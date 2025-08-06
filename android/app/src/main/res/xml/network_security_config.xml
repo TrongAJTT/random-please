@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">api.exchangerate-api.com</domain>
+        <domain includeSubdomains="true">api.fixer.io</domain>
+        <domain includeSubdomains="true">api.currencyapi.com</domain>
+        <domain includeSubdomains="true">v6.exchangerate-api.com</domain>
+    </domain-config>
+    
+    <!-- Allow cleartext traffic for all domains (for development/testing) -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+</network-security-config> 

@@ -1,0 +1,3565 @@
+{
+    "@@locale": "en",
+    "title": "random_please",
+    "settings": "Settings",
+    "theme": "Theme",
+    "language": "Language",
+    "userInterface": "User Interface",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark",
+    "english": "English",
+    "vietnamese": "Vietnamese",    "cache": "Cache",
+    "clearCache": "Clear Cache",
+    "cacheDetails": "Cache Details",
+    "viewCacheDetails": "View Details",
+    "cacheSize": "Cache Size",
+    "cacheItems": "Items",
+    "clearAllCache": "Clear All Cache",
+    "logs": "Application Logs",
+    "viewLogs": "View Logs",
+    "clearLogs": "Clear Logs",    
+    "logRetention": "Log Retention",
+    "logRetentionDays": "{days} days",
+    "@logRetentionDays": {
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+    "logRetentionForever": "Keep forever",
+    "logRetentionDesc": "Set how long to keep application logs before automatic deletion",
+    "logRetentionDescDetail": "Choose log retention period (5-30 days in 5-day intervals, or forever)",
+    "logRetentionAutoDelete": "Auto-delete after a period of time",
+    "logManagement": "App logs management and storage settings",
+    "logManagementDesc": "Manage application logs and retention settings",
+    "logStatus": "Log Status",
+    "logsDesc": "Application log files and debug information",
+    "dataAndStorage": "Data & Storage",
+    "confirmClearCache": "Are you sure you want to clear \"{cacheName}\" cache?",
+    "confirmClearAllCache": "Are you sure you want to clear ALL cache data? This will remove all saved templates but preserve your settings.",
+    "cannotClearFollowingCaches": "The following caches cannot be cleared because they are currently in use:",
+    "@cannotClearFollowingCaches": {
+        "description": "Warning text for caches that cannot be cleared"
+    },
+    "cacheCleared": "{cacheName} cache cleared successfully",
+    "allCacheCleared": "All cache cleared successfully",
+    "errorClearingCache": "Error clearing cache: {error}",
+    "close": "Close",
+    "custom": "Custom",
+    "online": "Online",
+    "offline": "Offline",
+    "options": "Options",
+    "about": "About",
+    "add": "Add",
+    "save": "Save",
+    "saved": "Saved",
+    "saveToHistory": "Save to history",
+    "edit": "Edit",
+    "copy": "Copy",
+    "move": "Move",
+    "destination": "Destination",
+    "fileName": "File Name",
+    "overwrite": "Overwrite",
+    "cancel": "Cancel",
+    "search": "Search",
+    "searchHint": "Search...",
+    "history": "History",
+    "total": "Total",
+    "selectTool": "Select a tool from the sidebar",
+    "selectToolDesc": "Choose a tool from the left sidebar to get started",
+    "settingsDesc": "Personalize your experience",
+    "random": "Random Generator",
+    "randomDesc": "Generate random passwords, numbers, dates, and more",
+    
+    "textTemplateGen": "Text Template Generator",
+    "textTemplateGenDesc": "Create documents from templates. You can create reusable templates with fields like text, number, date.",
+    "editTemplate": "Edit Template",
+    "createTemplate": "Create New Template",
+    "templateEditSuccessMessage": "Template saved successfully! You can now navigate back.",
+    "contentTab": "Content",
+    "structureTab": "Structure",
+    "templateTitleLabel": "Template Title *",
+    "templateTitleHint": "Enter title for this template",
+    "pleaseEnterTitle": "Please enter a title",
+    "addDataField": "Add Data Field",
+    "addDataLoop": "Add Data Loop",
+    "fieldTypeText": "Text",
+    "fieldTypeLargeText": "Large Text",
+    "fieldTypeNumber": "Number",
+    "fieldTypeDate": "Date",
+    "fieldTypeTime": "Time",
+    "fieldTypeDateTime": "DateTime",
+    "fieldTitleLabel": "Field title *",
+    "fieldTitleHint": "E.g. Customer name",
+    "pleaseEnterFieldTitle": "Please enter field title",
+    "copyAndClose": "Copy and Close",
+    "insertAtCursor": "Insert at Cursor",
+    "appendToEnd": "Append to End",
+    "loopTitleLabel": "Loop title *",
+    "loopTitleHint": "E.g. Product list",
+    "pleaseFixDuplicateIds": "Please fix inconsistent duplicate IDs before saving",
+    "errorSavingTemplate": "Error saving template: {error}",
+    "templateContentLabel": "Template Content *",
+    "templateContentHint": "Enter template content and add data fields...",
+    "pleaseEnterTemplateContent": "Please enter template content",
+    "templateStructure": "Template Structure",
+    "templateStructureOverview": "View an overview of fields and loops in your template.",
+    "textTemplatesTitle": "Templates",
+    "addNewTemplate": "Add new template",
+    "noTemplatesYet": "No templates yet",
+    "createTemplatesHint": "Create your first template to get started.",
+    "createNewTemplate": "Create new template",
+    "exportToJson": "Export to JSON",
+    "confirmDeletion": "Confirm Deletion",
+    "confirmDeleteTemplateMsg": "Are you sure you want to delete \"{title}\"?",
+    "holdToDeleteInstruction": "Hold the delete button for 5 seconds to confirm",
+    "holdToDelete": "Hold to delete...",
+    "deleting": "Deleting...",
+    "holdToClearCache": "Hold to clear...",
+    "clearingCache": "Clearing cache...",
+    "holdToClearCacheInstruction": "Hold the clear button for 10 seconds to confirm",
+    "templateDeleted": "Template deleted.",
+    "errorDeletingTemplate": "Error deleting template: {error}",
+    "help": "Help",
+    "usageGuide": "Usage Guide",
+    "textTemplateToolIntro": "This tool helps you manage and use text templates efficiently.",
+    "helpCreateNewTemplate": "Create a new template using the + button.",
+    "helpTapToUseTemplate": "Tap a template to use it.",
+    "helpTapMenuForActions": "Tap the menu (⋮) for more actions.",
+    "textTemplateScreenHint": "Templates are saved locally on your device.",
+    "gotIt": "Got it",
+    "addTemplate": "Add Template",
+    "addManually": "Add manually",
+    "createTemplateFromScratch": "Create a template from scratch",
+    "addFromFile": "Add from file",
+    "importTemplateFromJson": "Import multiple templates from JSON files",
+    "templateImported": "Template imported successfully.",
+    "templatesImported": "Templates imported successfully.",
+    "importResults": "Import Results",
+    "importSummary": "{successCount} successful, {failCount} failed",
+    "successfulImports": "Successful imports ({count})",
+    "failedImports": "Failed imports ({count})",
+    "noImportsAttempted": "No files were selected for import",
+    "invalidTemplateFormat": "Invalid template format: {error}",
+    "errorImportingTemplate": "Error importing template: {error}",
+    "copySuffix": "copy",
+    "templateCopied": "Template copied.",
+    "errorCopyingTemplate": "Error copying template: {error}",
+    "saveTemplateAsJson": "Save template as JSON",
+    "templateExported": "Template exported to {path}",
+    "errorExportingTemplate": "Error exporting template: {error}",
+    "generateDocumentTitle": "Generate Document: {title}",
+    "fillDataTab": "Fill Data",
+    "previewTab": "Preview",
+    "showDocument": "Show Document",
+    "fillInformation": "Fill Information",
+    "dataLoops": "Data Loops",
+    "generateDocument": "Generate Document",
+    "preview": "Preview",
+    "addNewRow": "Add New Row",
+    "rowNumber": "Row {number}",
+    "deleteThisRow": "Delete this row",
+    "enterField": "Enter {field}",
+    "unsupportedFieldType": "Field type {type} not supported",
+    "selectDate": "Select date",
+    "selectTime": "Select time",
+    "selectDateTime": "Select date and time",
+    "copiedToClipboard": "Copied to clipboard",
+    "completedDocument": "Completed Document",
+    "fieldCount": "Fields: {count}",
+    "basicFieldCount": "basic fields",
+    "loopFieldCount": "fields in loops",
+    "loopDataCount": "Data loops: {count}",
+    "duplicateIdWarning": "Detected {count} inconsistent duplicate IDs. Elements with the same ID must have the same type and title.",
+    "normalFields": "Normal fields:",
+    "loopLabel": "Loop: {title}",
+    "structureDetail": "Structure details",
+    "basicFields": "Basic fields",
+    "loopContent": "Loop content",
+    "fieldInLoop": "Field \"{field}\" belongs to loop \"{loop}\"",
+    
+    "characterCount": "{count} characters",
+    "fieldsAndLoops": "{fields} fields, {loops} loops",
+    "longPressToSelect": "Long press to select templates",
+    "selectedTemplates": "{count} selected",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "batchExport": "Export Selected",
+    "batchDelete": "Delete Selected",
+    "exportTemplates": "Export Templates",
+    "editFilenames": "Edit file names before export:",
+    "filenameFor": "Filename for \"{title}\":",
+    "confirmBatchDelete": "Confirm Batch Delete",
+    "typeConfirmToDelete": "Type \"confirm\" to delete {count} selected templates:",
+    "confirmText": "confirm",
+    "confirmationRequired": "Please type \"confirm\" to proceed",
+    "batchExportCompleted": "Exported {count} templates successfully",
+    "batchDeleteCompleted": "Deleted {count} templates successfully",
+    "errorDuringBatchExport": "Error exporting some templates: {errors}",
+    
+    "passwordGenerator": "Password Generator",
+    "passwordGeneratorDesc": "Generate secure random passwords",
+    "numCharacters": "Number of characters",
+    "includeLowercase": "Include lowercase letters",
+    "includeUppercase": "Include uppercase letters",
+    "includeNumbers": "Include numbers",
+    "includeSpecial": "Include special characters",
+    "generate": "Generate",
+    "generatedPassword": "Generated Password",
+    "copyToClipboard": "Copy to Clipboard",
+    "copied": "Copied!",
+    "restored": "Restored!",
+    
+    "dateCalculator": "Date Calculator",
+    "@dateCalculator": {
+        "description": "Title for the Date Calculator tool"
+    },
+    "dateCalculatorDesc": "A versatile tool for handling all your date-related calculations. Below is an overview of its features:",
+    "@dateCalculatorDesc": {
+        "description": "Description for the Date Calculator tool"
+    },
+    "dateInfoTabDescription": "Provides detailed information for any date, including day of the week, day of the year, week number, quarter, and leap year status.",
+    "dateDifferenceTabDescription": "Calculates the duration between two dates, showing the result in a combination of years, months, and days, as well as in total units like months, weeks, days, etc.",
+    "addSubtractTabDescription": "Adds or subtracts a specific number of years, months, and days from a given date to determine the resulting date.",
+    "ageCalculatorTabDescription": "Calculates the age from a birth date and shows the total days lived, days until the next birthday, and the date of the next birthday.",
+    "dateCalculatorHistory": "Date Calculator History",
+    "@dateCalculatorHistory": {
+        "description": "Title for the history panel in the Date Calculator"
+    },
+    "dateDifference": "Difference",
+    "addSubtractDate": "Add/Subtract",
+    "ageCalculator": "Birthday",
+    "ageCalculatorDesc": "Calculate age and track upcoming birthdays.",
+    "workingDays": "Working Days",
+    "timezoneConverter": "Timezone",
+    "recurringDates": "Recurring",
+    "countdown": "Countdown",
+    "dateInfo": "Detail",
+    "dateInfoDesc": "Get detailed information about any selected date",
+    "timeUnitConverter": "Time Unit",
+    "nthWeekday": "Nth Weekday",
+    
+    "dateCalculatorHistory": "History",
+    "allCalculations": "All Calculations",
+    "filterByType": "Filter by type",
+    "clearCalculationHistory": "Clear History",
+    "bookmarkResult": "Bookmark Result",
+    "resultBookmarked": "Result bookmarked to history",
+    "clearTabData": "Clear Data",
+    "tabDataCleared": "Data cleared for current tab",
+    "showCalculatorInfo": "Calculator Information",
+    
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "baseDate": "Base Date",
+    "birthDate": "Birth Date",
+    "targetDate": "Target Date",
+    "selectDateToView": "Select a date to view detailed information",
+    "duration": "Duration",
+    "dateDistanceSection": "Date Distance",
+    "unitConversionSection": "Unit Conversion",
+    "totalMonths": "Total Months",
+    "totalWeeks": "Total Weeks",
+    "totalDays": "Total Days",
+    "totalHours": "Total Hours",
+    "totalMinutes": "Total Minutes",
+    
+    "resultDate": "Result Date",
+    "dayOfWeek": "Day of the week",
+    "years": "Years",
+    "months": "Months",
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds",
+    "weeks": "Weeks",
+    
+    "addSubtractValues": "Add/Subtract Values",
+    "addSubtractResultsTitle": "Result",
+
+    "ageCalculatorResultsTitle": "Birthday Details",
+    "@ageCalculatorResultsTitle": {
+        "description": "Title for the age calculator results card"
+    },
+    "age": "Your Current Age",
+    "@age": {
+        "description": "Label for age in age calculator"
+    },
+    "daysLived": "Total Days Lived",
+    "@daysLived": {
+        "description": "Label for total days lived in age calculator"
+    },
+    "nextBirthday": "Next Birthday On",
+    "@nextBirthday": {
+        "description": "Label for the date of the next birthday"
+    },
+    "daysUntilBirthday": "Days Until Next Birthday",
+    "@daysUntilBirthday": {
+        "description": "Label for days until next birthday in age calculator"
+    },
+    
+    "workingDaysCount": "Working Days",
+    "excludeWeekends": "Exclude Weekends",
+    "customHolidays": "Custom Holidays",
+    "addHoliday": "Add Holiday",
+    "removeHoliday": "Remove Holiday",
+    
+    "fromTimezone": "From Timezone",
+    "toTimezone": "To Timezone",
+    "convertedTime": "Converted Time",
+    
+    "recurringPattern": "Pattern",
+    "interval": "Interval",
+    "occurrences": "Occurrences",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "generatedDates": "Generated Dates",
+    
+    "eventName": "Event Name",
+    "timeRemaining": "Time Remaining",
+    "expired": "Expired",
+    "daysRemaining": "Days Remaining",
+    "hoursRemaining": "Hours Remaining",
+    "minutesRemaining": "Minutes Remaining",
+    
+    "currentWeek": "Current Week",
+    "weekOf": "Week of {year}",
+    "@weekOf": {
+        "placeholders": {
+            "year": {
+                "type": "int"
+            }
+        }
+    },
+    
+    "currentDay": "Current Day",
+    "dayOf": "Day {day} of {year}",
+    "@dayOf": {
+        "placeholders": {
+            "day": {
+                "type": "int"
+            },
+            "year": {
+                "type": "int"
+            }
+        }
+    },
+    
+    "convertValue": "Convert Value",
+    "toUnit": "To Unit",
+    "convertedValue": "Converted Value",
+    "timeUnits": "Time Units",
+    
+    "findWeekday": "Find Weekday",
+    "year": "Year",
+    "month": "Month",
+    "weekday": "Weekday",
+    "occurrence": "Occurrence",
+    "first": "First",
+    "second": "Second",
+    "third": "Third",
+    "fourth": "Fourth",
+    "last": "Last",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "july": "July",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December",
+    
+    "dateNotFound": "Date not found",
+    "invalidDate": "Invalid date",
+    "calculationError": "Calculation error",
+    "noHistoryYet": "No calculation history yet",
+    "performCalculation": "Perform your first calculation to see history here",
+    
+    "confirmClearHistory": "Are you sure you want to clear the calculation history?",
+    "confirmClearTabData": "Are you sure you want to clear the data for the current tab?",
+    "historyCleared": "History cleared successfully",
+    "historyItem": "History Item",
+    "loadFromHistory": "Load from History",
+    "deleteFromHistory": "Delete from History",
+    "historyItemDeleted": "History item deleted",
+    "restoreExpression": "Restore Expression",
+    "restoreResult": "Restore Result",
+    
+    "numberGenerator": "Number Generator",
+    "numberGeneratorDesc": "Generate random numbers and sequences",
+    "integers": "Integers",
+    "floatingPoint": "Floating Point",
+    "minValue": "Minimum Value",
+    "maxValue": "Maximum Value",
+    "quantity": "Quantity",
+    "allowDuplicates": "Allow Duplicates",
+    "includeSeconds": "Include Seconds",
+    "generatedNumbers": "Generated Numbers",
+    
+    "other": "Other",
+    
+    "yesNo": "Yes or No?",
+    "yesNoDesc": "Get quick yes or no decisions",
+    "flipCoin": "Flip Coin",
+    "flipCoinDesc": "Virtual coin flip for random choices",
+    "flipCoinInstruction": "Flip the coin to see the result",
+    "rockPaperScissors": "Rock Paper Scissors",
+    "rockPaperScissorsDesc": "Play the classic hand game",
+    "rollDice": "Roll Dice",
+    "rollDiceDesc": "Roll virtual dice with custom sides",
+    "diceCount": "Number of dice",
+    "diceSides": "Sides per die",
+    
+    "colorGenerator": "Color Generator",
+    "colorGeneratorDesc": "Generate random colors and palettes",
+    "hex6": "HEX (6-digit)",
+    "hex8": "HEX (8-digit with alpha)",
+    "generatedColor": "Generated Color",
+    "latinLetters": "Latin Letters",
+    "latinLettersDesc": "Generate random alphabet letters",
+    "letterCount": "Number of letters",
+    "tens": "Tens",
+    "units": "Units",
+    
+    "playingCards": "Playing Cards",
+    "playingCardsDesc": "Draw random playing cards",
+    "includeJokers": "Include Jokers",
+    "cardCount": "Number of cards",
+    
+    "currencyConverter": "Currency Converter",
+    "updatingRates": "Updating exchange rates...",
+    "lastUpdatedAt": "Last updated: {date} at {time}",
+    "noRatesAvailable": "No exchange rate information available, fetching rates...",
+    "staticRates": "Static",
+    "refreshRates": "Refresh rates",
+    "resetLayout": "Reset Layout",
+    "confirmResetLayout": "Confirm Reset Layout",
+    "confirmResetLayoutMessage": "Are you sure you want to reset the layout? This will remove all cards and restore default settings.",
+    "confirm": "Confirm",
+    "addCard": "Add Card",
+    "addRow": "Add Row", 
+    "cardView": "Card View",
+    "cards": "Cards",
+    "rows": "Rows",
+    "converter": "Converter",
+    "amount": "Amount",
+    "from": "From",
+    "fromCurrency": "From Currency",
+    "convertedTo": "Converted to",
+    "removeCard": "Remove card",
+    "removeRow": "Remove row",
+    "liveRatesUpdated": "Live rates updated successfully",
+    "staticRatesUsed": "Using static rates (live data unavailable)",
+    "failedToUpdateRates": "Failed to update rates",
+    "actions": "Actions",
+    "customizeCurrenciesDialog": "Customize Currencies",
+    "searchCurrencies": "Search currencies...",
+    "noCurrenciesFound": "No currencies found",
+    "currenciesSelected": "{count} currencies selected",
+    "applyChanges": "Apply Changes",
+    "currencyStatusSuccess": "Live rate",
+    "currencyStatusFailed": "Failed to fetch",
+    "currencyStatusTimeout": "Timeout",
+    "currencyStatusNotSupported": "Not supported",
+    "currencyStatusStatic": "Static rate",
+    "currencyStatusFetchedRecently": "Recently fetched",
+    "currencyStatusSuccessDesc": "Successfully fetched live rate",
+    "currencyStatusFailedDesc": "Failed to fetch live rate, using static fallback",
+    "currencyStatusTimeoutDesc": "Request timed out, using static fallback",
+    "currencyStatusNotSupportedDesc": "Currency not supported by API",
+    "currencyStatusStaticDesc": "Using static exchange rate",
+    "currencyStatusFetchedRecentlyDesc": "Successfully fetched within the last hour",
+    "currencyConverterInfo": "Currency Converter Info",
+    "aboutThisFeature": "About This Feature",
+    "aboutThisFeatureDesc": "The Currency Converter allows you to convert between different currencies using live or static exchange rates. It supports over 80 currencies worldwide.",
+    "howToUseDesc": "• Add or remove cards/rows for multiple conversions\n• Customize visible currencies\n• Switch between card and table view\n• Rates update automatically based on your settings",
+    "staticRatesInfo": "Static Exchange Rates",
+    "staticRatesInfoDesc": "Static rates are fallback values used when live rates cannot be fetched. These rates are updated periodically and may not reflect real-time market prices.",
+    "viewStaticRates": "View Static Rates",
+    "lastStaticUpdate": "Last static rates update: May 2025",
+    "staticRatesList": "Static Exchange Rates List",
+    "rateBasedOnUSD": "All rates are based on 1 USD",
+    "maxCurrenciesSelected": "Maximum 10 currencies can be selected",
+    "savePreset": "Save Preset",
+    "loadPreset": "Load Preset",
+    "presetName": "Preset Name",
+    "enterPresetName": "Enter preset name",
+    "presetNameRequired": "Preset name is required",
+    "presetLoaded": "Preset loaded successfully",
+    "presetDeleted": "Preset deleted successfully",
+    "deletePreset": "Delete Preset",
+    "confirmDeletePreset": "Are you sure you want to delete this preset?",
+    "sortBy": "Sort by",
+    "sortByName": "Name",
+    "sortByDate": "Date",
+    "noPresetsFound": "No presets found",
+    "delete": "Delete",
+    "createdOn": "Created on {date}",
+    "currencies": "{count} currencies",
+    "currenciesCount": "{count} currencies",
+    "createdDate": "Created: {date}",
+    "sortByLabel": "Sort by:",
+    "selectPreset": "Select",
+    "selected": "Selected",
+    "deletePresetAction": "Delete",
+    "deletePresetTitle": "Delete Preset",
+    "deletePresetConfirm": "Are you sure you want to delete this preset?",
+    "presetDeletedSuccess": "Preset deleted",
+    "errorLabel": "Error:",
+    "fetchTimeout": "Fetch Timeout",
+    "fetchTimeoutDesc": "Set timeout for currency rate fetching (5-20 seconds)",
+    "fetchTimeoutSeconds": "{seconds}s",
+    "fetchRetryIncomplete": "Retry when incomplete",
+    "fetchRetryIncompleteDesc": "Automatically retry failed/timeout currencies during fetch",
+    "fetchRetryTimes": "{times} retries",
+    "@fetchRetryTimes": {
+        "placeholders": {
+            "times": {
+                "type": "int"
+            }
+        }
+    },
+    "fetchingRates": "Fetching Currency Rates",
+    "fetchingProgress": "Fetching progress: {completed}/{total}",
+    "timeRemaining": "Time remaining: {seconds}s",
+    "fetchingStatus": "Status",
+    "fetchingCurrency": "Fetching {currency}...",
+    "fetchComplete": "Fetch Complete",
+    "fetchCancelled": "Fetch Cancelled",
+    
+    "dateGenerator": "Date Generator",
+    "dateGeneratorDesc": "Generate random dates within ranges",
+    "dateCount": "Number of dates",
+    
+    "timeGenerator": "Time Generator",
+    "timeGeneratorDesc": "Generate random times of day",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "timeCount": "Number of times",
+    "dateTimeGenerator": "Date & Time Generator",
+    "dateTimeGeneratorDesc": "Generate random date and time combinations",
+    "heads": "Heads",
+    "tails": "Tails",    "rock": "Rock",
+    "paper": "Paper", 
+    "scissors": "Scissors",
+    "randomResult": "Result",
+    "flipping": "Flipping...",
+    "skipAnimation": "Skip Animation",
+    "skipAnimationDesc": "Show result immediately without visual effects",
+    "latinLetterGenerationError": "Cannot generate {count} unique letters from the available set. Please reduce the count or allow duplicates.",
+    "quickActions": "Quick Actions",
+    "quickActionsDesc": "Customize shortcuts that appear when you long-press the app icon.",
+    "edit": "Edit",
+      "cacheTypeTextTemplates": "Text Templates",
+    "cacheTypeTextTemplatesDesc": "Saved text templates and content",
+    "cacheTypeAppSettings": "App Settings",    "cacheTypeAppSettingsDesc": "Theme, language, and user preferences",    "cacheTypeRandomGenerators": "Random Generators",
+    "cacheTypeRandomGeneratorsDesc": "Generation history and settings",
+      "saveGenerationHistory": "Save Generation History",
+    "saveGenerationHistoryDesc": "Remember and display history of generated items",
+    "generationHistory": "Generation History",
+    "generatedAt": "Generated at",
+    "noHistoryYet": "No history yet",
+    "noHistoryMessage": "Generate some random results to see them here",
+    "clearHistory": "Clear History",
+    "calculationHistory": "Calculation History",
+    "noCalculationHistory": "No calculation history yet",
+    "saveCalculationHistory": "Save Calculation History",
+    "saveCalculationHistoryDesc": "Remember and display history of calculations",
+    "typeConfirmToProceed": "Type \"confirm\" to proceed:",
+    "toolsShortcuts": "Tools & Shortcuts",
+    "displayArrangeTools": "Display and arrange tools",
+    "displayArrangeToolsDesc": "Control which tools are visible and their order",
+    "manageToolVisibility": "Manage Tool Visibility and Order",
+    "dragToReorder": "Drag to reorder tools",
+    "allToolsHidden": "All tools are hidden",
+    "allToolsHiddenDesc": "Please enable at least one tool to continue using the application",    "enableAtLeastOneTool": "Please enable at least one tool.",
+    "toolVisibilityChanged": "Tool visibility and order have been updated.",
+    "errorMinOneTool": "At least one tool must be visible.",
+    "resetToDefault": "Reset to Default",
+    "manageQuickActions": "Manage Quick Actions",
+    "manageQuickActionsDesc": "Configure shortcuts for quick access to tools",
+    "quickActionsDialogTitle": "Quick Actions",
+    "quickActionsDialogDesc": "Select up to 4 tools for quick access via app icon or taskbar",
+    "quickActionsLimit": "Maximum 4 quick actions allowed",
+    "quickActionsLimitReached": "You can only select up to 4 tools for quick actions",
+    "clearAllQuickActions": "Clear All",
+    "quickActionsCleared": "Quick actions cleared",
+    "quickActionsUpdated": "Quick actions updated",
+    "quickActionsInfo": "Quick Actions",    "selectUpTo4Tools": "Select up to 4 tools for quick access.",
+    "quickActionsEnableDesc": "Quick actions will appear when you long-press the app icon on Android or right-click the taskbar icon on Windows.",
+    "quickActionsEnableDescMobile": "Quick actions will appear when you long-press the app icon (Android/iOS only).",
+    "selectedCount": "Selected: {current} of {max}",
+    "@selectedCount": {
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "max": {
+                "type": "int"
+            }
+        }
+    },    "maxQuickActionsReached": "Maximum 4 quick actions reached",
+    "clearAll": "Clear All",
+      "converterTools": "Converter Tools",
+    "converterToolsDesc": "Convert between different units and systems",
+    "calculatorTools": "Calculator Tools",
+    "calculatorToolsDesc": "Specialized calculators for health, finance, and more",
+    "lengthConverter": "Length Converter",
+    "temperatureConverter": "Temperature Converter",
+    "volumeConverter": "Volume Converter",
+    "areaConverter": "Area Converter",
+    "speedConverter": "Speed Converter",
+    "timeConverter": "Time Converter",
+    "dataConverter": "Data Storage Converter",
+    "numberSystemConverter": "Number System Converter",    
+    
+    "tables": "Tables",
+    "tableView": "Table View",
+    "listView": "List View",
+    "customizeUnits": "Customize Units",
+    "visibleUnits": "Visible Units",
+    "selectUnitsToShow": "Select units to display",
+    "enterValue": "Enter value",
+    "conversionResults": "Conversion Results",
+    
+    "meters": "Meters",
+    "kilometers": "Kilometers", 
+    "centimeters": "Centimeters",
+    "millimeters": "Millimeters",
+    "inches": "Inches",
+    "feet": "Feet",
+    "yards": "Yards",
+    "miles": "Miles",
+    
+    "grams": "Grams",
+    "kilograms": "Kilograms",
+    "pounds": "Pounds", 
+    "ounces": "Ounces",
+    "tons": "Tons",
+    
+    "celsius": "Celsius",
+    "fahrenheit": "Fahrenheit",
+    "kelvin": "Kelvin",
+    
+    "liters": "Liters",
+    "milliliters": "Milliliters",
+    "gallons": "Gallons",
+    "quarts": "Quarts",
+    "pints": "Pints",
+    "cups": "Cups",
+    
+    "squareMeters": "Square Meters",
+    "squareKilometers": "Square Kilometers",
+    "squareFeet": "Square Feet", 
+    "squareInches": "Square Inches",
+    "acres": "Acres",
+    "hectares": "Hectares",
+    
+    "metersPerSecond": "Meters per Second",
+    "kilometersPerHour": "Kilometers per Hour",
+    "milesPerHour": "Miles per Hour",
+    "knots": "Knots",
+    
+    "seconds": "Seconds",
+    "minutes": "Minutes",
+    "hours": "Hours",
+    "days": "Days",
+    "weeks": "Weeks",
+    "months": "Months",
+    "years": "Years",
+    
+    "bytes": "Bytes",
+    "kilobytes": "Kilobytes",
+    "megabytes": "Megabytes", 
+    "gigabytes": "Gigabytes",
+    "terabytes": "Terabytes",
+    "bits": "Bits",
+    
+    "decimal": "Decimal",
+    "binary": "Binary",
+    "octal": "Octal",
+    "hexadecimal": "Hexadecimal",
+      "usd": "US Dollar",
+    "eur": "Euro",
+    "gbp": "British Pound",
+    "jpy": "Japanese Yen",
+    "cad": "Canadian Dollar",
+    "aud": "Australian Dollar",
+    "vnd": "Vietnamese Dong",
+    
+    "currencyConverterDesc": "Convert between different currencies with live exchange rates",
+    "lengthConverterDesc": "Convert between different units of length",
+    "weightConverterDesc": "Convert between different units of weight",
+    "temperatureConverterDesc": "Convert between different temperature scales",
+    "volumeConverterDesc": "Convert between different units of volume",
+    "areaConverterDesc": "Convert between different units of area",
+    "speedConverterDesc": "Convert between different units of speed",
+    "timeConverterDesc": "Convert between different units of time",
+    "dataConverterDesc": "Convert between different units of data storage",    "numberSystemConverterDesc": "Convert between different number systems",
+    
+    "fromUnit": "From Unit",
+    "unit": "Unit",    "value": "Value",
+    "showAll": "Show All",    "apply": "Apply",
+    
+    "bmiCalculator": "BMI Calculator",
+    "bmiCalculatorDesc": "Calculate Body Mass Index and health category",
+    "scientificCalculator": "Scientific Calculator",
+    "scientificCalculatorDesc": "Advanced calculator with trigonometric, logarithmic functions",
+    "graphingCalculator": "Graphing Calculator",
+    "graphingCalculatorDesc": "Plot and visualize mathematical functions",
+    "graphingCalculatorDetailedInfo": "Graphing Calculator Information",
+    "graphingCalculatorOverview": "Advanced mathematical function plotting and visualization tool",
+    
+    "graphingKeyFeatures": "Key Features",
+    "realTimePlotting": "Real-time Plotting",
+    "realTimePlottingDesc": "Instantly visualize functions as you type with smooth curve rendering",
+    "multipleFunction": "Multiple Functions",
+    "multipleFunctionDesc": "Plot and compare multiple functions simultaneously with color coding",
+    "interactiveControls": "Interactive Controls",
+    "interactiveControlsDesc": "Zoom, pan, and navigate the graph with intuitive touch and mouse controls",
+    "aspectRatioControl": "Aspect Ratio Control",
+    "aspectRatioControlDesc": "Customize X:Y axis scaling for optimal function visualization",
+    "functionHistory": "Function History", 
+    "functionHistoryDesc": "Save and load function groups with automatic state preservation",
+    "mathExpressionSupport": "Advanced Math Support",
+    "mathExpressionSupportDesc": "Supports trigonometric, logarithmic, and polynomial functions",
+    
+    "graphingHowToUse": "How to Use",
+    "step1Graph": "Step 1: Enter Function",
+    "step1GraphDesc": "Type a mathematical function in the input field (e.g., x^2, sin(x), log(x))",
+    "step2Graph": "Step 2: Plot Function", 
+    "step2GraphDesc": "Press Enter or tap the add button to plot the function on the graph",
+    "step3Graph": "Step 3: Navigate Graph",
+    "step3GraphDesc": "Use zoom controls, pan gestures, or adjust aspect ratio for better viewing",
+    "step4Graph": "Step 4: Add More Functions",
+    "step4GraphDesc": "Add multiple functions to compare and analyze their behaviors",
+    
+    "graphingTips": "Pro Tips",
+    "tip1Graph": "Use parentheses for complex expressions: sin(x^2) instead of sin x^2",
+    "tip2Graph": "Common functions: sin(x), cos(x), tan(x), log(x), sqrt(x), abs(x)",
+    "tip3Graph": "Use π and e constants: sin(π*x), e^x",
+    "tip4Graph": "Pan by dragging the graph area with mouse or touch",
+    "tip5Graph": "Save function groups to history for quick access later",
+    "tip6Graph": "Toggle function visibility using the eye icon without removing them",
+    "tip7Graph": "Use aspect ratio controls for specialized viewing (1:1 for circles, 5:1 for oscillations)",
+    
+    "supportedFunctions": "Supported Functions",
+    "basicOperations": "Basic Operations",
+    "basicOperationsDesc": "Addition (+), Subtraction (-), Multiplication (*), Division (/), Power (^)",
+    "trigonometricFunctions": "Trigonometric Functions",
+    "trigonometricFunctionsDesc": "sin(x), cos(x), tan(x) and their inverse functions",
+    "logarithmicFunctions": "Logarithmic Functions", 
+    "logarithmicFunctionsDesc": "Natural logarithm log(x), exponential e^x",
+    "otherFunctions": "Other Functions",
+    "otherFunctionsDesc": "Square root sqrt(x), absolute value abs(x), polynomial functions",
+    
+    "navigationControls": "Navigation Controls",
+    "zoomControls": "Zoom Controls",
+    "zoomControlsDesc": "Use + and - buttons or pinch gestures to zoom in and out",
+    "panControls": "Pan Controls", 
+    "panControlsDesc": "Drag the graph to move around and explore different areas",
+    "resetControls": "Reset Controls",
+    "resetControlsDesc": "Return to center or reset the entire plot to default state",
+    "aspectRatioDialog": "Aspect Ratio",
+    "aspectRatioDialogDesc": "Adjust X:Y axis scaling from 0.1:1 to 10:1 for optimal viewing",
+    
+    "graphingPracticalApplications": "Practical Applications",
+    "graphingPracticalApplicationsDesc": "Useful for students learning algebra and calculus, visualizing function behavior, and exploring mathematical concepts through interactive graphs.",
+    
+    "scientificCalculatorDetailedInfo": "Scientific Calculator Information",
+    "scientificCalculatorOverview": "Advanced scientific calculator with comprehensive mathematical functions",
+    
+    "scientificKeyFeatures": "Key Features",
+    "realTimeCalculation": "Real-time Calculation",
+    "realTimeCalculationDesc": "See instant preview results as you type expressions",
+    "comprehensiveFunctions": "Comprehensive Functions",
+    "comprehensiveFunctionsDesc": "Complete set of trigonometric, logarithmic, and algebraic functions",
+    "dualAngleModes": "Dual Angle Modes",
+    "dualAngleModesDesc": "Switch between radians and degrees for trigonometric calculations",
+    "secondaryFunctions": "Secondary Functions",
+    "secondaryFunctionsDesc": "Access extended functions with the 2nd button toggle",
+    "calculationHistory": "Calculation History",
+    "calculationHistoryDesc": "Automatic saving and browsing of previous calculations",
+    "memoryOperations": "Memory Operations",
+    "memoryOperationsDesc": "Store and recall values with memory management functions",
+    
+    "scientificHowToUse": "How to Use",
+    "step1Scientific": "Step 1: Enter Expression",
+    "step1ScientificDesc": "Type numbers and use function buttons to build mathematical expressions",
+    "step2Scientific": "Step 2: Use Functions",
+    "step2ScientificDesc": "Access trigonometric, logarithmic, and algebraic functions from the keypad",
+    "step3Scientific": "Step 3: Toggle Modes",
+    "step3ScientificDesc": "Switch between radians/degrees and primary/secondary functions as needed",
+    "step4Scientific": "Step 4: Use History - View and reuse previous calculations",
+    "@step4Scientific": {
+        "description": "Step 4 for using scientific calculator"
+    },
+    "step4ScientificDesc": "Press = to calculate or see real-time preview while typing",
+    
+    "scientificTips": "Pro Tips",
+    "tip1Scientific": "Use parentheses to ensure correct order of operations: (2+3)×4 = 20",
+    "@tip1Scientific": {
+        "description": "Tip 1 for scientific calculator"
+    },
+    "tip2Scientific": "Switch to DEG mode for degree calculations, RAD for radians",
+    "@tip2Scientific": {
+        "description": "Tip 2 for scientific calculator"
+    },
+    "tip3Scientific": "Use the 2nd button to access inverse functions: sin⁻¹, cos⁻¹, log⁻¹",
+    "@tip3Scientific": {
+        "description": "Tip 3 for scientific calculator"
+    },
+    "tip4Scientific": "Use memory functions (MS, MR, M+, M-) to store intermediate results",
+    "@tip4Scientific": {
+        "description": "Tip 4 for scientific calculator"
+    },
+    "tip5Scientific": "Double-tap numbers to select and copy results",
+    "@tip5Scientific": {
+        "description": "Tip 5 for scientific calculator"
+    },
+    "tip6Scientific": "Use EXP for scientific notation: 1.23E+5 = 123,000",
+    "@tip6Scientific": {
+        "description": "Tip 6 for scientific calculator"
+    },
+    "tip7Scientific": "Clear individual entries with C, or clear all with AC",
+    "@tip7Scientific": {
+        "description": "Tip 7 for scientific calculator"
+    },
+    "basicArithmetic": "Basic Arithmetic",
+    "@basicArithmetic": {
+        "description": "Basic arithmetic operations section"
+    },
+    "trigonometricFunctionsScientific": "Trigonometric Functions",
+    "@trigonometricFunctionsScientific": {
+        "description": "Trigonometric functions section for scientific calculator"
+    },
+    "logarithmicFunctionsScientific": "Logarithmic Functions",
+    "@logarithmicFunctionsScientific": {
+        "description": "Logarithmic functions section for scientific calculator"
+    },
+    "algebraicFunctions": "Algebraic Functions",
+    "@algebraicFunctions": {
+        "description": "Algebraic functions section"
+    },
+    "scientificFunctionCategories": "Function Categories",
+    "basicArithmeticDesc": "Addition (+), Subtraction (-), Multiplication (*), Division (/)",
+    "trigonometricFunctionsScientificDesc": "sin, cos, tan and their inverse functions (asin, acos, atan)",
+    "logarithmicFunctionsScientificDesc": "Natural log (ln), common log (log), exponential (exp, eˣ, 10ˣ)",
+    "algebraicFunctionsDesc": "Powers (x², x³, xʸ), roots (√, ∛), factorial (n!), absolute value (|x|)",
+    "angleMode": "Angle Mode (DEG/RAD)",
+    "@angleMode": {
+        "description": "Angle mode control"
+    },
+    "functionToggle": "Function Toggle (2nd)",
+    "@functionToggle": {
+        "description": "Function toggle control"
+    },
+    "memoryFunctions": "Memory Functions",
+    "@memoryFunctions": {
+        "description": "Memory functions control"
+    },
+    "historyAccess": "History Access",
+    "@historyAccess": {
+        "description": "History access control"
+    },
+    "scientificCalculatorPracticalApplications": "Practical Applications",
+    "@scientificCalculatorPracticalApplications": {
+        "description": "Practical applications section for scientific calculator"
+    },
+    "scientificCalculatorPracticalApplicationsDesc": "Helpful for students in mathematics and science courses, basic engineering calculations, and everyday problem-solving involving complex mathematical operations.",
+    "@scientificCalculatorPracticalApplicationsDesc": {
+        "description": "Practical applications description for scientific calculator"
+    },
+    "cacheWithLogSize": "Cache: {cacheSize} (+{logSize} log)",
+    "@cacheWithLogSize": {
+        "description": "Cache info with log size",
+        "placeholders": {
+            "cacheSize": {
+                "type": "String",
+                "example": "180.5KB"
+            },
+            "logSize": {
+                "type": "String",
+                "example": "3.05MB"
+            }
+        }
+    },
+    "scientificModeControls": "Mode Controls",
+    "angleMode": "Angle Mode",
+    "angleModeDesc": "Toggle between Radians and Degrees for trigonometric calculations",
+    "functionToggle": "Function Toggle",
+    "functionToggleDesc": "Press 2nd to switch between primary and secondary function sets",
+    "memoryFunctions": "Memory Functions",
+    "memoryFunctionsDesc": "Store, recall, and manage values in calculator memory",
+    "historyAccess": "History Access",
+    "historyAccessDesc": "Browse previous calculations and reuse expressions",
+    
+    "scientificPracticalApplications": "Practical Applications",
+    "scientificPracticalApplicationsDesc": "Helpful for students in mathematics and science courses, performing calculations that require trigonometric, logarithmic, and algebraic functions.",
+    "metric": "Metric",
+    "imperial": "Imperial", 
+    "enterMeasurements": "Enter your measurements",
+    "heightCm": "Height (cm)",
+    "heightInches": "Height (inches)",
+    "weightKg": "Weight (kg)",    "weightPounds": "Weight (pounds)",
+    "yourBMI": "Your BMI",
+    "bmiScale": "BMI Scale",
+    "underweight": "Underweight",
+    "normalWeight": "Normal Weight",
+    "overweight": "Overweight",
+    "overweightI": "Overweight I",
+    "overweightII": "Overweight II", 
+    "obese": "Obese",
+    "obeseI": "Obese I",
+    "obeseII": "Obese II",
+    "obeseIII": "Obese III",
+    
+    "bmiPercentileOverweight": "85th - 95th percentile",
+    "bmiPercentileOverweightI": "85th - 95th percentile",
+    "bmiPercentileObese": "≥ 95th percentile",
+    "bmiPercentileObeseI": "≥ 95th percentile",
+    
+    "bmiNormalInterpretation": "Your BMI is {bmi}, which is in the normal healthy weight range. Keep maintaining your current lifestyle!",
+    "@bmiNormalInterpretation": {
+        "placeholders": {
+            "bmi": {
+                "type": "String"
+            }
+        }
+    },
+    "bmiOverweightInterpretation": "Your BMI is {bmi}, which is considered overweight. Consider healthy lifestyle changes to reduce weight.",
+    "@bmiOverweightInterpretation": {
+        "placeholders": {
+            "bmi": {
+                "type": "String"
+            }
+        }
+    },
+    "bmiObeseInterpretation": "Your BMI is {bmi}, which is considered obese. It's recommended to consult healthcare professionals for guidance.",
+    "@bmiObeseInterpretation": {
+        "placeholders": {
+            "bmi": {
+                "type": "String"
+            }
+        }
+    },
+    
+    "bmiUnderweightRec1": "Increase calorie intake with nutritious, high-calorie foods",
+    "bmiUnderweightRec2": "Include healthy fats, proteins, and complex carbohydrates in your diet",
+    "bmiUnderweightRec3": "Consult a healthcare provider to rule out underlying health issues",
+    "bmiNormalRec1": "Maintain a balanced diet with variety of nutrients",
+    "bmiNormalRec2": "Continue regular physical activity and exercise routine",
+    "bmiNormalRec3": "Monitor your weight regularly to stay within healthy range",
+    "bmiOverweightRec1": "Create a moderate calorie deficit through diet and exercise",
+    "bmiOverweightRec2": "Focus on portion control and choose nutrient-dense foods",
+    "bmiOverweightRec3": "Increase physical activity with both cardio and strength training",
+    "bmiObeseRec1": "Work with healthcare professionals to develop a safe weight loss plan",
+    "bmiObeseRec2": "Consider comprehensive lifestyle changes including diet and exercise",
+    "bmiObeseRec3": "Regular medical monitoring may be necessary for optimal health",
+    
+    "bmiUnderweightDesc": "Below normal weight range, may indicate nutritional deficiency",
+    "bmiNormalDesc": "Associated with lowest risk of weight-related health problems",
+    "bmiOverweightDesc": "Increased risk of cardiovascular disease, diabetes, and other health issues",
+    "bmiObeseDesc": "Significantly increased risk of serious health complications",
+    
+    "bmiKeyFeatures": "Key Features",
+    "comprehensiveBmiCalc": "Comprehensive BMI Calculation",
+    "comprehensiveBmiCalcDesc": "Calculate BMI using height, weight, age, and gender for accurate results",
+    "multipleUnitSystems": "Multiple Unit Systems",
+    "multipleUnitSystemsDesc": "Support for both metric (cm/kg) and imperial (ft-in/lbs) measurements",
+    "healthInsights": "Health Insights",
+    "healthInsightsDesc": "Get personalized recommendations based on your BMI category",
+    "calculationHistory": "Calculation History",
+    "calculationHistoryDesc": "Track your BMI calculations over time with detailed history",
+    "ageGenderConsideration": "Age & Gender Consideration",
+    "ageGenderConsiderationDesc": "BMI interpretation adjusted for age and gender factors",
+    
+    "bmiHowToUse": "How to Use",
+    "step1Bmi": "Step 1: Select Unit System",
+    "step1BmiDesc": "Choose between metric (cm/kg) or imperial (ft-in/lbs) measurements",
+    "step2Bmi": "Step 2: Enter Your Information",
+    "step2BmiDesc": "Input your height, weight, age, and gender for accurate calculation",
+    "step3Bmi": "Step 3: View Results",
+    "step3BmiDesc": "See your BMI value, category, and personalized health recommendations",
+    "step4Bmi": "Step 4: Track Progress",
+    "step4BmiDesc": "Save calculations to history and monitor changes over time",
+    
+    "bmiTips": "Health Tips",
+    "tip1Bmi": "BMI is a screening tool - consult healthcare providers for complete health assessment",
+    "tip2Bmi": "Regular monitoring helps track progress toward health goals",
+    "tip3Bmi": "BMI may not accurately reflect body composition for athletes or elderly",
+    "tip4Bmi": "Focus on healthy lifestyle changes rather than just the number",
+    "tip5Bmi": "Combine BMI with other health indicators for better understanding",
+    
+    "bmiLimitations": "Understanding BMI Limitations",
+    "bmiLimitationsDesc": "BMI is a useful screening tool but has limitations. It doesn't distinguish between muscle and fat mass, and may not be accurate for athletes, elderly, or certain ethnic groups. Always consult healthcare professionals for comprehensive health assessment.",
+    
+    "bmiPracticalApplications": "Practical Applications",
+    "bmiPracticalApplicationsDesc": "Useful for health screening, weight management planning, fitness goal setting, and tracking health progress over time.",
+    
+    "noHistoryMessage": "Your BMI calculation history will appear here",
+    "clearBmiHistory": "Clear BMI History",
+    "confirmClearHistory": "Are you sure you want to clear all BMI history?",
+    "confirmClearCalculatorHistory": "Are you sure you want to clear all calculation history?",
+    "historyCleared": "BMI history cleared",
+    "calculatorHistoryCleared": "Calculator history cleared",
+    "calculatedOn": "Calculated on {date}",
+    "@calculatedOn": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "bmiResult": "BMI: {bmi}",
+    "@bmiResult": {
+        "placeholders": {
+            "bmi": {
+                "type": "String"
+            }
+        }
+    },
+    "personalInfo": "Personal Information",
+    "measurements": "Measurements",
+    "bmiResults": "BMI Results",
+    "recommendations": "Recommendations",
+    "saveToHistory": "Save to History",
+    "autoSaveToHistory": "Auto-save to History",
+    "autoSaveToHistoryDesc": "Automatically save calculations to history",
+    "rememberLastValues": "Remember Last Values",
+    "rememberLastValuesDesc": "Remember your last entered values",
+    
+    "currencyFetchMode": "Currency Rate Fetching",
+    "currencyFetchModeDesc": "Choose how currency exchange rates are updated",
+    "fetchModeManual": "Manual",
+    "fetchModeManualDesc": "Only use cached rates, update manually by tapping refresh (limited to once every 6 hours)",
+    "fetchModeOnceADay": "Once a day",
+    "fetchModeOnceADayDesc": "Automatically fetch rates once per day",
+
+    "currencyFetchStatus": "Currency Fetch Status",
+    "fetchStatusSummary": "Fetch Status Summary",
+    "success": "Success",
+    "failed": "Failed", 
+    "timeout": "Timeout",
+    "static": "Static",
+    "noCurrenciesInThisCategory": "No currencies in this category",
+    
+    "saveFeatureState": "Save Feature State",
+    "saveFeatureStateDesc": "Remember the state of features between app sessions",
+    "testCache": "Test Cache",
+    
+      "viewDataStatus": "View Data Status",
+  "retryAttempt": "Retry {current}/{max}",
+  "@retryAttempt": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "ratesUpdatedWithErrors": "Rates updated with {errorCount} errors",
+  "@ratesUpdatedWithErrors": {
+    "placeholders": {
+      "errorCount": {
+        "type": "int"
+      }
+    }
+  },
+  "newRatesAvailable": "New exchange rates are available. Would you like to fetch them now?",
+  "progressDialogInfo": "This will show a progress dialog while fetching rates.",
+  "calculate": "Calculate",
+  "calculating": "Calculating...",
+  "unknown": "Unknown",
+  "logsManagement": "App logs management and storage settings",
+  "statusInfo": "Status: {info}",
+  "@statusInfo": {
+    "placeholders": {
+      "info": {
+        "type": "String"
+      }
+    }
+  },
+  "logsAvailable": "Logs available",
+  "noTimeData": "--:--:--",
+  "fetchStatusTab": "Fetch Status",
+  "currencyValueTab": "Currency Value",
+  "successfulCount": "Successful ({count})",
+  "@successfulCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "failedCount": "Failed ({count})",
+  "@failedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeoutCount": "Timeout ({count})",
+  "@timeoutCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recentlyUpdatedCount": "Recently Updated ({count})",
+  "@recentlyUpdatedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "updatedCount": "Updated ({count})",
+  "@updatedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "staticCount": "Static ({count})",
+  "@staticCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noCurrenciesInCategory": "No currencies in this category",
+  "updatedWithinLastHour": "Updated within the last hour",
+  "updatedDaysAgo": "Updated {days} days ago",
+  "@updatedDaysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "updatedHoursAgo": "Updated {hours} hours ago",
+  "@updatedHoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "hasUpdateData": "Has update data",
+  "usingStaticRates": "Using static rates",
+  "scrollToTop": "Scroll to Top",
+  "scrollToBottom": "Scroll to Bottom",
+  "logActions": "Log Actions",
+  "logApplication": "Log Application",
+  "previousChunk": "Previous Chunk",
+  "nextChunk": "Next Chunk",
+  "loadAll": "Load All",
+  "firstPart": "First Part",
+  "lastPart": "Last Part",
+  "largeFile": "Large File",
+  "loadingLargeFile": "Loading large file...",
+  "loadingLogContent": "Loading log content...",
+  "largeFileDetected": "Large file detected. Using optimized loading...",
+
+      "cacheTypeCalculatorTools": "Calculator Tools",
+    "cacheTypeCalculatorToolsDesc": "Calculation history, graphing calculator data, BMI data, and settings",
+    "cacheTypeConverterTools": "Converter Tools",
+    "cacheTypeConverterToolsDesc": "Currency/length states, presets and exchange rates cache",
+
+    "cardName": "Card Name",
+    "cardNameHint": "Enter card name (max 20 characters)",
+    "converterCardNameDefault": "Card {position}",
+    "unitSelectedStatus": "Selected {count} of {max}",
+    "unitVisibleStatus": "{count} units visible",
+    "moveDown": "Move Down",
+    "moveUp": "Move Up",
+    "moveToFirst": "Move to First",
+    "moveToLast": "Move to Last",
+    "cardActions": "Card Actions",
+    
+    "lengthUnits": "Length Units",
+    "angstroms": "Angstroms",
+    "nanometers": "Nanometers",
+    "microns": "Microns",
+    "nauticalMiles": "Nautical Miles",
+    "customizeLengthUnits": "Customize Length Units",
+    "selectLengthUnits": "Select length units to display",
+    "lengthConverterInfo": "Length Converter Information",
+    "weightConverter": "Weight Converter",
+    "@weightConverter": {
+        "description": "Title for weight converter tool"
+    },
+    "weightConverterInfo": "Weight Converter Info",
+    "@weightConverterInfo": {
+        "description": "Title for weight converter info dialog"
+    },
+    "customizeWeightUnits": "Customize Weight Units",
+    "@customizeWeightUnits": {
+        "description": "Title for weight unit customization dialog"
+    },
+    "massConverter": "Mass Converter",
+    "@massConverter": {
+        "description": "Title for mass converter tool"
+    },
+    "massConverterInfo": "Mass Converter Info",
+    "@massConverterInfo": {
+        "description": "Title for mass converter info dialog"
+    },
+    "massConverterDesc": "Convert between mass units (kg, lb, oz)",
+    "@massConverterDesc": {
+        "description": "Description for mass converter tool"
+    },
+    "weightConverter": "Weight Converter",
+    "@weightConverter": {
+        "description": "Title for weight converter tool"
+    },
+    "weightConverterInfo": "Weight Converter Info",
+    "@weightConverterInfo": {
+        "description": "Title for weight converter info dialog"
+    },
+    "weightConverterDesc": "Convert between force/weight units (N, kgf, lbf)",
+    "@weightConverterDesc": {
+        "description": "Description for weight converter tool"
+    },
+    "customizeMassUnits": "Customize Mass Units",
+    "@customizeMassUnits": {
+        "description": "Title for mass unit customization dialog"
+    },
+    "availableUnits": "Available Units",
+    "scientificNotation": "Scientific notation supported for extreme values",
+    
+    "dragging": "Dragging...",
+    "editName": "Edit name",
+    "editCurrencies": "Edit currencies", 
+    "tableWith": "Table {count} cards",
+    "@tableWith": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "noUnitsSelected": "No units selected",
+    "maximumSelectionExceeded": "Maximum selection exceeded",
+    "presetSaved": "Preset saved successfully",
+    "errorSavingPreset": "Error saving preset: {error}",
+    "@errorSavingPreset": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "errorLoadingPresets": "Error loading presets: {error}",
+    "@errorLoadingPresets": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "maximumSelectionReached": "Maximum selection reached",
+    "minimumSelectionRequired": "Minimum {count} selection(s) required",
+    "@minimumSelectionRequired": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "renamePreset": "Rename Preset",
+    "rename": "Rename",
+    "presetRenamedSuccessfully": "Preset renamed successfully",
+    "chooseFromSavedPresets": "Choose from your saved presets",
+    
+    "currencyConverterDetailedInfo": "Currency Converter - Detailed Information",
+    "currencyConverterOverview": "This powerful currency converter allows you to convert between different currencies with live exchange rates.",
+    "keyFeatures": "Key Features",
+    "multipleCards": "Multiple Cards",
+    "multipleCardsDesc": "Create multiple converter cards, each with its own set of currencies and amounts.",
+    "liveRates": "Live Exchange Rates", 
+    "liveRatesDesc": "Get real-time exchange rates from reliable financial sources.",
+    "customizeCurrencies": "Customize Currencies",
+    "customizeCurrenciesDesc": "Choose which currencies to display and save custom presets.",
+    "dragAndDrop": "Drag & Drop",
+    "dragAndDropDesc": "Reorder your converter cards by dragging them.",
+    "cardAndTableView": "Card & Table View",
+    "cardAndTableViewDesc": "Switch between card view for easy use or table view for comparison.",
+    "stateManagement": "State Management",
+    "stateManagementDesc": "Your converter state is automatically saved and restored.",
+    "howToUse": "How to Use",
+    "step1": "1. Add Cards",
+    "step1Desc": "Tap 'Add Card' to create new converter cards.",
+    "step2": "2. Enter Amount",
+    "step2Desc": "Enter an amount in any currency field.",
+    "step3": "3. Select Base Currency",
+    "step3Desc": "Use the dropdown to select which currency you're converting from.",
+    "step4": "4. View Results",
+    "step4Desc": "See instant conversions to all other currencies in the card.",
+    "tips": "Tips",
+    "tip1": "• Tap the edit icon next to card names to rename them",
+    "tip2": "• Use the currency icon to customize which currencies appear",
+    "tip3": "• Save currency presets for quick access",
+    "tip4": "• Check the status indicator for exchange rate freshness",
+    "tip5": "• Use table view to compare multiple cards side by side",
+    "rateUpdate": "Rate Updates",
+    "rateUpdateDesc": "Exchange rates are updated based on your settings. Check Settings > Converter Tools to configure update frequency and retry behavior.",
+    "poweredBy": "Powered by {service}",
+    "@poweredBy": {
+        "placeholders": {
+            "service": {
+                "type": "String"
+            }
+        }
+    },
+    "exchangeRatesBy": "Exchange rates by {service}",
+    "@exchangeRatesBy": {
+        "placeholders": {
+            "service": {
+                "type": "String"
+            }
+        }
+    },
+    "dataAttribution": "Data Attribution",
+    "apiProviderAttribution": "Exchange rate data provided by ExchangeRate-API",
+    "rateLimitReached": "Rate limit reached",
+    "rateLimitMessage": "You can only fetch currency rates once every 6 hours. Please try again later.",
+    "nextFetchAllowedIn": "Next fetch allowed in: {timeRemaining}",
+    "@nextFetchAllowedIn": {
+        "placeholders": {
+            "timeRemaining": {
+                "type": "String"
+            }
+        }
+    },
+    "rateLimitInfo": "Rate limiting helps prevent API abuse and ensures service availability for everyone.",
+    "understood": "Understood",
+    
+    "focusMode": "Focus Mode",
+    "focusModeEnabled": "Focus Mode",
+    "@focusModeEnabled": {
+        "description": "Focus mode setting label"
+    },
+    "focusModeEnabledDesc": "Hide UI elements for distraction-free experience",
+    "@focusModeEnabledDesc": {
+        "description": "Focus mode setting description"
+    },
+    "saveRandomToolsState": "Save Random Tools State",
+    "@saveRandomToolsState": {
+        "description": "Save random tools state setting label"
+    },
+    "saveRandomToolsStateDesc": "Automatically save tool settings when generating results",
+    "@saveRandomToolsStateDesc": {
+        "description": "Save random tools state setting description"
+    },
+    "focusModeDisabled": "Focus mode disabled", 
+    "enableFocusMode": "Enable Focus Mode",
+    "disableFocusMode": "Disable Focus Mode",
+    "focusModeDescription": "Hide interface elements to focus on your conversions",
+    "focusModeEnabledMessage": "Focus mode activated. {exitInstruction}",
+    "@focusModeEnabledMessage": {
+        "placeholders": {
+            "exitInstruction": {
+                "type": "String"
+            }
+        }
+    },
+    "focusModeDisabledMessage": "Focus mode deactivated. All interface elements are now visible.",
+    "exitFocusModeDesktop": "Tap the focus icon in the app bar to exit",
+    "exitFocusModeMobile": "Zoom out or tap the focus icon to exit",
+    "zoomToEnterFocusMode": "Zoom in to enter focus mode",
+    "zoomToExitFocusMode": "Zoom out to exit focus mode",
+    "focusModeGesture": "Use zoom gestures to toggle focus mode",
+    "focusModeButton": "Use the focus button to toggle focus mode",
+    "focusModeHidesElements": "Focus mode hides status widgets, add buttons, view mode buttons, and statistics",
+    "focusModeHelp": "Focus Mode Help",
+    "focusModeHelpTitle": "Focus Mode",
+    "focusModeHelpDescription": "Focus mode helps you concentrate on your conversions by hiding non-essential interface elements.",
+    "focusModeHelpHidden": "Hidden in Focus Mode:",
+    "focusModeHelpHiddenStatus": "• Status indicators and widgets",
+    "focusModeHelpHiddenButtons": "• Add card/row buttons",
+    "focusModeHelpHiddenViewMode": "• View mode toggle buttons (Card/Table)",
+    "focusModeHelpHiddenStats": "• Statistics and count information",
+    "focusModeHelpActivation": "Activation:",
+    "focusModeHelpActivationDesktop": "• Desktop: Click the focus icon in the app bar",
+    "focusModeHelpActivationMobile": "• Mobile: Use zoom in gesture or tap focus icon",
+    "focusModeHelpDeactivation": "Deactivation:",
+    "focusModeHelpDeactivationDesktop": "• Desktop: Click the focus icon again",
+    "focusModeHelpDeactivationMobile": "• Mobile: Use zoom out gesture or tap focus icon again",
+    "moreActions": "More Actions",
+    "moreOptions": "More Options",
+    
+    "lengthConverterDetailedInfo": "Length Converter - Detailed Information",
+    "lengthConverterOverview": "This precision length converter supports multiple units with high accuracy calculations for professional and scientific use.",
+    "precisionCalculations": "Precision Calculations",
+    "precisionCalculationsDesc": "High-precision arithmetic with up to 15 decimal places for scientific accuracy.",
+    "multipleUnits": "Multiple Length Units",
+    "multipleUnitsDesc": "Support for metric, imperial, and scientific units including nanometers to kilometers.",
+    "instantConversion": "Instant Conversion",
+    "instantConversionDesc": "Real-time conversion across all visible units as you type values.",
+    "customizableInterface": "Customizable Interface",
+    "customizableInterfaceDesc": "Hide or show specific units, arrange cards, and switch between views.",
+    "statePersistence": "State Persistence",
+    "statePersistenceDesc": "Your settings and card configurations are saved automatically.",
+    "scientificNotationSupport": "Scientific Notation",
+    "scientificNotationSupportDesc": "Support for very large and very small values using scientific notation.",
+    "step1Length": "Step 1: Add Cards",
+    "step1LengthDesc": "Add multiple converter cards to work with different length values simultaneously.",
+    "step2Length": "Step 2: Select Units", 
+    "step2LengthDesc": "Choose which length units to display by customizing each card's visible units.",
+    "step3Length": "Step 3: Enter Values",
+    "step3LengthDesc": "Type any length value and see instant conversions to all other units.",
+    "step4Length": "Step 4: Organize Layout",
+    "step4LengthDesc": "Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.",
+    "tip1Length": "• Use scientific notation (1.5e6) for very large or small measurements",
+    "tip2Length": "• Double-tap a unit field to select all text for quick editing",
+    "tip3Length": "• Cards remember their individual unit selections and names",
+    "tip4Length": "• Table view is ideal for comparing multiple measurements at once",
+    "tip5Length": "• Focus mode hides distractions for concentrated conversion work",
+    "tip6Length": "• Use the search function to quickly find specific units in customization",
+    "lengthUnitRange": "Supported Units Range",
+    "lengthUnitRangeDesc": "From subatomic (angstroms) to astronomical (light years) measurements with precision maintained throughout.",
+    
+    "weightConverterDetailedInfo": "Weight Converter - Detailed Information",
+    "weightConverterOverview": "This precision weight/force converter supports multiple unit systems with high accuracy calculations for engineering, physics, and scientific applications.",
+    "step1Weight": "Step 1: Add Cards",
+    "step1WeightDesc": "Add multiple converter cards to work with different force/weight values simultaneously.",
+    "step2Weight": "Step 2: Select Units",
+    "step2WeightDesc": "Choose which force/weight units to display by customizing each card's visible units.",
+    "step3Weight": "Step 3: Enter Values",
+    "step3WeightDesc": "Type any force/weight value and see instant conversions to all other units.",
+    "step4Weight": "Step 4: Organize Layout",
+    "step4WeightDesc": "Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.",
+    "tip1Weight": "• Newton (N) is the base SI unit for force with highest precision",
+    "tip2Weight": "• Kilogram-force (kgf) represents gravitational force on 1 kg mass",
+    "tip3Weight": "• Use scientific notation for very large or small force values",
+    "tip4Weight": "• Dyne is useful for small forces in CGS system calculations",
+    "tip5Weight": "• Troy units are specialized for precious metals and jewelry",
+    "tip6Weight": "• Focus mode helps concentrate on complex force calculations",
+    "weightUnitCategories": "Unit Categories",
+    "commonUnits": "Common Units",
+    "commonUnitsWeightDesc": "Newton (N), Kilogram-force (kgf), Pound-force (lbf) - most frequently used in engineering and physics.",
+    "lessCommonUnits": "Less Common Units", 
+    "lessCommonUnitsWeightDesc": "Dyne (dyn), Kilopond (kp) - specialized scientific and technical applications.",
+    "uncommonUnits": "Uncommon Units",
+    "uncommonUnitsWeightDesc": "Ton-force (tf) - for very large force measurements in heavy industry.",
+    "specialUnits": "Special Units",
+    "specialUnitsWeightDesc": "Gram-force (gf), Troy pound-force - for precision measurements and precious metals.",
+    "practicalApplicationsWeightDesc": "Useful for engineering calculations, physics experiments, and applications requiring force measurements.",
+    "practicalApplications": "Practical Applications",
+    "practicalApplicationsDesc": "Helpful for everyday measurements and unit conversions in various contexts.",
+    
+    "massConverterDetailedInfo": "Mass Converter - Detailed Information",
+    "massConverterOverview": "This precise mass converter supports multiple unit systems with high accuracy calculations for scientific, medical, and commercial applications.",
+    "step1Mass": "Step 1: Add Cards",
+    "step1MassDesc": "Add multiple converter cards to work with different mass values simultaneously.",
+    "step2Mass": "Step 2: Select Units",
+    "step2MassDesc": "Choose which mass units to display from metric, imperial, troy, and apothecaries systems.",
+    "step3Mass": "Step 3: Enter Values",
+    "step3MassDesc": "Type any mass value and see instant conversions to all other units.",
+    "step4Mass": "Step 4: Organize Layout",
+    "step4MassDesc": "Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.",
+    "tip1Mass": "• Use scientific notation (1.5e-12) for very small masses like atomic units",
+    "tip2Mass": "• Troy system is ideal for precious metals calculations",
+    "tip3Mass": "• Apothecaries system is used in pharmacy and medicine",
+    "tip4Mass": "• Table view is perfect for comparing multiple measurements",
+    "tip5Mass": "• Focus mode hides distractions for concentrated conversion work",
+    "tip6Mass": "• Use presets to save your favorite unit combinations",
+    "massUnitSystems": "Supported Unit Systems",
+    "massUnitSystemsDesc": "Metric (ng to tonnes), Imperial (grains to tons), Troy (precious metals), Apothecaries (pharmacy), and special units (carats, slugs, atomic mass units).",
+    "practicalApplicationsMassDesc": "Useful for cooking measurements, basic scientific calculations, and everyday mass conversions.",
+    
+    "areaConverter": "Area Converter",
+    "@areaConverter": {
+        "description": "Title for area converter tool"
+    },
+    "areaConverterInfo": "Area Converter Info",
+    "@areaConverterInfo": {
+        "description": "Title for area converter info dialog"
+    },
+    "customizeAreaUnits": "Customize Area Units",
+    "@customizeAreaUnits": {
+        "description": "Title for area unit customization dialog"
+    },
+    "areaConverterDesc": "Convert between area units (m², km², ha, acres, ft²)",
+    "@areaConverterDesc": {
+        "description": "Description for area converter tool"
+    },
+    "areaConverterDetailedInfo": "Area Converter - Detailed Information",
+    "areaConverterOverview": "This precision area converter supports multiple unit systems with high accuracy calculations for real estate, agriculture, engineering, and scientific applications.",
+    "step1Area": "Step 1: Add Cards",
+    "step1AreaDesc": "Add multiple converter cards to work with different area values simultaneously.",
+    "step2Area": "Step 2: Select Units",
+    "step2AreaDesc": "Choose which area units to display by customizing each card's visible units.",
+    "step3Area": "Step 3: Enter Values",
+    "step3AreaDesc": "Type any area value and see instant conversions to all other units.",
+    "step4Area": "Step 4: Organize Layout",
+    "step4AreaDesc": "Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.",
+    "tip1Area": "• Square meter (m²) is the base SI unit for area with highest precision",
+    "tip2Area": "• Hectare is commonly used for large land areas and agriculture",
+    "tip3Area": "• Acre is standard in real estate and land measurement in the US",
+    "tip4Area": "• Use scientific notation for very large or small area values",
+    "tip5Area": "• Square feet and square inches are common in construction and design",
+    "tip6Area": "• Focus mode helps concentrate on complex area calculations",
+    "areaUnitCategories": "Unit Categories",
+    "commonUnitsAreaDesc": "Square meter (m²), Square kilometer (km²), Square centimeter (cm²) - most frequently used metric units.",
+    "lessCommonUnitsAreaDesc": "Hectare (ha), Acre (ac), Square foot (ft²), Square inch (in²) - specialized applications in agriculture and construction.",
+    "uncommonUnitsAreaDesc": "Square yard (yd²), Square mile (mi²), Rood - for specific regional or historical measurements.",
+    "practicalApplicationsAreaDesc": "Helpful for home improvement projects, gardening, and basic area calculations.",
+    "timeConverter": "Time Converter",
+    "timeConverterDetailedInfo": "Time Converter - Detailed Information",
+    "timeConverterOverview": "Comprehensive time unit conversion with precision calculations and multiple unit support.",
+    "step1Time": "Step 1: Select Time Units",
+    "step1TimeDesc": "Choose from seconds, minutes, hours, days, weeks, months, years, and specialized units like milliseconds and nanoseconds.",
+    "step2Time": "Step 2: Enter Time Value",
+    "step2TimeDesc": "Input the time duration you want to convert. Supports decimal values and scientific notation for precise calculations.",
+    "step3Time": "Step 3: View Conversions",
+    "step3TimeDesc": "See instant conversions across all selected time units with high precision calculations.",
+    "step4Time": "Step 4: Customize & Save",
+    "step4TimeDesc": "Add multiple cards, customize visible units, and save your preferred layout for future use.",
+    "tip1Time": "• Use scientific notation for very small or large time values",
+    "tip2Time": "• Milliseconds and nanoseconds are perfect for technical calculations",
+    "tip3Time": "• Years and months use average values for consistency",
+    "tip4Time": "• Add multiple cards to compare different time scales",
+    "tip5Time": "• Customize visible units to show only what you need",
+    "tip6Time": "• Focus mode helps concentrate on complex time calculations",
+    "timeUnitSystems": "Time Unit Systems",
+    "timeUnitSystemsDesc": "Supports standard time units (s, min, h, d, wk, mo, yr), precision units (ms, μs, ns), and extended units (decades, centuries, millennia) for comprehensive time measurement across all scales.",
+    "practicalApplicationsTimeDesc": "Useful for scheduling, time zone conversions, and everyday time calculations.",
+    
+    "volumeConverterDetailedInfo": "Volume Converter - Detailed Information",
+    "volumeConverterOverview": "This precision volume converter supports multiple unit systems with high accuracy calculations for cooking, chemistry, engineering, and scientific applications.",
+    "step1Volume": "Step 1: Add Cards",
+    "step1VolumeDesc": "Add multiple converter cards to work with different volume values simultaneously.",
+    "step2Volume": "Step 2: Select Units",
+    "step2VolumeDesc": "Choose which volume units to display from metric, imperial, and US systems.",
+    "step3Volume": "Step 3: Enter Values",
+    "step3VolumeDesc": "Type any volume value and see instant conversions to all other units.",
+    "step4Volume": "Step 4: Organize Layout",
+    "step4VolumeDesc": "Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.",
+    "tip1Volume": "• Cubic meter (m³) is the base SI unit for volume with highest precision",
+    "tip2Volume": "• Liter is commonly used for liquid measurements in everyday applications",
+    "tip3Volume": "• Milliliter and cubic centimeter are equivalent and interchangeable",
+    "tip4Volume": "• US and UK gallons are different units, choose carefully",
+    "tip5Volume": "• Use scientific notation for very large or small volume values",
+    "tip6Volume": "• Focus mode helps concentrate on complex volume calculations",
+    "volumeUnitCategories": "Unit Categories",
+    "commonUnitsVolumeDesc": "Cubic meter (m³), Liter (L), Milliliter (mL) - most frequently used metric units.",
+    "lessCommonUnitsVolumeDesc": "Gallon (US/UK), Cubic foot (ft³), Quart, Pint - imperial and US customary units.",
+    "uncommonUnitsVolumeDesc": "Hectoliter (hL), Barrel (bbl), Cup, Fluid ounce - specialized applications.",
+    "specialUnitsVolumeDesc": "Cubic centimeter (cm³), Cubic inch (in³), Cubic yard (yd³) - engineering and construction units.",
+    "practicalApplicationsVolumeDesc": "Helpful for cooking, baking, and basic volume measurements.",
+    "volumeConverterInfo": "Volume Converter Information",
+    "customizeVolumeUnits": "Customize Volume Units",
+    "selectVolumeUnits": "Select volume units to display",
+    "volumeUnits": "Volume Units",
+    "cubicMeter": "Cubic Meter",
+    "liter": "Liter",
+    "milliliter": "Milliliter",
+    "cubicCentimeter": "Cubic Centimeter",
+    "hectoliter": "Hectoliter",
+    "gallonUS": "Gallon (US)",
+    "gallonUK": "Gallon (UK)",
+    "quartUS": "Quart (US)",
+    "pintUS": "Pint (US)",
+    "cup": "Cup",
+    "fluidOunceUS": "Fluid Ounce (US)",
+    "cubicInch": "Cubic Inch",
+    "cubicFoot": "Cubic Foot",
+    "cubicYard": "Cubic Yard",
+    "barrel": "Barrel (Oil)",
+    
+    "numberSystemConverter": "Number System Converter",
+    "numberSystemConverterDetailedInfo": "Number System Converter - Detailed Information",
+    "numberSystemConverterOverview": "This precision number system converter supports multiple base systems with high accuracy calculations for programming, computer science, and mathematical applications.",
+    "step1NumberSystem": "Step 1: Add Cards",
+    "step1NumberSystemDesc": "Add multiple converter cards to work with different number base values simultaneously.",
+    "step2NumberSystem": "Step 2: Select Bases",
+    "step2NumberSystemDesc": "Choose which number bases to display from binary, decimal, hexadecimal, and other systems.",
+    "step3NumberSystem": "Step 3: Enter Values",
+    "step3NumberSystemDesc": "Type any number value and see instant conversions to all other base systems.",
+    "step4NumberSystem": "Step 4: Organize Layout",
+    "step4NumberSystemDesc": "Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.",
+    "tip1NumberSystem": "• Decimal (Base 10) is the standard counting system with highest precision",
+    "tip2NumberSystem": "• Binary (Base 2) is fundamental for computer science and digital electronics",
+    "tip3NumberSystem": "• Hexadecimal (Base 16) is commonly used in programming and memory addressing",
+    "tip4NumberSystem": "• Octal (Base 8) was historically important in computing systems",
+    "tip5NumberSystem": "• Base 32 and Base 64 are used for data encoding and transmission",
+    "tip6NumberSystem": "• Focus mode helps concentrate on complex base calculations",
+    "numberSystemUnitCategories": "Base Systems",
+    "commonBasesDesc": "Binary (Base 2), Decimal (Base 10), Hexadecimal (Base 16) - most frequently used in computing and mathematics.",
+    "lessCommonBasesDesc": "Octal (Base 8), Base 32, Base 64 - specialized applications in programming and data encoding.",
+    "uncommonBasesDesc": "Base 128, Base 256 - for advanced data representation and specialized algorithms.",
+    "practicalApplicationsNumberSystemDesc": "Useful for basic programming, learning number systems, and simple base conversions.",
+    "numberSystemConverterInfo": "Number System Converter Information",
+    "customizeNumberSystemBases": "Customize Number System Bases",
+    "selectNumberSystemBases": "Select number bases to display",
+    "numberSystemBases": "Number Bases",
+    "binary": "Binary (Base 2)",
+    "octal": "Octal (Base 8)",
+    "decimal": "Decimal (Base 10)",
+    "hexadecimal": "Hexadecimal (Base 16)",
+    "base32": "Base 32",
+    "base64": "Base 64",
+    "base128": "Base 128",
+    "base256": "Base 256",
+    "numberSystemConverterDesc": "Convert between number systems (binary, decimal, hexadecimal, etc.)",
+    
+    "speedConverterDetailedInfo": "Speed Converter - Detailed Information",
+    "speedConverterOverview": "This precision speed converter supports multiple unit systems with high accuracy calculations for automotive, aviation, maritime, and scientific applications.",
+    "step1Speed": "Step 1: Add Cards",
+    "step1SpeedDesc": "Add multiple converter cards to work with different speed values simultaneously.",
+    "step2Speed": "Step 2: Select Units",
+    "step2SpeedDesc": "Choose which speed units to display from metric, imperial, maritime, and aviation systems.",
+    "step3Speed": "Step 3: Enter Values",
+    "step3SpeedDesc": "Type any speed value and see instant conversions to all other units.",
+    "step4Speed": "Step 4: Organize Layout",
+    "step4SpeedDesc": "Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.",
+    "tip1Speed": "• Meters per second (m/s) is the base SI unit for speed with highest precision",
+    "tip2Speed": "• Kilometers per hour (km/h) is commonly used for vehicle speeds",
+    "tip3Speed": "• Miles per hour (mph) is standard in the US for road speeds",
+    "tip4Speed": "• Knots are standard for maritime and aviation navigation",
+    "tip5Speed": "• Mach number represents speed relative to sound (343 m/s at sea level)",
+    "tip6Speed": "• Focus mode helps concentrate on complex speed calculations",
+    "speedUnitCategories": "Unit Categories",
+    "multipleSpeedUnits": "Multiple Speed Units",
+    "multipleSpeedUnitsDesc": "Support for metric, imperial, maritime, and aviation units including m/s to Mach numbers.",
+    "speedUnitRange": "Supported Speed Range",
+    "speedUnitRangeDesc": "From millimeters per second to supersonic speeds (Mach numbers) with precision maintained throughout the range.",
+    "commonUnitsSpeedDesc": "Kilometers per hour (km/h), Meters per second (m/s), Miles per hour (mph) - most frequently used for ground transportation.",
+    "lessCommonUnitsSpeedDesc": "Knots (kn), Feet per second (ft/s) - specialized for maritime, aviation, and ballistics applications.",
+    "uncommonUnitsSpeedDesc": "Mach (M) - for supersonic and hypersonic speeds in aerospace applications.",
+    "practicalApplicationsSpeedDesc": "Helpful for travel planning, sports activities, and basic speed conversions.",
+    "speedConverterInfo": "Speed Converter Information",
+    "customizeSpeedUnits": "Customize Speed Units",
+    "selectSpeedUnits": "Select speed units to display",
+    "speedUnits": "Speed Units",
+    
+    "temperatureConverterDetailedInfo": "Temperature Converter - Detailed Information",
+    "temperatureConverterOverview": "This precision temperature converter supports multiple temperature scales with high accuracy calculations for scientific, engineering, cooking, and everyday applications.",
+    "step1Temperature": "Step 1: Add Cards",
+    "step1TemperatureDesc": "Add multiple converter cards to work with different temperature values simultaneously.",
+    "step2Temperature": "Step 2: Select Scales",
+    "step2TemperatureDesc": "Choose which temperature scales to display from Celsius, Fahrenheit, Kelvin, and other systems.",
+    "step3Temperature": "Step 3: Enter Values",
+    "step3TemperatureDesc": "Type any temperature value and see instant conversions to all other scales.",
+    "step4Temperature": "Step 4: Organize Layout",
+    "step4TemperatureDesc": "Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.",
+    "tip1Temperature": "• Celsius (°C) is the most widely used temperature scale globally",
+    "tip2Temperature": "• Fahrenheit (°F) is commonly used in the United States",
+    "tip3Temperature": "• Kelvin (K) is the absolute temperature scale used in science",
+    "tip4Temperature": "• Rankine (°R) is the absolute Fahrenheit scale",
+    "tip5Temperature": "• Réaumur (°Ré) is historically used in some European countries",
+    "tip6Temperature": "• Focus mode helps concentrate on complex temperature calculations",
+    "temperatureUnitCategories": "Temperature Scale Categories",
+    "temperatureCommonUnits": "Common Scales",
+    "temperatureCommonUnitsDesc": "Celsius (°C), Fahrenheit (°F) - most frequently used for weather, cooking, and everyday temperature measurements.",
+    "temperatureLessCommonUnits": "Scientific Scale",
+    "temperatureLessCommonUnitsDesc": "Kelvin (K) - absolute temperature scale used in scientific and engineering applications.",
+    "temperatureRareUnits": "Specialized Scales",
+    "temperatureRareUnitsDesc": "Rankine (°R), Réaumur (°Ré), Delisle (°De) - historical and specialized temperature scales for specific applications.",
+    "temperaturePracticalApplicationsDesc": "Useful for cooking, weather understanding, and basic temperature conversions.",
+    "temperatureConverterInfo": "Temperature Converter Information",
+    "customizeTemperatureUnits": "Customize Temperature Scales",
+    "selectTemperatureUnits": "Select temperature scales to display",
+    "temperatureUnits": "Temperature Scales",
+
+    "dataConverterDetailedInfo": "Data Storage Converter - Detailed Information",
+    "dataConverterOverview": "This precision data storage converter supports multiple data units with high accuracy calculations for computer science, IT management, file handling, and digital storage applications.",
+    "step1Data": "Step 1: Add Cards",
+    "step1DataDesc": "Add multiple converter cards to work with different data storage values simultaneously.",
+    "step2Data": "Step 2: Select Units",
+    "step2DataDesc": "Choose which data storage units to display from bytes, kilobytes, gigabytes, and other systems.",
+    "step3Data": "Step 3: Enter Values",
+    "step3DataDesc": "Type any data storage value and see instant conversions to all other units.",
+    "step4Data": "Step 4: Organize Layout",
+    "step4DataDesc": "Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.",
+    "tip1Data": "• Byte (B) is the fundamental unit of digital information storage",
+    "tip2Data": "• Kilobyte (KB), Megabyte (MB), Gigabyte (GB) are standard for file sizes",
+    "tip3Data": "• Terabyte (TB) and Petabyte (PB) are used for large-scale storage systems",
+    "tip4Data": "• Bit units (Kbit, Mbit, Gbit) are commonly used for network speeds",
+    "tip5Data": "• Binary prefixes (1024-based) provide more accurate computer calculations",
+    "tip6Data": "• Focus mode helps concentrate on complex data storage calculations",
+    "dataUnitCategories": "Data Storage Unit Categories",
+    "dataCommonUnits": "Common Units",
+    "dataCommonUnitsDesc": "Kilobyte (KB), Megabyte (MB), Gigabyte (GB) - most frequently used storage units for everyday file sizes and device capacities.",
+    "dataLessCommonUnits": "Large Storage Units",
+    "dataLessCommonUnitsDesc": "Terabyte (TB), Petabyte (PB), and basic Byte (B) units for specialized storage applications and very large or very small data measurements.",
+    "dataRareUnits": "Network Units",
+    "dataRareUnitsDesc": "Bit, Kilobit (Kbit), Megabit (Mbit), Gigabit (Gbit) are primarily used for network speeds and data transmission rates.",
+    "dataPracticalApplicationsDesc": "Helpful for understanding file sizes, storage needs, and basic data unit conversions.",
+    "dataConverterInfo": "Data Storage Converter Information",
+    "customizeDataUnits": "Customize Data Storage Units",
+    "selectDataUnits": "Select data storage units to display",
+    "dataUnits": "Data Storage Units",
+    "holdToClearCache": "Hold to clear...",
+    "clearingCache": "Clearing cache...",
+    "holdToClearCacheInstruction": "Hold the clear button for 10 seconds to confirm",
+    
+    "drafts": "Drafts",
+    "noDraftsYet": "No drafts yet",
+    "createDraftsHint": "Drafts are temporary saves of your work. They're automatically created when you exit editing without saving.",
+    "draftSaved": "Draft saved",
+    "draftDeleted": "Draft deleted",
+    "saveDraft": "Save Draft",
+    "stayHere": "Stay Here",
+    "exitWithoutSaving": "Exit Without Saving",
+    "unsavedChanges": "Unsaved Changes",
+    "unsavedChangesMessage": "You have unsaved changes. What would you like to do?",
+    "continueDraft": "Continue Draft",
+    "publishDraft": "Publish Draft",
+    "deleteDraft": "Delete Draft",
+    "confirmDeleteDraft": "Delete Draft?",
+    "confirmDeleteDraftMessage": "Are you sure you want to delete this draft? This action cannot be undone.",
+    "draftPublished": "Draft published as template",
+    "newDraft": "New Draft",
+    "editDraft": "Edit Draft",
+    "draftCreatedOn": "Created on {date}",
+    "draftUpdatedOn": "Updated on {date}",
+    "autoSaved": "Auto-saved",
+    "viewDrafts": "View Drafts",
+    "manageDrafts": "Manage Drafts",
+    "draftsExpireAfter": "Drafts expire after 7 days",
+    "expiredDraft": "Expired",
+    "draftCount": "{count} drafts",
+    "graphingFunction": "f(x) = ",
+    "enterFunction": "Enter function (e.g., x^2, sin(x), etc.)",
+    "plot": "Plot",
+    "aspectRatio": "Aspect Ratio",
+    "aspectRatioXY": "Aspect Ratio (X:Y)",
+    "currentRatio": "Current ratio: {ratio}:1",
+    "@currentRatio": {
+        "placeholders": {
+            "ratio": {
+                "type": "String"
+            }
+        }
+    },
+    "resetPlot": "Reset Plot",
+    "resetZoom": "Reset Zoom",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "returnToCenter": "Return to Center",
+    "panning": "Panning",
+    "joystickControl": "Joystick Control",
+    "enableJoystick": "Enable Joystick",
+    "disableJoystick": "Disable Joystick",
+    "joystickMode": "Joystick Mode",
+    "joystickModeActive": "Joystick Mode Active",
+    "useJoystickToNavigateGraph": "Use joystick to navigate the graph",
+    "equalXYRatio": "Equal X:Y ratio",
+    "yAxisWiderThanX": "Y-axis will be {ratio}× wider than X-axis",
+    "@yAxisWiderThanX": {
+        "placeholders": {
+            "ratio": {
+                "type": "String"
+            }
+        }
+    },
+    "xAxisWiderThanY": "X-axis will be {ratio}× wider than Y-axis",
+    "@xAxisWiderThanY": {
+        "placeholders": {
+            "ratio": {
+                "type": "String"
+            }
+        }
+    },
+    "invalidFunction": "Invalid function: {error}",
+    "@invalidFunction": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "enterFunctionToPlot": "Enter a function to plot",
+    "functionLabel": "Function {number}",
+    "@functionLabel": {
+        "placeholders": {
+            "number": {
+                "type": "int"
+            }
+        }
+    },
+    "apply": "Apply",
+    "reset": "Reset",
+    "graphPanel": "Graph",
+    "functionsPanel": "Functions",
+    "historyPanel": "History",
+    "activeFunctions": "Active Functions",
+    "noActiveFunctions": "No active functions",
+    "addFunction": "Add Function",
+    "removeFunction": "Remove Function",
+    "toggleFunction": "Toggle Function",
+    "functionVisible": "Function visible",
+    "functionHidden": "Function hidden",
+    "functionInputHelp": "Function Input Help",
+    "functionInputHelpDesc": "Get help with mathematical function syntax",
+    "commonFunctions": "Common Functions",
+    "trigonometricFunctions": "Trigonometric Functions",
+    "logarithmicFunctions": "Logarithmic Functions",
+    "polynomialFunctions": "Polynomial Functions",
+    "insertFunction": "Insert",
+    "functionSyntaxError": "Invalid function syntax",
+    "functionSyntaxErrorDesc": "Please check your function syntax and try again",
+    "basicOperations": "Basic Operations",
+    "advancedFunctions": "Advanced Functions",
+    "askBeforeLoadingHistory": "Ask before loading history",
+    "askBeforeLoadingHistoryDesc": "Show confirmation dialog when loading function groups from history",
+    "rememberCalculationHistory": "Remember calculation history",
+    "rememberCalculationHistoryDesc": "Save function groups to history for later use",
+    "saveCurrentToHistory": "Save current group to history",
+    "loadHistoryGroup": "Load History Group",
+    "saveCurrentGroupQuestion": "Do you want to save the current function group to history?",
+    "dontAskAgain": "Don't ask again",
+    "rememberChoice": "Remember choice",
+    "info": "Info",
+    "yes": "Yes",
+    "no": "No",
+    "functionGroup": "Function Group",
+    "savedOn": "Saved on {date}",
+    "@savedOn": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "functionsCount": "{count} functions",
+    "@functionsCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "editFunctionColor": "Edit function color",
+    "selectColor": "Select Color",
+    "moreActions": "More actions",
+    "noHistoryAvailable": "No history available",
+    "removeFromHistory": "Remove from history",
+    "selectedColor": "Selected Color",
+    "predefinedColors": "Predefined Colors",
+    "customColor": "Custom Color",
+    "select": "Select",
+    "hue": "Hue",
+    "saturation": "Saturation",
+    "lightness": "Lightness",
+    "cacheWithLogSize": "Cache: {cacheSize} (+{logSize} log)",
+    "@cacheWithLogSize": {
+        "description": "Cache info with log size",
+        "placeholders": {
+            "cacheSize": {
+                "type": "String",
+                "example": "180.5KB"
+            },
+            "logSize": {
+                "type": "String",
+                "example": "3.05MB"
+            }
+        }
+    },
+    "debugCache": "Debug Cache",
+    "deletingOldLogs": "Deleting old logs...",
+    "deletedOldLogFiles": "Deleted {count} old log files",
+    "@deletedOldLogFiles": {
+        "description": "Message showing how many old log files were deleted",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
+    "noOldLogFilesToDelete": "No old log files to delete",
+    "errorDeletingLogs": "Error deleting logs: {error}",
+    "@errorDeletingLogs": {
+        "description": "Error message when deleting logs fails",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Permission denied"
+            }
+        }
+    },
+    "mobileCacheDebug": "Mobile Cache Debug",
+    "runningCacheDiagnostics": "Running cache diagnostics...",
+    "cacheDiagnosticsResults": "Cache Diagnostics Results",
+    "cacheStatus": "Cache Status:",
+    "reliability": "Reliability",
+    "reliable": "Reliable",
+    "unreliable": "Unreliable",
+    "hasCache": "Has Cache",
+    "statePersistence": "State Persistence:",
+    "currencyState": "Currency State",
+    "lengthState": "Length State",
+    "timeState": "Time State",
+    "saved": "Saved",
+    "defaultState": "Default",
+    "errorWithDetails": "Error: {details}",
+    "@errorWithDetails": {
+        "description": "Generic error message with details",
+        "placeholders": {
+            "details": {
+                "type": "String",
+                "example": "Connection failed"
+            }
+        }
+    },
+    "stateLoadingIssuesDetected": "⚠️ State Loading Issues Detected",
+    "stateLoadingIssuesDesc": "This usually happens after app updates that change data structure.",
+    "clearAllStateData": "Clear All State Data",
+    "clearingStateData": "Clearing State Data",
+    "clearingAllConverterStateData": "Clearing all converter state data...",
+    "success": "Success",
+    "allStateDataCleared": "All state data has been cleared. The app will restart to complete the process.",
+    "failedToRunDiagnostics": "Failed to run diagnostics: {error}",
+    "@failedToRunDiagnostics": {
+        "description": "Error message when diagnostics fail",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Network error"
+            }
+        }
+    },
+    "failedToClearStateData": "Failed to clear state data: {error}",
+    "@failedToClearStateData": {
+        "description": "Error message when clearing state data fails",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Permission denied"
+            }
+        }
+    },
+    "clearingStateData": "Clearing all converter state data...",
+    "stateDataClearedSuccess": "All state data has been cleared. The app will restart to complete the process.",
+    "ok": "OK",
+    "bmiUnderweightInterpretation": "Your BMI indicates that you are underweight. This may suggest you need to gain weight for optimal health.",
+    "bmiNormalInterpretation": "Your BMI is within the normal weight range. This indicates a healthy weight for your height.",
+    "bmiOverweightInterpretation": "Your BMI indicates that you are overweight. Consider lifestyle changes to achieve a healthier weight.",
+    "bmiObeseInterpretation": "Your BMI indicates obesity. It's important to consult with healthcare professionals for proper guidance.",
+
+    "bmiElderlyNote": "For adults over 65, slightly higher BMI ranges (22-27) may be acceptable and protective.",
+    "bmiYouthNote": "For individuals under 20, BMI should be evaluated using age and gender-specific percentile charts.",
+    "bmiLimitationReminder": "Remember: BMI is a screening tool and doesn't account for muscle mass, bone density, or body composition.",
+
+    "bmiElderlyRec": "As an older adult, focus on maintaining muscle mass through resistance training and adequate protein intake.",
+    "bmiYouthRec": "For young adults, focus on establishing healthy eating patterns and regular physical activity habits.",
+    "bmiFemaleRec": "Women of reproductive age should ensure adequate nutrition, especially iron and calcium intake.",
+    "bmiConsultationRec": "Consider consulting with healthcare professionals for personalized health assessment and guidance.",
+
+    "bmiFormula": "BMI = Weight (kg) / [Height (m)]²",
+    "bmiLimitation1": "Does not reflect body composition (muscle vs. fat ratio)",
+    "bmiLimitation2": "May not be accurate for athletes, elderly, or certain ethnic groups",
+    "bmiLimitation3": "Does not assess other health factors like blood pressure, cholesterol, or blood sugar",
+    "bmiLimitation4": "Not suitable for pregnant women, children under 18, or individuals with certain medical conditions",
+
+    "bmiConsult1": "Comprehensive health checkups and necessary tests",
+    "bmiConsult2": "Professional medical consultation and guidance",
+    "bmiConsult3": "Personalized care recommendations from healthcare specialists",
+
+    "bmiUnderweightDesc": "May indicate malnutrition, eating disorders, or underlying health conditions",
+    "bmiNormalDesc": "Associated with lowest risk of weight-related health problems",
+    "bmiOverweightDesc": "Increased risk of cardiovascular disease, diabetes, and other health issues",
+    "bmiObeseDesc": "Significantly increased risk of serious health complications",
+    
+    "bmiPediatricTitle": "BMI Classification for Children and Adolescents (Under 18)",
+    "bmiAdultTitle": "BMI Classification for Adults (18 and Over)",
+    "bmiPercentileNote": "Based on CDC growth charts with age and gender-specific percentiles",
+    "bmiPercentileUnderweight": "Below 5th percentile",
+    "bmiPercentileNormal": "5th to 85th percentile", 
+    "bmiPercentileOverweight": "85th to 95th percentile",
+    "bmiPercentileObese": "Above 95th percentile",
+
+    "bmiPediatricInterpretation": "Your BMI percentile is {percentile} for your age and gender. This indicates {category}.",
+    "bmiPediatricNote": "For children and adolescents, BMI is compared to others of the same age and gender using percentile charts.",
+    "bmiGrowthPattern": "Consult with pediatrician to evaluate growth patterns and overall health.",
+
+    "age": "Age",
+    "ageYears": "Age (years)",
+    "gender": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+    "bmiCalculatorTab": "Calculator",
+    "bmiHistoryTab": "History",
+    "bmiDetailedInfo": "BMI Calculator Information",
+    "bmiOverview": "Comprehensive Body Mass Index calculator with health insights and recommendations",
+
+    "financialCalculator": "Financial Calculator",
+    "financialCalculatorDesc": "Advanced financial calculations for loans, investments, and compound interest",
+    "financialCalculatorDetailedInfo": "Financial Calculator Information",
+    "financialCalculatorOverview": "Comprehensive financial calculator for loan payments, investment planning, and compound interest calculations",
+
+    "loanCalculator": "Loan Calculator",
+    "investmentCalculator": "Investment Calculator", 
+    "compoundInterestCalculator": "Compound Interest Calculator",
+
+    "loanAmount": "Loan Amount ($)",
+    "loanAmountHint": "Enter loan amount",
+    "annualInterestRate": "Annual Interest Rate (%)",
+    "annualInterestRateHint": "Enter interest rate",
+    "loanTerm": "Loan Term (years)",
+    "loanTermHint": "Enter loan term",
+    "calculateLoan": "Calculate Loan",
+
+    "initialInvestment": "Initial Investment ($)",
+    "initialInvestmentHint": "Enter initial amount",
+    "monthlyContribution": "Monthly Contribution ($)",
+    "monthlyContributionHint": "Enter monthly contribution",
+    "annualReturn": "Annual Return (%)",
+    "annualReturnHint": "Enter expected return",
+    "investmentPeriod": "Investment Period (years)",
+    "investmentPeriodHint": "Enter investment period",
+    "calculateInvestment": "Calculate Investment",
+
+    "principalAmount": "Principal Amount ($)",
+    "principalAmountHint": "Enter principal amount",
+    "timePeriod": "Time Period (years)",
+    "timePeriodHint": "Enter time period",
+    "compoundingFrequency": "Compounding Frequency (per year)",
+    "compoundingFrequencyHint": "Enter frequency (12 for monthly)",
+    "calculateCompoundInterest": "Calculate Compound Interest",
+
+    "monthlyPayment": "Monthly Payment",
+    "totalPayment": "Total Payment",
+    "totalInterest": "Total Interest",
+    "futureValue": "Future Value",
+    "totalContributions": "Total Contributions",
+    "totalEarnings": "Total Earnings",
+    "finalAmount": "Final Amount",
+    "interestEarned": "Interest Earned",
+
+    "results": "Results",
+    "financialHistory": "Financial History",
+    "historyTab": "History",
+    "loanTab": "Loan",
+    "investmentTab": "Investment", 
+    "compoundTab": "Compound",
+
+    "inputError": "Input Error",
+    "pleaseEnterValidNumbers": "Please enter valid positive numbers for all fields.",
+    "pleaseEnterValidReturnAndTerm": "Please enter valid positive numbers for return rate and term.",
+
+    "financialCalculationHistory": "Financial calculation history and saved calculations",
+    "financialHistoryCleared": "Financial history cleared",
+    "confirmClearFinancialHistory": "Are you sure you want to clear all financial calculation history?",
+
+    "loanCalculationSaved": "Loan calculation saved to history",
+    "investmentCalculationSaved": "Investment calculation saved to history", 
+    "compoundCalculationSaved": "Compound interest calculation saved to history",
+
+    "restoreCalculation": "Restore Calculation",
+    "copyResult": "Copy Result",
+    "copyInputs": "Copy Inputs",
+    "removeFromFinancialHistory": "Remove from history",
+
+    "financialCalculationDate": "Calculated on {date}",
+    "@financialCalculationDate": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+
+    "noFinancialHistoryYet": "No calculations yet",
+    "startCalculatingHint": "Start making financial calculations to see them here",
+
+    "financialResultsSummary": "{type}: {result}",
+    "@financialResultsSummary": {
+        "placeholders": {
+            "type": {
+                "type": "String"
+            },
+            "result": {
+                "type": "String"
+            }
+        }
+    },
+
+    "saveToFinancialHistory": "Save to history",
+    "financialCalculationTypes": "Financial Calculation Types",
+    "loanCalculationDesc": "Calculate monthly payments, total cost, and interest for loans",
+    "investmentCalculationDesc": "Plan future value of investments with regular contributions",
+    "compoundInterestDesc": "Calculate compound interest growth over time",
+
+    "practicalFinancialApplications": "Practical Applications",
+    "financialApplicationsDesc": "Mortgage planning, auto loans, retirement savings, education funding, business investments, and general financial planning.",
+
+    "financialTips": "Financial Tips",
+    "financialTip1": "Compare different loan terms to find the best option",
+    "financialTip2": "Start investing early to maximize compound interest",
+    "financialTip3": "Consider additional payments to reduce loan interest",
+    "financialTip4": "Regular contributions can significantly boost investment growth",
+    "financialTip5": "Higher compounding frequency increases returns",
+
+    "selectedDate": "Selected Date",
+    "weekdayName": "Day of Week",
+    "dayInMonth": "Day in Month",
+    "dayInYear": "Day in Year",
+    "weekInMonth": "Week in Month", 
+    "weekInYear": "Week in Year",
+    "monthName": "Month",
+    "monthOfYear": "Month Of Year",
+    "yearValue": "Year",
+    "quarter": "Quarter",
+    "quarterOfYear": "Quarter Of Year",
+    "isLeapYear": "Leap Year",
+    "daysInMonth": "Days in Month",
+    "daysInYear": "Days in Year",
+    "dateInfoResults": "Date Information Results",
+    "selectDateToView": "Select a date to view detailed information",
+    "quarterValue": "Q{number}",
+    "@quarterValue": {
+        "description": "Quarter number format",
+        "placeholders": {
+            "number": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "leapYearStatus": "{status}",
+    "@leapYearStatus": {
+        "description": "Leap year status",
+        "placeholders": {
+            "status": {
+                "type": "String",
+                "example": "Yes"
+            }
+        }
+    },
+
+    "dateDistance": "Distance",
+    "dateDistanceSection": "Date Distance",
+    "unitConversionSection": "Unit Conversion",
+    "totalMonths": "Total Months",
+    "totalWeeks": "Total Weeks",
+    "totalDays": "Total Days",
+    "totalHours": "Total Hours",
+    "totalMinutes": "Total Minutes",
+    "addSubtractResultsTitle": "Result",
+    "resultDate": "Result Date",
+    "dayOfWeek": "Day of the week",
+    "ageCalculatorResultsTitle": "Age Calculation Results",
+    "@ageCalculatorResultsTitle": {
+        "description": "Title for the age calculator results card"
+    },
+    "daysLived": "Total Days Lived",
+    "@daysLived": {
+        "description": "Label for total days lived in age calculator"
+    },
+    "daysUntilBirthday": "Days Until Next Birthday",
+    "@daysUntilBirthday": {
+        "description": "Label for days until next birthday in age calculator"
+    },
+    "nextBirthday": "Next Birthday On",
+    "@nextBirthday": {
+        "description": "Label for the date of the next birthday"
+    },
+    "age": "Your Current Age",
+    "@age": {
+        "description": "Label for age in age calculator"
+    },
+    "dateCalculatorInfoHeaderTitle": "Date Calculator Information",
+    "dateCalculatorInfoHeaderSubtitle": "A powerful tool for all your date and time calculations.",
+    "dateCalculatorMainFeatures": "Main Features",
+    "dateCalculatorUsage": "How to Use",
+    "showCalculatorInfo": "Show calculator information",
+
+    "dateCalculatorDetailedInfo": "Date Calculator Information",
+    "dateCalculatorOverview": "Comprehensive tool for all date, time, and age calculations with many useful features",
+    "dateKeyFeatures": "Key Features",
+    "comprehensiveDateCalc": "Comprehensive Calculations",
+    "comprehensiveDateCalcDesc": "Full support for date, time, and age calculations",
+    "multipleCalculationModes": "Multiple Calculation Modes",
+    "multipleCalculationModesDesc": "4 different modes: date info, date difference, add/subtract dates, age calculation",
+    "detailedDateInfo": "Detailed Information",
+    "detailedDateInfoDesc": "Display complete date information: weekday, week, quarter, leap year",
+    "flexibleDateInput": "Flexible Input",
+    "flexibleDateInputDesc": "Support multiple ways to input dates with easy adjustments",
+
+    "dateHowToUse": "How to Use",
+    "step1Date": "Step 1: Select calculation mode",
+    "step1DateDesc": "Choose appropriate tab: Date Info, Date Difference, Add/Subtract Date, or Age Calculator",
+    "step2Date": "Step 2: Input dates",
+    "step2DateDesc": "Use date picker or stepper to input the dates for calculation",
+    "step3Date": "Step 3: View results",
+    "step3DateDesc": "Results will be displayed immediately with detailed information",
+    "step4Date": "Step 4: Save to history",
+    "step4DateDesc": "Results are automatically saved to history for future reference",
+
+    "dateCalculationModes": "Calculation Modes",
+    "dateInfoMode": "Date Information",
+    "dateInfoModeDesc": "Display detailed information about a specific date",
+    "dateDifferenceMode": "Date Difference",
+    "dateDifferenceModeDesc": "Calculate the difference between any two dates",
+    "addSubtractMode": "Add/Subtract Date",
+    "addSubtractModeDesc": "Add or subtract days/months/years from a date",
+    "ageCalculatorMode": "Age Calculator",
+    "ageCalculatorModeDesc": "Calculate exact age from birth date to present or another date",
+
+    "dateTips": "Usage Tips",
+    "dateTip1": "Use date picker to select dates quickly",
+    "dateTip2": "Use stepper to adjust individual date/month/year components",
+    "dateTip3": "Check history to review previous calculations",
+    "dateTip4": "Pay attention to leap years when calculating long periods",
+    "dateTip5": "Use date info mode to check weekday of important dates",
+
+    "dateLimitations": "Important Notes",
+    "dateLimitationsDesc": "Some important points to consider when using the date calculator:",
+    "dateLimitation1": "Results are based on the Gregorian calendar",
+    "dateLimitation2": "Does not account for time zones in calculations",
+    "dateLimitation3": "Leap years are calculated according to international standards",
+    "dateLimitation4": "Results may differ from other calendar systems",
+    "dateLimitation5": "Should double-check results for important calculations",
+
+    "dateDisclaimer": "This tool provides date information based on the standard Gregorian calendar. Results are for reference only and may require additional verification for important applications.",
+
+    "discountCalculator": "Discount Calculator",
+    "discountCalculatorDesc": "Calculate discounts, tips, taxes, and markups quickly and accurately",
+    "discountTab": "Discount",
+    "tipTab": "Tip",
+    "taxTab": "Tax",
+    "markupTab": "Markup",
+
+    "originalPrice": "Original Price ($)",
+    "enterOriginalPrice": "Enter original price",
+    "discountPercent": "Discount Percent (%)",
+    "enterDiscountPercent": "Enter discount percent",
+    "discountAmount": "Discount Amount",
+    "finalPrice": "Final Price",
+    "savedAmount": "Saved Amount",
+
+    "billAmount": "Bill Amount ($)",
+    "enterBillAmount": "Enter bill amount",
+    "tipPercent": "Tip Percent (%)",
+    "enterTipPercent": "Enter tip percent",
+    "numberOfPeople": "Number of People",
+    "enterNumberOfPeople": "Enter number of people",
+    "tipAmount": "Tip Amount",
+    "totalBill": "Total Bill",
+    "perPersonAmount": "Per Person Amount",
+
+    "priceBeforeTax": "Price Before Tax ($)",
+    "enterPriceBeforeTax": "Enter price before tax",
+    "taxRate": "Tax Rate (%)",
+    "enterTaxRate": "Enter tax rate",
+    "taxAmount": "Tax Amount",
+    "priceAfterTax": "Price After Tax",
+
+    "costPrice": "Cost Price ($)",
+    "enterCostPrice": "Enter cost price",
+    "markupPercent": "Markup Percent (%)",
+    "enterMarkupPercent": "Enter markup percent",
+    "markupAmount": "Markup Amount",
+    "sellingPrice": "Selling Price",
+    "profitMargin": "Profit Margin (%)",
+
+    "calculateDiscount": "Calculate Discount",
+    "calculateTip": "Calculate Tip",
+    "calculateTax": "Calculate Tax",
+    "calculateMarkup": "Calculate Markup",
+    "discountCalculatorResults": "Discount Calculator Results",
+    "tipCalculatorResults": "Tip Calculation Results",
+    "taxCalculatorResults": "Tax Calculation Results", 
+    "markupCalculatorResults": "Markup Calculation Results",
+
+    "discountCalculatorDetailedInfo": "Discount Calculator Information",
+    "discountCalculatorOverview": "Comprehensive tool for discount, tip, tax, and markup calculations with many useful features",
+    "discountKeyFeatures": "Key Features",
+    "comprehensiveDiscountCalc": "Comprehensive Calculations",
+    "comprehensiveDiscountCalcDesc": "Full support for discount, tip, tax, and markup calculations",
+    "multipleDiscountModes": "Multiple Calculation Modes",
+    "multipleDiscountModesDesc": "4 different modes: discount, tip, tax, markup",
+    "realTimeDiscountResults": "Real-time Results",
+    "realTimeDiscountResultsDesc": "Get detailed results instantly as you input data",
+    "discountHistorySaving": "History Saving",
+    "discountHistorySavingDesc": "Save and review previous calculations for reference",
+
+    "discountHowToUse": "How to Use",
+    "step1Discount": "Step 1: Select calculation type",
+    "step1DiscountDesc": "Choose appropriate tab: Discount, Tip, Tax, or Markup",
+    "step2Discount": "Step 2: Enter information",
+    "step2DiscountDesc": "Fill in required information like price, percentage, quantity",
+    "step3Discount": "Step 3: View results",
+    "step3DiscountDesc": "Results will be displayed immediately with detailed information",
+    "step4Discount": "Step 4: Save to history",
+    "step4DiscountDesc": "Results are automatically saved to history for future reference",
+
+    "discountCalculationModes": "Calculation Modes",
+    "discountMode": "Discount Calculator",
+    "discountModeDesc": "Calculate final price after discount and savings amount",
+    "tipMode": "Tip Calculator",
+    "tipModeDesc": "Calculate tip and split bill among multiple people",
+    "taxMode": "Tax Calculator",
+    "taxModeDesc": "Calculate tax amount and final price after tax",
+    "markupMode": "Markup Calculator",
+    "markupModeDesc": "Calculate selling price and profit margin from cost price",
+
+    "discountTips": "Usage Tips",
+    "discountTip1": "Use discount calculator when shopping to know real prices",
+    "discountTip2": "Calculate appropriate tip based on service quality",
+    "discountTip3": "Check tax to know actual total cost",
+    "discountTip4": "Use markup calculator for business pricing",
+    "discountTip5": "Save calculations for comparison and reference",
+
+    "discountLimitations": "Important Notes",
+    "discountLimitationsDesc": "Some important points to consider when using the discount calculator:",
+    "discountLimitation1": "Results are for reference only",
+    "discountLimitation2": "Tax rates may vary by location",
+    "discountLimitation3": "Tip amounts may vary by culture",
+    "discountLimitation4": "Markup may be affected by other costs",
+    "discountLimitation5": "Should verify with actual receipts",
+
+    "discountDisclaimer": "This tool is for calculation assistance only and does not replace professional financial advice. Results may differ from reality due to other factors.",
+
+    "financialKeyFeatures": "Key Features",
+    "comprehensiveFinancialCalc": "Comprehensive Calculations",
+    "comprehensiveFinancialCalcDesc": "Versatile financial calculator for loans, investments, and compound interest",
+    "multipleCalculationTypes": "Multiple Calculation Types",
+    "multipleCalculationTypesDesc": "Support for loan, investment, and compound interest calculations in one app",
+    "realTimeResults": "Real-time Results",
+    "realTimeResultsDesc": "Get detailed results instantly as you input data",
+    "historySaving": "History Saving",
+    "historySavingDesc": "Save and review previous calculations for reference",
+
+    "financialHowToUse": "How to Use",
+    "step1Financial": "Step 1: Select calculation type",
+    "step1FinancialDesc": "Choose Loan, Investment, or Compound Interest tab based on your needs",
+    "step2Financial": "Step 2: Enter information",
+    "step2FinancialDesc": "Fill in required information like amount, interest rate, time period",
+    "step3Financial": "Step 3: Calculate",
+    "step3FinancialDesc": "Press the calculate button to view detailed results",
+    "step4Financial": "Step 4: Save results",
+    "step4FinancialDesc": "Save results to history for future reference",
+
+    "financialFormulas": "Financial Formulas",
+    "loanFormula": "Loan Formula",
+    "loanFormulaText": "M = P × [r(1+r)ⁿ] / [(1+r)ⁿ-1]",
+    "loanFormulaDesc": "M: Monthly payment, P: Loan amount, r: Monthly interest rate, n: Number of months",
+    "investmentFormula": "Investment Formula",
+    "investmentFormulaText": "FV = PV(1+r)ⁿ + PMT × [((1+r)ⁿ-1)/r]",
+    "investmentFormulaDesc": "FV: Future value, PV: Initial investment, PMT: Monthly contribution, r: Interest rate, n: Number of periods",
+    "compoundInterestFormula": "Compound Interest Formula",
+    "compoundInterestFormulaText": "A = P(1 + r/n)^(nt)",
+    "compoundInterestFormulaDesc": "A: Final amount, P: Principal, r: Interest rate, n: Compounding frequency, t: Time",
+
+    "financialLimitations": "Important Notes",
+    "financialLimitationsDesc": "The calculation results are for reference only and may not accurately reflect real-world situations:",
+    "financialLimitation1": "Does not account for inflation and market volatility",
+    "financialLimitation2": "Interest rates may change over time",
+    "financialLimitation3": "Does not include fees and additional costs",
+    "financialLimitation4": "Results may differ based on actual terms and conditions",
+    "financialLimitation5": "Should consult financial professionals for advice",
+
+    "financialDisclaimer": "This tool is for calculation assistance only and does not replace professional financial advice. Please consult experts before making important financial decisions.",
+
+    "discountResultSavedToHistory": "Discount result saved to history",
+    "tipResultSavedToHistory": "Tip result saved to history",
+    "taxResultSavedToHistory": "Tax result saved to history",
+    "markupResultSavedToHistory": "Markup result saved to history",
+    "startCalculatingToSeeHistory": "Start calculating to see history",
+    "noHistoryAvailable": "No history available",
+
+      "p2pDataTransfer": "P2P File Transfer",
+  "p2pDataTransferDesc": "Transfer files between devices on the same local network.",
+    "networkSecurityWarning": "Network Security Warning",
+    "unsecureNetworkDetected": "Unsecure network detected",
+    "currentNetwork": "Current Network",
+    "securityLevel": "Security Level",
+    "securityRisks": "Security Risks",
+    "unsecureNetworkRisks": "On unsecure networks, your data transmissions may be intercepted by malicious users. Only proceed if you trust the network and other users.",
+    "proceedAnyway": "Proceed Anyway",
+    "secureNetwork": "Secure (WPA/WPA2)",
+    "unsecureNetwork": "Unsecure (Open/No Password)",
+    "unknownSecurity": "Unknown Security",
+    "startNetworking": "Start Networking",
+    "stopNetworking": "Stop Networking",
+    "pairingRequests": "Pairing Requests",
+    "devices": "Devices",
+    "transfers": "Transfers",
+    "status": "Status",
+    "connectionStatus": "Connection Status",
+    "autoConnect": "Auto Connect",
+    "networkInfo": "Network Info",
+    "statistics": "Statistics",
+    "discoveredDevices": "Discovered devices",
+    "pairedDevices": "Paired devices",
+    "activeTransfers": "Active transfers",
+    "noDevicesFound": "No devices found",
+    "searchingForDevices": "Searching for devices...",
+    "startNetworkingToDiscover": "Start networking to discover devices",
+    "noActiveTransfers": "No active transfers",
+    "transfersWillAppearHere": "Data transfers will appear here",
+    "paired": "Paired",
+    "lastSeen": "Last Seen",
+    "pairedSince": "Paired Since",
+    "trusted": "Trusted",
+    "pair": "Pair",
+    "sendFile": "Send File",
+    "cancelTransfer": "Cancel Transfer",
+    "confirmCancelTransfer": "Are you sure you want to cancel this transfer?",
+    "p2pPairingRequest": "P2P Pairing Request",
+    "p2pPairingResponse": "P2P Pairing Response",
+    "p2pHeartbeat": "P2P Heartbeat",
+    "p2pPermissionRequiredTitle": "Permission Required",
+    "@p2pPermissionRequiredTitle": {
+        "description": "Title for the permission request dialog"
+    },
+    "p2pPermissionExplanation": "To discover nearby devices using WiFi, this app needs access to your location. This is an Android requirement for scanning WiFi networks. Your location data is not stored or shared. The app is client-side and we do not collect any user data.",
+    "@p2pPermissionExplanation": {
+        "description": "Explanation for why location permission is needed for P2P"
+    },
+    "p2pPermissionContinue": "Continue",
+    "@p2pPermissionContinue": {
+        "description": "Button text to continue with granting permission"
+    },
+    "p2pPermissionCancel": "Cancel",
+    "@p2pPermissionCancel": {
+        "description": "Button text to cancel the permission request"
+    },
+    "p2pNearbyDevicesPermissionTitle": "Nearby Devices Permission Required",
+    "@p2pNearbyDevicesPermissionTitle": {
+        "description": "Title for the nearby devices permission request dialog"
+    },
+    "p2pNearbyDevicesPermissionExplanation": "To discover nearby devices on modern Android versions, this app needs access to nearby WiFi devices. This permission allows the app to scan for WiFi networks without accessing your location. Your data is not stored or shared. The app is client-side and we do not collect any user data.",
+    "@p2pNearbyDevicesPermissionExplanation": {
+        "description": "Explanation for why nearby WiFi devices permission is needed for P2P"
+    },
+      "dataTransferRequest": "Data Transfer Request",
+  "dataTransferResponse": "Data Transfer Response",
+      "sendData": "Send Data",
+    "savedDevices": "Saved Devices",
+    "availableDevices": "Available Devices",
+    "p2lanTransfer": "P2Lan Transfer",
+    "@p2lanTransfer": {
+        "description": "Title for the P2Lan Transfer screen"
+    },
+    "p2lanStatus": "P2LAN Status",
+    "@p2lanStatus": {
+        "description": "Notification type for P2LAN active status"
+    },
+    "fileTransferStatus": "File Transfer Status",
+    "@fileTransferStatus": {
+        "description": "Notification type for detailed file transfer status"
+    },
+    "p2lanActive": "P2LAN Active",
+    "@p2lanActive": {
+        "description": "Notification title when P2LAN is running"
+    },
+    "readyForConnections": "Ready for connections",
+    "@readyForConnections": {
+        "description": "Status when P2LAN is ready to accept connections"
+    },
+    "devicesConnected": "{count} devices connected",
+    "@devicesConnected": {
+        "description": "Number of devices connected to P2LAN",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "deviceConnected": "{count} device connected",
+    "@deviceConnected": {
+        "description": "One device connected to P2LAN",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "stopP2lan": "Stop P2LAN",
+    "@stopP2lan": {
+        "description": "Action button to stop P2LAN from notification"
+    },
+    "p2lanStopped": "P2LAN stopped",
+    "@p2lanStopped": {
+        "description": "Message when P2LAN has been stopped"
+    },
+    "calculatorToolsDesc": "Specialized calculators for health, finance, and more",
+    
+    "p2pDataTransfer": "P2P File Transfer",
+    "@p2pDataTransfer": {
+        "description": "Title for the P2P File Transfer tool"
+    },
+    "p2pDataTransferDesc": "Transfer files between devices on the same local network.",
+    "@p2pDataTransferDesc": {
+        "description": "Description for the P2P File Transfer tool"
+    },
+
+    "quickActions": "Quick Actions",
+    "quickActionsDesc": "Select up to 4 tools for quick access.",
+    "quickActionsManage": "Manage Quick Actions",
+    "cacheDetailsDialogTitle": "Cache Details",
+    "randomGeneratorsCacheDesc": "Generation history and settings",
+    "calculatorToolsCacheDesc": "Calculation history, graphing calculator data, BMI data, and settings",
+    "converterToolsCacheDesc": "Currency/length states, presets and exchange rates cache",
+    "p2pDataTransferCacheDesc": "Settings, saved device profiles, and temporary file transfer cache.",
+    "@p2pDataTransferCacheDesc": {
+        "description": "Description for the P2P cache entry in the cache details dialog"
+    },
+
+    "totalCacheSize": "Total: {count} items, {size}",
+    "clearSelectedCache": "Clear Selected Cache",
+    "noHistoryAvailable": "No history available",
+    "converterTools": "Converter Tools",
+    "converterToolsDesc": "Convert between different units and systems",
+    "calculatorTools": "Calculator Tools",
+    "calculatorToolsDesc": "Specialized calculators for health, finance, and more",
+
+    "p2pDataTransfer": "P2P File Transfer",
+    "p2pDataTransferDesc": "Transfer files between devices on the same local network.",
+
+    "quickActions": "Quick Actions",
+    "quickActionsDesc": "Select up to 4 tools for quick access.",
+    "quickActionsManage": "Manage Quick Actions",
+    "cacheDetailsDialogTitle": "Cache Details",
+    "randomGeneratorsCacheDesc": "Generation history and settings",
+    "calculatorToolsCacheDesc": "Calculation history, graphing calculator data, BMI data, and settings",
+    "converterToolsCacheDesc": "Currency/length states, presets and exchange rates cache",
+    "p2pDataTransferCacheDesc": "Settings, saved device profiles, and temporary file transfer cache.",
+
+    "totalCacheSize": "Total: {count} items, {size}",
+    "clearSelectedCache": "Clear Selected Cache",
+
+    "pairWithDevice": "Do you want to pair with this device?",
+    "@pairWithDevice": {
+        "description": "Question in user pairing dialog"
+    },
+    "deviceId": "Device ID",
+    "@deviceId": {
+        "description": "Label for device ID field"
+    },
+    "discoveryTime": "Discovery Time",
+    "@discoveryTime": {
+        "description": "Label for when device was discovered"
+    },
+    "saveConnection": "Save Connection",
+    "@saveConnection": {
+        "description": "Checkbox label to save connection"
+    },
+    "autoReconnectDescription": "Automatically reconnect when both devices are online",
+    "@autoReconnectDescription": {
+        "description": "Description for save connection option"
+    },
+    "pairingNotificationInfo": "The other user will receive a pairing request and needs to accept to complete the pairing.",
+    "@pairingNotificationInfo": {
+        "description": "Information about pairing process"
+    },
+    "sendRequest": "Send Request",
+    "@sendRequest": {
+        "description": "Button to send pairing request"
+    },
+    "justNow": "Just now",
+    "@justNow": {
+        "description": "Time indication for very recent actions"
+    },
+    "minutesAgo": "{minutes} minutes ago",
+    "@minutesAgo": {
+        "description": "Time indication for minutes ago",
+        "placeholders": {
+            "minutes": {
+                "type": "int"
+            }
+        }
+    },
+    "hoursAgo": "{hours} hours ago",
+    "@hoursAgo": {
+        "description": "Time indication for hours ago",
+        "placeholders": {
+            "hours": {
+                "type": "int"
+            }
+        }
+    },
+    "daysAgo": "{days} days ago",
+    "@daysAgo": {
+        "description": "Time indication for days ago",
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+
+    "noPairingRequests": "No pairing requests",
+    "@noPairingRequests": {
+        "description": "Text when there are no pairing requests"
+    },
+    "pairingRequestFrom": "Pairing request from:",
+    "@pairingRequestFrom": {
+        "description": "Text indicating source of pairing request"
+    },
+    "sentTime": "Sent Time",
+    "@sentTime": {
+        "description": "Label for when request was sent"
+    },
+    "wantsSaveConnection": "This person wants to save the connection",
+    "@wantsSaveConnection": {
+        "description": "Message when sender wants to save connection"
+    },
+    "trustThisUser": "Trust this user",
+    "@trustThisUser": {
+        "description": "Checkbox to trust user"
+    },
+    "allowFileTransfersWithoutConfirmation": "Allow file transfers without confirmation",
+    "@allowFileTransfersWithoutConfirmation": {
+        "description": "Description for trust user option"
+    },
+    "onlyAcceptFromTrustedDevices": "Only accept pairing from devices you trust.",
+    "@onlyAcceptFromTrustedDevices": {
+        "description": "Security warning about pairing"
+    },
+    "previousRequest": "Previous request",
+    "@previousRequest": {
+        "description": "Tooltip for previous request button"
+    },
+    "nextRequest": "Next request",
+    "@nextRequest": {
+        "description": "Tooltip for next request button"
+    },
+    "reject": "Reject",
+    "@reject": {
+        "description": "Button to reject pairing/transfer request"
+    },
+    "accept": "Accept",
+    "@accept": {
+        "description": "Button to accept pairing/transfer request"
+    },
+
+    "incomingFiles": "Incoming Files",
+    "@incomingFiles": {
+        "description": "Title for incoming file transfer dialog"
+    },
+    "wantsToSendYouFiles": "wants to send you {count} file(s)",
+    "@wantsToSendYouFiles": {
+        "description": "Text showing sender wants to send files",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "filesToReceive": "Files to receive:",
+    "@filesToReceive": {
+        "description": "Header for list of files to receive"
+    },
+    "totalSize": "Total size:",
+    "@totalSize": {
+        "description": "Label for total file size"
+    },
+
+    "localFiles": "Local Files",
+    "@localFiles": {
+        "description": "Tooltip for local files button"
+    },
+    "manualDiscovery": "Manual Discovery",
+    "@manualDiscovery": {
+        "description": "Tooltip and label for manual discovery"
+    },
+    "transferSettings": "Transfer Settings",
+    "@transferSettings": {
+        "description": "Tooltip for transfer settings button"
+    },
+    "savedDevicesCurrentlyAvailable": "Saved devices currently available",
+    "@savedDevicesCurrentlyAvailable": {
+        "description": "Subtitle for saved devices section"
+    },
+    "recentlyDiscoveredDevices": "Recently discovered devices",
+    "@recentlyDiscoveredDevices": {
+        "description": "Subtitle for discovered devices section"
+    },
+    "saved": "Saved",
+    "@saved": {
+        "description": "Label for saved devices"
+    },
+    "viewInfo": "View Info",
+    "@viewInfo": {
+        "description": "Menu option to view device info"
+    },
+    "trust": "Trust",
+    "@trust": {
+        "description": "Menu option to trust device"
+    },
+    "removeTrust": "Remove Trust",
+    "@removeTrust": {
+        "description": "Menu option to remove trust"
+    },
+    "unpair": "Unpair",
+    "@unpair": {
+        "description": "Menu option to unpair device"
+    },
+    "thisDevice": "This Device",
+    "@thisDevice": {
+        "description": "Label for current device"
+    },
+    "fileCache": "File Cache",
+    "@fileCache": {
+        "description": "Label for file cache section"
+    },
+    "reload": "Reload",
+    "@reload": {
+        "description": "Button to reload cache size"
+    },
+    "clear": "Clear",
+    "@clear": {
+        "description": "Button to clear cache"
+    },
+    "temporaryFilesFromTransfers": "Temporary files from P2Lan file transfers",
+    "@temporaryFilesFromTransfers": {
+        "description": "Description of file cache content"
+    },
+    "debug": "Debug",
+    "@debug": {
+        "description": "Debug button label"
+    },
+    "clearFileCache": "Clear File Cache",
+    "@clearFileCache": {
+        "description": "Title for clear file cache dialog"
+    },
+    "fileCacheClearedSuccessfully": "File cache cleared successfully",
+    "@fileCacheClearedSuccessfully": {
+        "description": "Success message for cache clear"
+    },
+    "failedToClearCache": "Failed to clear cache: {error}",
+    "@failedToClearCache": {
+        "description": "Error message for cache clear failure",
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "failedToUpdateSettings": "Failed to update settings",
+    "@failedToUpdateSettings": {
+        "description": "Error message for settings update failure"
+    },
+    "failedToLoadSettings": "Failed to load settings: {error}",
+    "@failedToLoadSettings": {
+        "description": "Error message for settings load failure",
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "removeTrustFrom": "Remove trust from {deviceName}?",
+    "@removeTrustFrom": {
+        "description": "Confirmation to remove trust from device",
+        "placeholders": {
+            "deviceName": {
+                "type": "String"
+            }
+        }
+    },
+    "remove": "Remove",
+    "@remove": {
+        "description": "Button to remove/delete"
+    },
+    "unpairFrom": "Unpair from {deviceName}",
+    "@unpairFrom": {
+        "description": "Title for unpair dialog",
+        "placeholders": {
+            "deviceName": {
+                "type": "String"
+            }
+        }
+    },
+    "unpairDescription": "This will remove the pairing completely from both devices. You will need to pair again in the future.\\n\\nThe other device will also be notified and their connection will be removed.",
+    "@unpairDescription": {
+        "description": "Description of unpair action"
+    },
+    "holdToUnpair": "Hold to Unpair",
+    "@holdToUnpair": {
+        "description": "Button text for unpair confirmation"
+    },
+    "unpairing": "Unpairing...",
+    "@unpairing": {
+        "description": "Text shown during unpair process"
+    },
+    "holdButtonToConfirmUnpair": "Hold the button for 1 second to confirm unpair",
+    "@holdButtonToConfirmUnpair": {
+        "description": "Instruction for unpair confirmation"
+    },
+    "taskAndFileDeletedSuccessfully": "Task and file deleted successfully",
+    "@taskAndFileDeletedSuccessfully": {
+        "description": "Success message when task and file are deleted"
+    },
+    "taskCleared": "Task cleared",
+    "@taskCleared": {
+        "description": "Message when task is cleared"
+    },
+    "notConnected": "Not connected",
+    "@notConnected": {
+        "description": "Status when not connected"
+    },
+
+    "clearAll": "Clear All",
+    "@clearAll": {
+        "description": "Button to clear all selected files"
+    },
+    "sending": "Sending...",
+    "@sending": {
+        "description": "Status text during file sending"
+    },
+    "sendFiles": "Send Files",
+    "@sendFiles": {
+        "description": "Button to send selected files"
+    },
+    "addFiles": "Add Files",
+    "@addFiles": {
+        "description": "Button to add files"
+    },
+    "errorSelectingFiles": "Error selecting files: {error}",
+    "@errorSelectingFiles": {
+        "description": "Error message for file selection",
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "errorSendingFiles": "Error sending files: {error}",
+    "@errorSendingFiles": {
+        "description": "Error message for file sending",
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "noFilesSelected": "No files selected",
+    "@noFilesSelected": {
+        "description": "Message when no files are selected"
+    },
+    "tapRightClickForOptions": "Tap or right-click for options",
+    "@tapRightClickForOptions": {
+        "description": "Instructions for file options"
+    },
+    "transferSummary": "Transfer Summary",
+    "@transferSummary": {
+        "description": "Title for transfer summary section"
+    },
+
+    "unlimited": "Unlimited",
+    "@unlimited": {
+        "description": "Option for unlimited size/count"
+    },
+    "tcpProtocol": "TCP",
+    "@tcpProtocol": {
+        "description": "TCP protocol option"
+    },
+    "tcpDescription": "More reliable, better for important files",
+    "@tcpDescription": {
+        "description": "Description of TCP protocol"
+    },
+    "udpProtocol": "UDP",
+    "@udpProtocol": {
+        "description": "UDP protocol option"
+    },
+    "udpDescription": "Faster but less reliable, good for large files",
+    "@udpDescription": {
+        "description": "Description of UDP protocol"
+    },
+    "noFileOrganization": "None",
+    "@noFileOrganization": {
+        "description": "No file organization option"
+    },
+    "createDateFolders": "Create date folders",
+    "@createDateFolders": {
+        "description": "Option to create folders by date"
+    },
+    "organizeFoldersByDate": "Organize files by date received",
+    "@organizeFoldersByDate": {
+        "description": "Description of date organization"
+    },
+    "createSenderFolders": "Create sender folders",
+    "@createSenderFolders": {
+        "description": "Option to create folders by sender"
+    },
+    "immediate": "Immediate",
+    "@immediate": {
+        "description": "Option for immediate UI updates"
+    },
+    "myDevice": "My Device",
+    "@myDevice": {
+        "description": "Default device name"
+    },
+    "bySenderName": "By Sender Name",
+    "@bySenderName": {
+        "description": "File organization by sender name"
+    },
+    "byDate": "By Date",
+    "@byDate": {
+        "description": "File organization by date"
+    },
+    "none": "None",
+    "@none": {
+        "description": "No organization option"
+    },
+    "resetToDefaults": "Reset to Defaults",
+    "@resetToDefaults": {
+        "description": "Button and dialog title to reset settings"
+    },
+    "resetConfirmation": "Are you sure you want to reset all settings to their default values?",
+    "@resetConfirmation": {
+        "description": "Confirmation message for reset"
+    },
+    "reset": "Reset",
+    "@reset": {
+        "description": "Button to confirm reset"
+    },
+    "generic": "Generic",
+    "@generic": {
+        "description": "Tab label for general settings"
+    },
+    "storage": "Storage",
+    "@storage": {
+        "description": "Tab label for storage settings"
+    },
+    "network": "Network",
+    "@network": {
+        "description": "Tab label for network settings"
+    },
+    "saveSettings": "Save Settings",
+    "@saveSettings": {
+        "description": "Button to save settings"
+    },
+    "deviceProfile": "Device Profile",
+    "@deviceProfile": {
+        "description": "Section header for device profile"
+    },
+    "deviceDisplayName": "Device Display Name",
+    "@deviceDisplayName": {
+        "description": "Label for device name input field"
+    },
+    "userPreferences": "User Preferences",
+    "@userPreferences": {
+        "description": "Section header for user preferences"
+    },
+    "enableNotifications": "Enable notifications",
+    "@enableNotifications": {
+        "description": "Setting to enable notifications"
+    },
+    "userInterfacePerformance": "User Interface Performance",
+    "@userInterfacePerformance": {
+        "description": "Section header for UI performance settings"
+    },
+    "uiRefreshRate": "UI Refresh Rate",
+    "@uiRefreshRate": {
+        "description": "Label for UI refresh rate setting"
+    },
+    "currentConfiguration": "Current Configuration",
+    "@currentConfiguration": {
+        "description": "Section header for current config display"
+    },
+    "protocol": "Protocol",
+    "@protocol": {
+        "description": "Label for protocol setting"
+    },
+    "maxFileSize": "Max File Size",
+    "@maxFileSize": {
+        "description": "Label for maximum file size setting"
+    },
+    "maxTotalSize": "Max Total Size",
+    "@maxTotalSize": {
+        "description": "Label for maximum total size setting"
+    },
+    "concurrentTasks": "Concurrent Tasks",
+    "@concurrentTasks": {
+        "description": "Label for concurrent tasks setting"
+    },
+    "chunkSize": "Chunk Size",
+    "@chunkSize": {
+        "description": "Label for chunk size setting"
+    },
+    "fileOrganization": "File Organization",
+    "@fileOrganization": {
+        "description": "Label for file organization setting"
+    },
+    "storageInformation": "Storage Information",
+    "@storageInformation": {
+        "description": "Section header for storage info"
+    },
+    "downloadPath": "Download Path",
+    "@downloadPath": {
+        "description": "Label for download path"
+    },
+    "totalSpace": "Total Space",
+    "@totalSpace": {
+        "description": "Label for total disk space"
+    },
+    "freeSpace": "Free Space",
+    "@freeSpace": {
+        "description": "Label for free disk space"
+    },
+    "usedSpace": "Used Space",
+    "@usedSpace": {
+        "description": "Label for used disk space"
+    },
+    "noDownloadPathSet": "No Download Path Set",
+    "@noDownloadPathSet": {
+        "description": "Message when no download path is configured"
+    },
+    "downloadLocation": "Download Location",
+    "@downloadLocation": {
+        "description": "Section header for download location settings"
+    },
+    "downloadFolder": "Download Folder",
+    "@downloadFolder": {
+        "description": "Label for download folder setting"
+    },
+    "androidStorageAccess": "Android Storage Access",
+    "@androidStorageAccess": {
+        "description": "Section header for Android storage permissions"
+    },
+    "useAppFolder": "Use App Folder",
+    "@useAppFolder": {
+        "description": "Button to use app-specific folder"
+    },
+    "sizeLimits": "Size Limits",
+    "@sizeLimits": {
+        "description": "Section header for size limit settings"
+    },
+    "totalSizeLimitDescription": "Total size limit for all files in a single transfer request",
+    "@totalSizeLimitDescription": {
+        "description": "Description for total size limit"
+    },
+    "transferProtocolSection": "Transfer Protocol",
+    "@transferProtocolSection": {
+        "description": "Section header for protocol settings"
+    },
+    "performanceTuning": "Performance Tuning",
+    "@performanceTuning": {
+        "description": "Section header for performance settings"
+    },
+    "concurrentTransfersDescription": "More transfers = faster overall but higher CPU usage",
+    "@concurrentTransfersDescription": {
+        "description": "Description for concurrent transfers setting"
+    },
+    "transferChunkSizeDescription": "Higher sizes = faster transfers but more memory usage",
+    "@transferChunkSizeDescription": {
+        "description": "Description for chunk size setting"
+    },
+
+    "unknown": "Unknown",
+    "@unknown": {
+        "description": "Unknown status or value"
+    },
+    "permissionsRequiredForP2P": "Permissions are required to start P2P networking",
+    "@permissionsRequiredForP2P": {
+        "description": "Error message when permissions are missing"
+    },
+    "errorInStartNetworking": "Error in starting networking: {error}",
+    "@errorInStartNetworking": {
+        "description": "Error message for networking start failure",
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "clearAll": "Clear All",
+    "@clearAll": {
+        "description": "Button to clear all selected files"
+    },
+    "sending": "Sending...",
+    "@sending": {
+        "description": "Status text during file sending"
+    },
+    "sendFiles": "Send Files",
+    "@sendFiles": {
+        "description": "Button to send selected files"
+    },
+    "addFiles": "Add Files",
+    "@addFiles": {
+        "description": "Button to add files"
+    },
+    "errorSelectingFilesFromCategory": "Error selecting files from {category}: {error}",
+    "@errorSelectingFilesFromCategory": {
+        "description": "Error message for file selection from category",
+        "placeholders": {
+            "category": {
+                "type": "String"
+            },
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "errorSelectingFiles": "Error selecting files: {error}",
+    "@errorSelectingFiles": {
+        "description": "Error message for file selection",
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "errorSendingFiles": "Error sending files: {error}",
+    "@errorSendingFiles": {
+        "description": "Error message for file sending",
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "noFilesSelected": "No files selected",
+    "@noFilesSelected": {
+        "description": "Message when no files are selected"
+    },
+    "tapRightClickForOptions": "Tap or right-click for options",
+    "@tapRightClickForOptions": {
+        "description": "Instructions for file options"
+    },
+    "transferSummary": "Transfer Summary",
+    "@transferSummary": {
+        "description": "Title for transfer summary section"
+    },
+    "unlimited": "Unlimited",
+    "@unlimited": {
+        "description": "Option for unlimited size/count"
+    },
+    "tcpProtocol": "TCP",
+    "@tcpProtocol": {
+        "description": "TCP protocol option"
+    },
+    "tcpDescription": "More reliable, better for important files",
+    "@tcpDescription": {
+        "description": "Description of TCP protocol"
+    },
+    "udpProtocol": "UDP",
+    "@udpProtocol": {
+        "description": "UDP protocol option"
+    },
+    "udpDescription": "Faster but less reliable, good for large files",
+    "@udpDescription": {
+        "description": "Description of UDP protocol"
+    },
+    "noFileOrganization": "None",
+    "@noFileOrganization": {
+        "description": "No file organization option"
+    },
+    "createDateFolders": "Create date folders",
+    "@createDateFolders": {
+        "description": "Option to create folders by date"
+    },
+    "organizeFoldersByDate": "Organize files by date received",
+    "@organizeFoldersByDate": {
+        "description": "Description of date organization"
+    },
+    "createSenderFolders": "Create sender folders",
+    "@createSenderFolders": {
+        "description": "Option to create folders by sender"
+    },
+    "immediate": "Immediate",
+    "@immediate": {
+        "description": "Option for immediate UI updates"
+    },
+    "myDevice": "My Device",
+    "@myDevice": {
+        "description": "Default device name"
+    },
+    "bySenderName": "By Sender Name",
+    "@bySenderName": {
+        "description": "File organization by sender name"
+    },
+    "byDate": "By Date",
+    "@byDate": {
+        "description": "File organization by date"
+    },
+    "removeTrustFrom": "Remove trust from {deviceName}?",
+    "@removeTrustFrom": {
+        "description": "Confirmation to remove trust from device",
+        "placeholders": {
+            "deviceName": {
+                "type": "String"
+            }
+        }
+    },
+    "remove": "Remove",
+    "@remove": {
+        "description": "Button to remove/delete"
+    },
+    "unpairFrom": "Unpair from {deviceName}",
+    "@unpairFrom": {
+        "description": "Title for unpair dialog",
+        "placeholders": {
+            "deviceName": {
+                "type": "String"
+            }
+        }
+    },
+    "unpairDescription": "This will remove the pairing completely from both devices. You will need to pair again in the future.\\n\\nThe other device will also be notified and their connection will be removed.",
+    "@unpairDescription": {
+        "description": "Description of unpair action"
+    },
+    "holdToUnpair": "Hold to Unpair",
+    "@holdToUnpair": {
+        "description": "Button text for unpair confirmation"
+    },
+    "unpairing": "Unpairing...",
+    "@unpairing": {
+        "description": "Text shown during unpair process"
+    },
+    "holdButtonToConfirmUnpair": "Hold the button for 1 second to confirm unpair",
+    "@holdButtonToConfirmUnpair": {
+        "description": "Instruction for unpair confirmation"
+    },
+    "taskAndFileDeletedSuccessfully": "Task and file deleted successfully",
+    "@taskAndFileDeletedSuccessfully": {
+        "description": "Success message when task and file are deleted"
+    },
+    "taskCleared": "Task cleared",
+    "@taskCleared": {
+        "description": "Message when task is cleared"
+    },
+    "notConnected": "Not connected",
+    "@notConnected": {
+        "description": "Status when not connected"
+    },
+    "connectionStatus": "Connection Status",
+    "thisDevice": "This Device",
+    "loadingDeviceInfo": "Loading device information...",
+    "fileCache": "File Cache",
+    "reload": "Reload",
+    "clear": "Clear",
+    "cacheSize": "Cache size",
+    "calculating": "Calculating...",
+    "tempFilesDescription": "Temporary files from P2Lan file transfers",
+    "debug": "Debug",
+    "networkDebugCompleted": "Network debug completed. Check logs for details.",
+    "lastRefresh": "Last refresh: {time}",
+    "@lastRefresh": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "justNow": "Just now",
+    "minutesAgo": "{minutes} min ago",
+    "@minutesAgo": {
+        "placeholders": {
+            "minutes": {
+                "type": "int"
+            }
+        }
+    },
+    "hoursAgo": "{hours} hr ago",
+    "@hoursAgo": {
+        "placeholders": {
+            "hours": {
+                "type": "int"
+            }
+        }
+    },
+    "daysAgo": "{days} days ago",
+    "@daysAgo": {
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+    "p2pNetworkingPaused": "P2P networking is paused due to internet connection loss. It will automatically resume when connection is restored.",
+    "searchingForDevices": "Searching for devices...",
+    "noDevicesInRange": "No devices in range. Try refreshing.",
+    "initialDiscoveryInProgress": "Initial discovery in progress...",
+    "manualDiscovery": "Manual Discovery",
+    "refreshing": "Refreshing...",
+    "pausedNoInternet": "Paused (No Internet)",
+    "localFiles": "Local Files",
+    "transferSettings": "Transfer Settings",
+    "trusted": "Trusted {name}",
+    "@trusted": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "trustRemoved": "Trust removed from {name}",
+    "@trustRemoved": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "removeTrust": "Remove Trust",
+    "removeTrustConfirm": "Remove trust from {name}?",
+    "@removeTrustConfirm": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "unpairFromDevice": "Unpair from {name}",
+    "@unpairFromDevice": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "unpairDescription": "This will remove the pairing completely from both devices. You will need to pair again in the future.\n\nThe other device will also be notified and their connection will be removed.",
+    "holdToUnpair": "Hold to Unpair",
+    "unpairing": "Unpairing...",
+    "holdUnpairInstruction": "Hold the button for 1 second to confirm unpair",
+    "unpaired": "Unpaired from {name}",
+    "@unpaired": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "taskAndFileDeleted": "Task and file deleted successfully",
+    "taskCleared": "Task cleared",
+    "clearFileCache": "Clear File Cache",
+    "clearFileCacheConfirm": "This will clear temporary files from P2Lan transfers. This action cannot be undone.",
+    "fileCacheClearedSuccess": "File cache cleared successfully",
+    "failedToClearCache": "Failed to clear cache: {error}",
+    "@failedToClearCache": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "permissionsRequired": "Permissions are required to start P2P networking",
+    "startedSending": "Started sending {count} files to {name}",
+    "@startedSending": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            },
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "transferSettingsUpdated": "Transfer settings updated successfully",
+    "disconnected": "Disconnected",
+    "discoveringDevices": "Discovering devices...",
+    "connected": "Connected",
+    "pairing": "Pairing...",
+    "paired": "Paired",
+    "checkingNetwork": "Checking network...",
+    "connectedViaMobileData": "Connected via mobile data (secure)",
+    "connectedToWifi": "Connected to {name} ({security})",
+    "@connectedToWifi": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            },
+            "security": {
+                "type": "String"
+            }
+        }
+    },
+    "secure": "secure",
+    "unsecure": "unsecure",
+    "connectedViaEthernet": "Connected via Ethernet (secure)",
+    "noNetworkConnection": "No network connection",
+    "unknownWifi": "Unknown WiFi",
+    "protocol": "Protocol",
+    "tcpReliable": "TCP (Reliable)",
+    "tcpDescription": "More reliable, better for important files",
+    "udpFast": "UDP (Fast)",
+    "udpDescription": "Faster but less reliable, good for large files",
+    "fileOrganization": "File Organization",
+    "createDateFolders": "Create date folders",
+    "createDateFoldersDescription": "Organize by date (YYYY-MM-DD)",
+    "createSenderFolders": "Create sender folders",
+    "createSenderFoldersDescription": "Organize by sender display name",
+    "maxFileSize": "Max File Size",
+    "maxTotalSize": "Max Total Size",
+    "maxConcurrentTasks": "Max Concurrent Tasks",
+    "chunkSize": "Chunk Size",
+    "uiRefreshRate": "UI Refresh Rate",
+    "immediate": "Immediate",
+    "unlimited": "Unlimited",
+    "defaultLabel": "Default",
+    "downloadPath": "Download Path",
+    "customDisplayName": "Custom Display Name",
+    "deviceName": "Device Name",
+    "enableNotifications": "Enable Notifications",
+    "general": "General",
+    "performance": "Performance",
+    "advanced": "Advanced",
+    "save": "Save",
+    "discard": "Discard",
+    "hasUnsavedChanges": "You have unsaved changes. Do you want to discard them?",
+    "selectFolder": "Select Folder",
+    "permissionRequired": "Permission Required",
+    "grantStoragePermission": "Grant storage permission to select download folder",
+    "openSettings": "Open Settings",
+    "notificationPermissionInfo": "Notification permission allows you to receive updates about file transfers and connection status.",
+    "secondsLabel": "second",
+    "secondsPlural": "seconds",
+    "networkInfoTitle": "Network Information",
+    "deviceSections": "Device Sections",
+    "onlineDevices": "Online Devices",
+    "newDevices": "New Devices", 
+    "savedDevices": "Saved Devices",
+    "viewInfo": "View Info",
+    "addTrust": "Add Trust",
+    "removeTrust": "Remove Trust",
+    "unpair": "Unpair",
+    "emptyDevicesStateTitle": "No Devices Found",
+    "viewDeviceInfo": "View device information",
+    "pair": "Pair",
+    "trustUser": "Trust user",
+    "sendFiles": "Send files",
+    "menuSendFiles": "Send Files",
+    "menuViewInfo": "View Info",
+    "menuPair": "Pair",
+    "menuTrust": "Trust",
+    "menuUntrust": "Remove Trust",
+    "menuUnpair": "Unpair",
+    "deviceActions": "Device Actions",
+    "p2pTemporarilyDisabled": "P2P temporarily disabled - waiting for internet connection",
+    "udpDescription": "Faster but less reliable, good for large files",
+    "none": "None",
+    "createDateFolders": "Create date folders",
+    "createSenderFolders": "Create sender folders",
+    "fileOrgNoneDescription": "Files go directly to download folder",
+    "fileOrgDateDescription": "Organize by date (YYYY-MM-DD)",
+    "fileOrgSenderDescription": "Organize by sender display name",
+    "basic": "Basic",
+    "advanced": "Advanced",
+    "summary": "Summary",
+    "reset": "Reset",
+    "save": "Save",
+    "p2lanTransferSettingsTitle": "P2Lan Transfer Settings",
+    "settingsTabGeneric": "Generic",
+    "settingsTabStorage": "Storage",
+    "settingsTabNetwork": "Network",
+    "deviceProfile": "Device Profile",
+    "displayName": "Display Name",
+    "displayNameDescription": "Customize how your device appears to other users",
+    "deviceDisplayNameLabel": "Device Display Name",
+    "deviceDisplayNameHint": "Enter custom display name...",
+    "defaultDisplayName": "Default: {name}",
+    "@defaultDisplayName": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "userPreferences": "User Preferences",
+    "notifications": "Notifications",
+    "notSupportedOnWindows": "Not supported on Windows",
+    "uiPerformance": "User Interface Performance",
+    "uiRefreshRate": "UI Refresh Rate",
+    "uiRefreshRateDescription": "Choose how often transfer progress updates in the UI. Higher frequencies work better on powerful devices.",
+    "immediate": "Immediate",
+    "saveSettings": "Save Settings",
+    "resetToDefaults": "Reset to Defaults",
+    "savedDevicesCount": "Saved Devices ({count})",
+    "@savedDevicesCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "previouslyPairedOffline": "Previously paired devices (offline)",
+    "statusSaved": "Saved",
+    "statusTrusted": "Trusted",
+    "thisDeviceCardTitle": "This Device",
+    "deviceName": "Device Name",
+    "appInstallationId": "App Installation ID",
+    "ipAddress": "IP Address",
+    "port": "Port",
+    "status": "Status",
+    "statusOffline": "Offline",
+    "lastSeen": "Last Seen",
+    "notConnected": "Not connected",
+    "downloadLocation": "Download Location",
+    "downloadFolder": "Download Folder",
+    "selectDownloadFolder": "Select download folder...",
+    "sizeLimits": "Size Limits",
+    "maxFileSizePerFile": "Maximum file size (per file)",
+    "transferProtocol": "Transfer Protocol",
+    "performanceTuning": "Performance Tuning",
+    "concurrentTransfers": "Concurrent transfers",
+    "concurrentTransfersDescription": " = faster overall but higher CPU usage",
+    "transferChunkSize": "Transfer chunk size",
+    "transferChunkSizeDescription": "Higher sizes = faster transfers but more memory usage",
+    "defaultValue": "(Default)",
+    "useAppFolder": "Use App Folder",
+    "androidStorageAccess": "Android Storage Access",
+    "androidStorageAccessDescription": "For security, it's recommended to use the app-specific folder. You can select other folders, but this may require additional permissions.",
+    "totalSpace": "Total Space",
+    "freeSpace": "Free Space",
+    "usedSpace": "Used Space",
+    "storageInfo": "Storage Information",
+    "noDownloadPathSet": "No Download Path Set",
+    "noDownloadPathSetDescription": "Please select a download folder in the Storage tab to see storage information.",
+    "enableNotificationsDescription": "Get notified about transfer events",
+    "currentConfiguration": "Current Configuration",
+    "maxFileSizePerFileDescription": "Larger files will be automatically rejected",
+    "maxTotalSize": "Maximum total size (per transfer batch)",
+    "maxTotalSizeDescription": "Total size limit for all files in a single transfer request",
+    "concurrentTransfersSubtitle": "More transfers = faster overall but higher CPU usage",
+    "transferChunkSizeSubtitle": "Higher sizes = faster transfers but more memory usage",
+    "protocolTcpReliable": "TCP (Reliable)",
+    "protocolTcpDescription": "More reliable, better for important files",
+    "protocolUdpFast": "UDP (Fast)",
+    "fileOrgNone": "None",
+    "fileOrgDate": "By Date",
+    "fileOrgSender": "By Sender Name",
+    "transferSettingsUpdatedSuccessfully": "Transfer settings updated successfully",
+    "selectOperation": "Select Operation",
+    "filterAndSort": "Filter and Sort",
+    "filterByType": "Filter by Type",
+    "sortBy": "Sort by",
+    "tapToSelectAgain": "Tap to select again",
+    "notSelected": "Not selected",
+    "selectDestinationFolder": "Select destination folder",
+    "openInApp": "Open in App",
+    "copyTo": "Copy to",
+    "moveTo": "Move to",
+    "moveOrCopyAndRename": "Move or Copy and Rename",
+    "share": "Share",
+    "confirmDelete": "Are you sure you want to delete file",
+    "removeSelected": "Remove selected content",
+    "noFilesFound": "No files found",
+    "emptyFolder": "Empty folder",
+    "file": "file",
+    "quickAccess": "Quick Access",
+    "colorFormat": "Color Format"
+  }
