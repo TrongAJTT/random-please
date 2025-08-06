@@ -1,8 +1,11 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:random_please/services/app_logger.dart';
 import 'package:random_please/models/settings_model.dart';
+
+// These imports will fail on web, but we'll handle it with try-catch
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class HiveService {
   // Box names
@@ -18,31 +21,43 @@ class HiveService {
   /// Initialize Hive database with custom path
   static Future<void> initialize() async {
     try {
-      // Get application documents directory for storing Hive data
-      final Directory appDocDir = await getApplicationDocumentsDirectory();
-      final String hivePath = '${appDocDir.path}/hive_data';
+      if (kIsWeb) {
+        // On web, use Hive.initFlutter() without path
+        await Hive.initFlutter();
+        logInfo('HiveService: Initialized Hive for web platform');
+      } else {
+        // On native platforms, try to use custom path, fallback to default
+        try {
+          final appDocDir = await getApplicationDocumentsDirectory();
+          final hivePath = '${appDocDir.path}/hive_data';
 
-      // Create directory if it doesn't exist
-      final Directory hiveDir = Directory(hivePath);
-      if (!await hiveDir.exists()) {
-        await hiveDir.create(recursive: true);
-        logInfo('HiveService: Created Hive data directory at $hivePath');
+          final hiveDir = Directory(hivePath);
+          if (!await hiveDir.exists()) {
+            await hiveDir.create(recursive: true);
+            logInfo('HiveService: Created Hive data directory at $hivePath');
+          }
+
+          Hive.init(hivePath);
+          logInfo('HiveService: Initialized Hive with path: $hivePath');
+        } catch (e) {
+          // Fallback to Flutter init if path operations fail
+          await Hive.initFlutter();
+          logWarning('HiveService: Fallback to initFlutter due to error: $e');
+        }
       }
-
-      // Initialize Hive with custom path
-      Hive.init(hivePath);
-      logInfo('HiveService: Initialized Hive with path: $hivePath');
 
       // TEMPORARY FIX: Clear the file transfer requests box to resolve a data migration issue.
       // This error (type 'bool' is not a subtype of type 'String?') occurs when the
       // structure of a stored object changes in an incompatible way.
-      try {
-        await Hive.deleteBoxFromDisk('file_transfer_requests');
-        logInfo(
-            "HiveService: Cleared 'file_transfer_requests' box to fix migration error.");
-      } catch (e) {
-        logWarning(
-            "HiveService: Could not clear 'file_transfer_requests' box: $e");
+      if (!kIsWeb) {
+        try {
+          await Hive.deleteBoxFromDisk('file_transfer_requests');
+          logInfo(
+              "HiveService: Cleared 'file_transfer_requests' box to fix migration error.");
+        } catch (e) {
+          logWarning(
+              "HiveService: Could not clear 'file_transfer_requests' box: $e");
+        }
       }
 
       if (!Hive.isAdapterRegistered(12)) {
@@ -114,9 +129,13 @@ class HiveService {
 
   /// Get the size of a box in bytes by reading its file size from disk.
   static Future<int> getBoxSize(String boxName) async {
+    if (kIsWeb) {
+      // Cannot determine file size on web
+      return 0;
+    }
+
     try {
       final dir = await getApplicationDocumentsDirectory();
-      // Construct the path for both .hive and .lock files
       final hivePath = '${dir.path}/hive_data/$boxName.hive';
       final lockPath = '${dir.path}/hive_data/$boxName.lock';
 
@@ -184,8 +203,12 @@ class HiveService {
 
   /// Get current Hive storage path
   static Future<String> getHivePath() async {
+    if (kIsWeb) {
+      return 'Browser Storage';
+    }
+
     try {
-      final Directory appDocDir = await getApplicationDocumentsDirectory();
+      final appDocDir = await getApplicationDocumentsDirectory();
       return '${appDocDir.path}/hive_data';
     } catch (e) {
       logError('HiveService: Error getting Hive path: $e');
@@ -195,6 +218,15 @@ class HiveService {
 
   /// Get storage info for debugging
   static Future<Map<String, dynamic>> getStorageInfo() async {
+    if (kIsWeb) {
+      return {
+        'path': 'Browser Storage',
+        'exists': true,
+        'files': ['IndexedDB Storage'],
+        'totalSize': 0, // Cannot determine size on web
+      };
+    }
+
     try {
       final hivePath = await getHivePath();
       final hiveDir = Directory(hivePath);

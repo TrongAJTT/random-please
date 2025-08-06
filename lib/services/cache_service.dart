@@ -158,13 +158,13 @@ class CacheService {
         .fold<int>(0, (sum, info) => sum + info.sizeBytes);
   }
 
-  static Future<int> getTotalLogSize() async {
-    try {
-      return await AppLogger.instance.getTotalLogSize();
-    } catch (e) {
-      return 0;
-    }
-  }
+  // static Future<int> getTotalLogSize() async {
+  //   try {
+  //     return await AppLogger.instance.getTotalLogSize();
+  //   } catch (e) {
+  //     return 0;
+  //   }
+  // }
 
   static String formatCacheSize(int bytes) {
     if (bytes < 1024) {

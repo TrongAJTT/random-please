@@ -155,218 +155,100 @@ class _SectionSidebarScrollingLayoutState
   }
 
   Widget _buildDesktopLayout() {
-    if (widget.isEmbedded) {
-      return _buildDesktopContent();
-    } else {
-      return Scaffold(
-        body: SafeArea(child: _buildDesktopContent()),
-      );
-    }
-  }
-
-  Widget _buildDesktopContent() {
-    return Row(
-      children: [
-        // Sidebar (30% width) - Removed header/appbar
-        Expanded(
-          flex: 3,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              border: Border(
-                right: BorderSide(
-                  color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
-                ),
-              ),
-            ),
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: widget.sections.length,
-              itemBuilder: (context, index) {
-                final section = widget.sections[index];
-                final isSelected = section.id == _currentSectionId;
-
-                return Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: isSelected
-                        ? Theme.of(context)
+    return Scaffold(
+      key: _scaffoldKey,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: widget.sections.map((section) {
+              return Container(
+                key: _sectionKeys[section.id],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Section header with full width background - Made smaller
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context)
                             .colorScheme
                             .primaryContainer
-                            .withValues(alpha: 0.7)
-                        : null,
-                  ),
-                  child: ListTile(
-                    leading: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.primary
-                            : (section.iconColor ?? Colors.grey)
-                                .withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
+                            .withValues(alpha: 0.4),
                       ),
-                      child: Icon(
-                        section.icon,
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.onPrimary
-                            : section.iconColor ?? Colors.grey,
-                        size: 20,
-                      ),
-                    ),
-                    title: Text(
-                      section.title,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.normal,
-                            color: isSelected
-                                ? Theme.of(context)
-                                    .colorScheme
-                                    .onPrimaryContainer
-                                : null,
-                          ),
-                    ),
-                    subtitle: section.subtitle != null
-                        ? Text(
-                            section.subtitle!,
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: isSelected
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .onPrimaryContainer
-                                              .withValues(alpha: 0.7)
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .onSurfaceVariant,
-                                    ),
-                          )
-                        : null,
-                    onTap: () => _scrollToSection(section.id),
-                    dense: true,
-                    visualDensity: VisualDensity.compact,
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-
-        // Content area (70% width) - Updated styling for full width sections
-        Expanded(
-          flex: 7,
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: widget.sections.map((section) {
-                return Container(
-                  key: _sectionKeys[section.id],
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Section header with full width background - Made smaller
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primaryContainer
-                              .withValues(alpha: 0.4),
-                        ),
-                        child: Row(
-                          children: [
-                            // Icon with background border like sidebar
-                            Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: section.iconColor ??
-                                    Theme.of(context).colorScheme.primary,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                section.icon,
-                                color: Colors.white,
-                                size: 20,
-                              ),
+                      child: Row(
+                        children: [
+                          // Icon with background border like sidebar
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: section.iconColor ??
+                                  Theme.of(context).colorScheme.primary,
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                            child: Icon(
+                              section.icon,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  section.title,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                                if (section.subtitle != null) ...[
+                                  const SizedBox(height: 4),
                                   Text(
-                                    section.title,
+                                    section.subtitle!,
                                     style: Theme.of(context)
                                         .textTheme
-                                        .titleLarge
+                                        .bodyMedium
                                         ?.copyWith(
-                                          fontWeight: FontWeight.bold,
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .onPrimaryContainer,
+                                              .onSurfaceVariant,
                                         ),
                                   ),
-                                  if (section.subtitle != null) ...[
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      section.subtitle!,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimaryContainer
-                                                .withValues(alpha: 0.8),
-                                          ),
-                                    ),
-                                  ],
                                 ],
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      // Section content with full width background
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(24),
-                        color: Theme.of(context).colorScheme.surface,
-                        child: section.content,
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
+                    ),
+                    // Section content with full width background
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      color: Theme.of(context).colorScheme.surface,
+                      child: section.content,
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
           ),
         ),
-      ],
+      ),
     );
   }
 
   Widget _buildMobileLayout() {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: widget.isEmbedded
-          ? null
-          : AppBar(
-              title: Text(widget.title ?? 'Sections'),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.menu),
-                  onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
-                ),
-              ],
-            ),
-      endDrawer: _buildMobileDrawer(),
       body: SafeArea(
         child: SingleChildScrollView(
           controller: _scrollController,

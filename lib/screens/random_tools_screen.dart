@@ -176,16 +176,6 @@ class RandomToolsScreen extends StatelessWidget {
       );
     }
 
-    if (isEmbedded) {
-      return content;
-    } else {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(loc.random),
-          elevation: 0,
-        ),
-        body: content,
-      );
-    }
+    return content;
   }
 }

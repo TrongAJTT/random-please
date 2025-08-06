@@ -43,67 +43,70 @@ class OptionCard extends StatelessWidget {
 
     return Opacity(
       opacity: isEnabled ? 1.0 : 0.5,
-      child: InkWell(
-        onTap: isEnabled ? onTap : null,
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          width: double.infinity,
-          padding: decorator?.padding ??
-              const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: decorator?.borderColor ??
-                  theme.colorScheme.outline.withValues(alpha: 0.2),
-              width: decorator?.borderWidth ?? 0.5,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isEnabled ? onTap : null,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            width: double.infinity,
+            padding: decorator?.padding ??
+                const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: decorator?.borderColor ??
+                    theme.colorScheme.outline.withValues(alpha: 0.2),
+                width: decorator?.borderWidth ?? 0.5,
+              ),
+              borderRadius: decorator?.borderRadius ?? BorderRadius.circular(8),
+              color: decorator?.backgroundColor ??
+                  theme.colorScheme.surfaceContainerLow,
             ),
-            borderRadius: decorator?.borderRadius ?? BorderRadius.circular(8),
-            color: decorator?.backgroundColor ??
-                theme.colorScheme.surfaceContainerLow,
-          ),
-          child: Row(
-            children: [
-              if (option.icon != null) ...[
-                option.icon!,
-                const SizedBox(width: 12),
-              ],
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      option.label,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: isEnabled ? null : theme.disabledColor,
-                      ),
-                    ),
-                    if (option.subtitle != null) ...[
-                      const SizedBox(height: 4),
+            child: Row(
+              children: [
+                if (option.icon != null) ...[
+                  option.icon!,
+                  const SizedBox(width: 12),
+                ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Text(
-                        option.subtitle!,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: isEnabled
-                              ? theme.colorScheme.onSurfaceVariant
-                              : theme.disabledColor,
+                        option.label,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: isEnabled ? null : theme.disabledColor,
                         ),
                       ),
+                      if (option.subtitle != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          option.subtitle!,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: isEnabled
+                                ? theme.colorScheme.onSurfaceVariant
+                                : theme.disabledColor,
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              // Display primary trailing icon if not null
-              if (decorator?.primaryTrailingIcon != null) ...[
-                decorator!.primaryTrailingIcon!,
+                const SizedBox(width: 8),
+                // Display primary trailing icon if not null
+                if (decorator?.primaryTrailingIcon != null) ...[
+                  decorator!.primaryTrailingIcon!,
+                ],
+                // Display defailt trailing icon
+                if (decorator?.primaryTrailingIcon == null) ...[
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                  ),
+                ],
               ],
-              // Display defailt trailing icon
-              if (decorator?.primaryTrailingIcon == null) ...[
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                ),
-              ],
-            ],
+            ),
           ),
         ),
       ),

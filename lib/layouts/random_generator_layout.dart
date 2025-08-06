@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:random_please/utils/snackbar_utils.dart';
 
 /// Generic layout widget for all random generators to ensure consistency
 class RandomGeneratorLayout extends StatefulWidget {
@@ -230,6 +231,35 @@ class RandomGeneratorHistoryWidget extends StatelessWidget {
     );
   }
 
+  Future<void> _showClearHistoryDialog(
+      BuildContext context, AppLocalizations loc) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(loc.confirmClearHistory),
+        content: Text(loc.confirmClearHistoryMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(loc.cancel),
+          ),
+          TextButton(
+            autofocus: true,
+            onPressed: () {
+              onClearHistory();
+              Navigator.of(context).pop(true);
+            },
+            child: Text(loc.clearHistory),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      SnackbarUtils.showTyped(context, loc.historyCleared, SnackBarType.info);
+    }
+  }
+
   Widget _buildHeader(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return LayoutBuilder(
@@ -247,7 +277,7 @@ class RandomGeneratorHistoryWidget extends StatelessWidget {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: onClearHistory,
+                  onPressed: () => _showClearHistoryDialog(context, loc),
                   child: Text(loc.clearHistory),
                 ),
               ),
@@ -266,7 +296,7 @@ class RandomGeneratorHistoryWidget extends StatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: onClearHistory,
+                onPressed: () => _showClearHistoryDialog(context, loc),
                 child: Text(loc.clearHistory),
               ),
             ],

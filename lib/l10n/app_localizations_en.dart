@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get title => 'random_please';
+  String get title => 'Random Please';
 
   @override
   String get settings => 'Settings';
@@ -51,7 +51,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewCacheDetails => 'View Details';
 
   @override
-  String get cacheSize => 'Cache size';
+  String cacheSize(String size) {
+    return 'Cache size';
+  }
 
   @override
   String get cacheItems => 'Items';
@@ -80,12 +82,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logRetentionForever => 'Keep forever';
 
   @override
-  String get logRetentionDesc =>
-      'Set how long to keep application logs before automatic deletion';
+  String get logRetentionDesc => 'Set how long to keep application logs before automatic deletion';
 
   @override
-  String get logRetentionDescDetail =>
-      'Choose log retention period (5-30 days in 5-day intervals, or forever)';
+  String get logRetentionDescDetail => 'Choose log retention period (5-30 days in 5-day intervals, or forever)';
 
   @override
   String get logRetentionAutoDelete => 'Auto-delete after a period of time';
@@ -94,8 +94,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logManagement => 'App logs management and storage settings';
 
   @override
-  String get logManagementDesc =>
-      'Manage application logs and retention settings';
+  String get logManagementDesc => 'Manage application logs and retention settings';
 
   @override
   String get logStatus => 'Log Status';
@@ -112,12 +111,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get confirmClearAllCache =>
-      'Are you sure you want to clear ALL cache data? This will remove all saved templates but preserve your settings.';
+  String get confirmClearAllCache => 'Are you sure you want to clear ALL cache data? This will remove all saved templates but preserve your settings.';
 
   @override
-  String get cannotClearFollowingCaches =>
-      'The following caches cannot be cleared because they are currently in use:';
+  String get cannotClearFollowingCaches => 'The following caches cannot be cleared because they are currently in use:';
 
   @override
   String cacheCleared(Object cacheName) {
@@ -199,8 +196,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectTool => 'Select a tool from the sidebar';
 
   @override
-  String get selectToolDesc =>
-      'Choose a tool from the left sidebar to get started';
+  String get selectToolDesc => 'Choose a tool from the left sidebar to get started';
 
   @override
   String get settingsDesc => 'Personalize your experience';
@@ -209,15 +205,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get random => 'Random Generator';
 
   @override
-  String get randomDesc =>
-      'Generate random passwords, numbers, dates, and more';
+  String get randomDesc => 'Generate random passwords, numbers, dates, and more';
 
   @override
   String get textTemplateGen => 'Text Template Generator';
 
   @override
-  String get textTemplateGenDesc =>
-      'Create documents from templates. You can create reusable templates with fields like text, number, date.';
+  String get textTemplateGenDesc => 'Create documents from templates. You can create reusable templates with fields like text, number, date.';
 
   @override
   String get editTemplate => 'Edit Template';
@@ -226,8 +220,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createTemplate => 'Create New Template';
 
   @override
-  String get templateEditSuccessMessage =>
-      'Template saved successfully! You can now navigate back.';
+  String get templateEditSuccessMessage => 'Template saved successfully! You can now navigate back.';
 
   @override
   String get contentTab => 'Content';
@@ -293,8 +286,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loopTitleHint => 'E.g. Product list';
 
   @override
-  String get pleaseFixDuplicateIds =>
-      'Please fix inconsistent duplicate IDs before saving';
+  String get pleaseFixDuplicateIds => 'Please fix inconsistent duplicate IDs before saving';
 
   @override
   String errorSavingTemplate(Object error) {
@@ -305,8 +297,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get templateContentLabel => 'Template Content *';
 
   @override
-  String get templateContentHint =>
-      'Enter template content and add data fields...';
+  String get templateContentHint => 'Enter template content and add data fields...';
 
   @override
   String get pleaseEnterTemplateContent => 'Please enter template content';
@@ -315,8 +306,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get templateStructure => 'Template Structure';
 
   @override
-  String get templateStructureOverview =>
-      'View an overview of fields and loops in your template.';
+  String get templateStructureOverview => 'View an overview of fields and loops in your template.';
 
   @override
   String get textTemplatesTitle => 'Templates';
@@ -328,8 +318,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noTemplatesYet => 'No templates yet';
 
   @override
-  String get createTemplatesHint =>
-      'Create your first template to get started.';
+  String get createTemplatesHint => 'Create your first template to get started.';
 
   @override
   String get createNewTemplate => 'Create new template';
@@ -346,8 +335,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get holdToDeleteInstruction =>
-      'Hold the delete button for 5 seconds to confirm';
+  String get holdToDeleteInstruction => 'Hold the delete button for 5 seconds to confirm';
 
   @override
   String get holdToDelete => 'Hold to delete...';
@@ -362,8 +350,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clearingCache => 'Clearing cache...';
 
   @override
-  String get holdToClearCacheInstruction =>
-      'Hold the clear button for 10 seconds to confirm';
+  String get holdToClearCacheInstruction => 'Hold the clear button for 10 seconds to confirm';
 
   @override
   String get templateDeleted => 'Template deleted.';
@@ -380,12 +367,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get usageGuide => 'Usage Guide';
 
   @override
-  String get textTemplateToolIntro =>
-      'This tool helps you manage and use text templates efficiently.';
+  String get textTemplateToolIntro => 'This tool helps you manage and use text templates efficiently.';
 
   @override
-  String get helpCreateNewTemplate =>
-      'Create a new template using the + button.';
+  String get helpCreateNewTemplate => 'Create a new template using the + button.';
 
   @override
   String get helpTapToUseTemplate => 'Tap a template to use it.';
@@ -394,8 +379,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get helpTapMenuForActions => 'Tap the menu (⋮) for more actions.';
 
   @override
-  String get textTemplateScreenHint =>
-      'Templates are saved locally on your device.';
+  String get textTemplateScreenHint => 'Templates are saved locally on your device.';
 
   @override
   String get gotIt => 'Got it';
@@ -413,8 +397,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addFromFile => 'Add from file';
 
   @override
-  String get importTemplateFromJson =>
-      'Import multiple templates from JSON files';
+  String get importTemplateFromJson => 'Import multiple templates from JSON files';
 
   @override
   String get templateImported => 'Template imported successfully.';
@@ -694,24 +677,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dateCalculator => 'Date Calculator';
 
   @override
-  String get dateCalculatorDesc =>
-      'A versatile tool for handling all your date-related calculations. Below is an overview of its features:';
+  String get dateCalculatorDesc => 'A versatile tool for handling all your date-related calculations. Below is an overview of its features:';
 
   @override
-  String get dateInfoTabDescription =>
-      'Provides detailed information for any date, including day of the week, day of the year, week number, quarter, and leap year status.';
+  String get dateInfoTabDescription => 'Provides detailed information for any date, including day of the week, day of the year, week number, quarter, and leap year status.';
 
   @override
-  String get dateDifferenceTabDescription =>
-      'Calculates the duration between two dates, showing the result in a combination of years, months, and days, as well as in total units like months, weeks, days, etc.';
+  String get dateDifferenceTabDescription => 'Calculates the duration between two dates, showing the result in a combination of years, months, and days, as well as in total units like months, weeks, days, etc.';
 
   @override
-  String get addSubtractTabDescription =>
-      'Adds or subtracts a specific number of years, months, and days from a given date to determine the resulting date.';
+  String get addSubtractTabDescription => 'Adds or subtracts a specific number of years, months, and days from a given date to determine the resulting date.';
 
   @override
-  String get ageCalculatorTabDescription =>
-      'Calculates the age from a birth date and shows the total days lived, days until the next birthday, and the date of the next birthday.';
+  String get ageCalculatorTabDescription => 'Calculates the age from a birth date and shows the total days lived, days until the next birthday, and the date of the next birthday.';
 
   @override
   String get dateCalculatorHistory => 'History';
@@ -1062,19 +1040,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noHistoryYet => 'No history yet';
 
   @override
-  String get performCalculation =>
-      'Perform your first calculation to see history here';
+  String get performCalculation => 'Perform your first calculation to see history here';
 
   @override
-  String get confirmClearHistory =>
-      'Are you sure you want to clear all BMI history?';
+  String get confirmClearHistory => 'Are you sure you want to clear history?';
 
   @override
-  String get confirmClearTabData =>
-      'Are you sure you want to clear the data for the current tab?';
+  String get confirmClearHistoryMessage => 'This will remove all saved history items. This action cannot be undone.\nMake sure you have saved any important results before proceeding.';
 
   @override
-  String get historyCleared => 'BMI history cleared';
+  String get historyCleared => 'History cleared successfully';
 
   @override
   String get historyItem => 'History Item';
@@ -1214,8 +1189,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get noRatesAvailable =>
-      'No exchange rate information available, fetching rates...';
+  String get noRatesAvailable => 'No exchange rate information available, fetching rates...';
 
   @override
   String get staticRates => 'Static';
@@ -1230,8 +1204,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirmResetLayout => 'Confirm Reset Layout';
 
   @override
-  String get confirmResetLayoutMessage =>
-      'Are you sure you want to reset the layout? This will remove all cards and restore default settings.';
+  String get confirmResetLayoutMessage => 'Are you sure you want to reset the layout? This will remove all cards and restore default settings.';
 
   @override
   String get confirm => 'Confirm';
@@ -1323,12 +1296,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currencyStatusSuccessDesc => 'Successfully fetched live rate';
 
   @override
-  String get currencyStatusFailedDesc =>
-      'Failed to fetch live rate, using static fallback';
+  String get currencyStatusFailedDesc => 'Failed to fetch live rate, using static fallback';
 
   @override
-  String get currencyStatusTimeoutDesc =>
-      'Request timed out, using static fallback';
+  String get currencyStatusTimeoutDesc => 'Request timed out, using static fallback';
 
   @override
   String get currencyStatusNotSupportedDesc => 'Currency not supported by API';
@@ -1337,8 +1308,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currencyStatusStaticDesc => 'Using static exchange rate';
 
   @override
-  String get currencyStatusFetchedRecentlyDesc =>
-      'Successfully fetched within the last hour';
+  String get currencyStatusFetchedRecentlyDesc => 'Successfully fetched within the last hour';
 
   @override
   String get currencyConverterInfo => 'Currency Converter Info';
@@ -1347,19 +1317,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutThisFeature => 'About This Feature';
 
   @override
-  String get aboutThisFeatureDesc =>
-      'The Currency Converter allows you to convert between different currencies using live or static exchange rates. It supports over 80 currencies worldwide.';
+  String get aboutThisFeatureDesc => 'The Currency Converter allows you to convert between different currencies using live or static exchange rates. It supports over 80 currencies worldwide.';
 
   @override
-  String get howToUseDesc =>
-      '• Add or remove cards/rows for multiple conversions\n• Customize visible currencies\n• Switch between card and table view\n• Rates update automatically based on your settings';
+  String get howToUseDesc => '• Add or remove cards/rows for multiple conversions\n• Customize visible currencies\n• Switch between card and table view\n• Rates update automatically based on your settings';
 
   @override
   String get staticRatesInfo => 'Static Exchange Rates';
 
   @override
-  String get staticRatesInfoDesc =>
-      'Static rates are fallback values used when live rates cannot be fetched. These rates are updated periodically and may not reflect real-time market prices.';
+  String get staticRatesInfoDesc => 'Static rates are fallback values used when live rates cannot be fetched. These rates are updated periodically and may not reflect real-time market prices.';
 
   @override
   String get viewStaticRates => 'View Static Rates';
@@ -1401,8 +1368,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deletePreset => 'Delete Preset';
 
   @override
-  String get confirmDeletePreset =>
-      'Are you sure you want to delete this preset?';
+  String get confirmDeletePreset => 'Are you sure you want to delete this preset?';
 
   @override
   String get sortBy => 'Sort by';
@@ -1455,8 +1421,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deletePresetTitle => 'Delete Preset';
 
   @override
-  String get deletePresetConfirm =>
-      'Are you sure you want to delete this preset?';
+  String get deletePresetConfirm => 'Are you sure you want to delete this preset?';
 
   @override
   String get presetDeletedSuccess => 'Preset deleted';
@@ -1468,8 +1433,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fetchTimeout => 'Fetch Timeout';
 
   @override
-  String get fetchTimeoutDesc =>
-      'Set timeout for currency rate fetching (5-20 seconds)';
+  String get fetchTimeoutDesc => 'Set timeout for currency rate fetching (5-20 seconds)';
 
   @override
   String fetchTimeoutSeconds(Object seconds) {
@@ -1480,8 +1444,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fetchRetryIncomplete => 'Retry when incomplete';
 
   @override
-  String get fetchRetryIncompleteDesc =>
-      'Automatically retry failed/timeout currencies during fetch';
+  String get fetchRetryIncompleteDesc => 'Automatically retry failed/timeout currencies during fetch';
 
   @override
   String fetchRetryTimes(int times) {
@@ -1538,8 +1501,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dateTimeGenerator => 'Date & Time Generator';
 
   @override
-  String get dateTimeGeneratorDesc =>
-      'Generate random date and time combinations';
+  String get dateTimeGeneratorDesc => 'Generate random date and time combinations';
 
   @override
   String get heads => 'Heads';
@@ -1566,8 +1528,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get skipAnimation => 'Skip Animation';
 
   @override
-  String get skipAnimationDesc =>
-      'Show result immediately without visual effects';
+  String get skipAnimationDesc => 'Show result immediately without visual effects';
 
   @override
   String latinLetterGenerationError(Object count) {
@@ -1590,8 +1551,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cacheTypeAppSettings => 'App Settings';
 
   @override
-  String get cacheTypeAppSettingsDesc =>
-      'Theme, language, and user preferences';
+  String get cacheTypeAppSettingsDesc => 'Theme, language, and user preferences';
 
   @override
   String get cacheTypeRandomGenerators => 'Random Generators';
@@ -1603,8 +1563,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveGenerationHistory => 'Save Generation History';
 
   @override
-  String get saveGenerationHistoryDesc =>
-      'Remember and display history of generated items';
+  String get saveGenerationHistoryDesc => 'Remember and display history of generated items';
 
   @override
   String get generationHistory => 'Generation History';
@@ -1613,8 +1572,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generatedAt => 'Generated at';
 
   @override
-  String get noHistoryMessage =>
-      'Your BMI calculation history will appear here';
+  String get noHistoryMessage => 'Your BMI calculation history will appear here';
 
   @override
   String get clearHistory => 'Clear History';
@@ -1629,8 +1587,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveCalculationHistory => 'Save Calculation History';
 
   @override
-  String get saveCalculationHistoryDesc =>
-      'Remember and display history of calculations';
+  String get saveCalculationHistoryDesc => 'Remember and display history of calculations';
 
   @override
   String get typeConfirmToProceed => 'Type \"confirm\" to proceed:';
@@ -1642,8 +1599,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get displayArrangeTools => 'Display and arrange tools';
 
   @override
-  String get displayArrangeToolsDesc =>
-      'Control which tools are visible and their order';
+  String get displayArrangeToolsDesc => 'Control which tools are visible and their order';
 
   @override
   String get manageToolVisibility => 'Manage Tool Visibility and Order';
@@ -1655,15 +1611,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get allToolsHidden => 'All tools are hidden';
 
   @override
-  String get allToolsHiddenDesc =>
-      'Please enable at least one tool to continue using the application';
+  String get allToolsHiddenDesc => 'Please enable at least one tool to continue using the application';
 
   @override
   String get enableAtLeastOneTool => 'Please enable at least one tool.';
 
   @override
-  String get toolVisibilityChanged =>
-      'Tool visibility and order have been updated.';
+  String get toolVisibilityChanged => 'Tool visibility and order have been updated.';
 
   @override
   String get errorMinOneTool => 'At least one tool must be visible.';
@@ -1675,22 +1629,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get manageQuickActions => 'Manage Quick Actions';
 
   @override
-  String get manageQuickActionsDesc =>
-      'Configure shortcuts for quick access to tools';
+  String get manageQuickActionsDesc => 'Configure shortcuts for quick access to tools';
 
   @override
   String get quickActionsDialogTitle => 'Quick Actions';
 
   @override
-  String get quickActionsDialogDesc =>
-      'Select up to 4 tools for quick access via app icon or taskbar';
+  String get quickActionsDialogDesc => 'Select up to 4 tools for quick access via app icon or taskbar';
 
   @override
   String get quickActionsLimit => 'Maximum 4 quick actions allowed';
 
   @override
-  String get quickActionsLimitReached =>
-      'You can only select up to 4 tools for quick actions';
+  String get quickActionsLimitReached => 'You can only select up to 4 tools for quick actions';
 
   @override
   String get clearAllQuickActions => 'Clear All';
@@ -1708,12 +1659,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectUpTo4Tools => 'Select up to 4 tools for quick access.';
 
   @override
-  String get quickActionsEnableDesc =>
-      'Quick actions will appear when you long-press the app icon on Android or right-click the taskbar icon on Windows.';
+  String get quickActionsEnableDesc => 'Quick actions will appear when you long-press the app icon on Android or right-click the taskbar icon on Windows.';
 
   @override
-  String get quickActionsEnableDescMobile =>
-      'Quick actions will appear when you long-press the app icon (Android/iOS only).';
+  String get quickActionsEnableDescMobile => 'Quick actions will appear when you long-press the app icon (Android/iOS only).';
 
   @override
   String selectedCount(int current, int max) {
@@ -1730,15 +1679,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get converterTools => 'Converter Tools';
 
   @override
-  String get converterToolsDesc =>
-      'Convert between different units and systems';
+  String get converterToolsDesc => 'Convert between different units and systems';
 
   @override
   String get calculatorTools => 'Calculator Tools';
 
   @override
-  String get calculatorToolsDesc =>
-      'Specialized calculators for health, finance, and more';
+  String get calculatorToolsDesc => 'Specialized calculators for health, finance, and more';
 
   @override
   String get lengthConverter => 'Length Converter';
@@ -1936,26 +1883,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vnd => 'Vietnamese Dong';
 
   @override
-  String get currencyConverterDesc =>
-      'Convert between different currencies with live exchange rates';
+  String get currencyConverterDesc => 'Convert between different currencies with live exchange rates';
 
   @override
   String get lengthConverterDesc => 'Convert between different units of length';
 
   @override
-  String get weightConverterDesc =>
-      'Convert between force/weight units (N, kgf, lbf)';
+  String get weightConverterDesc => 'Convert between force/weight units (N, kgf, lbf)';
 
   @override
-  String get temperatureConverterDesc =>
-      'Convert between different temperature scales';
+  String get temperatureConverterDesc => 'Convert between different temperature scales';
 
   @override
   String get volumeConverterDesc => 'Convert between different units of volume';
 
   @override
-  String get areaConverterDesc =>
-      'Convert between area units (m², km², ha, acres, ft²)';
+  String get areaConverterDesc => 'Convert between area units (m², km², ha, acres, ft²)';
 
   @override
   String get speedConverterDesc => 'Convert between different units of speed';
@@ -1964,12 +1907,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get timeConverterDesc => 'Convert between different units of time';
 
   @override
-  String get dataConverterDesc =>
-      'Convert between different units of data storage';
+  String get dataConverterDesc => 'Convert between different units of data storage';
 
   @override
-  String get numberSystemConverterDesc =>
-      'Convert between number systems (binary, decimal, hexadecimal, etc.)';
+  String get numberSystemConverterDesc => 'Convert between number systems (binary, decimal, hexadecimal, etc.)';
 
   @override
   String get fromUnit => 'From Unit';
@@ -1990,30 +1931,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bmiCalculator => 'BMI Calculator';
 
   @override
-  String get bmiCalculatorDesc =>
-      'Calculate Body Mass Index and health category';
+  String get bmiCalculatorDesc => 'Calculate Body Mass Index and health category';
 
   @override
   String get scientificCalculator => 'Scientific Calculator';
 
   @override
-  String get scientificCalculatorDesc =>
-      'Advanced calculator with trigonometric, logarithmic functions';
+  String get scientificCalculatorDesc => 'Advanced calculator with trigonometric, logarithmic functions';
 
   @override
   String get graphingCalculator => 'Graphing Calculator';
 
   @override
-  String get graphingCalculatorDesc =>
-      'Plot and visualize mathematical functions';
+  String get graphingCalculatorDesc => 'Plot and visualize mathematical functions';
 
   @override
-  String get graphingCalculatorDetailedInfo =>
-      'Graphing Calculator Information';
+  String get graphingCalculatorDetailedInfo => 'Graphing Calculator Information';
 
   @override
-  String get graphingCalculatorOverview =>
-      'Advanced mathematical function plotting and visualization tool';
+  String get graphingCalculatorOverview => 'Advanced mathematical function plotting and visualization tool';
 
   @override
   String get graphingKeyFeatures => 'Key Features';
@@ -2022,43 +1958,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get realTimePlotting => 'Real-time Plotting';
 
   @override
-  String get realTimePlottingDesc =>
-      'Instantly visualize functions as you type with smooth curve rendering';
+  String get realTimePlottingDesc => 'Instantly visualize functions as you type with smooth curve rendering';
 
   @override
   String get multipleFunction => 'Multiple Functions';
 
   @override
-  String get multipleFunctionDesc =>
-      'Plot and compare multiple functions simultaneously with color coding';
+  String get multipleFunctionDesc => 'Plot and compare multiple functions simultaneously with color coding';
 
   @override
   String get interactiveControls => 'Interactive Controls';
 
   @override
-  String get interactiveControlsDesc =>
-      'Zoom, pan, and navigate the graph with intuitive touch and mouse controls';
+  String get interactiveControlsDesc => 'Zoom, pan, and navigate the graph with intuitive touch and mouse controls';
 
   @override
   String get aspectRatioControl => 'Aspect Ratio Control';
 
   @override
-  String get aspectRatioControlDesc =>
-      'Customize X:Y axis scaling for optimal function visualization';
+  String get aspectRatioControlDesc => 'Customize X:Y axis scaling for optimal function visualization';
 
   @override
   String get functionHistory => 'Function History';
 
   @override
-  String get functionHistoryDesc =>
-      'Save and load function groups with automatic state preservation';
+  String get functionHistoryDesc => 'Save and load function groups with automatic state preservation';
 
   @override
   String get mathExpressionSupport => 'Advanced Math Support';
 
   @override
-  String get mathExpressionSupportDesc =>
-      'Supports trigonometric, logarithmic, and polynomial functions';
+  String get mathExpressionSupportDesc => 'Supports trigonometric, logarithmic, and polynomial functions';
 
   @override
   String get graphingHowToUse => 'How to Use';
@@ -2067,40 +1997,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get step1Graph => 'Step 1: Enter Function';
 
   @override
-  String get step1GraphDesc =>
-      'Type a mathematical function in the input field (e.g., x^2, sin(x), log(x))';
+  String get step1GraphDesc => 'Type a mathematical function in the input field (e.g., x^2, sin(x), log(x))';
 
   @override
   String get step2Graph => 'Step 2: Plot Function';
 
   @override
-  String get step2GraphDesc =>
-      'Press Enter or tap the add button to plot the function on the graph';
+  String get step2GraphDesc => 'Press Enter or tap the add button to plot the function on the graph';
 
   @override
   String get step3Graph => 'Step 3: Navigate Graph';
 
   @override
-  String get step3GraphDesc =>
-      'Use zoom controls, pan gestures, or adjust aspect ratio for better viewing';
+  String get step3GraphDesc => 'Use zoom controls, pan gestures, or adjust aspect ratio for better viewing';
 
   @override
   String get step4Graph => 'Step 4: Add More Functions';
 
   @override
-  String get step4GraphDesc =>
-      'Add multiple functions to compare and analyze their behaviors';
+  String get step4GraphDesc => 'Add multiple functions to compare and analyze their behaviors';
 
   @override
   String get graphingTips => 'Pro Tips';
 
   @override
-  String get tip1Graph =>
-      'Use parentheses for complex expressions: sin(x^2) instead of sin x^2';
+  String get tip1Graph => 'Use parentheses for complex expressions: sin(x^2) instead of sin x^2';
 
   @override
-  String get tip2Graph =>
-      'Common functions: sin(x), cos(x), tan(x), log(x), sqrt(x), abs(x)';
+  String get tip2Graph => 'Common functions: sin(x), cos(x), tan(x), log(x), sqrt(x), abs(x)';
 
   @override
   String get tip3Graph => 'Use π and e constants: sin(π*x), e^x';
@@ -2109,16 +2033,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tip4Graph => 'Pan by dragging the graph area with mouse or touch';
 
   @override
-  String get tip5Graph =>
-      'Save function groups to history for quick access later';
+  String get tip5Graph => 'Save function groups to history for quick access later';
 
   @override
-  String get tip6Graph =>
-      'Toggle function visibility using the eye icon without removing them';
+  String get tip6Graph => 'Toggle function visibility using the eye icon without removing them';
 
   @override
-  String get tip7Graph =>
-      'Use aspect ratio controls for specialized viewing (1:1 for circles, 5:1 for oscillations)';
+  String get tip7Graph => 'Use aspect ratio controls for specialized viewing (1:1 for circles, 5:1 for oscillations)';
 
   @override
   String get supportedFunctions => 'Supported Functions';
@@ -2127,29 +2048,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get basicOperations => 'Basic Operations';
 
   @override
-  String get basicOperationsDesc =>
-      'Addition (+), Subtraction (-), Multiplication (*), Division (/), Power (^)';
+  String get basicOperationsDesc => 'Addition (+), Subtraction (-), Multiplication (*), Division (/), Power (^)';
 
   @override
   String get trigonometricFunctions => 'Trigonometric Functions';
 
   @override
-  String get trigonometricFunctionsDesc =>
-      'sin(x), cos(x), tan(x) and their inverse functions';
+  String get trigonometricFunctionsDesc => 'sin(x), cos(x), tan(x) and their inverse functions';
 
   @override
   String get logarithmicFunctions => 'Logarithmic Functions';
 
   @override
-  String get logarithmicFunctionsDesc =>
-      'Natural logarithm log(x), exponential e^x';
+  String get logarithmicFunctionsDesc => 'Natural logarithm log(x), exponential e^x';
 
   @override
   String get otherFunctions => 'Other Functions';
 
   @override
-  String get otherFunctionsDesc =>
-      'Square root sqrt(x), absolute value abs(x), polynomial functions';
+  String get otherFunctionsDesc => 'Square root sqrt(x), absolute value abs(x), polynomial functions';
 
   @override
   String get navigationControls => 'Navigation Controls';
@@ -2158,44 +2075,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get zoomControls => 'Zoom Controls';
 
   @override
-  String get zoomControlsDesc =>
-      'Use + and - buttons or pinch gestures to zoom in and out';
+  String get zoomControlsDesc => 'Use + and - buttons or pinch gestures to zoom in and out';
 
   @override
   String get panControls => 'Pan Controls';
 
   @override
-  String get panControlsDesc =>
-      'Drag the graph to move around and explore different areas';
+  String get panControlsDesc => 'Drag the graph to move around and explore different areas';
 
   @override
   String get resetControls => 'Reset Controls';
 
   @override
-  String get resetControlsDesc =>
-      'Return to center or reset the entire plot to default state';
+  String get resetControlsDesc => 'Return to center or reset the entire plot to default state';
 
   @override
   String get aspectRatioDialog => 'Aspect Ratio';
 
   @override
-  String get aspectRatioDialogDesc =>
-      'Adjust X:Y axis scaling from 0.1:1 to 10:1 for optimal viewing';
+  String get aspectRatioDialogDesc => 'Adjust X:Y axis scaling from 0.1:1 to 10:1 for optimal viewing';
 
   @override
   String get graphingPracticalApplications => 'Practical Applications';
 
   @override
-  String get graphingPracticalApplicationsDesc =>
-      'Useful for students learning algebra and calculus, visualizing function behavior, and exploring mathematical concepts through interactive graphs.';
+  String get graphingPracticalApplicationsDesc => 'Useful for students learning algebra and calculus, visualizing function behavior, and exploring mathematical concepts through interactive graphs.';
 
   @override
-  String get scientificCalculatorDetailedInfo =>
-      'Scientific Calculator Information';
+  String get scientificCalculatorDetailedInfo => 'Scientific Calculator Information';
 
   @override
-  String get scientificCalculatorOverview =>
-      'Advanced scientific calculator with comprehensive mathematical functions';
+  String get scientificCalculatorOverview => 'Advanced scientific calculator with comprehensive mathematical functions';
 
   @override
   String get scientificKeyFeatures => 'Key Features';
@@ -2204,40 +2114,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get realTimeCalculation => 'Real-time Calculation';
 
   @override
-  String get realTimeCalculationDesc =>
-      'See instant preview results as you type expressions';
+  String get realTimeCalculationDesc => 'See instant preview results as you type expressions';
 
   @override
   String get comprehensiveFunctions => 'Comprehensive Functions';
 
   @override
-  String get comprehensiveFunctionsDesc =>
-      'Complete set of trigonometric, logarithmic, and algebraic functions';
+  String get comprehensiveFunctionsDesc => 'Complete set of trigonometric, logarithmic, and algebraic functions';
 
   @override
   String get dualAngleModes => 'Dual Angle Modes';
 
   @override
-  String get dualAngleModesDesc =>
-      'Switch between radians and degrees for trigonometric calculations';
+  String get dualAngleModesDesc => 'Switch between radians and degrees for trigonometric calculations';
 
   @override
   String get secondaryFunctions => 'Secondary Functions';
 
   @override
-  String get secondaryFunctionsDesc =>
-      'Access extended functions with the 2nd button toggle';
+  String get secondaryFunctionsDesc => 'Access extended functions with the 2nd button toggle';
 
   @override
-  String get calculationHistoryDesc =>
-      'Track your BMI calculations over time with detailed history';
+  String get calculationHistoryDesc => 'Track your BMI calculations over time with detailed history';
 
   @override
   String get memoryOperations => 'Memory Operations';
 
   @override
-  String get memoryOperationsDesc =>
-      'Store and recall values with memory management functions';
+  String get memoryOperationsDesc => 'Store and recall values with memory management functions';
 
   @override
   String get scientificHowToUse => 'How to Use';
@@ -2246,60 +2150,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String get step1Scientific => 'Step 1: Enter Expression';
 
   @override
-  String get step1ScientificDesc =>
-      'Type numbers and use function buttons to build mathematical expressions';
+  String get step1ScientificDesc => 'Type numbers and use function buttons to build mathematical expressions';
 
   @override
   String get step2Scientific => 'Step 2: Use Functions';
 
   @override
-  String get step2ScientificDesc =>
-      'Access trigonometric, logarithmic, and algebraic functions from the keypad';
+  String get step2ScientificDesc => 'Access trigonometric, logarithmic, and algebraic functions from the keypad';
 
   @override
   String get step3Scientific => 'Step 3: Toggle Modes';
 
   @override
-  String get step3ScientificDesc =>
-      'Switch between radians/degrees and primary/secondary functions as needed';
+  String get step3ScientificDesc => 'Switch between radians/degrees and primary/secondary functions as needed';
 
   @override
-  String get step4Scientific =>
-      'Step 4: Use History - View and reuse previous calculations';
+  String get step4Scientific => 'Step 4: Use History - View and reuse previous calculations';
 
   @override
-  String get step4ScientificDesc =>
-      'Press = to calculate or see real-time preview while typing';
+  String get step4ScientificDesc => 'Press = to calculate or see real-time preview while typing';
 
   @override
   String get scientificTips => 'Pro Tips';
 
   @override
-  String get tip1Scientific =>
-      'Use parentheses to ensure correct order of operations: (2+3)×4 = 20';
+  String get tip1Scientific => 'Use parentheses to ensure correct order of operations: (2+3)×4 = 20';
 
   @override
-  String get tip2Scientific =>
-      'Switch to DEG mode for degree calculations, RAD for radians';
+  String get tip2Scientific => 'Switch to DEG mode for degree calculations, RAD for radians';
 
   @override
-  String get tip3Scientific =>
-      'Use the 2nd button to access inverse functions: sin⁻¹, cos⁻¹, log⁻¹';
+  String get tip3Scientific => 'Use the 2nd button to access inverse functions: sin⁻¹, cos⁻¹, log⁻¹';
 
   @override
-  String get tip4Scientific =>
-      'Use memory functions (MS, MR, M+, M-) to store intermediate results';
+  String get tip4Scientific => 'Use memory functions (MS, MR, M+, M-) to store intermediate results';
 
   @override
   String get tip5Scientific => 'Double-tap numbers to select and copy results';
 
   @override
-  String get tip6Scientific =>
-      'Use EXP for scientific notation: 1.23E+5 = 123,000';
+  String get tip6Scientific => 'Use EXP for scientific notation: 1.23E+5 = 123,000';
 
   @override
-  String get tip7Scientific =>
-      'Clear individual entries with C, or clear all with AC';
+  String get tip7Scientific => 'Clear individual entries with C, or clear all with AC';
 
   @override
   String get basicArithmetic => 'Basic Arithmetic';
@@ -2317,20 +2210,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scientificFunctionCategories => 'Function Categories';
 
   @override
-  String get basicArithmeticDesc =>
-      'Addition (+), Subtraction (-), Multiplication (*), Division (/)';
+  String get basicArithmeticDesc => 'Addition (+), Subtraction (-), Multiplication (*), Division (/)';
 
   @override
-  String get trigonometricFunctionsScientificDesc =>
-      'sin, cos, tan and their inverse functions (asin, acos, atan)';
+  String get trigonometricFunctionsScientificDesc => 'sin, cos, tan and their inverse functions (asin, acos, atan)';
 
   @override
-  String get logarithmicFunctionsScientificDesc =>
-      'Natural log (ln), common log (log), exponential (exp, eˣ, 10ˣ)';
+  String get logarithmicFunctionsScientificDesc => 'Natural log (ln), common log (log), exponential (exp, eˣ, 10ˣ)';
 
   @override
-  String get algebraicFunctionsDesc =>
-      'Powers (x², x³, xʸ), roots (√, ∛), factorial (n!), absolute value (|x|)';
+  String get algebraicFunctionsDesc => 'Powers (x², x³, xʸ), roots (√, ∛), factorial (n!), absolute value (|x|)';
 
   @override
   String get angleMode => 'Angle Mode';
@@ -2345,12 +2234,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get historyAccess => 'History Access';
 
   @override
-  String get scientificCalculatorPracticalApplications =>
-      'Practical Applications';
+  String get scientificCalculatorPracticalApplications => 'Practical Applications';
 
   @override
-  String get scientificCalculatorPracticalApplicationsDesc =>
-      'Helpful for students in mathematics and science courses, basic engineering calculations, and everyday problem-solving involving complex mathematical operations.';
+  String get scientificCalculatorPracticalApplicationsDesc => 'Helpful for students in mathematics and science courses, basic engineering calculations, and everyday problem-solving involving complex mathematical operations.';
 
   @override
   String cacheWithLogSize(String cacheSize, String logSize) {
@@ -2361,27 +2248,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scientificModeControls => 'Mode Controls';
 
   @override
-  String get angleModeDesc =>
-      'Toggle between Radians and Degrees for trigonometric calculations';
+  String get angleModeDesc => 'Toggle between Radians and Degrees for trigonometric calculations';
 
   @override
-  String get functionToggleDesc =>
-      'Press 2nd to switch between primary and secondary function sets';
+  String get functionToggleDesc => 'Press 2nd to switch between primary and secondary function sets';
 
   @override
-  String get memoryFunctionsDesc =>
-      'Store, recall, and manage values in calculator memory';
+  String get memoryFunctionsDesc => 'Store, recall, and manage values in calculator memory';
 
   @override
-  String get historyAccessDesc =>
-      'Browse previous calculations and reuse expressions';
+  String get historyAccessDesc => 'Browse previous calculations and reuse expressions';
 
   @override
   String get scientificPracticalApplications => 'Practical Applications';
 
   @override
-  String get scientificPracticalApplicationsDesc =>
-      'Helpful for students in mathematics and science courses, performing calculations that require trigonometric, logarithmic, and algebraic functions.';
+  String get scientificPracticalApplicationsDesc => 'Helpful for students in mathematics and science courses, performing calculations that require trigonometric, logarithmic, and algebraic functions.';
 
   @override
   String get metric => 'Metric';
@@ -2465,68 +2347,52 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bmiUnderweightRec1 =>
-      'Increase calorie intake with nutritious, high-calorie foods';
+  String get bmiUnderweightRec1 => 'Increase calorie intake with nutritious, high-calorie foods';
 
   @override
-  String get bmiUnderweightRec2 =>
-      'Include healthy fats, proteins, and complex carbohydrates in your diet';
+  String get bmiUnderweightRec2 => 'Include healthy fats, proteins, and complex carbohydrates in your diet';
 
   @override
-  String get bmiUnderweightRec3 =>
-      'Consult a healthcare provider to rule out underlying health issues';
+  String get bmiUnderweightRec3 => 'Consult a healthcare provider to rule out underlying health issues';
 
   @override
-  String get bmiNormalRec1 =>
-      'Maintain a balanced diet with variety of nutrients';
+  String get bmiNormalRec1 => 'Maintain a balanced diet with variety of nutrients';
 
   @override
-  String get bmiNormalRec2 =>
-      'Continue regular physical activity and exercise routine';
+  String get bmiNormalRec2 => 'Continue regular physical activity and exercise routine';
 
   @override
-  String get bmiNormalRec3 =>
-      'Monitor your weight regularly to stay within healthy range';
+  String get bmiNormalRec3 => 'Monitor your weight regularly to stay within healthy range';
 
   @override
-  String get bmiOverweightRec1 =>
-      'Create a moderate calorie deficit through diet and exercise';
+  String get bmiOverweightRec1 => 'Create a moderate calorie deficit through diet and exercise';
 
   @override
-  String get bmiOverweightRec2 =>
-      'Focus on portion control and choose nutrient-dense foods';
+  String get bmiOverweightRec2 => 'Focus on portion control and choose nutrient-dense foods';
 
   @override
-  String get bmiOverweightRec3 =>
-      'Increase physical activity with both cardio and strength training';
+  String get bmiOverweightRec3 => 'Increase physical activity with both cardio and strength training';
 
   @override
-  String get bmiObeseRec1 =>
-      'Work with healthcare professionals to develop a safe weight loss plan';
+  String get bmiObeseRec1 => 'Work with healthcare professionals to develop a safe weight loss plan';
 
   @override
-  String get bmiObeseRec2 =>
-      'Consider comprehensive lifestyle changes including diet and exercise';
+  String get bmiObeseRec2 => 'Consider comprehensive lifestyle changes including diet and exercise';
 
   @override
-  String get bmiObeseRec3 =>
-      'Regular medical monitoring may be necessary for optimal health';
+  String get bmiObeseRec3 => 'Regular medical monitoring may be necessary for optimal health';
 
   @override
-  String get bmiUnderweightDesc =>
-      'May indicate malnutrition, eating disorders, or underlying health conditions';
+  String get bmiUnderweightDesc => 'May indicate malnutrition, eating disorders, or underlying health conditions';
 
   @override
-  String get bmiNormalDesc =>
-      'Associated with lowest risk of weight-related health problems';
+  String get bmiNormalDesc => 'Associated with lowest risk of weight-related health problems';
 
   @override
-  String get bmiOverweightDesc =>
-      'Increased risk of cardiovascular disease, diabetes, and other health issues';
+  String get bmiOverweightDesc => 'Increased risk of cardiovascular disease, diabetes, and other health issues';
 
   @override
-  String get bmiObeseDesc =>
-      'Significantly increased risk of serious health complications';
+  String get bmiObeseDesc => 'Significantly increased risk of serious health complications';
 
   @override
   String get bmiKeyFeatures => 'Key Features';
@@ -2535,29 +2401,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comprehensiveBmiCalc => 'Comprehensive BMI Calculation';
 
   @override
-  String get comprehensiveBmiCalcDesc =>
-      'Calculate BMI using height, weight, age, and gender for accurate results';
+  String get comprehensiveBmiCalcDesc => 'Calculate BMI using height, weight, age, and gender for accurate results';
 
   @override
   String get multipleUnitSystems => 'Multiple Unit Systems';
 
   @override
-  String get multipleUnitSystemsDesc =>
-      'Support for both metric (cm/kg) and imperial (ft-in/lbs) measurements';
+  String get multipleUnitSystemsDesc => 'Support for both metric (cm/kg) and imperial (ft-in/lbs) measurements';
 
   @override
   String get healthInsights => 'Health Insights';
 
   @override
-  String get healthInsightsDesc =>
-      'Get personalized recommendations based on your BMI category';
+  String get healthInsightsDesc => 'Get personalized recommendations based on your BMI category';
 
   @override
   String get ageGenderConsideration => 'Age & Gender Consideration';
 
   @override
-  String get ageGenderConsiderationDesc =>
-      'BMI interpretation adjusted for age and gender factors';
+  String get ageGenderConsiderationDesc => 'BMI interpretation adjusted for age and gender factors';
 
   @override
   String get bmiHowToUse => 'How to Use';
@@ -2566,81 +2428,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get step1Bmi => 'Step 1: Select Unit System';
 
   @override
-  String get step1BmiDesc =>
-      'Choose between metric (cm/kg) or imperial (ft-in/lbs) measurements';
+  String get step1BmiDesc => 'Choose between metric (cm/kg) or imperial (ft-in/lbs) measurements';
 
   @override
   String get step2Bmi => 'Step 2: Enter Your Information';
 
   @override
-  String get step2BmiDesc =>
-      'Input your height, weight, age, and gender for accurate calculation';
+  String get step2BmiDesc => 'Input your height, weight, age, and gender for accurate calculation';
 
   @override
   String get step3Bmi => 'Step 3: View Results';
 
   @override
-  String get step3BmiDesc =>
-      'See your BMI value, category, and personalized health recommendations';
+  String get step3BmiDesc => 'See your BMI value, category, and personalized health recommendations';
 
   @override
   String get step4Bmi => 'Step 4: Track Progress';
 
   @override
-  String get step4BmiDesc =>
-      'Save calculations to history and monitor changes over time';
+  String get step4BmiDesc => 'Save calculations to history and monitor changes over time';
 
   @override
   String get bmiTips => 'Health Tips';
 
   @override
-  String get tip1Bmi =>
-      'BMI is a screening tool - consult healthcare providers for complete health assessment';
+  String get tip1Bmi => 'BMI is a screening tool - consult healthcare providers for complete health assessment';
 
   @override
-  String get tip2Bmi =>
-      'Regular monitoring helps track progress toward health goals';
+  String get tip2Bmi => 'Regular monitoring helps track progress toward health goals';
 
   @override
-  String get tip3Bmi =>
-      'BMI may not accurately reflect body composition for athletes or elderly';
+  String get tip3Bmi => 'BMI may not accurately reflect body composition for athletes or elderly';
 
   @override
-  String get tip4Bmi =>
-      'Focus on healthy lifestyle changes rather than just the number';
+  String get tip4Bmi => 'Focus on healthy lifestyle changes rather than just the number';
 
   @override
-  String get tip5Bmi =>
-      'Combine BMI with other health indicators for better understanding';
+  String get tip5Bmi => 'Combine BMI with other health indicators for better understanding';
 
   @override
   String get bmiLimitations => 'Understanding BMI Limitations';
 
   @override
-  String get bmiLimitationsDesc =>
-      'BMI is a useful screening tool but has limitations. It doesn\'t distinguish between muscle and fat mass, and may not be accurate for athletes, elderly, or certain ethnic groups. Always consult healthcare professionals for comprehensive health assessment.';
+  String get bmiLimitationsDesc => 'BMI is a useful screening tool but has limitations. It doesn\'t distinguish between muscle and fat mass, and may not be accurate for athletes, elderly, or certain ethnic groups. Always consult healthcare professionals for comprehensive health assessment.';
 
   @override
   String get bmiPracticalApplications => 'Practical Applications';
 
   @override
-  String get bmiPracticalApplicationsDesc =>
-      'Useful for health screening, weight management planning, fitness goal setting, and tracking health progress over time.';
+  String get bmiPracticalApplicationsDesc => 'Useful for health screening, weight management planning, fitness goal setting, and tracking health progress over time.';
 
   @override
   String get clearBmiHistory => 'Clear BMI History';
-
-  @override
-  String get confirmClearCalculatorHistory =>
-      'Are you sure you want to clear all calculation history?';
-
-  @override
-  String get calculatorHistoryCleared => 'Calculator history cleared';
-
-  @override
-  String calculatedOn(String date) {
-    return 'Calculated on $date';
-  }
 
   @override
   String bmiResult(String bmi) {
@@ -2663,8 +2502,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get autoSaveToHistory => 'Auto-save to History';
 
   @override
-  String get autoSaveToHistoryDesc =>
-      'Automatically save calculations to history';
+  String get autoSaveToHistoryDesc => 'Automatically save calculations to history';
 
   @override
   String get rememberLastValues => 'Remember Last Values';
@@ -2676,15 +2514,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currencyFetchMode => 'Currency Rate Fetching';
 
   @override
-  String get currencyFetchModeDesc =>
-      'Choose how currency exchange rates are updated';
+  String get currencyFetchModeDesc => 'Choose how currency exchange rates are updated';
 
   @override
   String get fetchModeManual => 'Manual';
 
   @override
-  String get fetchModeManualDesc =>
-      'Only use cached rates, update manually by tapping refresh (limited to once every 6 hours)';
+  String get fetchModeManualDesc => 'Only use cached rates, update manually by tapping refresh (limited to once every 6 hours)';
 
   @override
   String get fetchModeOnceADay => 'Once a day';
@@ -2717,8 +2553,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveFeatureState => 'Save Feature State';
 
   @override
-  String get saveFeatureStateDesc =>
-      'Remember the state of features between app sessions';
+  String get saveFeatureStateDesc => 'Remember the state of features between app sessions';
 
   @override
   String get testCache => 'Test Cache';
@@ -2737,12 +2572,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get newRatesAvailable =>
-      'New exchange rates are available. Would you like to fetch them now?';
+  String get newRatesAvailable => 'New exchange rates are available. Would you like to fetch them now?';
 
   @override
-  String get progressDialogInfo =>
-      'This will show a progress dialog while fetching rates.';
+  String get progressDialogInfo => 'This will show a progress dialog while fetching rates.';
 
   @override
   String get calculate => 'Calculate';
@@ -2862,22 +2695,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadingLogContent => 'Loading log content...';
 
   @override
-  String get largeFileDetected =>
-      'Large file detected. Using optimized loading...';
+  String get largeFileDetected => 'Large file detected. Using optimized loading...';
 
   @override
   String get cacheTypeCalculatorTools => 'Calculator Tools';
 
   @override
-  String get cacheTypeCalculatorToolsDesc =>
-      'Calculation history, graphing calculator data, BMI data, and settings';
+  String get cacheTypeCalculatorToolsDesc => 'Calculation history, graphing calculator data, BMI data, and settings';
 
   @override
   String get cacheTypeConverterTools => 'Converter Tools';
 
   @override
-  String get cacheTypeConverterToolsDesc =>
-      'Currency/length states, presets and exchange rates cache';
+  String get cacheTypeConverterToolsDesc => 'Currency/length states, presets and exchange rates cache';
 
   @override
   String get cardName => 'Card Name';
@@ -2964,8 +2794,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get availableUnits => 'Available Units';
 
   @override
-  String get scientificNotation =>
-      'Scientific notation supported for extreme values';
+  String get scientificNotation => 'Scientific notation supported for extreme values';
 
   @override
   String get dragging => 'Dragging...';
@@ -3021,12 +2850,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseFromSavedPresets => 'Choose from your saved presets';
 
   @override
-  String get currencyConverterDetailedInfo =>
-      'Currency Converter - Detailed Information';
+  String get currencyConverterDetailedInfo => 'Currency Converter - Detailed Information';
 
   @override
-  String get currencyConverterOverview =>
-      'This powerful currency converter allows you to convert between different currencies with live exchange rates.';
+  String get currencyConverterOverview => 'This powerful currency converter allows you to convert between different currencies with live exchange rates.';
 
   @override
   String get keyFeatures => 'Key Features';
@@ -3035,43 +2862,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get multipleCards => 'Multiple Cards';
 
   @override
-  String get multipleCardsDesc =>
-      'Create multiple converter cards, each with its own set of currencies and amounts.';
+  String get multipleCardsDesc => 'Create multiple converter cards, each with its own set of currencies and amounts.';
 
   @override
   String get liveRates => 'Live Exchange Rates';
 
   @override
-  String get liveRatesDesc =>
-      'Get real-time exchange rates from reliable financial sources.';
+  String get liveRatesDesc => 'Get real-time exchange rates from reliable financial sources.';
 
   @override
   String get customizeCurrencies => 'Customize Currencies';
 
   @override
-  String get customizeCurrenciesDesc =>
-      'Choose which currencies to display and save custom presets.';
+  String get customizeCurrenciesDesc => 'Choose which currencies to display and save custom presets.';
 
   @override
   String get dragAndDrop => 'Drag & Drop';
 
   @override
-  String get dragAndDropDesc =>
-      'Reorder your converter cards by dragging them.';
+  String get dragAndDropDesc => 'Reorder your converter cards by dragging them.';
 
   @override
   String get cardAndTableView => 'Card & Table View';
 
   @override
-  String get cardAndTableViewDesc =>
-      'Switch between card view for easy use or table view for comparison.';
+  String get cardAndTableViewDesc => 'Switch between card view for easy use or table view for comparison.';
 
   @override
   String get stateManagement => 'State Management';
 
   @override
-  String get stateManagementDesc =>
-      'Your converter state is automatically saved and restored.';
+  String get stateManagementDesc => 'Your converter state is automatically saved and restored.';
 
   @override
   String get howToUse => 'How to Use';
@@ -3092,15 +2913,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get step3 => '3. Select Base Currency';
 
   @override
-  String get step3Desc =>
-      'Use the dropdown to select which currency you\'re converting from.';
+  String get step3Desc => 'Use the dropdown to select which currency you\'re converting from.';
 
   @override
   String get step4 => '4. View Results';
 
   @override
-  String get step4Desc =>
-      'See instant conversions to all other currencies in the card.';
+  String get step4Desc => 'See instant conversions to all other currencies in the card.';
 
   @override
   String get tips => 'Tips';
@@ -3109,8 +2928,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tip1 => '• Tap the edit icon next to card names to rename them';
 
   @override
-  String get tip2 =>
-      '• Use the currency icon to customize which currencies appear';
+  String get tip2 => '• Use the currency icon to customize which currencies appear';
 
   @override
   String get tip3 => '• Save currency presets for quick access';
@@ -3125,8 +2943,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rateUpdate => 'Rate Updates';
 
   @override
-  String get rateUpdateDesc =>
-      'Exchange rates are updated based on your settings. Check Settings > Converter Tools to configure update frequency and retry behavior.';
+  String get rateUpdateDesc => 'Exchange rates are updated based on your settings. Check Settings > Converter Tools to configure update frequency and retry behavior.';
 
   @override
   String poweredBy(String service) {
@@ -3142,15 +2959,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dataAttribution => 'Data Attribution';
 
   @override
-  String get apiProviderAttribution =>
-      'Exchange rate data provided by ExchangeRate-API';
+  String get apiProviderAttribution => 'Exchange rate data provided by ExchangeRate-API';
 
   @override
   String get rateLimitReached => 'Rate limit reached';
 
   @override
-  String get rateLimitMessage =>
-      'You can only fetch currency rates once every 6 hours. Please try again later.';
+  String get rateLimitMessage => 'You can only fetch currency rates once every 6 hours. Please try again later.';
 
   @override
   String nextFetchAllowedIn(String timeRemaining) {
@@ -3158,8 +2973,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get rateLimitInfo =>
-      'Rate limiting helps prevent API abuse and ensures service availability for everyone.';
+  String get rateLimitInfo => 'Rate limiting helps prevent API abuse and ensures service availability for everyone.';
 
   @override
   String get understood => 'Understood';
@@ -3171,15 +2985,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get focusModeEnabled => 'Focus Mode';
 
   @override
-  String get focusModeEnabledDesc =>
-      'Hide UI elements for distraction-free experience';
+  String get focusModeEnabledDesc => 'Hide UI elements for distraction-free experience';
 
   @override
   String get saveRandomToolsState => 'Save Random Tools State';
 
   @override
-  String get saveRandomToolsStateDesc =>
-      'Automatically save tool settings when generating results';
+  String get saveRandomToolsStateDesc => 'Automatically save tool settings when generating results';
 
   @override
   String get focusModeDisabled => 'Focus mode disabled';
@@ -3191,8 +3003,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get disableFocusMode => 'Disable Focus Mode';
 
   @override
-  String get focusModeDescription =>
-      'Hide interface elements to focus on your conversions';
+  String get focusModeDescription => 'Hide interface elements to focus on your conversions';
 
   @override
   String focusModeEnabledMessage(String exitInstruction) {
@@ -3200,12 +3011,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get focusModeDisabledMessage =>
-      'Focus mode deactivated. All interface elements are now visible.';
+  String get focusModeDisabledMessage => 'Focus mode deactivated. All interface elements are now visible.';
 
   @override
-  String get exitFocusModeDesktop =>
-      'Tap the focus icon in the app bar to exit';
+  String get exitFocusModeDesktop => 'Tap the focus icon in the app bar to exit';
 
   @override
   String get exitFocusModeMobile => 'Zoom out or tap the focus icon to exit';
@@ -3223,8 +3032,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get focusModeButton => 'Use the focus button to toggle focus mode';
 
   @override
-  String get focusModeHidesElements =>
-      'Focus mode hides status widgets, add buttons, view mode buttons, and statistics';
+  String get focusModeHidesElements => 'Focus mode hides status widgets, add buttons, view mode buttons, and statistics';
 
   @override
   String get focusModeHelp => 'Focus Mode Help';
@@ -3233,8 +3041,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get focusModeHelpTitle => 'Focus Mode';
 
   @override
-  String get focusModeHelpDescription =>
-      'Focus mode helps you concentrate on your conversions by hiding non-essential interface elements.';
+  String get focusModeHelpDescription => 'Focus mode helps you concentrate on your conversions by hiding non-essential interface elements.';
 
   @override
   String get focusModeHelpHidden => 'Hidden in Focus Mode:';
@@ -3246,8 +3053,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get focusModeHelpHiddenButtons => '• Add card/row buttons';
 
   @override
-  String get focusModeHelpHiddenViewMode =>
-      '• View mode toggle buttons (Card/Table)';
+  String get focusModeHelpHiddenViewMode => '• View mode toggle buttons (Card/Table)';
 
   @override
   String get focusModeHelpHiddenStats => '• Statistics and count information';
@@ -3256,23 +3062,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get focusModeHelpActivation => 'Activation:';
 
   @override
-  String get focusModeHelpActivationDesktop =>
-      '• Desktop: Click the focus icon in the app bar';
+  String get focusModeHelpActivationDesktop => '• Desktop: Click the focus icon in the app bar';
 
   @override
-  String get focusModeHelpActivationMobile =>
-      '• Mobile: Use zoom in gesture or tap focus icon';
+  String get focusModeHelpActivationMobile => '• Mobile: Use zoom in gesture or tap focus icon';
 
   @override
   String get focusModeHelpDeactivation => 'Deactivation:';
 
   @override
-  String get focusModeHelpDeactivationDesktop =>
-      '• Desktop: Click the focus icon again';
+  String get focusModeHelpDeactivationDesktop => '• Desktop: Click the focus icon again';
 
   @override
-  String get focusModeHelpDeactivationMobile =>
-      '• Mobile: Use zoom out gesture or tap focus icon again';
+  String get focusModeHelpDeactivationMobile => '• Mobile: Use zoom out gesture or tap focus icon again';
 
   @override
   String get moreActions => 'More actions';
@@ -3281,173 +3083,142 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moreOptions => 'More Options';
 
   @override
-  String get lengthConverterDetailedInfo =>
-      'Length Converter - Detailed Information';
+  String get lengthConverterDetailedInfo => 'Length Converter - Detailed Information';
 
   @override
-  String get lengthConverterOverview =>
-      'This precision length converter supports multiple units with high accuracy calculations for professional and scientific use.';
+  String get lengthConverterOverview => 'This precision length converter supports multiple units with high accuracy calculations for professional and scientific use.';
 
   @override
   String get precisionCalculations => 'Precision Calculations';
 
   @override
-  String get precisionCalculationsDesc =>
-      'High-precision arithmetic with up to 15 decimal places for scientific accuracy.';
+  String get precisionCalculationsDesc => 'High-precision arithmetic with up to 15 decimal places for scientific accuracy.';
 
   @override
   String get multipleUnits => 'Multiple Length Units';
 
   @override
-  String get multipleUnitsDesc =>
-      'Support for metric, imperial, and scientific units including nanometers to kilometers.';
+  String get multipleUnitsDesc => 'Support for metric, imperial, and scientific units including nanometers to kilometers.';
 
   @override
   String get instantConversion => 'Instant Conversion';
 
   @override
-  String get instantConversionDesc =>
-      'Real-time conversion across all visible units as you type values.';
+  String get instantConversionDesc => 'Real-time conversion across all visible units as you type values.';
 
   @override
   String get customizableInterface => 'Customizable Interface';
 
   @override
-  String get customizableInterfaceDesc =>
-      'Hide or show specific units, arrange cards, and switch between views.';
+  String get customizableInterfaceDesc => 'Hide or show specific units, arrange cards, and switch between views.';
 
   @override
   String get statePersistence => 'State Persistence:';
 
   @override
-  String get statePersistenceDesc =>
-      'Your settings and card configurations are saved automatically.';
+  String get statePersistenceDesc => 'Your settings and card configurations are saved automatically.';
 
   @override
   String get scientificNotationSupport => 'Scientific Notation';
 
   @override
-  String get scientificNotationSupportDesc =>
-      'Support for very large and very small values using scientific notation.';
+  String get scientificNotationSupportDesc => 'Support for very large and very small values using scientific notation.';
 
   @override
   String get step1Length => 'Step 1: Add Cards';
 
   @override
-  String get step1LengthDesc =>
-      'Add multiple converter cards to work with different length values simultaneously.';
+  String get step1LengthDesc => 'Add multiple converter cards to work with different length values simultaneously.';
 
   @override
   String get step2Length => 'Step 2: Select Units';
 
   @override
-  String get step2LengthDesc =>
-      'Choose which length units to display by customizing each card\'s visible units.';
+  String get step2LengthDesc => 'Choose which length units to display by customizing each card\'s visible units.';
 
   @override
   String get step3Length => 'Step 3: Enter Values';
 
   @override
-  String get step3LengthDesc =>
-      'Type any length value and see instant conversions to all other units.';
+  String get step3LengthDesc => 'Type any length value and see instant conversions to all other units.';
 
   @override
   String get step4Length => 'Step 4: Organize Layout';
 
   @override
-  String get step4LengthDesc =>
-      'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
+  String get step4LengthDesc => 'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
 
   @override
-  String get tip1Length =>
-      '• Use scientific notation (1.5e6) for very large or small measurements';
+  String get tip1Length => '• Use scientific notation (1.5e6) for very large or small measurements';
 
   @override
-  String get tip2Length =>
-      '• Double-tap a unit field to select all text for quick editing';
+  String get tip2Length => '• Double-tap a unit field to select all text for quick editing';
 
   @override
-  String get tip3Length =>
-      '• Cards remember their individual unit selections and names';
+  String get tip3Length => '• Cards remember their individual unit selections and names';
 
   @override
-  String get tip4Length =>
-      '• Table view is ideal for comparing multiple measurements at once';
+  String get tip4Length => '• Table view is ideal for comparing multiple measurements at once';
 
   @override
-  String get tip5Length =>
-      '• Focus mode hides distractions for concentrated conversion work';
+  String get tip5Length => '• Focus mode hides distractions for concentrated conversion work';
 
   @override
-  String get tip6Length =>
-      '• Use the search function to quickly find specific units in customization';
+  String get tip6Length => '• Use the search function to quickly find specific units in customization';
 
   @override
   String get lengthUnitRange => 'Supported Units Range';
 
   @override
-  String get lengthUnitRangeDesc =>
-      'From subatomic (angstroms) to astronomical (light years) measurements with precision maintained throughout.';
+  String get lengthUnitRangeDesc => 'From subatomic (angstroms) to astronomical (light years) measurements with precision maintained throughout.';
 
   @override
-  String get weightConverterDetailedInfo =>
-      'Weight Converter - Detailed Information';
+  String get weightConverterDetailedInfo => 'Weight Converter - Detailed Information';
 
   @override
-  String get weightConverterOverview =>
-      'This precision weight/force converter supports multiple unit systems with high accuracy calculations for engineering, physics, and scientific applications.';
+  String get weightConverterOverview => 'This precision weight/force converter supports multiple unit systems with high accuracy calculations for engineering, physics, and scientific applications.';
 
   @override
   String get step1Weight => 'Step 1: Add Cards';
 
   @override
-  String get step1WeightDesc =>
-      'Add multiple converter cards to work with different force/weight values simultaneously.';
+  String get step1WeightDesc => 'Add multiple converter cards to work with different force/weight values simultaneously.';
 
   @override
   String get step2Weight => 'Step 2: Select Units';
 
   @override
-  String get step2WeightDesc =>
-      'Choose which force/weight units to display by customizing each card\'s visible units.';
+  String get step2WeightDesc => 'Choose which force/weight units to display by customizing each card\'s visible units.';
 
   @override
   String get step3Weight => 'Step 3: Enter Values';
 
   @override
-  String get step3WeightDesc =>
-      'Type any force/weight value and see instant conversions to all other units.';
+  String get step3WeightDesc => 'Type any force/weight value and see instant conversions to all other units.';
 
   @override
   String get step4Weight => 'Step 4: Organize Layout';
 
   @override
-  String get step4WeightDesc =>
-      'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
+  String get step4WeightDesc => 'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
 
   @override
-  String get tip1Weight =>
-      '• Newton (N) is the base SI unit for force with highest precision';
+  String get tip1Weight => '• Newton (N) is the base SI unit for force with highest precision';
 
   @override
-  String get tip2Weight =>
-      '• Kilogram-force (kgf) represents gravitational force on 1 kg mass';
+  String get tip2Weight => '• Kilogram-force (kgf) represents gravitational force on 1 kg mass';
 
   @override
-  String get tip3Weight =>
-      '• Use scientific notation for very large or small force values';
+  String get tip3Weight => '• Use scientific notation for very large or small force values';
 
   @override
-  String get tip4Weight =>
-      '• Dyne is useful for small forces in CGS system calculations';
+  String get tip4Weight => '• Dyne is useful for small forces in CGS system calculations';
 
   @override
-  String get tip5Weight =>
-      '• Troy units are specialized for precious metals and jewelry';
+  String get tip5Weight => '• Troy units are specialized for precious metals and jewelry';
 
   @override
-  String get tip6Weight =>
-      '• Focus mode helps concentrate on complex force calculations';
+  String get tip6Weight => '• Focus mode helps concentrate on complex force calculations';
 
   @override
   String get weightUnitCategories => 'Unit Categories';
@@ -3456,111 +3227,91 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonUnits => 'Common Units';
 
   @override
-  String get commonUnitsWeightDesc =>
-      'Newton (N), Kilogram-force (kgf), Pound-force (lbf) - most frequently used in engineering and physics.';
+  String get commonUnitsWeightDesc => 'Newton (N), Kilogram-force (kgf), Pound-force (lbf) - most frequently used in engineering and physics.';
 
   @override
   String get lessCommonUnits => 'Less Common Units';
 
   @override
-  String get lessCommonUnitsWeightDesc =>
-      'Dyne (dyn), Kilopond (kp) - specialized scientific and technical applications.';
+  String get lessCommonUnitsWeightDesc => 'Dyne (dyn), Kilopond (kp) - specialized scientific and technical applications.';
 
   @override
   String get uncommonUnits => 'Uncommon Units';
 
   @override
-  String get uncommonUnitsWeightDesc =>
-      'Ton-force (tf) - for very large force measurements in heavy industry.';
+  String get uncommonUnitsWeightDesc => 'Ton-force (tf) - for very large force measurements in heavy industry.';
 
   @override
   String get specialUnits => 'Special Units';
 
   @override
-  String get specialUnitsWeightDesc =>
-      'Gram-force (gf), Troy pound-force - for precision measurements and precious metals.';
+  String get specialUnitsWeightDesc => 'Gram-force (gf), Troy pound-force - for precision measurements and precious metals.';
 
   @override
-  String get practicalApplicationsWeightDesc =>
-      'Useful for engineering calculations, physics experiments, and applications requiring force measurements.';
+  String get practicalApplicationsWeightDesc => 'Useful for engineering calculations, physics experiments, and applications requiring force measurements.';
 
   @override
   String get practicalApplications => 'Practical Applications';
 
   @override
-  String get practicalApplicationsDesc =>
-      'Helpful for everyday measurements and unit conversions in various contexts.';
+  String get practicalApplicationsDesc => 'Helpful for everyday measurements and unit conversions in various contexts.';
 
   @override
-  String get massConverterDetailedInfo =>
-      'Mass Converter - Detailed Information';
+  String get massConverterDetailedInfo => 'Mass Converter - Detailed Information';
 
   @override
-  String get massConverterOverview =>
-      'This precise mass converter supports multiple unit systems with high accuracy calculations for scientific, medical, and commercial applications.';
+  String get massConverterOverview => 'This precise mass converter supports multiple unit systems with high accuracy calculations for scientific, medical, and commercial applications.';
 
   @override
   String get step1Mass => 'Step 1: Add Cards';
 
   @override
-  String get step1MassDesc =>
-      'Add multiple converter cards to work with different mass values simultaneously.';
+  String get step1MassDesc => 'Add multiple converter cards to work with different mass values simultaneously.';
 
   @override
   String get step2Mass => 'Step 2: Select Units';
 
   @override
-  String get step2MassDesc =>
-      'Choose which mass units to display from metric, imperial, troy, and apothecaries systems.';
+  String get step2MassDesc => 'Choose which mass units to display from metric, imperial, troy, and apothecaries systems.';
 
   @override
   String get step3Mass => 'Step 3: Enter Values';
 
   @override
-  String get step3MassDesc =>
-      'Type any mass value and see instant conversions to all other units.';
+  String get step3MassDesc => 'Type any mass value and see instant conversions to all other units.';
 
   @override
   String get step4Mass => 'Step 4: Organize Layout';
 
   @override
-  String get step4MassDesc =>
-      'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
+  String get step4MassDesc => 'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
 
   @override
-  String get tip1Mass =>
-      '• Use scientific notation (1.5e-12) for very small masses like atomic units';
+  String get tip1Mass => '• Use scientific notation (1.5e-12) for very small masses like atomic units';
 
   @override
-  String get tip2Mass =>
-      '• Troy system is ideal for precious metals calculations';
+  String get tip2Mass => '• Troy system is ideal for precious metals calculations';
 
   @override
-  String get tip3Mass =>
-      '• Apothecaries system is used in pharmacy and medicine';
+  String get tip3Mass => '• Apothecaries system is used in pharmacy and medicine';
 
   @override
-  String get tip4Mass =>
-      '• Table view is perfect for comparing multiple measurements';
+  String get tip4Mass => '• Table view is perfect for comparing multiple measurements';
 
   @override
-  String get tip5Mass =>
-      '• Focus mode hides distractions for concentrated conversion work';
+  String get tip5Mass => '• Focus mode hides distractions for concentrated conversion work';
 
   @override
-  String get tip6Mass =>
-      '• Use presets to save your favorite unit combinations';
+  String get tip6Mass => '• Use presets to save your favorite unit combinations';
 
   @override
   String get massUnitSystems => 'Supported Unit Systems';
 
   @override
-  String get massUnitSystemsDesc =>
-      'Metric (ng to tonnes), Imperial (grains to tons), Troy (precious metals), Apothecaries (pharmacy), and special units (carats, slugs, atomic mass units).';
+  String get massUnitSystemsDesc => 'Metric (ng to tonnes), Imperial (grains to tons), Troy (precious metals), Apothecaries (pharmacy), and special units (carats, slugs, atomic mass units).';
 
   @override
-  String get practicalApplicationsMassDesc =>
-      'Useful for cooking measurements, basic scientific calculations, and everyday mass conversions.';
+  String get practicalApplicationsMassDesc => 'Useful for cooking measurements, basic scientific calculations, and everyday mass conversions.';
 
   @override
   String get areaConverterInfo => 'Area Converter Info';
@@ -3569,236 +3320,190 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customizeAreaUnits => 'Customize Area Units';
 
   @override
-  String get areaConverterDetailedInfo =>
-      'Area Converter - Detailed Information';
+  String get areaConverterDetailedInfo => 'Area Converter - Detailed Information';
 
   @override
-  String get areaConverterOverview =>
-      'This precision area converter supports multiple unit systems with high accuracy calculations for real estate, agriculture, engineering, and scientific applications.';
+  String get areaConverterOverview => 'This precision area converter supports multiple unit systems with high accuracy calculations for real estate, agriculture, engineering, and scientific applications.';
 
   @override
   String get step1Area => 'Step 1: Add Cards';
 
   @override
-  String get step1AreaDesc =>
-      'Add multiple converter cards to work with different area values simultaneously.';
+  String get step1AreaDesc => 'Add multiple converter cards to work with different area values simultaneously.';
 
   @override
   String get step2Area => 'Step 2: Select Units';
 
   @override
-  String get step2AreaDesc =>
-      'Choose which area units to display by customizing each card\'s visible units.';
+  String get step2AreaDesc => 'Choose which area units to display by customizing each card\'s visible units.';
 
   @override
   String get step3Area => 'Step 3: Enter Values';
 
   @override
-  String get step3AreaDesc =>
-      'Type any area value and see instant conversions to all other units.';
+  String get step3AreaDesc => 'Type any area value and see instant conversions to all other units.';
 
   @override
   String get step4Area => 'Step 4: Organize Layout';
 
   @override
-  String get step4AreaDesc =>
-      'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
+  String get step4AreaDesc => 'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
 
   @override
-  String get tip1Area =>
-      '• Square meter (m²) is the base SI unit for area with highest precision';
+  String get tip1Area => '• Square meter (m²) is the base SI unit for area with highest precision';
 
   @override
-  String get tip2Area =>
-      '• Hectare is commonly used for large land areas and agriculture';
+  String get tip2Area => '• Hectare is commonly used for large land areas and agriculture';
 
   @override
-  String get tip3Area =>
-      '• Acre is standard in real estate and land measurement in the US';
+  String get tip3Area => '• Acre is standard in real estate and land measurement in the US';
 
   @override
-  String get tip4Area =>
-      '• Use scientific notation for very large or small area values';
+  String get tip4Area => '• Use scientific notation for very large or small area values';
 
   @override
-  String get tip5Area =>
-      '• Square feet and square inches are common in construction and design';
+  String get tip5Area => '• Square feet and square inches are common in construction and design';
 
   @override
-  String get tip6Area =>
-      '• Focus mode helps concentrate on complex area calculations';
+  String get tip6Area => '• Focus mode helps concentrate on complex area calculations';
 
   @override
   String get areaUnitCategories => 'Unit Categories';
 
   @override
-  String get commonUnitsAreaDesc =>
-      'Square meter (m²), Square kilometer (km²), Square centimeter (cm²) - most frequently used metric units.';
+  String get commonUnitsAreaDesc => 'Square meter (m²), Square kilometer (km²), Square centimeter (cm²) - most frequently used metric units.';
 
   @override
-  String get lessCommonUnitsAreaDesc =>
-      'Hectare (ha), Acre (ac), Square foot (ft²), Square inch (in²) - specialized applications in agriculture and construction.';
+  String get lessCommonUnitsAreaDesc => 'Hectare (ha), Acre (ac), Square foot (ft²), Square inch (in²) - specialized applications in agriculture and construction.';
 
   @override
-  String get uncommonUnitsAreaDesc =>
-      'Square yard (yd²), Square mile (mi²), Rood - for specific regional or historical measurements.';
+  String get uncommonUnitsAreaDesc => 'Square yard (yd²), Square mile (mi²), Rood - for specific regional or historical measurements.';
 
   @override
-  String get practicalApplicationsAreaDesc =>
-      'Helpful for home improvement projects, gardening, and basic area calculations.';
+  String get practicalApplicationsAreaDesc => 'Helpful for home improvement projects, gardening, and basic area calculations.';
 
   @override
-  String get timeConverterDetailedInfo =>
-      'Time Converter - Detailed Information';
+  String get timeConverterDetailedInfo => 'Time Converter - Detailed Information';
 
   @override
-  String get timeConverterOverview =>
-      'Comprehensive time unit conversion with precision calculations and multiple unit support.';
+  String get timeConverterOverview => 'Comprehensive time unit conversion with precision calculations and multiple unit support.';
 
   @override
   String get step1Time => 'Step 1: Select Time Units';
 
   @override
-  String get step1TimeDesc =>
-      'Choose from seconds, minutes, hours, days, weeks, months, years, and specialized units like milliseconds and nanoseconds.';
+  String get step1TimeDesc => 'Choose from seconds, minutes, hours, days, weeks, months, years, and specialized units like milliseconds and nanoseconds.';
 
   @override
   String get step2Time => 'Step 2: Enter Time Value';
 
   @override
-  String get step2TimeDesc =>
-      'Input the time duration you want to convert. Supports decimal values and scientific notation for precise calculations.';
+  String get step2TimeDesc => 'Input the time duration you want to convert. Supports decimal values and scientific notation for precise calculations.';
 
   @override
   String get step3Time => 'Step 3: View Conversions';
 
   @override
-  String get step3TimeDesc =>
-      'See instant conversions across all selected time units with high precision calculations.';
+  String get step3TimeDesc => 'See instant conversions across all selected time units with high precision calculations.';
 
   @override
   String get step4Time => 'Step 4: Customize & Save';
 
   @override
-  String get step4TimeDesc =>
-      'Add multiple cards, customize visible units, and save your preferred layout for future use.';
+  String get step4TimeDesc => 'Add multiple cards, customize visible units, and save your preferred layout for future use.';
 
   @override
-  String get tip1Time =>
-      '• Use scientific notation for very small or large time values';
+  String get tip1Time => '• Use scientific notation for very small or large time values';
 
   @override
-  String get tip2Time =>
-      '• Milliseconds and nanoseconds are perfect for technical calculations';
+  String get tip2Time => '• Milliseconds and nanoseconds are perfect for technical calculations';
 
   @override
-  String get tip3Time =>
-      '• Years and months use average values for consistency';
+  String get tip3Time => '• Years and months use average values for consistency';
 
   @override
-  String get tip4Time =>
-      '• Add multiple cards to compare different time scales';
+  String get tip4Time => '• Add multiple cards to compare different time scales';
 
   @override
   String get tip5Time => '• Customize visible units to show only what you need';
 
   @override
-  String get tip6Time =>
-      '• Focus mode helps concentrate on complex time calculations';
+  String get tip6Time => '• Focus mode helps concentrate on complex time calculations';
 
   @override
   String get timeUnitSystems => 'Time Unit Systems';
 
   @override
-  String get timeUnitSystemsDesc =>
-      'Supports standard time units (s, min, h, d, wk, mo, yr), precision units (ms, μs, ns), and extended units (decades, centuries, millennia) for comprehensive time measurement across all scales.';
+  String get timeUnitSystemsDesc => 'Supports standard time units (s, min, h, d, wk, mo, yr), precision units (ms, μs, ns), and extended units (decades, centuries, millennia) for comprehensive time measurement across all scales.';
 
   @override
-  String get practicalApplicationsTimeDesc =>
-      'Useful for scheduling, time zone conversions, and everyday time calculations.';
+  String get practicalApplicationsTimeDesc => 'Useful for scheduling, time zone conversions, and everyday time calculations.';
 
   @override
-  String get volumeConverterDetailedInfo =>
-      'Volume Converter - Detailed Information';
+  String get volumeConverterDetailedInfo => 'Volume Converter - Detailed Information';
 
   @override
-  String get volumeConverterOverview =>
-      'This precision volume converter supports multiple unit systems with high accuracy calculations for cooking, chemistry, engineering, and scientific applications.';
+  String get volumeConverterOverview => 'This precision volume converter supports multiple unit systems with high accuracy calculations for cooking, chemistry, engineering, and scientific applications.';
 
   @override
   String get step1Volume => 'Step 1: Add Cards';
 
   @override
-  String get step1VolumeDesc =>
-      'Add multiple converter cards to work with different volume values simultaneously.';
+  String get step1VolumeDesc => 'Add multiple converter cards to work with different volume values simultaneously.';
 
   @override
   String get step2Volume => 'Step 2: Select Units';
 
   @override
-  String get step2VolumeDesc =>
-      'Choose which volume units to display from metric, imperial, and US systems.';
+  String get step2VolumeDesc => 'Choose which volume units to display from metric, imperial, and US systems.';
 
   @override
   String get step3Volume => 'Step 3: Enter Values';
 
   @override
-  String get step3VolumeDesc =>
-      'Type any volume value and see instant conversions to all other units.';
+  String get step3VolumeDesc => 'Type any volume value and see instant conversions to all other units.';
 
   @override
   String get step4Volume => 'Step 4: Organize Layout';
 
   @override
-  String get step4VolumeDesc =>
-      'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
+  String get step4VolumeDesc => 'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
 
   @override
-  String get tip1Volume =>
-      '• Cubic meter (m³) is the base SI unit for volume with highest precision';
+  String get tip1Volume => '• Cubic meter (m³) is the base SI unit for volume with highest precision';
 
   @override
-  String get tip2Volume =>
-      '• Liter is commonly used for liquid measurements in everyday applications';
+  String get tip2Volume => '• Liter is commonly used for liquid measurements in everyday applications';
 
   @override
-  String get tip3Volume =>
-      '• Milliliter and cubic centimeter are equivalent and interchangeable';
+  String get tip3Volume => '• Milliliter and cubic centimeter are equivalent and interchangeable';
 
   @override
-  String get tip4Volume =>
-      '• US and UK gallons are different units, choose carefully';
+  String get tip4Volume => '• US and UK gallons are different units, choose carefully';
 
   @override
-  String get tip5Volume =>
-      '• Use scientific notation for very large or small volume values';
+  String get tip5Volume => '• Use scientific notation for very large or small volume values';
 
   @override
-  String get tip6Volume =>
-      '• Focus mode helps concentrate on complex volume calculations';
+  String get tip6Volume => '• Focus mode helps concentrate on complex volume calculations';
 
   @override
   String get volumeUnitCategories => 'Unit Categories';
 
   @override
-  String get commonUnitsVolumeDesc =>
-      'Cubic meter (m³), Liter (L), Milliliter (mL) - most frequently used metric units.';
+  String get commonUnitsVolumeDesc => 'Cubic meter (m³), Liter (L), Milliliter (mL) - most frequently used metric units.';
 
   @override
-  String get lessCommonUnitsVolumeDesc =>
-      'Gallon (US/UK), Cubic foot (ft³), Quart, Pint - imperial and US customary units.';
+  String get lessCommonUnitsVolumeDesc => 'Gallon (US/UK), Cubic foot (ft³), Quart, Pint - imperial and US customary units.';
 
   @override
-  String get uncommonUnitsVolumeDesc =>
-      'Hectoliter (hL), Barrel (bbl), Cup, Fluid ounce - specialized applications.';
+  String get uncommonUnitsVolumeDesc => 'Hectoliter (hL), Barrel (bbl), Cup, Fluid ounce - specialized applications.';
 
   @override
-  String get specialUnitsVolumeDesc =>
-      'Cubic centimeter (cm³), Cubic inch (in³), Cubic yard (yd³) - engineering and construction units.';
+  String get specialUnitsVolumeDesc => 'Cubic centimeter (cm³), Cubic inch (in³), Cubic yard (yd³) - engineering and construction units.';
 
   @override
-  String get practicalApplicationsVolumeDesc =>
-      'Helpful for cooking, baking, and basic volume measurements.';
+  String get practicalApplicationsVolumeDesc => 'Helpful for cooking, baking, and basic volume measurements.';
 
   @override
   String get volumeConverterInfo => 'Volume Converter Information';
@@ -3858,83 +3563,67 @@ class AppLocalizationsEn extends AppLocalizations {
   String get barrel => 'Barrel (Oil)';
 
   @override
-  String get numberSystemConverterDetailedInfo =>
-      'Number System Converter - Detailed Information';
+  String get numberSystemConverterDetailedInfo => 'Number System Converter - Detailed Information';
 
   @override
-  String get numberSystemConverterOverview =>
-      'This precision number system converter supports multiple base systems with high accuracy calculations for programming, computer science, and mathematical applications.';
+  String get numberSystemConverterOverview => 'This precision number system converter supports multiple base systems with high accuracy calculations for programming, computer science, and mathematical applications.';
 
   @override
   String get step1NumberSystem => 'Step 1: Add Cards';
 
   @override
-  String get step1NumberSystemDesc =>
-      'Add multiple converter cards to work with different number base values simultaneously.';
+  String get step1NumberSystemDesc => 'Add multiple converter cards to work with different number base values simultaneously.';
 
   @override
   String get step2NumberSystem => 'Step 2: Select Bases';
 
   @override
-  String get step2NumberSystemDesc =>
-      'Choose which number bases to display from binary, decimal, hexadecimal, and other systems.';
+  String get step2NumberSystemDesc => 'Choose which number bases to display from binary, decimal, hexadecimal, and other systems.';
 
   @override
   String get step3NumberSystem => 'Step 3: Enter Values';
 
   @override
-  String get step3NumberSystemDesc =>
-      'Type any number value and see instant conversions to all other base systems.';
+  String get step3NumberSystemDesc => 'Type any number value and see instant conversions to all other base systems.';
 
   @override
   String get step4NumberSystem => 'Step 4: Organize Layout';
 
   @override
-  String get step4NumberSystemDesc =>
-      'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
+  String get step4NumberSystemDesc => 'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
 
   @override
-  String get tip1NumberSystem =>
-      '• Decimal (Base 10) is the standard counting system with highest precision';
+  String get tip1NumberSystem => '• Decimal (Base 10) is the standard counting system with highest precision';
 
   @override
-  String get tip2NumberSystem =>
-      '• Binary (Base 2) is fundamental for computer science and digital electronics';
+  String get tip2NumberSystem => '• Binary (Base 2) is fundamental for computer science and digital electronics';
 
   @override
-  String get tip3NumberSystem =>
-      '• Hexadecimal (Base 16) is commonly used in programming and memory addressing';
+  String get tip3NumberSystem => '• Hexadecimal (Base 16) is commonly used in programming and memory addressing';
 
   @override
-  String get tip4NumberSystem =>
-      '• Octal (Base 8) was historically important in computing systems';
+  String get tip4NumberSystem => '• Octal (Base 8) was historically important in computing systems';
 
   @override
-  String get tip5NumberSystem =>
-      '• Base 32 and Base 64 are used for data encoding and transmission';
+  String get tip5NumberSystem => '• Base 32 and Base 64 are used for data encoding and transmission';
 
   @override
-  String get tip6NumberSystem =>
-      '• Focus mode helps concentrate on complex base calculations';
+  String get tip6NumberSystem => '• Focus mode helps concentrate on complex base calculations';
 
   @override
   String get numberSystemUnitCategories => 'Base Systems';
 
   @override
-  String get commonBasesDesc =>
-      'Binary (Base 2), Decimal (Base 10), Hexadecimal (Base 16) - most frequently used in computing and mathematics.';
+  String get commonBasesDesc => 'Binary (Base 2), Decimal (Base 10), Hexadecimal (Base 16) - most frequently used in computing and mathematics.';
 
   @override
-  String get lessCommonBasesDesc =>
-      'Octal (Base 8), Base 32, Base 64 - specialized applications in programming and data encoding.';
+  String get lessCommonBasesDesc => 'Octal (Base 8), Base 32, Base 64 - specialized applications in programming and data encoding.';
 
   @override
-  String get uncommonBasesDesc =>
-      'Base 128, Base 256 - for advanced data representation and specialized algorithms.';
+  String get uncommonBasesDesc => 'Base 128, Base 256 - for advanced data representation and specialized algorithms.';
 
   @override
-  String get practicalApplicationsNumberSystemDesc =>
-      'Useful for basic programming, learning number systems, and simple base conversions.';
+  String get practicalApplicationsNumberSystemDesc => 'Useful for basic programming, learning number systems, and simple base conversions.';
 
   @override
   String get numberSystemConverterInfo => 'Number System Converter Information';
@@ -3961,64 +3650,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get base256 => 'Base 256';
 
   @override
-  String get speedConverterDetailedInfo =>
-      'Speed Converter - Detailed Information';
+  String get speedConverterDetailedInfo => 'Speed Converter - Detailed Information';
 
   @override
-  String get speedConverterOverview =>
-      'This precision speed converter supports multiple unit systems with high accuracy calculations for automotive, aviation, maritime, and scientific applications.';
+  String get speedConverterOverview => 'This precision speed converter supports multiple unit systems with high accuracy calculations for automotive, aviation, maritime, and scientific applications.';
 
   @override
   String get step1Speed => 'Step 1: Add Cards';
 
   @override
-  String get step1SpeedDesc =>
-      'Add multiple converter cards to work with different speed values simultaneously.';
+  String get step1SpeedDesc => 'Add multiple converter cards to work with different speed values simultaneously.';
 
   @override
   String get step2Speed => 'Step 2: Select Units';
 
   @override
-  String get step2SpeedDesc =>
-      'Choose which speed units to display from metric, imperial, maritime, and aviation systems.';
+  String get step2SpeedDesc => 'Choose which speed units to display from metric, imperial, maritime, and aviation systems.';
 
   @override
   String get step3Speed => 'Step 3: Enter Values';
 
   @override
-  String get step3SpeedDesc =>
-      'Type any speed value and see instant conversions to all other units.';
+  String get step3SpeedDesc => 'Type any speed value and see instant conversions to all other units.';
 
   @override
   String get step4Speed => 'Step 4: Organize Layout';
 
   @override
-  String get step4SpeedDesc =>
-      'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
+  String get step4SpeedDesc => 'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
 
   @override
-  String get tip1Speed =>
-      '• Meters per second (m/s) is the base SI unit for speed with highest precision';
+  String get tip1Speed => '• Meters per second (m/s) is the base SI unit for speed with highest precision';
 
   @override
-  String get tip2Speed =>
-      '• Kilometers per hour (km/h) is commonly used for vehicle speeds';
+  String get tip2Speed => '• Kilometers per hour (km/h) is commonly used for vehicle speeds';
 
   @override
-  String get tip3Speed =>
-      '• Miles per hour (mph) is standard in the US for road speeds';
+  String get tip3Speed => '• Miles per hour (mph) is standard in the US for road speeds';
 
   @override
-  String get tip4Speed =>
-      '• Knots are standard for maritime and aviation navigation';
+  String get tip4Speed => '• Knots are standard for maritime and aviation navigation';
 
   @override
-  String get tip5Speed =>
-      '• Mach number represents speed relative to sound (343 m/s at sea level)';
+  String get tip5Speed => '• Mach number represents speed relative to sound (343 m/s at sea level)';
 
   @override
-  String get tip6Speed =>
-      '• Focus mode helps concentrate on complex speed calculations';
+  String get tip6Speed => '• Focus mode helps concentrate on complex speed calculations';
 
   @override
   String get speedUnitCategories => 'Unit Categories';
@@ -4027,31 +3704,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get multipleSpeedUnits => 'Multiple Speed Units';
 
   @override
-  String get multipleSpeedUnitsDesc =>
-      'Support for metric, imperial, maritime, and aviation units including m/s to Mach numbers.';
+  String get multipleSpeedUnitsDesc => 'Support for metric, imperial, maritime, and aviation units including m/s to Mach numbers.';
 
   @override
   String get speedUnitRange => 'Supported Speed Range';
 
   @override
-  String get speedUnitRangeDesc =>
-      'From millimeters per second to supersonic speeds (Mach numbers) with precision maintained throughout the range.';
+  String get speedUnitRangeDesc => 'From millimeters per second to supersonic speeds (Mach numbers) with precision maintained throughout the range.';
 
   @override
-  String get commonUnitsSpeedDesc =>
-      'Kilometers per hour (km/h), Meters per second (m/s), Miles per hour (mph) - most frequently used for ground transportation.';
+  String get commonUnitsSpeedDesc => 'Kilometers per hour (km/h), Meters per second (m/s), Miles per hour (mph) - most frequently used for ground transportation.';
 
   @override
-  String get lessCommonUnitsSpeedDesc =>
-      'Knots (kn), Feet per second (ft/s) - specialized for maritime, aviation, and ballistics applications.';
+  String get lessCommonUnitsSpeedDesc => 'Knots (kn), Feet per second (ft/s) - specialized for maritime, aviation, and ballistics applications.';
 
   @override
-  String get uncommonUnitsSpeedDesc =>
-      'Mach (M) - for supersonic and hypersonic speeds in aerospace applications.';
+  String get uncommonUnitsSpeedDesc => 'Mach (M) - for supersonic and hypersonic speeds in aerospace applications.';
 
   @override
-  String get practicalApplicationsSpeedDesc =>
-      'Helpful for travel planning, sports activities, and basic speed conversions.';
+  String get practicalApplicationsSpeedDesc => 'Helpful for travel planning, sports activities, and basic speed conversions.';
 
   @override
   String get speedConverterInfo => 'Speed Converter Information';
@@ -4066,64 +3737,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get speedUnits => 'Speed Units';
 
   @override
-  String get temperatureConverterDetailedInfo =>
-      'Temperature Converter - Detailed Information';
+  String get temperatureConverterDetailedInfo => 'Temperature Converter - Detailed Information';
 
   @override
-  String get temperatureConverterOverview =>
-      'This precision temperature converter supports multiple temperature scales with high accuracy calculations for scientific, engineering, cooking, and everyday applications.';
+  String get temperatureConverterOverview => 'This precision temperature converter supports multiple temperature scales with high accuracy calculations for scientific, engineering, cooking, and everyday applications.';
 
   @override
   String get step1Temperature => 'Step 1: Add Cards';
 
   @override
-  String get step1TemperatureDesc =>
-      'Add multiple converter cards to work with different temperature values simultaneously.';
+  String get step1TemperatureDesc => 'Add multiple converter cards to work with different temperature values simultaneously.';
 
   @override
   String get step2Temperature => 'Step 2: Select Scales';
 
   @override
-  String get step2TemperatureDesc =>
-      'Choose which temperature scales to display from Celsius, Fahrenheit, Kelvin, and other systems.';
+  String get step2TemperatureDesc => 'Choose which temperature scales to display from Celsius, Fahrenheit, Kelvin, and other systems.';
 
   @override
   String get step3Temperature => 'Step 3: Enter Values';
 
   @override
-  String get step3TemperatureDesc =>
-      'Type any temperature value and see instant conversions to all other scales.';
+  String get step3TemperatureDesc => 'Type any temperature value and see instant conversions to all other scales.';
 
   @override
   String get step4Temperature => 'Step 4: Organize Layout';
 
   @override
-  String get step4TemperatureDesc =>
-      'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
+  String get step4TemperatureDesc => 'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
 
   @override
-  String get tip1Temperature =>
-      '• Celsius (°C) is the most widely used temperature scale globally';
+  String get tip1Temperature => '• Celsius (°C) is the most widely used temperature scale globally';
 
   @override
-  String get tip2Temperature =>
-      '• Fahrenheit (°F) is commonly used in the United States';
+  String get tip2Temperature => '• Fahrenheit (°F) is commonly used in the United States';
 
   @override
-  String get tip3Temperature =>
-      '• Kelvin (K) is the absolute temperature scale used in science';
+  String get tip3Temperature => '• Kelvin (K) is the absolute temperature scale used in science';
 
   @override
-  String get tip4Temperature =>
-      '• Rankine (°R) is the absolute Fahrenheit scale';
+  String get tip4Temperature => '• Rankine (°R) is the absolute Fahrenheit scale';
 
   @override
-  String get tip5Temperature =>
-      '• Réaumur (°Ré) is historically used in some European countries';
+  String get tip5Temperature => '• Réaumur (°Ré) is historically used in some European countries';
 
   @override
-  String get tip6Temperature =>
-      '• Focus mode helps concentrate on complex temperature calculations';
+  String get tip6Temperature => '• Focus mode helps concentrate on complex temperature calculations';
 
   @override
   String get temperatureUnitCategories => 'Temperature Scale Categories';
@@ -4132,26 +3791,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get temperatureCommonUnits => 'Common Scales';
 
   @override
-  String get temperatureCommonUnitsDesc =>
-      'Celsius (°C), Fahrenheit (°F) - most frequently used for weather, cooking, and everyday temperature measurements.';
+  String get temperatureCommonUnitsDesc => 'Celsius (°C), Fahrenheit (°F) - most frequently used for weather, cooking, and everyday temperature measurements.';
 
   @override
   String get temperatureLessCommonUnits => 'Scientific Scale';
 
   @override
-  String get temperatureLessCommonUnitsDesc =>
-      'Kelvin (K) - absolute temperature scale used in scientific and engineering applications.';
+  String get temperatureLessCommonUnitsDesc => 'Kelvin (K) - absolute temperature scale used in scientific and engineering applications.';
 
   @override
   String get temperatureRareUnits => 'Specialized Scales';
 
   @override
-  String get temperatureRareUnitsDesc =>
-      'Rankine (°R), Réaumur (°Ré), Delisle (°De) - historical and specialized temperature scales for specific applications.';
+  String get temperatureRareUnitsDesc => 'Rankine (°R), Réaumur (°Ré), Delisle (°De) - historical and specialized temperature scales for specific applications.';
 
   @override
-  String get temperaturePracticalApplicationsDesc =>
-      'Useful for cooking, weather understanding, and basic temperature conversions.';
+  String get temperaturePracticalApplicationsDesc => 'Useful for cooking, weather understanding, and basic temperature conversions.';
 
   @override
   String get temperatureConverterInfo => 'Temperature Converter Information';
@@ -4166,64 +3821,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get temperatureUnits => 'Temperature Scales';
 
   @override
-  String get dataConverterDetailedInfo =>
-      'Data Storage Converter - Detailed Information';
+  String get dataConverterDetailedInfo => 'Data Storage Converter - Detailed Information';
 
   @override
-  String get dataConverterOverview =>
-      'This precision data storage converter supports multiple data units with high accuracy calculations for computer science, IT management, file handling, and digital storage applications.';
+  String get dataConverterOverview => 'This precision data storage converter supports multiple data units with high accuracy calculations for computer science, IT management, file handling, and digital storage applications.';
 
   @override
   String get step1Data => 'Step 1: Add Cards';
 
   @override
-  String get step1DataDesc =>
-      'Add multiple converter cards to work with different data storage values simultaneously.';
+  String get step1DataDesc => 'Add multiple converter cards to work with different data storage values simultaneously.';
 
   @override
   String get step2Data => 'Step 2: Select Units';
 
   @override
-  String get step2DataDesc =>
-      'Choose which data storage units to display from bytes, kilobytes, gigabytes, and other systems.';
+  String get step2DataDesc => 'Choose which data storage units to display from bytes, kilobytes, gigabytes, and other systems.';
 
   @override
   String get step3Data => 'Step 3: Enter Values';
 
   @override
-  String get step3DataDesc =>
-      'Type any data storage value and see instant conversions to all other units.';
+  String get step3DataDesc => 'Type any data storage value and see instant conversions to all other units.';
 
   @override
   String get step4Data => 'Step 4: Organize Layout';
 
   @override
-  String get step4DataDesc =>
-      'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
+  String get step4DataDesc => 'Drag cards to reorder, switch to table view, or use focus mode for distraction-free work.';
 
   @override
-  String get tip1Data =>
-      '• Byte (B) is the fundamental unit of digital information storage';
+  String get tip1Data => '• Byte (B) is the fundamental unit of digital information storage';
 
   @override
-  String get tip2Data =>
-      '• Kilobyte (KB), Megabyte (MB), Gigabyte (GB) are standard for file sizes';
+  String get tip2Data => '• Kilobyte (KB), Megabyte (MB), Gigabyte (GB) are standard for file sizes';
 
   @override
-  String get tip3Data =>
-      '• Terabyte (TB) and Petabyte (PB) are used for large-scale storage systems';
+  String get tip3Data => '• Terabyte (TB) and Petabyte (PB) are used for large-scale storage systems';
 
   @override
-  String get tip4Data =>
-      '• Bit units (Kbit, Mbit, Gbit) are commonly used for network speeds';
+  String get tip4Data => '• Bit units (Kbit, Mbit, Gbit) are commonly used for network speeds';
 
   @override
-  String get tip5Data =>
-      '• Binary prefixes (1024-based) provide more accurate computer calculations';
+  String get tip5Data => '• Binary prefixes (1024-based) provide more accurate computer calculations';
 
   @override
-  String get tip6Data =>
-      '• Focus mode helps concentrate on complex data storage calculations';
+  String get tip6Data => '• Focus mode helps concentrate on complex data storage calculations';
 
   @override
   String get dataUnitCategories => 'Data Storage Unit Categories';
@@ -4232,26 +3875,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dataCommonUnits => 'Common Units';
 
   @override
-  String get dataCommonUnitsDesc =>
-      'Kilobyte (KB), Megabyte (MB), Gigabyte (GB) - most frequently used storage units for everyday file sizes and device capacities.';
+  String get dataCommonUnitsDesc => 'Kilobyte (KB), Megabyte (MB), Gigabyte (GB) - most frequently used storage units for everyday file sizes and device capacities.';
 
   @override
   String get dataLessCommonUnits => 'Large Storage Units';
 
   @override
-  String get dataLessCommonUnitsDesc =>
-      'Terabyte (TB), Petabyte (PB), and basic Byte (B) units for specialized storage applications and very large or very small data measurements.';
+  String get dataLessCommonUnitsDesc => 'Terabyte (TB), Petabyte (PB), and basic Byte (B) units for specialized storage applications and very large or very small data measurements.';
 
   @override
   String get dataRareUnits => 'Network Units';
 
   @override
-  String get dataRareUnitsDesc =>
-      'Bit, Kilobit (Kbit), Megabit (Mbit), Gigabit (Gbit) are primarily used for network speeds and data transmission rates.';
+  String get dataRareUnitsDesc => 'Bit, Kilobit (Kbit), Megabit (Mbit), Gigabit (Gbit) are primarily used for network speeds and data transmission rates.';
 
   @override
-  String get dataPracticalApplicationsDesc =>
-      'Helpful for understanding file sizes, storage needs, and basic data unit conversions.';
+  String get dataPracticalApplicationsDesc => 'Helpful for understanding file sizes, storage needs, and basic data unit conversions.';
 
   @override
   String get dataConverterInfo => 'Data Storage Converter Information';
@@ -4272,8 +3911,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noDraftsYet => 'No drafts yet';
 
   @override
-  String get createDraftsHint =>
-      'Drafts are temporary saves of your work. They\'re automatically created when you exit editing without saving.';
+  String get createDraftsHint => 'Drafts are temporary saves of your work. They\'re automatically created when you exit editing without saving.';
 
   @override
   String get draftSaved => 'Draft saved';
@@ -4294,8 +3932,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unsavedChanges => 'Unsaved Changes';
 
   @override
-  String get unsavedChangesMessage =>
-      'You have unsaved changes. What would you like to do?';
+  String get unsavedChangesMessage => 'You have unsaved changes. What would you like to do?';
 
   @override
   String get continueDraft => 'Continue Draft';
@@ -4310,8 +3947,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirmDeleteDraft => 'Delete Draft?';
 
   @override
-  String get confirmDeleteDraftMessage =>
-      'Are you sure you want to delete this draft? This action cannot be undone.';
+  String get confirmDeleteDraftMessage => 'Are you sure you want to delete this draft? This action cannot be undone.';
 
   @override
   String get draftPublished => 'Draft published as template';
@@ -4471,8 +4107,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get functionInputHelp => 'Function Input Help';
 
   @override
-  String get functionInputHelpDesc =>
-      'Get help with mathematical function syntax';
+  String get functionInputHelpDesc => 'Get help with mathematical function syntax';
 
   @override
   String get commonFunctions => 'Common Functions';
@@ -4487,8 +4122,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get functionSyntaxError => 'Invalid function syntax';
 
   @override
-  String get functionSyntaxErrorDesc =>
-      'Please check your function syntax and try again';
+  String get functionSyntaxErrorDesc => 'Please check your function syntax and try again';
 
   @override
   String get advancedFunctions => 'Advanced Functions';
@@ -4497,15 +4131,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get askBeforeLoadingHistory => 'Ask before loading history';
 
   @override
-  String get askBeforeLoadingHistoryDesc =>
-      'Show confirmation dialog when loading function groups from history';
+  String get askBeforeLoadingHistoryDesc => 'Show confirmation dialog when loading function groups from history';
 
   @override
   String get rememberCalculationHistory => 'Remember calculation history';
 
   @override
-  String get rememberCalculationHistoryDesc =>
-      'Save function groups to history for later use';
+  String get rememberCalculationHistoryDesc => 'Save function groups to history for later use';
 
   @override
   String get saveCurrentToHistory => 'Save current group to history';
@@ -4514,8 +4146,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadHistoryGroup => 'Load History Group';
 
   @override
-  String get saveCurrentGroupQuestion =>
-      'Do you want to save the current function group to history?';
+  String get saveCurrentGroupQuestion => 'Do you want to save the current function group to history?';
 
   @override
   String get dontAskAgain => 'Don\'t ask again';
@@ -4642,8 +4273,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stateLoadingIssuesDetected => '⚠️ State Loading Issues Detected';
 
   @override
-  String get stateLoadingIssuesDesc =>
-      'This usually happens after app updates that change data structure.';
+  String get stateLoadingIssuesDesc => 'This usually happens after app updates that change data structure.';
 
   @override
   String get clearAllStateData => 'Clear All State Data';
@@ -4652,12 +4282,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clearingStateData => 'Clearing all converter state data...';
 
   @override
-  String get clearingAllConverterStateData =>
-      'Clearing all converter state data...';
+  String get clearingAllConverterStateData => 'Clearing all converter state data...';
 
   @override
-  String get allStateDataCleared =>
-      'All state data has been cleared. The app will restart to complete the process.';
+  String get allStateDataCleared => 'All state data has been cleared. The app will restart to complete the process.';
 
   @override
   String failedToRunDiagnostics(String error) {
@@ -4670,62 +4298,49 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get stateDataClearedSuccess =>
-      'All state data has been cleared. The app will restart to complete the process.';
+  String get stateDataClearedSuccess => 'All state data has been cleared. The app will restart to complete the process.';
 
   @override
   String get ok => 'OK';
 
   @override
-  String get bmiUnderweightInterpretation =>
-      'Your BMI indicates that you are underweight. This may suggest you need to gain weight for optimal health.';
+  String get bmiUnderweightInterpretation => 'Your BMI indicates that you are underweight. This may suggest you need to gain weight for optimal health.';
 
   @override
-  String get bmiElderlyNote =>
-      'For adults over 65, slightly higher BMI ranges (22-27) may be acceptable and protective.';
+  String get bmiElderlyNote => 'For adults over 65, slightly higher BMI ranges (22-27) may be acceptable and protective.';
 
   @override
-  String get bmiYouthNote =>
-      'For individuals under 20, BMI should be evaluated using age and gender-specific percentile charts.';
+  String get bmiYouthNote => 'For individuals under 20, BMI should be evaluated using age and gender-specific percentile charts.';
 
   @override
-  String get bmiLimitationReminder =>
-      'Remember: BMI is a screening tool and doesn\'t account for muscle mass, bone density, or body composition.';
+  String get bmiLimitationReminder => 'Remember: BMI is a screening tool and doesn\'t account for muscle mass, bone density, or body composition.';
 
   @override
-  String get bmiElderlyRec =>
-      'As an older adult, focus on maintaining muscle mass through resistance training and adequate protein intake.';
+  String get bmiElderlyRec => 'As an older adult, focus on maintaining muscle mass through resistance training and adequate protein intake.';
 
   @override
-  String get bmiYouthRec =>
-      'For young adults, focus on establishing healthy eating patterns and regular physical activity habits.';
+  String get bmiYouthRec => 'For young adults, focus on establishing healthy eating patterns and regular physical activity habits.';
 
   @override
-  String get bmiFemaleRec =>
-      'Women of reproductive age should ensure adequate nutrition, especially iron and calcium intake.';
+  String get bmiFemaleRec => 'Women of reproductive age should ensure adequate nutrition, especially iron and calcium intake.';
 
   @override
-  String get bmiConsultationRec =>
-      'Consider consulting with healthcare professionals for personalized health assessment and guidance.';
+  String get bmiConsultationRec => 'Consider consulting with healthcare professionals for personalized health assessment and guidance.';
 
   @override
   String get bmiFormula => 'BMI = Weight (kg) / [Height (m)]²';
 
   @override
-  String get bmiLimitation1 =>
-      'Does not reflect body composition (muscle vs. fat ratio)';
+  String get bmiLimitation1 => 'Does not reflect body composition (muscle vs. fat ratio)';
 
   @override
-  String get bmiLimitation2 =>
-      'May not be accurate for athletes, elderly, or certain ethnic groups';
+  String get bmiLimitation2 => 'May not be accurate for athletes, elderly, or certain ethnic groups';
 
   @override
-  String get bmiLimitation3 =>
-      'Does not assess other health factors like blood pressure, cholesterol, or blood sugar';
+  String get bmiLimitation3 => 'Does not assess other health factors like blood pressure, cholesterol, or blood sugar';
 
   @override
-  String get bmiLimitation4 =>
-      'Not suitable for pregnant women, children under 18, or individuals with certain medical conditions';
+  String get bmiLimitation4 => 'Not suitable for pregnant women, children under 18, or individuals with certain medical conditions';
 
   @override
   String get bmiConsult1 => 'Comprehensive health checkups and necessary tests';
@@ -4734,19 +4349,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bmiConsult2 => 'Professional medical consultation and guidance';
 
   @override
-  String get bmiConsult3 =>
-      'Personalized care recommendations from healthcare specialists';
+  String get bmiConsult3 => 'Personalized care recommendations from healthcare specialists';
 
   @override
-  String get bmiPediatricTitle =>
-      'BMI Classification for Children and Adolescents (Under 18)';
+  String get bmiPediatricTitle => 'BMI Classification for Children and Adolescents (Under 18)';
 
   @override
   String get bmiAdultTitle => 'BMI Classification for Adults (18 and Over)';
 
   @override
-  String get bmiPercentileNote =>
-      'Based on CDC growth charts with age and gender-specific percentiles';
+  String get bmiPercentileNote => 'Based on CDC growth charts with age and gender-specific percentiles';
 
   @override
   String get bmiPercentileUnderweight => 'Below 5th percentile';
@@ -4760,12 +4372,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bmiPediatricNote =>
-      'For children and adolescents, BMI is compared to others of the same age and gender using percentile charts.';
+  String get bmiPediatricNote => 'For children and adolescents, BMI is compared to others of the same age and gender using percentile charts.';
 
   @override
-  String get bmiGrowthPattern =>
-      'Consult with pediatrician to evaluate growth patterns and overall health.';
+  String get bmiGrowthPattern => 'Consult with pediatrician to evaluate growth patterns and overall health.';
 
   @override
   String get ageYears => 'Age (years)';
@@ -4789,23 +4399,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bmiDetailedInfo => 'BMI Calculator Information';
 
   @override
-  String get bmiOverview =>
-      'Comprehensive Body Mass Index calculator with health insights and recommendations';
+  String get bmiOverview => 'Comprehensive Body Mass Index calculator with health insights and recommendations';
 
   @override
   String get financialCalculator => 'Financial Calculator';
 
   @override
-  String get financialCalculatorDesc =>
-      'Advanced financial calculations for loans, investments, and compound interest';
+  String get financialCalculatorDesc => 'Advanced financial calculations for loans, investments, and compound interest';
 
   @override
-  String get financialCalculatorDetailedInfo =>
-      'Financial Calculator Information';
+  String get financialCalculatorDetailedInfo => 'Financial Calculator Information';
 
   @override
-  String get financialCalculatorOverview =>
-      'Comprehensive financial calculator for loan payments, investment planning, and compound interest calculations';
+  String get financialCalculatorOverview => 'Comprehensive financial calculator for loan payments, investment planning, and compound interest calculations';
 
   @override
   String get loanCalculator => 'Loan Calculator';
@@ -4931,34 +4537,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get inputError => 'Input Error';
 
   @override
-  String get pleaseEnterValidNumbers =>
-      'Please enter valid positive numbers for all fields.';
+  String get pleaseEnterValidNumbers => 'Please enter valid positive numbers for all fields.';
 
   @override
-  String get pleaseEnterValidReturnAndTerm =>
-      'Please enter valid positive numbers for return rate and term.';
+  String get pleaseEnterValidReturnAndTerm => 'Please enter valid positive numbers for return rate and term.';
 
   @override
-  String get financialCalculationHistory =>
-      'Financial calculation history and saved calculations';
+  String get financialCalculationHistory => 'Financial calculation history and saved calculations';
 
   @override
   String get financialHistoryCleared => 'Financial history cleared';
 
   @override
-  String get confirmClearFinancialHistory =>
-      'Are you sure you want to clear all financial calculation history?';
+  String get confirmClearFinancialHistory => 'Are you sure you want to clear all financial calculation history?';
 
   @override
   String get loanCalculationSaved => 'Loan calculation saved to history';
 
   @override
-  String get investmentCalculationSaved =>
-      'Investment calculation saved to history';
+  String get investmentCalculationSaved => 'Investment calculation saved to history';
 
   @override
-  String get compoundCalculationSaved =>
-      'Compound interest calculation saved to history';
+  String get compoundCalculationSaved => 'Compound interest calculation saved to history';
 
   @override
   String get restoreCalculation => 'Restore Calculation';
@@ -4981,8 +4581,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noFinancialHistoryYet => 'No calculations yet';
 
   @override
-  String get startCalculatingHint =>
-      'Start making financial calculations to see them here';
+  String get startCalculatingHint => 'Start making financial calculations to see them here';
 
   @override
   String financialResultsSummary(String type, String result) {
@@ -4996,42 +4595,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get financialCalculationTypes => 'Financial Calculation Types';
 
   @override
-  String get loanCalculationDesc =>
-      'Calculate monthly payments, total cost, and interest for loans';
+  String get loanCalculationDesc => 'Calculate monthly payments, total cost, and interest for loans';
 
   @override
-  String get investmentCalculationDesc =>
-      'Plan future value of investments with regular contributions';
+  String get investmentCalculationDesc => 'Plan future value of investments with regular contributions';
 
   @override
-  String get compoundInterestDesc =>
-      'Calculate compound interest growth over time';
+  String get compoundInterestDesc => 'Calculate compound interest growth over time';
 
   @override
   String get practicalFinancialApplications => 'Practical Applications';
 
   @override
-  String get financialApplicationsDesc =>
-      'Mortgage planning, auto loans, retirement savings, education funding, business investments, and general financial planning.';
+  String get financialApplicationsDesc => 'Mortgage planning, auto loans, retirement savings, education funding, business investments, and general financial planning.';
 
   @override
   String get financialTips => 'Financial Tips';
 
   @override
-  String get financialTip1 =>
-      'Compare different loan terms to find the best option';
+  String get financialTip1 => 'Compare different loan terms to find the best option';
 
   @override
-  String get financialTip2 =>
-      'Start investing early to maximize compound interest';
+  String get financialTip2 => 'Start investing early to maximize compound interest';
 
   @override
-  String get financialTip3 =>
-      'Consider additional payments to reduce loan interest';
+  String get financialTip3 => 'Consider additional payments to reduce loan interest';
 
   @override
-  String get financialTip4 =>
-      'Regular contributions can significantly boost investment growth';
+  String get financialTip4 => 'Regular contributions can significantly boost investment growth';
 
   @override
   String get financialTip5 => 'Higher compounding frequency increases returns';
@@ -5098,8 +4689,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dateCalculatorInfoHeaderTitle => 'Date Calculator Information';
 
   @override
-  String get dateCalculatorInfoHeaderSubtitle =>
-      'A powerful tool for all your date and time calculations.';
+  String get dateCalculatorInfoHeaderSubtitle => 'A powerful tool for all your date and time calculations.';
 
   @override
   String get dateCalculatorMainFeatures => 'Main Features';
@@ -5111,8 +4701,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dateCalculatorDetailedInfo => 'Date Calculator Information';
 
   @override
-  String get dateCalculatorOverview =>
-      'Comprehensive tool for all date, time, and age calculations with many useful features';
+  String get dateCalculatorOverview => 'Comprehensive tool for all date, time, and age calculations with many useful features';
 
   @override
   String get dateKeyFeatures => 'Key Features';
@@ -5121,29 +4710,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comprehensiveDateCalc => 'Comprehensive Calculations';
 
   @override
-  String get comprehensiveDateCalcDesc =>
-      'Full support for date, time, and age calculations';
+  String get comprehensiveDateCalcDesc => 'Full support for date, time, and age calculations';
 
   @override
   String get multipleCalculationModes => 'Multiple Calculation Modes';
 
   @override
-  String get multipleCalculationModesDesc =>
-      '4 different modes: date info, date difference, add/subtract dates, age calculation';
+  String get multipleCalculationModesDesc => '4 different modes: date info, date difference, add/subtract dates, age calculation';
 
   @override
   String get detailedDateInfo => 'Detailed Information';
 
   @override
-  String get detailedDateInfoDesc =>
-      'Display complete date information: weekday, week, quarter, leap year';
+  String get detailedDateInfoDesc => 'Display complete date information: weekday, week, quarter, leap year';
 
   @override
   String get flexibleDateInput => 'Flexible Input';
 
   @override
-  String get flexibleDateInputDesc =>
-      'Support multiple ways to input dates with easy adjustments';
+  String get flexibleDateInputDesc => 'Support multiple ways to input dates with easy adjustments';
 
   @override
   String get dateHowToUse => 'How to Use';
@@ -5152,29 +4737,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get step1Date => 'Step 1: Select calculation mode';
 
   @override
-  String get step1DateDesc =>
-      'Choose appropriate tab: Date Info, Date Difference, Add/Subtract Date, or Age Calculator';
+  String get step1DateDesc => 'Choose appropriate tab: Date Info, Date Difference, Add/Subtract Date, or Age Calculator';
 
   @override
   String get step2Date => 'Step 2: Input dates';
 
   @override
-  String get step2DateDesc =>
-      'Use date picker or stepper to input the dates for calculation';
+  String get step2DateDesc => 'Use date picker or stepper to input the dates for calculation';
 
   @override
   String get step3Date => 'Step 3: View results';
 
   @override
-  String get step3DateDesc =>
-      'Results will be displayed immediately with detailed information';
+  String get step3DateDesc => 'Results will be displayed immediately with detailed information';
 
   @override
   String get step4Date => 'Step 4: Save to history';
 
   @override
-  String get step4DateDesc =>
-      'Results are automatically saved to history for future reference';
+  String get step4DateDesc => 'Results are automatically saved to history for future reference';
 
   @override
   String get dateCalculationModes => 'Calculation Modes';
@@ -5183,29 +4764,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dateInfoMode => 'Date Information';
 
   @override
-  String get dateInfoModeDesc =>
-      'Display detailed information about a specific date';
+  String get dateInfoModeDesc => 'Display detailed information about a specific date';
 
   @override
   String get dateDifferenceMode => 'Date Difference';
 
   @override
-  String get dateDifferenceModeDesc =>
-      'Calculate the difference between any two dates';
+  String get dateDifferenceModeDesc => 'Calculate the difference between any two dates';
 
   @override
   String get addSubtractMode => 'Add/Subtract Date';
 
   @override
-  String get addSubtractModeDesc =>
-      'Add or subtract days/months/years from a date';
+  String get addSubtractModeDesc => 'Add or subtract days/months/years from a date';
 
   @override
   String get ageCalculatorMode => 'Age Calculator';
 
   @override
-  String get ageCalculatorModeDesc =>
-      'Calculate exact age from birth date to present or another date';
+  String get ageCalculatorModeDesc => 'Calculate exact age from birth date to present or another date';
 
   @override
   String get dateTips => 'Usage Tips';
@@ -5214,56 +4791,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dateTip1 => 'Use date picker to select dates quickly';
 
   @override
-  String get dateTip2 =>
-      'Use stepper to adjust individual date/month/year components';
+  String get dateTip2 => 'Use stepper to adjust individual date/month/year components';
 
   @override
   String get dateTip3 => 'Check history to review previous calculations';
 
   @override
-  String get dateTip4 =>
-      'Pay attention to leap years when calculating long periods';
+  String get dateTip4 => 'Pay attention to leap years when calculating long periods';
 
   @override
-  String get dateTip5 =>
-      'Use date info mode to check weekday of important dates';
+  String get dateTip5 => 'Use date info mode to check weekday of important dates';
 
   @override
   String get dateLimitations => 'Important Notes';
 
   @override
-  String get dateLimitationsDesc =>
-      'Some important points to consider when using the date calculator:';
+  String get dateLimitationsDesc => 'Some important points to consider when using the date calculator:';
 
   @override
   String get dateLimitation1 => 'Results are based on the Gregorian calendar';
 
   @override
-  String get dateLimitation2 =>
-      'Does not account for time zones in calculations';
+  String get dateLimitation2 => 'Does not account for time zones in calculations';
 
   @override
-  String get dateLimitation3 =>
-      'Leap years are calculated according to international standards';
+  String get dateLimitation3 => 'Leap years are calculated according to international standards';
 
   @override
-  String get dateLimitation4 =>
-      'Results may differ from other calendar systems';
+  String get dateLimitation4 => 'Results may differ from other calendar systems';
 
   @override
-  String get dateLimitation5 =>
-      'Should double-check results for important calculations';
+  String get dateLimitation5 => 'Should double-check results for important calculations';
 
   @override
-  String get dateDisclaimer =>
-      'This tool provides date information based on the standard Gregorian calendar. Results are for reference only and may require additional verification for important applications.';
+  String get dateDisclaimer => 'This tool provides date information based on the standard Gregorian calendar. Results are for reference only and may require additional verification for important applications.';
 
   @override
   String get discountCalculator => 'Discount Calculator';
 
   @override
-  String get discountCalculatorDesc =>
-      'Calculate discounts, tips, taxes, and markups quickly and accurately';
+  String get discountCalculatorDesc => 'Calculate discounts, tips, taxes, and markups quickly and accurately';
 
   @override
   String get discountTab => 'Discount';
@@ -5389,12 +4956,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get markupCalculatorResults => 'Markup Calculation Results';
 
   @override
-  String get discountCalculatorDetailedInfo =>
-      'Discount Calculator Information';
+  String get discountCalculatorDetailedInfo => 'Discount Calculator Information';
 
   @override
-  String get discountCalculatorOverview =>
-      'Comprehensive tool for discount, tip, tax, and markup calculations with many useful features';
+  String get discountCalculatorOverview => 'Comprehensive tool for discount, tip, tax, and markup calculations with many useful features';
 
   @override
   String get discountKeyFeatures => 'Key Features';
@@ -5403,29 +4968,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comprehensiveDiscountCalc => 'Comprehensive Calculations';
 
   @override
-  String get comprehensiveDiscountCalcDesc =>
-      'Full support for discount, tip, tax, and markup calculations';
+  String get comprehensiveDiscountCalcDesc => 'Full support for discount, tip, tax, and markup calculations';
 
   @override
   String get multipleDiscountModes => 'Multiple Calculation Modes';
 
   @override
-  String get multipleDiscountModesDesc =>
-      '4 different modes: discount, tip, tax, markup';
+  String get multipleDiscountModesDesc => '4 different modes: discount, tip, tax, markup';
 
   @override
   String get realTimeDiscountResults => 'Real-time Results';
 
   @override
-  String get realTimeDiscountResultsDesc =>
-      'Get detailed results instantly as you input data';
+  String get realTimeDiscountResultsDesc => 'Get detailed results instantly as you input data';
 
   @override
   String get discountHistorySaving => 'History Saving';
 
   @override
-  String get discountHistorySavingDesc =>
-      'Save and review previous calculations for reference';
+  String get discountHistorySavingDesc => 'Save and review previous calculations for reference';
 
   @override
   String get discountHowToUse => 'How to Use';
@@ -5434,29 +4995,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get step1Discount => 'Step 1: Select calculation type';
 
   @override
-  String get step1DiscountDesc =>
-      'Choose appropriate tab: Discount, Tip, Tax, or Markup';
+  String get step1DiscountDesc => 'Choose appropriate tab: Discount, Tip, Tax, or Markup';
 
   @override
   String get step2Discount => 'Step 2: Enter information';
 
   @override
-  String get step2DiscountDesc =>
-      'Fill in required information like price, percentage, quantity';
+  String get step2DiscountDesc => 'Fill in required information like price, percentage, quantity';
 
   @override
   String get step3Discount => 'Step 3: View results';
 
   @override
-  String get step3DiscountDesc =>
-      'Results will be displayed immediately with detailed information';
+  String get step3DiscountDesc => 'Results will be displayed immediately with detailed information';
 
   @override
   String get step4Discount => 'Step 4: Save to history';
 
   @override
-  String get step4DiscountDesc =>
-      'Results are automatically saved to history for future reference';
+  String get step4DiscountDesc => 'Results are automatically saved to history for future reference';
 
   @override
   String get discountCalculationModes => 'Calculation Modes';
@@ -5465,15 +5022,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get discountMode => 'Discount Calculator';
 
   @override
-  String get discountModeDesc =>
-      'Calculate final price after discount and savings amount';
+  String get discountModeDesc => 'Calculate final price after discount and savings amount';
 
   @override
   String get tipMode => 'Tip Calculator';
 
   @override
-  String get tipModeDesc =>
-      'Calculate tip and split bill among multiple people';
+  String get tipModeDesc => 'Calculate tip and split bill among multiple people';
 
   @override
   String get taxMode => 'Tax Calculator';
@@ -5485,19 +5040,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get markupMode => 'Markup Calculator';
 
   @override
-  String get markupModeDesc =>
-      'Calculate selling price and profit margin from cost price';
+  String get markupModeDesc => 'Calculate selling price and profit margin from cost price';
 
   @override
   String get discountTips => 'Usage Tips';
 
   @override
-  String get discountTip1 =>
-      'Use discount calculator when shopping to know real prices';
+  String get discountTip1 => 'Use discount calculator when shopping to know real prices';
 
   @override
-  String get discountTip2 =>
-      'Calculate appropriate tip based on service quality';
+  String get discountTip2 => 'Calculate appropriate tip based on service quality';
 
   @override
   String get discountTip3 => 'Check tax to know actual total cost';
@@ -5512,8 +5064,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get discountLimitations => 'Important Notes';
 
   @override
-  String get discountLimitationsDesc =>
-      'Some important points to consider when using the discount calculator:';
+  String get discountLimitationsDesc => 'Some important points to consider when using the discount calculator:';
 
   @override
   String get discountLimitation1 => 'Results are for reference only';
@@ -5531,8 +5082,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get discountLimitation5 => 'Should verify with actual receipts';
 
   @override
-  String get discountDisclaimer =>
-      'This tool is for calculation assistance only and does not replace professional financial advice. Results may differ from reality due to other factors.';
+  String get discountDisclaimer => 'This tool is for calculation assistance only and does not replace professional financial advice. Results may differ from reality due to other factors.';
 
   @override
   String get financialKeyFeatures => 'Key Features';
@@ -5541,29 +5091,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comprehensiveFinancialCalc => 'Comprehensive Calculations';
 
   @override
-  String get comprehensiveFinancialCalcDesc =>
-      'Versatile financial calculator for loans, investments, and compound interest';
+  String get comprehensiveFinancialCalcDesc => 'Versatile financial calculator for loans, investments, and compound interest';
 
   @override
   String get multipleCalculationTypes => 'Multiple Calculation Types';
 
   @override
-  String get multipleCalculationTypesDesc =>
-      'Support for loan, investment, and compound interest calculations in one app';
+  String get multipleCalculationTypesDesc => 'Support for loan, investment, and compound interest calculations in one app';
 
   @override
   String get realTimeResults => 'Real-time Results';
 
   @override
-  String get realTimeResultsDesc =>
-      'Get detailed results instantly as you input data';
+  String get realTimeResultsDesc => 'Get detailed results instantly as you input data';
 
   @override
   String get historySaving => 'History Saving';
 
   @override
-  String get historySavingDesc =>
-      'Save and review previous calculations for reference';
+  String get historySavingDesc => 'Save and review previous calculations for reference';
 
   @override
   String get financialHowToUse => 'How to Use';
@@ -5572,29 +5118,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get step1Financial => 'Step 1: Select calculation type';
 
   @override
-  String get step1FinancialDesc =>
-      'Choose Loan, Investment, or Compound Interest tab based on your needs';
+  String get step1FinancialDesc => 'Choose Loan, Investment, or Compound Interest tab based on your needs';
 
   @override
   String get step2Financial => 'Step 2: Enter information';
 
   @override
-  String get step2FinancialDesc =>
-      'Fill in required information like amount, interest rate, time period';
+  String get step2FinancialDesc => 'Fill in required information like amount, interest rate, time period';
 
   @override
   String get step3Financial => 'Step 3: Calculate';
 
   @override
-  String get step3FinancialDesc =>
-      'Press the calculate button to view detailed results';
+  String get step3FinancialDesc => 'Press the calculate button to view detailed results';
 
   @override
   String get step4Financial => 'Step 4: Save results';
 
   @override
-  String get step4FinancialDesc =>
-      'Save results to history for future reference';
+  String get step4FinancialDesc => 'Save results to history for future reference';
 
   @override
   String get financialFormulas => 'Financial Formulas';
@@ -5606,8 +5148,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loanFormulaText => 'M = P × [r(1+r)ⁿ] / [(1+r)ⁿ-1]';
 
   @override
-  String get loanFormulaDesc =>
-      'M: Monthly payment, P: Loan amount, r: Monthly interest rate, n: Number of months';
+  String get loanFormulaDesc => 'M: Monthly payment, P: Loan amount, r: Monthly interest rate, n: Number of months';
 
   @override
   String get investmentFormula => 'Investment Formula';
@@ -5616,8 +5157,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get investmentFormulaText => 'FV = PV(1+r)ⁿ + PMT × [((1+r)ⁿ-1)/r]';
 
   @override
-  String get investmentFormulaDesc =>
-      'FV: Future value, PV: Initial investment, PMT: Monthly contribution, r: Interest rate, n: Number of periods';
+  String get investmentFormulaDesc => 'FV: Future value, PV: Initial investment, PMT: Monthly contribution, r: Interest rate, n: Number of periods';
 
   @override
   String get compoundInterestFormula => 'Compound Interest Formula';
@@ -5626,38 +5166,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get compoundInterestFormulaText => 'A = P(1 + r/n)^(nt)';
 
   @override
-  String get compoundInterestFormulaDesc =>
-      'A: Final amount, P: Principal, r: Interest rate, n: Compounding frequency, t: Time';
+  String get compoundInterestFormulaDesc => 'A: Final amount, P: Principal, r: Interest rate, n: Compounding frequency, t: Time';
 
   @override
   String get financialLimitations => 'Important Notes';
 
   @override
-  String get financialLimitationsDesc =>
-      'The calculation results are for reference only and may not accurately reflect real-world situations:';
+  String get financialLimitationsDesc => 'The calculation results are for reference only and may not accurately reflect real-world situations:';
 
   @override
-  String get financialLimitation1 =>
-      'Does not account for inflation and market volatility';
+  String get financialLimitation1 => 'Does not account for inflation and market volatility';
 
   @override
   String get financialLimitation2 => 'Interest rates may change over time';
 
   @override
-  String get financialLimitation3 =>
-      'Does not include fees and additional costs';
+  String get financialLimitation3 => 'Does not include fees and additional costs';
 
   @override
-  String get financialLimitation4 =>
-      'Results may differ based on actual terms and conditions';
+  String get financialLimitation4 => 'Results may differ based on actual terms and conditions';
 
   @override
-  String get financialLimitation5 =>
-      'Should consult financial professionals for advice';
+  String get financialLimitation5 => 'Should consult financial professionals for advice';
 
   @override
-  String get financialDisclaimer =>
-      'This tool is for calculation assistance only and does not replace professional financial advice. Please consult experts before making important financial decisions.';
+  String get financialDisclaimer => 'This tool is for calculation assistance only and does not replace professional financial advice. Please consult experts before making important financial decisions.';
 
   @override
   String get discountResultSavedToHistory => 'Discount result saved to history';
@@ -5678,8 +5211,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get p2pDataTransfer => 'P2P File Transfer';
 
   @override
-  String get p2pDataTransferDesc =>
-      'Transfer files between devices on the same local network.';
+  String get p2pDataTransferDesc => 'Transfer files between devices on the same local network.';
 
   @override
   String get networkSecurityWarning => 'Network Security Warning';
@@ -5697,8 +5229,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get securityRisks => 'Security Risks';
 
   @override
-  String get unsecureNetworkRisks =>
-      'On unsecure networks, your data transmissions may be intercepted by malicious users. Only proceed if you trust the network and other users.';
+  String get unsecureNetworkRisks => 'On unsecure networks, your data transmissions may be intercepted by malicious users. Only proceed if you trust the network and other users.';
 
   @override
   String get proceedAnyway => 'Proceed Anyway';
@@ -5758,8 +5289,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchingForDevices => 'Searching for devices...';
 
   @override
-  String get startNetworkingToDiscover =>
-      'Start networking to discover devices';
+  String get startNetworkingToDiscover => 'Start networking to discover devices';
 
   @override
   String get noActiveTransfers => 'No active transfers';
@@ -5791,8 +5321,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancelTransfer => 'Cancel Transfer';
 
   @override
-  String get confirmCancelTransfer =>
-      'Are you sure you want to cancel this transfer?';
+  String get confirmCancelTransfer => 'Are you sure you want to cancel this transfer?';
 
   @override
   String get p2pPairingRequest => 'P2P Pairing Request';
@@ -5807,8 +5336,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get p2pPermissionRequiredTitle => 'Permission Required';
 
   @override
-  String get p2pPermissionExplanation =>
-      'To discover nearby devices using WiFi, this app needs access to your location. This is an Android requirement for scanning WiFi networks. Your location data is not stored or shared. The app is client-side and we do not collect any user data.';
+  String get p2pPermissionExplanation => 'To discover nearby devices using WiFi, this app needs access to your location. This is an Android requirement for scanning WiFi networks. Your location data is not stored or shared. The app is client-side and we do not collect any user data.';
 
   @override
   String get p2pPermissionContinue => 'Continue';
@@ -5817,12 +5345,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get p2pPermissionCancel => 'Cancel';
 
   @override
-  String get p2pNearbyDevicesPermissionTitle =>
-      'Nearby Devices Permission Required';
+  String get p2pNearbyDevicesPermissionTitle => 'Nearby Devices Permission Required';
 
   @override
-  String get p2pNearbyDevicesPermissionExplanation =>
-      'To discover nearby devices on modern Android versions, this app needs access to nearby WiFi devices. This permission allows the app to scan for WiFi networks without accessing your location. Your data is not stored or shared. The app is client-side and we do not collect any user data.';
+  String get p2pNearbyDevicesPermissionExplanation => 'To discover nearby devices on modern Android versions, this app needs access to nearby WiFi devices. This permission allows the app to scan for WiFi networks without accessing your location. Your data is not stored or shared. The app is client-side and we do not collect any user data.';
 
   @override
   String get dataTransferRequest => 'Data Transfer Request';
@@ -5880,16 +5406,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get randomGeneratorsCacheDesc => 'Generation history and settings';
 
   @override
-  String get calculatorToolsCacheDesc =>
-      'Calculation history, graphing calculator data, BMI data, and settings';
+  String get calculatorToolsCacheDesc => 'Calculation history, graphing calculator data, BMI data, and settings';
 
   @override
-  String get converterToolsCacheDesc =>
-      'Currency/length states, presets and exchange rates cache';
+  String get converterToolsCacheDesc => 'Currency/length states, presets and exchange rates cache';
 
   @override
-  String get p2pDataTransferCacheDesc =>
-      'Settings, saved device profiles, and temporary file transfer cache.';
+  String get p2pDataTransferCacheDesc => 'Settings, saved device profiles, and temporary file transfer cache.';
 
   @override
   String totalCacheSize(Object count, Object size) {
@@ -5912,12 +5435,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveConnection => 'Save Connection';
 
   @override
-  String get autoReconnectDescription =>
-      'Automatically reconnect when both devices are online';
+  String get autoReconnectDescription => 'Automatically reconnect when both devices are online';
 
   @override
-  String get pairingNotificationInfo =>
-      'The other user will receive a pairing request and needs to accept to complete the pairing.';
+  String get pairingNotificationInfo => 'The other user will receive a pairing request and needs to accept to complete the pairing.';
 
   @override
   String get sendRequest => 'Send Request';
@@ -5956,12 +5477,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get trustThisUser => 'Trust this user';
 
   @override
-  String get allowFileTransfersWithoutConfirmation =>
-      'Allow file transfers without confirmation';
+  String get allowFileTransfersWithoutConfirmation => 'Allow file transfers without confirmation';
 
   @override
-  String get onlyAcceptFromTrustedDevices =>
-      'Only accept pairing from devices you trust.';
+  String get onlyAcceptFromTrustedDevices => 'Only accept pairing from devices you trust.';
 
   @override
   String get previousRequest => 'Previous request';
@@ -5999,8 +5518,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transferSettings => 'Transfer Settings';
 
   @override
-  String get savedDevicesCurrentlyAvailable =>
-      'Saved devices currently available';
+  String get savedDevicesCurrentlyAvailable => 'Saved devices currently available';
 
   @override
   String get recentlyDiscoveredDevices => 'Recently discovered devices';
@@ -6030,8 +5548,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clear => 'Clear';
 
   @override
-  String get temporaryFilesFromTransfers =>
-      'Temporary files from P2Lan file transfers';
+  String get temporaryFilesFromTransfers => 'Temporary files from P2Lan file transfers';
 
   @override
   String get debug => 'Debug';
@@ -6069,8 +5586,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get unpairDescription =>
-      'This will remove the pairing completely from both devices. You will need to pair again in the future.\n\nThe other device will also be notified and their connection will be removed.';
+  String get unpairDescription => 'This will remove the pairing completely from both devices. You will need to pair again in the future.\n\nThe other device will also be notified and their connection will be removed.';
 
   @override
   String get holdToUnpair => 'Hold to Unpair';
@@ -6079,12 +5595,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unpairing => 'Unpairing...';
 
   @override
-  String get holdButtonToConfirmUnpair =>
-      'Hold the button for 1 second to confirm unpair';
+  String get holdButtonToConfirmUnpair => 'Hold the button for 1 second to confirm unpair';
 
   @override
-  String get taskAndFileDeletedSuccessfully =>
-      'Task and file deleted successfully';
+  String get taskAndFileDeletedSuccessfully => 'Task and file deleted successfully';
 
   @override
   String get taskCleared => 'Task cleared';
@@ -6166,8 +5680,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetToDefaults => 'Reset to Defaults';
 
   @override
-  String get resetConfirmation =>
-      'Are you sure you want to reset all settings to their default values?';
+  String get resetConfirmation => 'Are you sure you want to reset all settings to their default values?';
 
   @override
   String get generic => 'Generic';
@@ -6254,8 +5767,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sizeLimits => 'Size Limits';
 
   @override
-  String get totalSizeLimitDescription =>
-      'Total size limit for all files in a single transfer request';
+  String get totalSizeLimitDescription => 'Total size limit for all files in a single transfer request';
 
   @override
   String get transferProtocolSection => 'Transfer Protocol';
@@ -6264,16 +5776,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get performanceTuning => 'Performance Tuning';
 
   @override
-  String get concurrentTransfersDescription =>
-      ' = faster overall but higher CPU usage';
+  String get concurrentTransfersDescription => ' = faster overall but higher CPU usage';
 
   @override
-  String get transferChunkSizeDescription =>
-      'Higher sizes = faster transfers but more memory usage';
+  String get transferChunkSizeDescription => 'Higher sizes = faster transfers but more memory usage';
 
   @override
-  String get permissionsRequiredForP2P =>
-      'Permissions are required to start P2P networking';
+  String get permissionsRequiredForP2P => 'Permissions are required to start P2P networking';
 
   @override
   String errorInStartNetworking(String error) {
@@ -6289,12 +5798,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadingDeviceInfo => 'Loading device information...';
 
   @override
-  String get tempFilesDescription =>
-      'Temporary files from P2Lan file transfers';
+  String get tempFilesDescription => 'Temporary files from P2Lan file transfers';
 
   @override
-  String get networkDebugCompleted =>
-      'Network debug completed. Check logs for details.';
+  String get networkDebugCompleted => 'Network debug completed. Check logs for details.';
 
   @override
   String lastRefresh(String time) {
@@ -6302,8 +5809,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get p2pNetworkingPaused =>
-      'P2P networking is paused due to internet connection loss. It will automatically resume when connection is restored.';
+  String get p2pNetworkingPaused => 'P2P networking is paused due to internet connection loss. It will automatically resume when connection is restored.';
 
   @override
   String get noDevicesInRange => 'No devices in range. Try refreshing.';
@@ -6333,8 +5839,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get holdUnpairInstruction =>
-      'Hold the button for 1 second to confirm unpair';
+  String get holdUnpairInstruction => 'Hold the button for 1 second to confirm unpair';
 
   @override
   String unpaired(String name) {
@@ -6345,15 +5850,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taskAndFileDeleted => 'Task and file deleted successfully';
 
   @override
-  String get clearFileCacheConfirm =>
-      'This will clear temporary files from P2Lan transfers. This action cannot be undone.';
+  String get clearFileCacheConfirm => 'This will clear temporary files from P2Lan transfers. This action cannot be undone.';
 
   @override
   String get fileCacheClearedSuccess => 'File cache cleared successfully';
 
   @override
-  String get permissionsRequired =>
-      'Permissions are required to start P2P networking';
+  String get permissionsRequired => 'Permissions are required to start P2P networking';
 
   @override
   String startedSending(int count, String name) {
@@ -6361,8 +5864,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get transferSettingsUpdated =>
-      'Transfer settings updated successfully';
+  String get transferSettingsUpdated => 'Transfer settings updated successfully';
 
   @override
   String get disconnected => 'Disconnected';
@@ -6412,8 +5914,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createDateFoldersDescription => 'Organize by date (YYYY-MM-DD)';
 
   @override
-  String get createSenderFoldersDescription =>
-      'Organize by sender display name';
+  String get createSenderFoldersDescription => 'Organize by sender display name';
 
   @override
   String get maxConcurrentTasks => 'Max Concurrent Tasks';
@@ -6440,8 +5941,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get discard => 'Discard';
 
   @override
-  String get hasUnsavedChanges =>
-      'You have unsaved changes. Do you want to discard them?';
+  String get hasUnsavedChanges => 'You have unsaved changes. Do you want to discard them?';
 
   @override
   String get selectFolder => 'Select Folder';
@@ -6450,15 +5950,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get permissionRequired => 'Permission Required';
 
   @override
-  String get grantStoragePermission =>
-      'Grant storage permission to select download folder';
+  String get grantStoragePermission => 'Grant storage permission to select download folder';
 
   @override
   String get openSettings => 'Open Settings';
 
   @override
-  String get notificationPermissionInfo =>
-      'Notification permission allows you to receive updates about file transfers and connection status.';
+  String get notificationPermissionInfo => 'Notification permission allows you to receive updates about file transfers and connection status.';
 
   @override
   String get secondsLabel => 'second';
@@ -6512,8 +6010,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deviceActions => 'Device Actions';
 
   @override
-  String get p2pTemporarilyDisabled =>
-      'P2P temporarily disabled - waiting for internet connection';
+  String get p2pTemporarilyDisabled => 'P2P temporarily disabled - waiting for internet connection';
 
   @override
   String get fileOrgNoneDescription => 'Files go directly to download folder';
@@ -6546,8 +6043,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get displayName => 'Display Name';
 
   @override
-  String get displayNameDescription =>
-      'Customize how your device appears to other users';
+  String get displayNameDescription => 'Customize how your device appears to other users';
 
   @override
   String get deviceDisplayNameLabel => 'Device Display Name';
@@ -6570,8 +6066,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uiPerformance => 'User Interface Performance';
 
   @override
-  String get uiRefreshRateDescription =>
-      'Choose how often transfer progress updates in the UI. Higher frequencies work better on powerful devices.';
+  String get uiRefreshRateDescription => 'Choose how often transfer progress updates in the UI. Higher frequencies work better on powerful devices.';
 
   @override
   String savedDevicesCount(int count) {
@@ -6621,42 +6116,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get defaultValue => '(Default)';
 
   @override
-  String get androidStorageAccessDescription =>
-      'For security, it\'s recommended to use the app-specific folder. You can select other folders, but this may require additional permissions.';
+  String get androidStorageAccessDescription => 'For security, it\'s recommended to use the app-specific folder. You can select other folders, but this may require additional permissions.';
 
   @override
   String get storageInfo => 'Storage Information';
 
   @override
-  String get noDownloadPathSetDescription =>
-      'Please select a download folder in the Storage tab to see storage information.';
+  String get noDownloadPathSetDescription => 'Please select a download folder in the Storage tab to see storage information.';
 
   @override
-  String get enableNotificationsDescription =>
-      'Get notified about transfer events';
+  String get enableNotificationsDescription => 'Get notified about transfer events';
 
   @override
-  String get maxFileSizePerFileDescription =>
-      'Larger files will be automatically rejected';
+  String get maxFileSizePerFileDescription => 'Larger files will be automatically rejected';
 
   @override
-  String get maxTotalSizeDescription =>
-      'Total size limit for all files in a single transfer request';
+  String get maxTotalSizeDescription => 'Total size limit for all files in a single transfer request';
 
   @override
-  String get concurrentTransfersSubtitle =>
-      'More transfers = faster overall but higher CPU usage';
+  String get concurrentTransfersSubtitle => 'More transfers = faster overall but higher CPU usage';
 
   @override
-  String get transferChunkSizeSubtitle =>
-      'Higher sizes = faster transfers but more memory usage';
+  String get transferChunkSizeSubtitle => 'Higher sizes = faster transfers but more memory usage';
 
   @override
   String get protocolTcpReliable => 'TCP (Reliable)';
 
   @override
-  String get protocolTcpDescription =>
-      'More reliable, better for important files';
+  String get protocolTcpDescription => 'More reliable, better for important files';
 
   @override
   String get protocolUdpFast => 'UDP (Fast)';
@@ -6671,8 +6158,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fileOrgSender => 'By Sender Name';
 
   @override
-  String get transferSettingsUpdatedSuccessfully =>
-      'Transfer settings updated successfully';
+  String get transferSettingsUpdatedSuccessfully => 'Transfer settings updated successfully';
 
   @override
   String get selectOperation => 'Select Operation';

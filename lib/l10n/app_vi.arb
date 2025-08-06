@@ -1,6 +1,6 @@
 ﻿{
     "@@locale": "vi",
-    "title": "random_please",
+    "title": "Random Please",
     "settings": "Cài đặt",
     "theme": "Chủ đề",
     "language": "Ngôn ngữ",
@@ -399,6 +399,9 @@
     "noHistoryYet": "Chưa có lịch sử",
     "noHistoryMessage": "Tạo một số kết quả ngẫu nhiên để xem chúng ở đây",
     "clearHistory": "Xóa lịch sử",
+    "confirmClearHistory": "Bạn có chắc chắn muốn xóa lịch sử không?",
+    "confirmClearHistoryMessage": "Điều này sẽ xóa tất cả các mục lịch sử đã lưu. Hành động này không thể hoàn tác.\nHãy chắc chắn rằng bạn đã lưu bất kỳ kết quả quan trọng nào trước khi tiếp tục.",
+
     "calculationHistory": "Lịch sử tính toán",
     "noCalculationHistory": "Chưa có lịch sử tính toán",
     "saveCalculationHistory": "Ghi nhớ lịch sử tính toán",
@@ -1879,6 +1882,16 @@
             "logSize": {
                 "type": "String",
                 "example": "3.05MB"
+            }
+        }
+    },
+    "cacheSize": "Bộ nhớ đệm: {size}",
+    "@cacheSize": {
+        "description": "Thông tin kích thước bộ nhớ đệm",
+        "placeholders": {
+            "size": {
+                "type": "String",
+                "example": "180.5KB"
             }
         }
     },

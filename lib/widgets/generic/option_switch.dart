@@ -156,30 +156,33 @@ class OptionSwitch extends StatelessWidget {
       );
     }
 
-    return InkWell(
-      onTap: isEffectivelyDisabled ? null : () => onChanged?.call(!value),
-      child: Padding(
-        padding: decorator?.padding ??
-            const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: subtitle != null
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(title, style: titleStyle),
-                        const SizedBox(height: 4),
-                        Text(subtitle!, style: subtitleStyle),
-                      ],
-                    )
-                  : Text(title, style: titleStyle),
-            ),
-            const SizedBox(width: 24),
-            switchWidget,
-          ],
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: isEffectivelyDisabled ? null : () => onChanged?.call(!value),
+        child: Padding(
+          padding: decorator?.padding ??
+              const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: subtitle != null
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(title, style: titleStyle),
+                          const SizedBox(height: 4),
+                          Text(subtitle!, style: subtitleStyle),
+                        ],
+                      )
+                    : Text(title, style: titleStyle),
+              ),
+              const SizedBox(width: 24),
+              switchWidget,
+            ],
+          ),
         ),
       ),
     );

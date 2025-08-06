@@ -1,6 +1,6 @@
 {
     "@@locale": "en",
-    "title": "random_please",
+    "title": "Random Please",
     "settings": "Settings",
     "theme": "Theme",
     "language": "Language",
@@ -390,8 +390,8 @@
     "noHistoryYet": "No calculation history yet",
     "performCalculation": "Perform your first calculation to see history here",
     
-    "confirmClearHistory": "Are you sure you want to clear the calculation history?",
-    "confirmClearTabData": "Are you sure you want to clear the data for the current tab?",
+    "confirmClearHistory": "Are you sure you want to clear history?",
+    "confirmClearHistoryMessage": "This will remove all saved history items. This action cannot be undone.\nMake sure you have saved any important results before proceeding.",
     "historyCleared": "History cleared successfully",
     "historyItem": "History Item",
     "loadFromHistory": "Load from History",
@@ -899,6 +899,16 @@
             }
         }
     },
+    "cacheSize": "Cache: {size}",
+    "@cacheSize": {
+        "description": "Cache size information",
+        "placeholders": {
+            "size": {
+                "type": "String",
+                "example": "180.5KB"
+            }
+        }
+    },
     "scientificModeControls": "Mode Controls",
     "angleMode": "Angle Mode",
     "angleModeDesc": "Toggle between Radians and Degrees for trigonometric calculations",
@@ -1014,18 +1024,6 @@
     
     "noHistoryMessage": "Your BMI calculation history will appear here",
     "clearBmiHistory": "Clear BMI History",
-    "confirmClearHistory": "Are you sure you want to clear all BMI history?",
-    "confirmClearCalculatorHistory": "Are you sure you want to clear all calculation history?",
-    "historyCleared": "BMI history cleared",
-    "calculatorHistoryCleared": "Calculator history cleared",
-    "calculatedOn": "Calculated on {date}",
-    "@calculatedOn": {
-        "placeholders": {
-            "date": {
-                "type": "String"
-            }
-        }
-    },
     "bmiResult": "BMI: {bmi}",
     "@bmiResult": {
         "placeholders": {
