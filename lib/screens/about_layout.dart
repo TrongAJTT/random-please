@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/library_list.dart';
@@ -129,18 +130,20 @@ class _AboutLayoutState extends State<AboutLayout> {
           ),
 
           // Update new version section
-          ListTile(
-            leading: const Icon(
-              Icons.update,
-              color: Colors.purple,
+          if (!kIsWeb) ...[
+            ListTile(
+              leading: const Icon(
+                Icons.update,
+                color: Colors.purple,
+              ),
+              title: Text(l10n.checkForNewVersion),
+              subtitle: Text(l10n.checkForNewVersionDesc),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                VersionCheckService.showVersionDialog(context);
+              },
             ),
-            title: Text(l10n.checkForNewVersion),
-            subtitle: Text(l10n.checkForNewVersionDesc),
-            trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              VersionCheckService.showVersionDialog(context);
-            },
-          ),
+          ],
 
           // View author's products section
           ListTile(

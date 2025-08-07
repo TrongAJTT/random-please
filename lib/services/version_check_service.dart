@@ -749,6 +749,11 @@ class VersionCheckService {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                loc.downloadAppDesc,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 12),
               if (showTitle) ...[
                 // Header với thông tin phiên bản
                 Container(
@@ -815,7 +820,6 @@ class VersionCheckService {
                 ),
                 const SizedBox(height: 24),
               ],
-
               // Danh sách các nền tảng
               Text(
                 loc.selectPlatform,
