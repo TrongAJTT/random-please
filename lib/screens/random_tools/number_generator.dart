@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:random_please/l10n/app_localizations.dart';
@@ -275,48 +276,100 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
                     labelAlign: grid.LabelAlign.center,
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
                 // 2. Min/Max Inputs
                 _buildRangeDisplay(loc),
                 const SizedBox(height: 16),
                 WidgetLayoutRenderHelper.twoEqualWidthInRow(
-                  TextFormField(
-                    controller: _minValueController,
-                    decoration: InputDecoration(
-                      labelText: loc.minValue,
-                      border: const OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      _isInteger
-                          ? FilteringTextInputFormatter.digitsOnly
-                          : FilteringTextInputFormatter.allow(
-                              RegExp(r'[0-9.-]')),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _minValue = double.tryParse(value) ?? _minValue;
-                      });
+                  Listener(
+                    onPointerSignal: (pointerSignal) {
+                      if (pointerSignal is PointerScrollEvent &&
+                          _minValueController.selection.baseOffset >= 0) {
+                        // Only handle scroll if focused
+                        double currentValue =
+                            double.tryParse(_minValueController.text) ??
+                                _minValue;
+                        double delta = _isInteger ? 1 : 0.1;
+                        double newValue = currentValue +
+                            (pointerSignal.scrollDelta.dy < 0 ? delta : -delta);
+                        if (_isInteger) {
+                          newValue = newValue.roundToDouble();
+                        }
+                        // Clamp to not exceed max
+                        if (newValue > _maxValue) newValue = _maxValue;
+                        if (newValue < -1e12) newValue = -1e12; // Arbitrary min
+                        _minValueController.text = newValue.toString();
+                        setState(() {
+                          _minValue = newValue;
+                        });
+                      }
                     },
+                    child: Focus(
+                      child: TextFormField(
+                        controller: _minValueController,
+                        decoration: InputDecoration(
+                          labelText: loc.minValue,
+                          border: const OutlineInputBorder(),
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          _isInteger
+                              ? FilteringTextInputFormatter.digitsOnly
+                              : FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.-]')),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _minValue = double.tryParse(value) ?? _minValue;
+                          });
+                        },
+                      ),
+                    ),
                   ),
-                  TextFormField(
-                    controller: _maxValueController,
-                    decoration: InputDecoration(
-                      labelText: loc.maxValue,
-                      border: const OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      _isInteger
-                          ? FilteringTextInputFormatter.digitsOnly
-                          : FilteringTextInputFormatter.allow(
-                              RegExp(r'[0-9.-]')),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _maxValue = double.tryParse(value) ?? _maxValue;
-                      });
+                  Listener(
+                    onPointerSignal: (pointerSignal) {
+                      if (pointerSignal is PointerScrollEvent &&
+                          _maxValueController.selection.baseOffset >= 0) {
+                        // Only handle scroll if focused
+                        double currentValue =
+                            double.tryParse(_maxValueController.text) ??
+                                _maxValue;
+                        double delta = _isInteger ? 1 : 0.1;
+                        double newValue = currentValue +
+                            (pointerSignal.scrollDelta.dy < 0 ? delta : -delta);
+                        if (_isInteger) {
+                          newValue = newValue.roundToDouble();
+                        }
+                        // Clamp to not go below min
+                        if (newValue < _minValue) newValue = _minValue;
+                        if (newValue > 1e12) newValue = 1e12; // Arbitrary max
+                        _maxValueController.text = newValue.toString();
+                        setState(() {
+                          _maxValue = newValue;
+                        });
+                      }
                     },
+                    child: Focus(
+                      child: TextFormField(
+                        controller: _maxValueController,
+                        decoration: InputDecoration(
+                          labelText: loc.maxValue,
+                          border: const OutlineInputBorder(),
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          _isInteger
+                              ? FilteringTextInputFormatter.digitsOnly
+                              : FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.-]')),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _maxValue = double.tryParse(value) ?? _maxValue;
+                          });
+                        },
+                      ),
+                    ),
                   ),
                   spacing: TwoDimSpacing.specific(vertical: 8, horizontal: 16),
                   minWidth: 300,

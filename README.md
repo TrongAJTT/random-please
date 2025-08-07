@@ -1,169 +1,162 @@
-# 🛠️ random_please - Your All-in-One Productivity Suite
+<div align="center">
+    <img style="width:30%;" src="./assets/app_icon.png"/>
+    <h1>Random Please</h1>
+    <h3>Convenient randomizer tool that can help you anytime</h3> 
+</div>
 
-**The ultimate collection of essential tools in your pocket!** A simple, cross-platform application that brings together the most useful everyday utilities you need - from text templates to advanced calculators, random generators to unit converters.
+**A comprehensive collection of random generators and utilities!** A powerful, cross-platform Flutter application designed to provide essential randomization tools and utilities for daily use - from secure password generation to mathematical calculations and unit conversions.
 
-✨ **Available on Windows, Android**  
-🌍 **Supports English and Vietnamese**  
-📱 **Responsive design - works well on both phones, tablets, and desktops**
+## 📸 Screenshot
+
+<div align="center">
+    <img style="width:77%;" src="./assets/preview/desktop1.png"/>
+    <img style="width:21%;" src="./assets/preview/mobile1.jpg"/>
+    <img style="width:21%;" src="./assets/preview/mobile2.jpg"/>
+    <img style="width:77%;" src="./assets/preview/desktop2.png"/>
+    <img style="width:77%;" src="./assets/preview/desktop3.png"/>
+    <img style="width:21%;" src="./assets/preview/mobile3.jpg"/>
+</div>
+
+✨ **Available on Windows, Android, and Web**  
+🌍 **Fully localized in English and Vietnamese**  
+📱 **Responsive Material Design 3 interface for all screen sizes**
 
 ---
 
-## 🚀 Why You'll Love random_please
-
-### 📝 **Text Template Generator**
-*Never write the same thing twice!*
-- Create smart templates with dynamic fields (name, date, numbers, etc.)
-- Build complex documents with repeatable sections
-- Auto-fill templates with your data
-- Export/import templates for backup and sharing
-- Perfect for: emails, reports, contracts, forms, invoices
+## 🚀 Core Features
 
 ### 🎲 **Random Generator Suite** 
-*12 powerful randomization tools for every need!*
-- **🔐 Password Generator:** Ultra-secure passwords with custom rules
-- **🔢 Number Generator:** Random integers, decimals, ranges, no duplicates
-- **✅ Yes/No & Decision Makers:** Quick decisions, coin flips, rock-paper-scissors
-- **🎰 Gaming Tools:** Dice (3-100 sides), playing cards, random selections
-- **🎨 Creative Tools:** Random colors (HEX), Latin letters, text generation
-- **📅 Date & Time Tools:** Random dates, times, datetime ranges
-- Perfect for: games, passwords, testing, creative projects, decision making
+*12+ powerful randomization tools for every scenario!*
 
-### 🧮 **Calculator Tools**
-*Professional calculators for every calculation need!*
-- **📊 Scientific Calculator:** Advanced math functions, trigonometry, logarithms
-- **📈 Graphing Calculator:** Plot mathematical functions with interactive charts
-- **⚖️ BMI Calculator:** Health and fitness calculations
-- **💰 Financial Calculator:** Loans, investments, compound interest
-- **📅 Date Calculator:** Calculate date differences, add/subtract time
-- **💸 Discount Calculator:** Shopping discounts, tips, tax calculations
+**🔐 Security & Passwords**
+- **Password Generator:** Military-grade secure passwords with customizable complexity
+- **Latin Letter Generator:** Random letter sequences with range selection
 
-### 🔄 **Unit Converter Suite**
-*Convert anything to anything instantly!*
-- **💱 Currency Converter:** Real-time exchange rates for 170+ currencies
-- **📏 Length:** Meters, feet, inches, kilometers, miles, and more
-- **⚖️ Weight & Mass:** Kilograms, pounds, ounces, tons, stones
-- **📐 Area:** Square meters, acres, hectares, square feet
-- **🕐 Time:** Seconds, minutes, hours, days, weeks, years
-- **🥤 Volume:** Liters, gallons, cups, milliliters, fluid ounces
-- **💾 Data Storage:** Bytes, KB, MB, GB, TB, bits
-- **🏃 Speed:** km/h, mph, m/s, knots, Mach
-- **🌡️ Temperature:** Celsius, Fahrenheit, Kelvin
-- **🔢 Number Systems:** Binary, decimal, hexadecimal, octal
+**🔢 Numbers & Mathematics**
+- **Number Generator:** Integers, decimals, ranges with duplicate control
+- **Dice Roll Generator:** Multi-dice rolling with 4 to 100-sided dice
+- **Coin Flip & Decision Makers:** Binary choices, yes/no decisions
+
+**🎮 Creative & Gaming**
+- **Color Generator:** Random HEX colors for design projects
+- **Card Generator:** Playing card draws with deck management
+- **Text Generator:** Lorem ipsum and random text creation
+
+**📅 Date & Time Tools**
+- **Date Generator:** Random dates within specified ranges
+- **Time Generator:** Random time generation with precision control
 
 ---
 
-## ⏳ Features that are planned and may update in the future
+## 🏗️ **Technical Architecture**
 
-- Todo
-- Note
-- Focus
-- Shortcuts
-- Data Transfer
-- Clipboard Manager
-- Clipboard sync
-- Clipboard pusher
-- Color picker
-- HTTP Requester
+### 🛠️ **Built with Modern Flutter**
+- **Flutter 3.0+:** Cross-platform development with single codebase
+- **Material Design 3:** Latest Google design system implementation
+- **Responsive Layouts:** Adaptive UI for mobile, tablet, and desktop
 
----
-
-## 📱 **Perfect for Everyone**
-
-### 👩‍💼 **Business Professionals**
-- Create standardized documents and templates
-- Calculate loans, investments, and financial projections
-- Convert currencies for international business
-- Generate secure passwords for accounts
-
-### 🎓 **Students & Educators**
-- Advanced scientific and graphing calculators
-- Random number generation for statistics
-- Unit conversions for physics and chemistry
-- Template creation for assignments and reports
-
-### 🎮 **Gamers & Hobbyists**
-- Dice rolling for tabletop games
-- Random generators for creative projects
-- Playing card draws for card games
-- Decision makers for choices
-
-### 👥 **Everyday Users**
-- BMI and health calculations
-- Shopping discount calculations
-- Password generation for security
-- Date calculations for planning
-
----
-
-## 🌟 **Key Highlights**
-
-### ⚡ **Lightning Fast**
-- Instant calculations and conversions
-- Offline functionality - no internet required for most features
-- Smooth, responsive interface on all devices
-
-### 🎨 **Beautiful Design**
-- Modern Material Design 3 interface
-- Dark and light theme support
-- Intuitive navigation and user experience
-
-### 🔒 **Privacy Focused**
-- All data stays on your device
-- No tracking or analytics
-- Secure password generation
-
-### 🌐 **Cross-Platform**
-- Works on Windows, macOS, Linux, Android, and iOS
-- Responsive design adapts to any screen size
-- Consistent experience across all platforms
-
----
-
-## 💻 **Built with Modern Technology**
-
-### 🛠️ **Core Technologies**
-- **Flutter:** Google's UI toolkit for beautiful, natively compiled applications
-- **Material Design 3:** Latest Google design system for modern, accessible interfaces
-- **Dart:** Optimized programming language for fast apps on any platform
-
-### 📚 **Powerful Libraries**
-- **fl_chart:** Advanced interactive charts for graphing calculator
+### 📚 **Key Dependencies**
+- **Hive:** Fast, lightweight local database for settings and history
+- **intl:** Internationalization and locale-specific formatting
 - **math_expressions:** Mathematical expression parsing and evaluation
-- **shared_preferences:** Local data storage for your settings and templates
-- **http:** Real-time currency exchange rate fetching
+- **shared_preferences:** System-level preference storage
 
-### 🌍 **Internationalization**
-- Full localization support with Flutter's i18n framework
-- Easy language switching without app restart
-- Expandable to additional languages
+### 🔒 **Security & Privacy**
+- **Local Storage:** All sensitive data remains on device
+- **Secure Random:** Cryptographically secure random number generation
+- **No Tracking:** Zero analytics or user behavior monitoring
+- **Offline Capable:** Core functionality works without internet
 
----
-
-### 💡 **Pro Tips**
-- Switch to dark mode in settings for comfortable night use
-- Export your templates to backup or share with colleagues
-- Use quick actions (Android) for instant access to your favorite tools
-- Customize tool visibility to show only what you need
+### 🌐 **Cross-Platform Support**
+- **Windows:** Full desktop experience with window management
+- **Android:** Native mobile interface with quick actions
+- **Web:** Browser-compatible version with responsive design
+- **Future:** iOS and macOS support planned
 
 ---
 
-## 🤝 **Community & Support**
+## 🌟 **Key Advantages**
 
-### 🐛 **Found a Bug?**
-- Open an issue on GitHub with details
-- We actively monitor and fix reported issues
+### ⚡ **Performance Optimized**
+- Lightning-fast calculations and generations
+- Minimal memory footprint with efficient algorithms
+- Smooth 60fps animations and transitions
+- Instant startup and response times
 
-### 💡 **Feature Requests**
-- Suggest new tools or improvements
-- Community-driven development
+### 🎨 **User Experience**
+- Intuitive Material Design 3 interface
+- Consistent experience across all platforms
+- Customizable tool visibility and ordering
+- Contextual help and guidance
 
-### ⭐ **Show Your Support**
-- Star the repository if you find it useful
-- Share with friends and colleagues
-- Leave a review on app stores
+### ⚙️ **Highly Configurable**
+- Extensive settings for personalizing experience
+- Tool-specific configuration options
+- Import/export settings for backup
+- Compact mode for space-constrained devices
+
+### 🌐 **Accessibility & Localization**
+- Vietnamese and English localization
+- Screen reader compatibility
+- High contrast mode support
+- Keyboard navigation support
 
 ---
 
-## 📄 **License**
+## 🛠️ **Installation & Setup**
 
-MIT License - Free to use, modify, and distribute.
+### 🚀 **Getting Started**
+1. **Download:** Get the latest release for your platform
+2. **Install:** Follow platform-specific installation instructions
+3. **Configure:** Set your preferred language and theme
+4. **Customize:** Arrange tools according to your needs
+
+### 🖥️ **System Requirements**
+- **Windows:** Windows 10 1903 or later
+- **Android:** Android 7.0 (API level 24) or higher
+- **Web:** Modern browser with JavaScript enabled
+- **RAM:** Minimum 2GB available memory
+
+---
+
+## 📁 Project Structure
+
+```
+lib/
+├── main.dart                    # App entry point
+├── controllers/                 # P2P and state management
+├── models/                      # Data models and schemas
+├── services/                    # Core services
+├── screens/                     # App screens and UI
+├── widgets/                     # Reusable UI components
+├── layouts/                     # Layout components
+├── utils/                       # Helper functions
+└── l10n/                        # Localization files
+```
+---
+
+## ❤️ Donate to this project
+
+You can donate either via [**Github Sponsor**](https://github.com/sponsors/TrongAJTT/) or [**Buy me a coffee**](https://www.buymeacoffee.com/trongajtt) (write your feelings about the application).
+
+More details about inside the app.
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to:
+- Report bugs and issues
+- Suggest new features
+- Improve translation
+- Improve documentation
+
+## 📄 License
+
+This project is licensed under the GPL-3.0 License.
+
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+
+## 🙏 Credits
+
+Built with love using Flutter and the amazing open-source community libraries.
+
+---

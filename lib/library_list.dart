@@ -18,18 +18,8 @@ List<Map<String, String>> libraryList = [
 
   // UI & File Management
   {
-    'name': 'flutter_markdown',
-    'author': 'Flutter Community',
-    'license': 'BSD-3-Clause',
-  },
-  {
     'name': 'file_picker',
     'author': 'Miguel Ruivo',
-    'license': 'MIT',
-  },
-  {
-    'name': 'cross_file',
-    'author': 'Flutter Community',
     'license': 'MIT',
   },
   {
@@ -38,8 +28,13 @@ List<Map<String, String>> libraryList = [
     'license': 'MIT',
   },
   {
-    'name': 'desktop_drop',
-    'author': 'leanflutter',
+    'name': 'markdown_widget',
+    'author': 'asjqkkkk',
+    'license': 'MIT',
+  },
+  {
+    'name': 'cached_network_image',
+    'author': 'Baseflow',
     'license': 'MIT',
   },
 
@@ -62,12 +57,12 @@ List<Map<String, String>> libraryList = [
 
   // Database
   {
-    'name': 'isar',
+    'name': 'hive',
     'author': 'Simon Leier',
     'license': 'Apache-2.0',
   },
   {
-    'name': 'isar_flutter_libs',
+    'name': 'hive_flutter',
     'author': 'Simon Leier',
     'license': 'Apache-2.0',
   },
@@ -103,11 +98,6 @@ List<Map<String, String>> libraryList = [
 
   // System Integration
   {
-    'name': 'quick_actions',
-    'author': 'Flutter Team',
-    'license': 'BSD-3-Clause',
-  },
-  {
     'name': 'window_manager',
     'author': 'LiJianying',
     'license': 'MIT',
@@ -129,22 +119,22 @@ List<Map<String, String>> libraryList = [
     'author': 'Flutter Team',
     'license': 'BSD-3-Clause',
   },
+  {
+    'name': 'dio',
+    'author': 'cfug',
+    'license': 'MIT',
+  },
 
   // Network & P2P
-  {
-    'name': 'connectivity_plus',
-    'author': 'Flutter Community',
-    'license': 'BSD-3-Clause',
-  },
-  {
-    'name': 'network_info_plus',
-    'author': 'Flutter Community',
-    'license': 'BSD-3-Clause',
-  },
   {
     'name': 'multicast_dns',
     'author': 'Flutter Team',
     'license': 'BSD-3-Clause',
+  },
+  {
+    'name': 'socket_io_client',
+    'author': 'Darshan Gowda',
+    'license': 'MIT',
   },
   {
     'name': 'nsd',
@@ -162,16 +152,6 @@ List<Map<String, String>> libraryList = [
     'name': 'encrypt',
     'author': 'Leonardo Rignanese',
     'license': 'BSD-3-Clause',
-  },
-  {
-    'name': 'pointycastle',
-    'author': 'Dart Team',
-    'license': 'BSD-2-Clause',
-  },
-  {
-    'name': 'cryptography',
-    'author': 'Gohilla',
-    'license': 'Apache-2.0',
   },
 
   // Permissions & Device Info
@@ -197,50 +177,31 @@ List<Map<String, String>> libraryList = [
     'author': 'Remi Rousselet',
     'license': 'MIT',
   },
-  {
-    'name': 'get',
-    'author': 'Jonny Borges',
-    'license': 'MIT',
-  },
 
-  // File Operations & Sharing
+  // Development Dependencies
   {
-    'name': 'open_file',
-    'author': 'crazecoder',
+    'name': 'flutter_test',
+    'author': 'Flutter Team',
     'license': 'BSD-3-Clause',
   },
   {
-    'name': 'share_plus',
-    'author': 'Flutter Community',
+    'name': 'flutter_lints',
+    'author': 'Flutter Team',
     'license': 'BSD-3-Clause',
   },
   {
-    'name': 'archive',
-    'author': 'Brendan Duncan',
+    'name': 'hive_generator',
+    'author': 'Simon Leier',
     'license': 'Apache-2.0',
   },
-
-  // Notifications & Background Tasks
   {
-    'name': 'flutter_local_notifications',
-    'author': 'MaikuB',
+    'name': 'build_runner',
+    'author': 'Dart Team',
     'license': 'BSD-3-Clause',
   },
   {
-    'name': 'workmanager',
-    'author': 'Tim Visée',
-    'license': 'MIT',
-  },
-
-  // Clipboard Management
-  {
-    'name': 'clipboard',
-    'author': 'Clipboard Team',
-    'license': 'MIT',
-  },
-  {
-    'name': 'pasteboard',
-    'author': 'Pasteboard Team',
+    'name': 'remove_unused_localizations',
+    'author': 'Zhiguang Chen',
     'license': 'MIT',
   },
 ];
