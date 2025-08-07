@@ -142,6 +142,19 @@ class SettingsService {
     return settings.saveRandomToolsState;
   }
 
+  // Update compact tab layout
+  static Future<void> updateCompactTabLayout(bool enabled) async {
+    final currentSettings = await getSettings();
+    final updatedSettings = currentSettings.copyWith(compactTabLayout: enabled);
+    await saveSettings(updatedSettings);
+  }
+
+  // Get compact tab layout
+  static Future<bool> getCompactTabLayout() async {
+    final settings = await getSettings();
+    return settings.compactTabLayout;
+  }
+
   // Clear settings (for testing or reset)
   static Future<void> clearSettings() async {
     await initialize();

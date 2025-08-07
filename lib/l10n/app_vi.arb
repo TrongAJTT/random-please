@@ -483,5 +483,27 @@
 
   "yes": "Có",
   "no": "Không",
-  "dateErrStartEndConflict": "Ngày bắt đầu không thể sau ngày kết thúc"
+  "dateErrStartEndConflict": "Ngày bắt đầu không thể sau ngày kết thúc",
+  
+  "arrangeTools": "Sắp xếp công cụ",
+  "arrangeToolsDesc": "Tùy chỉnh thứ tự các công cụ trong giao diện",
+  "howToArrangeTools": "Cách sắp xếp công cụ",
+  "dragAndDropToReorder": "Kéo và thả để sắp xếp lại các công cụ theo ý muốn",
+  "defaultOrder": "Thứ tự mặc định",
+  "save": "Lưu",
+  "reloadTools": "Tải lại công cụ",
+  "compactTabLayout": "Bố cục tab thu gọn",
+  "compactTabLayoutDesc": "Ẩn biểu tượng trong tab để có giao diện gọn hơn",
+  "letterCountRange": "Khoảng số lượng chữ cái",
+  "numberRangeFromTo": "Khoảng giá trị: Từ {from} đến {to}",
+  "@numberRangeFromTo": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  }
 }

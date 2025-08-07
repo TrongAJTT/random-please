@@ -1065,4 +1065,41 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get dateErrStartEndConflict =>
       'Ngày bắt đầu không thể sau ngày kết thúc';
+
+  @override
+  String get arrangeTools => 'Sắp xếp công cụ';
+
+  @override
+  String get arrangeToolsDesc => 'Tùy chỉnh thứ tự các công cụ trong giao diện';
+
+  @override
+  String get howToArrangeTools => 'Cách sắp xếp công cụ';
+
+  @override
+  String get dragAndDropToReorder =>
+      'Kéo và thả để sắp xếp lại các công cụ theo ý muốn';
+
+  @override
+  String get defaultOrder => 'Thứ tự mặc định';
+
+  @override
+  String get save => 'Lưu';
+
+  @override
+  String get reloadTools => 'Tải lại công cụ';
+
+  @override
+  String get compactTabLayout => 'Bố cục tab thu gọn';
+
+  @override
+  String get compactTabLayoutDesc =>
+      'Ẩn biểu tượng trong tab để có giao diện gọn hơn';
+
+  @override
+  String get letterCountRange => 'Khoảng số lượng chữ cái';
+
+  @override
+  String numberRangeFromTo(String from, String to) {
+    return 'Khoảng giá trị: Từ $from đến $to';
+  }
 }

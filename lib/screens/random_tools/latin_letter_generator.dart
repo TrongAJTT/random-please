@@ -7,9 +7,9 @@ import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/services/random_services/random_state_service.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
-import 'package:random_please/widgets/quantity_selector.dart';
 import 'package:random_please/utils/widget_layout_render_helper.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
+import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 
 class LatinLetterGeneratorScreen extends StatefulWidget {
@@ -35,6 +35,16 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
   late Animation<double> _animation;
   List<GenerationHistoryItem> _history = [];
   bool _historyEnabled = false;
+
+  // New variables for range selection
+  int _selectedRangeIndex = 0; // Default to 1-20 range
+  final List<Map<String, dynamic>> _ranges = [
+    {'min': 1, 'max': 20, 'label': '1-20'},
+    {'min': 21, 'max': 40, 'label': '21-40'},
+    {'min': 41, 'max': 60, 'label': '41-60'},
+    {'min': 61, 'max': 80, 'label': '61-80'},
+    {'min': 81, 'max': 100, 'label': '81-100'},
+  ];
 
   static const String _historyType = 'latin_letter';
 
@@ -63,11 +73,24 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
           _letterCount = state.letterCount;
           _allowDuplicates = state.allowDuplicates;
           _skipAnimation = state.skipAnimation;
+
+          // Set the appropriate range index based on letterCount
+          _selectedRangeIndex = _getRangeIndexForValue(_letterCount);
         });
       }
     } catch (e) {
       // Error is already logged in service
     }
+  }
+
+  // Helper method to get range index for a given value
+  int _getRangeIndexForValue(int value) {
+    for (int i = 0; i < _ranges.length; i++) {
+      if (value >= _ranges[i]['min'] && value <= _ranges[i]['max']) {
+        return i;
+      }
+    }
+    return 0; // Default to first range if not found
   }
 
   Future<void> _saveState() async {
@@ -249,6 +272,132 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
     );
   }
 
+  Widget _buildRangeChips(AppLocalizations loc) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          loc.letterCountRange,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: _ranges.asMap().entries.map((entry) {
+            final index = entry.key;
+            final range = entry.value;
+            final isSelected = index == _selectedRangeIndex;
+
+            return FilterChip(
+              label: Text(range['label']),
+              selected: isSelected,
+              onSelected: (selected) {
+                if (selected) {
+                  setState(() {
+                    _selectedRangeIndex = index;
+                    // Update letter count to be within the new range
+                    final min = range['min'] as int;
+                    final max = range['max'] as int;
+                    if (_letterCount < min || _letterCount > max) {
+                      _letterCount = min; // Set to minimum of new range
+                    }
+                  });
+                }
+              },
+              backgroundColor: isSelected
+                  ? Theme.of(context).colorScheme.primaryContainer
+                  : null,
+              selectedColor: Theme.of(context).colorScheme.primaryContainer,
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLetterCountSlider(AppLocalizations loc) {
+    final selectedRange = _ranges[_selectedRangeIndex];
+    final min = selectedRange['min'] as int;
+    final max = selectedRange['max'] as int;
+
+    // Create 20 meaningful options within the range
+    final List<SliderOption<int>> options = [];
+    final totalValues = max - min + 1;
+
+    if (totalValues <= 20) {
+      // If range has 20 or fewer values, include all
+      for (int i = min; i <= max; i++) {
+        options.add(SliderOption<int>(
+          value: i,
+          label: i.toString(),
+        ));
+      }
+    } else {
+      // Create 20 evenly distributed meaningful values
+      final step = (max - min) / 19.0;
+      final Set<int> uniqueValues = <int>{};
+
+      for (int i = 0; i < 20; i++) {
+        final value = (min + (step * i)).round();
+        uniqueValues.add(value);
+      }
+
+      // Ensure min and max are included
+      uniqueValues.add(min);
+      uniqueValues.add(max);
+
+      // Sort and create options
+      final sortedValues = uniqueValues.toList()..sort();
+      for (final value in sortedValues.take(20)) {
+        options.add(SliderOption<int>(
+          value: value,
+          label: value.toString(),
+        ));
+      }
+    }
+
+    // Ensure current letterCount is valid for this range
+    int validLetterCount = _letterCount;
+    if (validLetterCount < min || validLetterCount > max) {
+      validLetterCount = min;
+    }
+
+    // Find the closest option value
+    final optionValues = options.map((o) => o.value).toList();
+    validLetterCount = optionValues.reduce((curr, next) =>
+        (curr - validLetterCount).abs() < (next - validLetterCount).abs()
+            ? curr
+            : next);
+
+    // Update letterCount if it changed
+    if (validLetterCount != _letterCount) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          _letterCount = validLetterCount;
+        });
+      });
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        OptionSlider<int>(
+          label: '${loc.letterCount}: $validLetterCount',
+          currentValue: validLetterCount,
+          options: options,
+          onChanged: (value) {
+            setState(() {
+              _letterCount = value;
+            });
+          },
+          layout: OptionSliderLayout.none,
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -263,27 +412,8 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  loc.letterCount,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                Center(
-                  child: QuantitySelector(
-                    value: _letterCount,
-                    minValue: 1,
-                    maxValue: 99,
-                    smallStep: 1,
-                    largeStep: 10,
-                    onChanged: (newValue) {
-                      setState(() {
-                        _letterCount = newValue;
-                      });
-                    },
-                    showBorder: false,
-                    highlightValue: true,
-                  ),
-                ),
+                _buildRangeChips(loc),
+                _buildLetterCountSlider(loc),
                 VerticalSpacingDivider.specific(top: 12, bottom: 6),
                 _buildSwitchOptions(loc),
                 VerticalSpacingDivider.specific(top: 6, bottom: 12),

@@ -9,6 +9,7 @@ import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/size_utils.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/utils/widget_layout_render_helper.dart';
+import 'package:random_please/utils/number_formatter.dart';
 import 'package:random_please/widgets/generic/option_grid_picker.dart' as grid;
 import 'package:random_please/widgets/generic/option_item.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
@@ -122,6 +123,9 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
         return;
       }
 
+      // Get locale before any async operations
+      final locale = NumberFormatter.getCurrentLocale(context);
+
       setState(() {
         _minValue = min;
         _maxValue = max;
@@ -141,17 +145,17 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
       // Save to history if enabled
       if (_historyEnabled && _generatedNumbers.isNotEmpty) {
         String numbersText = _generatedNumbers.map((number) {
-          if (_isInteger) {
-            return number.toInt().toString();
-          } else {
-            return number.toStringAsFixed(2);
-          }
+          return NumberFormatter.formatNumber(number, locale,
+              isInteger: _isInteger, decimalPlaces: 2);
         }).join(', ');
 
-        GenerationHistoryService.addHistoryItem(
+        await GenerationHistoryService.addHistoryItem(
           numbersText,
           _historyType,
-        ).then((_) => _loadHistory()); // Refresh history
+        );
+        if (mounted) {
+          _loadHistory(); // Refresh history
+        }
       }
     } catch (e) {
       if (!mounted) return; // Check mounted before using context
@@ -166,12 +170,10 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
   }
 
   void _copyToClipboard() {
+    final locale = NumberFormatter.getCurrentLocale(context);
     String numbersText = _generatedNumbers.map((number) {
-      if (_isInteger) {
-        return number.toInt().toString();
-      } else {
-        return number.toStringAsFixed(2);
-      }
+      return NumberFormatter.formatNumber(number, locale,
+          isInteger: _isInteger, decimalPlaces: 2);
     }).join(', ');
 
     Clipboard.setData(ClipboardData(text: numbersText));
@@ -191,11 +193,9 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
   }
 
   String _formatNumber(num number) {
-    if (_isInteger) {
-      return number.toInt().toString();
-    } else {
-      return number.toStringAsFixed(2);
-    }
+    final locale = NumberFormatter.getCurrentLocale(context);
+    return NumberFormatter.formatNumber(number, locale,
+        isInteger: _isInteger, decimalPlaces: 2);
   }
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
@@ -225,6 +225,19 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
             _historyType, index);
         await _loadHistory();
       },
+    );
+  }
+
+  Widget _buildRangeDisplay(AppLocalizations loc) {
+    final locale = NumberFormatter.getCurrentLocale(context);
+    return Text(
+      loc.numberRangeFromTo(
+        NumberFormatter.formatNumber(_minValue, locale,
+            isInteger: _isInteger, decimalPlaces: 2),
+        NumberFormatter.formatNumber(_maxValue, locale,
+            isInteger: _isInteger, decimalPlaces: 2),
+      ),
+      style: Theme.of(context).textTheme.titleMedium,
     );
   }
 
@@ -262,8 +275,10 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
                     labelAlign: grid.LabelAlign.center,
                   ),
                 ),
-                VerticalSpacingDivider.specific(top: 6, bottom: 12),
+                const SizedBox(height: 24),
                 // 2. Min/Max Inputs
+                _buildRangeDisplay(loc),
+                const SizedBox(height: 16),
                 WidgetLayoutRenderHelper.twoEqualWidthInRow(
                   TextFormField(
                     controller: _minValueController,
@@ -279,7 +294,9 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
                               RegExp(r'[0-9.-]')),
                     ],
                     onChanged: (value) {
-                      _minValue = double.tryParse(value) ?? _minValue;
+                      setState(() {
+                        _minValue = double.tryParse(value) ?? _minValue;
+                      });
                     },
                   ),
                   TextFormField(
@@ -296,7 +313,9 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
                               RegExp(r'[0-9.-]')),
                     ],
                     onChanged: (value) {
-                      _maxValue = double.tryParse(value) ?? _maxValue;
+                      setState(() {
+                        _maxValue = double.tryParse(value) ?? _maxValue;
+                      });
                     },
                   ),
                   spacing: TwoDimSpacing.specific(vertical: 8, horizontal: 16),

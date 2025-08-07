@@ -2059,6 +2059,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start date cannot be after end date'**
   String get dateErrStartEndConflict;
+
+  /// No description provided for @arrangeTools.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrange Tools'**
+  String get arrangeTools;
+
+  /// No description provided for @arrangeToolsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize the order of tools in the interface'**
+  String get arrangeToolsDesc;
+
+  /// No description provided for @howToArrangeTools.
+  ///
+  /// In en, this message translates to:
+  /// **'How to arrange tools'**
+  String get howToArrangeTools;
+
+  /// No description provided for @dragAndDropToReorder.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag and drop to reorder the tools as you prefer'**
+  String get dragAndDropToReorder;
+
+  /// No description provided for @defaultOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Order'**
+  String get defaultOrder;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @reloadTools.
+  ///
+  /// In en, this message translates to:
+  /// **'Reload Tools'**
+  String get reloadTools;
+
+  /// No description provided for @compactTabLayout.
+  ///
+  /// In en, this message translates to:
+  /// **'Compact Tab Layout'**
+  String get compactTabLayout;
+
+  /// No description provided for @compactTabLayoutDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide icons in tabs for a more compact look'**
+  String get compactTabLayoutDesc;
+
+  /// No description provided for @letterCountRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Letter Count Range'**
+  String get letterCountRange;
+
+  /// No description provided for @numberRangeFromTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Number Range: From {from} to {to}'**
+  String numberRangeFromTo(String from, String to);
 }
 
 class _AppLocalizationsDelegate

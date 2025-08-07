@@ -23,13 +23,14 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       fetchRetryTimes: fields[3] as int,
       focusModeEnabled: fields[4] as bool,
       saveRandomToolsState: fields[5] as bool,
+      compactTabLayout: fields[6] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, SettingsModel obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.fetchTimeoutSeconds)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       ..writeByte(4)
       ..write(obj.focusModeEnabled)
       ..writeByte(5)
-      ..write(obj.saveRandomToolsState);
+      ..write(obj.saveRandomToolsState)
+      ..writeByte(6)
+      ..write(obj.compactTabLayout);
   }
 
   @override

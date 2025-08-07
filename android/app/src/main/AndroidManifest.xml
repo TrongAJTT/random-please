@@ -20,7 +20,7 @@
     <!-- For Android 10 (API level 29) and above -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
       <application
-        android:label="random_please"
+        android:label="Random Please"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"

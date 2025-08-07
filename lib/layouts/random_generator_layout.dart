@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:random_please/l10n/app_localizations.dart';
-import 'package:random_please/services/app_logger.dart';
 import 'package:random_please/services/generation_history_service.dart';
+import 'package:random_please/services/settings_service.dart';
 import 'package:random_please/utils/generic_dialog_utils.dart';
 import 'package:random_please/utils/localization_utils.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
@@ -24,7 +24,7 @@ class DoubleConfirmHelper {
     required String confirmMessage,
     required String successMessage,
     required VoidCallback onStateChange,
-    Duration timeout = const Duration(seconds: 3),
+    Duration timeout = const Duration(seconds: 2),
   }) {
     if (_pendingIndex == index) {
       // Second tap - confirm action
@@ -103,11 +103,22 @@ class RandomGeneratorLayout extends StatefulWidget {
 class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool _compactTabLayout = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final compactTabLayout = await SettingsService.getCompactTabLayout();
+    if (mounted) {
+      setState(() {
+        _compactTabLayout = compactTabLayout;
+      });
+    }
   }
 
   @override
@@ -183,11 +194,11 @@ class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
               dividerColor: Colors.transparent,
               tabs: [
                 Tab(
-                  icon: const Icon(Icons.casino),
+                  icon: _compactTabLayout ? null : const Icon(Icons.casino),
                   text: loc.random,
                 ),
                 Tab(
-                  icon: const Icon(Icons.history),
+                  icon: _compactTabLayout ? null : const Icon(Icons.history),
                   text: loc.generationHistory,
                 ),
               ],
@@ -222,6 +233,16 @@ class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
 
     // Return either the content directly (if embedded) or wrapped in a Scaffold
     if (widget.isEmbedded) {
+      // When embedded, wrap TabBar content in Material if needed
+      if (!isLargeScreen &&
+          widget.historyEnabled &&
+          widget.hasHistory &&
+          widget.historyWidget != null) {
+        return Material(
+          type: MaterialType.transparency,
+          child: content,
+        );
+      }
       return content;
     } else {
       return Scaffold(
@@ -369,15 +390,7 @@ class _RandomGeneratorHistoryWidgetState
     // Item builder
     return ListTile(
         dense: true,
-        leading: widget.customHeader != null
-            ? widget.customHeader!(widget.history, index)
-            : isPinned
-                ? const Icon(
-                    Icons.push_pin,
-                    size: 16,
-                    color: Colors.orange,
-                  )
-                : null,
+        leading: widget.customHeader?.call(widget.history, index),
         tileColor: isPendingDelete ? Colors.red.withValues(alpha: 0.1) : null,
         title: Text(
           item.value.toString(),
@@ -487,7 +500,10 @@ class _RandomGeneratorHistoryWidgetState
                         ),
                   ),
                 )),
-            onTapDown: (d) => _showClearOptionsContextMenu(d.globalPosition),
+            onTapUp: (d) => _showClearOptionsContextMenu(d.globalPosition),
+            onLongPressStart: (d) => _showClearAllHistoryDialog(context, true),
+            onSecondaryTapDown: (d) =>
+                _showClearAllHistoryDialog(context, true),
           )
         : TextButton(
             onPressed: () => _showClearAllHistoryDialog(context, false),

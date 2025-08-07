@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/services/security_service.dart';
 import 'package:random_please/services/data_migration_service.dart';
 import 'package:random_please/widgets/security/security_dialogs.dart';
@@ -7,7 +8,7 @@ import 'package:random_please/widgets/security/security_dialogs.dart';
 class SecurityManager extends ChangeNotifier {
   static SecurityManager? _instance;
   static SecurityManager get instance => _instance ??= SecurityManager._();
-  
+
   SecurityManager._();
 
   bool _isSecurityEnabled = false;
@@ -25,7 +26,7 @@ class SecurityManager extends ChangeNotifier {
   /// Initialize security manager
   Future<void> initialize() async {
     if (_isInitialized) return;
-    
+
     _isSecurityEnabled = await SecurityService.isSecurityEnabled();
     _isInitialized = true;
     notifyListeners();
@@ -34,7 +35,7 @@ class SecurityManager extends ChangeNotifier {
   /// Check if app needs security setup on first launch
   Future<bool> needsSecuritySetup() async {
     await initialize();
-    
+
     // Only show setup if:
     // 1. Security is not enabled
     // 2. We haven't shown the setup dialog before
@@ -42,43 +43,45 @@ class SecurityManager extends ChangeNotifier {
       final hasShown = await SecurityService.hasShownSecuritySetup();
       return !hasShown;
     }
-    
+
     return false;
   }
 
   /// Handle app launch security flow
-  Future<bool> handleAppLaunch(BuildContext context) async {
+  Future<bool> handleAppLaunch(
+      BuildContext context, AppLocalizations loc) async {
     await initialize();
-    
+
     if (!_isSecurityEnabled) {
       // Check if we need to show setup dialog
       if (await needsSecuritySetup()) {
-        final setupResult = await SecurityDialogs.handleSecuritySetup(context);
+        final setupResult =
+            await SecurityDialogs.handleSecuritySetup(context, loc);
         if (setupResult) {
           await initialize(); // Re-initialize after setup
           notifyListeners(); // Notify UI about state change
         }
       }
-      
+
       // If still no security, user can proceed
       _isAuthenticated = true;
       notifyListeners();
       return true;
     } else {
       // Security is enabled, need to authenticate
-      return await authenticate(context);
+      return await authenticate(context, loc);
     }
   }
 
   /// Authenticate user with master password
-  Future<bool> authenticate(BuildContext context) async {
+  Future<bool> authenticate(BuildContext context, AppLocalizations loc) async {
     if (!_isSecurityEnabled) {
       _isAuthenticated = true;
       notifyListeners();
       return true;
     }
 
-    final password = await SecurityDialogs.handleSecurityLogin(context);
+    final password = await SecurityDialogs.handleSecurityLogin(context, loc);
     if (password == null) {
       // User reset data, security is now disabled
       await initialize();
@@ -102,48 +105,76 @@ class SecurityManager extends ChangeNotifier {
   }
 
   /// Enable security with master password
-  Future<bool> enableSecurity(BuildContext context, String masterPassword) async {
-    final success = await SecurityService.enableSecurity(masterPassword);
-    if (success) {
-      // Migrate existing data
-      await DataMigrationService.migrateToEncrypted(masterPassword);
-      
-      // Update state
-      _isSecurityEnabled = true;
-      _isAuthenticated = true;
-      _currentMasterPassword = masterPassword;
-      _currentEncryptionKey = await SecurityService.getEncryptionKey(masterPassword);
-      notifyListeners();
-      return true;
+  Future<bool> enableSecurity(
+      BuildContext context, String masterPassword) async {
+    try {
+      print('SecurityManager.enableSecurity: Starting...');
+      final success = await SecurityService.enableSecurity(masterPassword);
+      print(
+          'SecurityManager.enableSecurity: SecurityService.enableSecurity result: $success');
+
+      if (success) {
+        print('SecurityManager.enableSecurity: Starting data migration...');
+        // Migrate existing data
+        await DataMigrationService.migrateToEncrypted(masterPassword);
+        print('SecurityManager.enableSecurity: Data migration completed');
+
+        // Update state
+        _isSecurityEnabled = true;
+        _isAuthenticated = true;
+        _currentMasterPassword = masterPassword;
+        _currentEncryptionKey =
+            await SecurityService.getEncryptionKey(masterPassword);
+        notifyListeners();
+        print('SecurityManager.enableSecurity: State updated and notified');
+        return true;
+      }
+      print(
+          'SecurityManager.enableSecurity: SecurityService.enableSecurity failed');
+      return false;
+    } catch (e) {
+      print('SecurityManager.enableSecurity: Exception caught: $e');
+      // If anything fails, make sure security is disabled
+      try {
+        await SecurityService.disableSecurity();
+      } catch (e) {
+        // Ignore cleanup errors
+      }
+      rethrow;
     }
-    return false;
   }
 
   /// Disable security
   Future<bool> disableSecurity(String currentPassword) async {
-    // Verify current password first
-    final isValid = await SecurityService.verifyPassword(currentPassword);
-    if (!isValid) {
-      return false;
-    }
+    try {
+      // Verify current password first
+      final isValid = await SecurityService.verifyPassword(currentPassword);
+      if (!isValid) {
+        return false;
+      }
 
-    // Migrate data back to unencrypted
-    final migrationSuccess = await DataMigrationService.migrateToUnencrypted(currentPassword);
-    if (!migrationSuccess) {
-      return false;
-    }
+      // Migrate data back to unencrypted
+      final migrationSuccess =
+          await DataMigrationService.migrateToUnencrypted(currentPassword);
+      if (!migrationSuccess) {
+        return false;
+      }
 
-    // Disable security
-    final success = await SecurityService.disableSecurity();
-    if (success) {
-      _isSecurityEnabled = false;
-      _isAuthenticated = true; // Still authenticated, just no security
-      _currentMasterPassword = null;
-      _currentEncryptionKey = null;
-      notifyListeners();
-      return true;
+      // Disable security
+      final success = await SecurityService.disableSecurity();
+      if (success) {
+        _isSecurityEnabled = false;
+        _isAuthenticated = true; // Still authenticated, just no security
+        _currentMasterPassword = null;
+        _currentEncryptionKey = null;
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      // If anything fails during disable, we're in an inconsistent state
+      rethrow;
     }
-    return false;
   }
 
   /// Lock the app (require authentication again)
@@ -158,13 +189,22 @@ class SecurityManager extends ChangeNotifier {
   Future<void> resetAll() async {
     await DataMigrationService.clearEncryptedData();
     await SecurityService.resetSecurity();
-    
+
     _isSecurityEnabled = false;
     _isAuthenticated = true;
     _currentMasterPassword = null;
     _currentEncryptionKey = null;
     _isInitialized = false;
-    
+
+    notifyListeners();
+  }
+
+  /// Update state after security setup (called from SecurityDialogs)
+  Future<void> updateAfterSetup(String password) async {
+    await initialize();
+    _isAuthenticated = true;
+    _currentMasterPassword = password;
+    _currentEncryptionKey = await SecurityService.getEncryptionKey(password);
     notifyListeners();
   }
 

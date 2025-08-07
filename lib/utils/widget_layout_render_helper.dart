@@ -1057,6 +1057,9 @@ class GridBuilderHelper extends StatelessWidget {
       builder: (context, constraints) {
         final columns = _getColumnsForWidth(constraints.maxWidth);
 
+        // Ensure we have at least 1 column
+        final safeColumns = columns > 0 ? columns : 1;
+
         // Calculate child aspect ratio if height constraints are specified
         double? aspectRatio = decorator?.childAspectRatio;
         if (aspectRatio == null &&
@@ -1064,14 +1067,31 @@ class GridBuilderHelper extends StatelessWidget {
                 decorator?.maxChildHeight != null)) {
           final itemWidth = (constraints.maxWidth -
                   (decorator?.padding?.horizontal ?? 0) -
-                  ((columns - 1) * (decorator?.crossAxisSpacing ?? 4))) /
-              columns;
+                  ((safeColumns - 1) * (decorator?.crossAxisSpacing ?? 4))) /
+              safeColumns;
 
-          if (decorator?.minChildHeight != null) {
-            aspectRatio = itemWidth / decorator!.minChildHeight!;
-          } else if (decorator?.maxChildHeight != null) {
-            aspectRatio = itemWidth / decorator!.maxChildHeight!;
+          // Ensure itemWidth is positive
+          if (itemWidth > 0) {
+            if (decorator?.minChildHeight != null &&
+                decorator!.minChildHeight! > 0) {
+              aspectRatio = itemWidth / decorator!.minChildHeight!;
+            } else if (decorator?.maxChildHeight != null &&
+                decorator!.maxChildHeight! > 0) {
+              aspectRatio = itemWidth / decorator!.maxChildHeight!;
+            }
           }
+
+          // Ensure aspectRatio is always positive and reasonable
+          if (aspectRatio != null &&
+              (aspectRatio <= 0 || !aspectRatio.isFinite)) {
+            aspectRatio = 1.0;
+          }
+        }
+
+        // Final safety check
+        aspectRatio = aspectRatio ?? 1.0;
+        if (aspectRatio <= 0 || !aspectRatio.isFinite) {
+          aspectRatio = 1.0;
         }
 
         return GridView.builder(
@@ -1083,10 +1103,10 @@ class GridBuilderHelper extends StatelessWidget {
           physics: decorator?.physics,
           shrinkWrap: decorator?.shrinkWrap ?? false,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: columns,
+            crossAxisCount: safeColumns,
             mainAxisSpacing: decorator?.mainAxisSpacing ?? 4.0,
             crossAxisSpacing: decorator?.crossAxisSpacing ?? 4.0,
-            childAspectRatio: aspectRatio ?? 1.0,
+            childAspectRatio: aspectRatio,
           ),
           itemCount: itemCount,
           itemBuilder: (context, index) {

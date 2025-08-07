@@ -37,8 +37,8 @@ class GenericSettingsConfig<T> {
   const GenericSettingsConfig({
     required this.title,
     required this.settingsLayout,
-    this.currentSettings,
     required this.onSettingsChanged,
+    this.currentSettings,
     this.onCancel,
     this.showActions = true,
     this.isCompact = false,

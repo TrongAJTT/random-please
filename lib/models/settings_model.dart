@@ -22,6 +22,9 @@ class SettingsModel extends HiveObject {
   @HiveField(5)
   final bool saveRandomToolsState;
 
+  @HiveField(6)
+  final bool compactTabLayout;
+
   SettingsModel({
     this.fetchTimeoutSeconds = 10,
     this.featureStateSavingEnabled = true, // Always enabled by default
@@ -29,6 +32,7 @@ class SettingsModel extends HiveObject {
     this.fetchRetryTimes = 1, // Default to 1 retry
     this.focusModeEnabled = false,
     this.saveRandomToolsState = true,
+    this.compactTabLayout = false, // Default to false
   });
 
   SettingsModel copyWith({
@@ -38,6 +42,7 @@ class SettingsModel extends HiveObject {
     int? fetchRetryTimes,
     bool? focusModeEnabled,
     bool? saveRandomToolsState,
+    bool? compactTabLayout,
   }) {
     return SettingsModel(
       fetchTimeoutSeconds: fetchTimeoutSeconds ?? this.fetchTimeoutSeconds,
@@ -47,6 +52,7 @@ class SettingsModel extends HiveObject {
       fetchRetryTimes: fetchRetryTimes ?? this.fetchRetryTimes,
       focusModeEnabled: focusModeEnabled ?? this.focusModeEnabled,
       saveRandomToolsState: saveRandomToolsState ?? this.saveRandomToolsState,
+      compactTabLayout: compactTabLayout ?? this.compactTabLayout,
     );
   }
 
@@ -58,6 +64,7 @@ class SettingsModel extends HiveObject {
       'fetchRetryTimes': fetchRetryTimes,
       'focusModeEnabled': focusModeEnabled,
       'saveRandomToolsState': saveRandomToolsState,
+      'compactTabLayout': compactTabLayout,
     };
   }
 
@@ -69,6 +76,7 @@ class SettingsModel extends HiveObject {
       fetchRetryTimes: json['fetchRetryTimes'] ?? 1,
       focusModeEnabled: json['focusModeEnabled'] ?? false,
       saveRandomToolsState: json['saveRandomToolsState'] ?? true,
+      compactTabLayout: json['compactTabLayout'] ?? false,
     );
   }
 }

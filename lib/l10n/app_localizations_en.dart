@@ -1067,4 +1067,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dateErrStartEndConflict => 'Start date cannot be after end date';
+
+  @override
+  String get arrangeTools => 'Arrange Tools';
+
+  @override
+  String get arrangeToolsDesc =>
+      'Customize the order of tools in the interface';
+
+  @override
+  String get howToArrangeTools => 'How to arrange tools';
+
+  @override
+  String get dragAndDropToReorder =>
+      'Drag and drop to reorder the tools as you prefer';
+
+  @override
+  String get defaultOrder => 'Default Order';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get reloadTools => 'Reload Tools';
+
+  @override
+  String get compactTabLayout => 'Compact Tab Layout';
+
+  @override
+  String get compactTabLayoutDesc =>
+      'Hide icons in tabs for a more compact look';
+
+  @override
+  String get letterCountRange => 'Letter Count Range';
+
+  @override
+  String numberRangeFromTo(String from, String to) {
+    return 'Number Range: From $from to $to';
+  }
 }

@@ -5,6 +5,8 @@ import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/screens/about_layout.dart';
 import 'package:random_please/services/version_check_service.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
+import 'package:random_please/utils/variables_utils.dart';
+import 'package:random_please/variables.dart';
 import 'package:random_please/widgets/generic/generic_settings_helper.dart';
 import 'package:random_please/services/cache_service.dart';
 import 'package:random_please/services/hive_service.dart';
@@ -13,10 +15,12 @@ import 'package:random_please/services/app_logger.dart';
 import 'package:random_please/services/security_manager.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/models/settings_model.dart';
+import 'package:random_please/widgets/generic/icon_button_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 import 'screens/main_settings.dart';
 import 'screens/random_tools_screen.dart';
+import 'screens/random_tools_desktop_layout.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 
@@ -234,6 +238,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with WindowListener {
   bool _isSecurityChecked = false;
+  late AppLocalizations loc;
+  int _rebuildKey = DateTime.now().millisecondsSinceEpoch;
 
   @override
   void initState() {
@@ -246,13 +252,28 @@ class _HomePageState extends State<HomePage> with WindowListener {
     });
   }
 
+  @override
+  void didChangeDependencies() {
+    loc = AppLocalizations.of(context)!;
+    super.didChangeDependencies();
+  }
+
+  /// Callback to refresh tool order when settings change
+  void _onToolOrderChanged() {
+    // Force rebuild by calling setState with new key
+    // This will force recreation of the widgets including their FutureBuilder
+    setState(() {
+      _rebuildKey = DateTime.now().millisecondsSinceEpoch;
+    });
+  }
+
   Future<void> _handleAppLaunch() async {
     if (!mounted) return;
 
     try {
       // Handle security flow
       final securityManager = SecurityManager.instance;
-      final success = await securityManager.handleAppLaunch(context);
+      final success = await securityManager.handleAppLaunch(context, loc);
 
       if (mounted) {
         setState(() {
@@ -316,16 +337,88 @@ class _HomePageState extends State<HomePage> with WindowListener {
     super.dispose();
   }
 
+  Widget _buildActionAppbar(bool isDesktop, int visibleCount) {
+    List<IconButtonListItem> buttons = [
+      IconButtonListItem(
+        icon: Icons.refresh,
+        label: loc.reloadTools,
+        onPressed: _onToolOrderChanged,
+      ),
+      IconButtonListItem(
+        icon: Icons.settings,
+        label: loc.settings,
+        onPressed: () {
+          final screen = MainSettingsScreen(
+            isEmbedded: isDesktop,
+            onToolVisibilityChanged: _onToolOrderChanged,
+            initialSectionId: null, // Let the screen decide the initial view
+          );
+          GenericSettingsHelper.showSettings(
+            context,
+            GenericSettingsConfig(
+              title: loc.settings,
+              settingsLayout: screen,
+              onSettingsChanged: (newSettings) {},
+            ),
+          );
+        },
+      ),
+      if (kIsWeb)
+        IconButtonListItem(
+          icon: Icons.download,
+          label: loc.downloadApp,
+          onPressed: () {
+            GenericSettingsHelper.showSettings(
+              context,
+              GenericSettingsConfig(
+                title: loc.downloadApp,
+                settingsLayout: VersionCheckService.buildDownloadAppLayout(
+                  context: context,
+                ),
+                onSettingsChanged: (newSettings) {},
+              ),
+            );
+          },
+        ),
+      IconButtonListItem(
+        icon: Icons.info_outline,
+        label: loc.about,
+        onPressed: () {
+          GenericSettingsHelper.showSettings(
+            context,
+            GenericSettingsConfig(
+              title: loc.about,
+              settingsLayout: const AboutLayout(),
+              onSettingsChanged: (newSettings) {},
+            ),
+          );
+        },
+      ),
+    ];
+    return IconButtonList(
+      buttons: buttons,
+      visibleCount: visibleCount,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isDesktop = MediaQuery.of(context).size.width >= 600;
+    final isDesktop = isDesktopContext(context);
+    final width = MediaQuery.of(context).size.width;
     final loc = AppLocalizations.of(context)!;
 
     // Show loading screen while security is being checked
     if (!_isSecurityChecked) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(loc.title),
+          title: ListTile(
+            dense: false,
+            contentPadding: const EdgeInsets.only(),
+            title:
+                Text(loc.title, style: Theme.of(context).textTheme.titleLarge),
+            leading: SizedBox(
+                width: 40, height: 40, child: Image.asset(imageAssetPath)),
+          ),
         ),
         body: const Center(
           child: CircularProgressIndicator(),
@@ -337,65 +430,23 @@ class _HomePageState extends State<HomePage> with WindowListener {
       builder: (context, constraints) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(loc.title),
+            title: ListTile(
+              dense: false,
+              contentPadding: const EdgeInsets.only(),
+              title: Text(loc.title,
+                  style: Theme.of(context).textTheme.titleLarge),
+              leading: SizedBox(
+                  width: 40, height: 40, child: Image.asset(imageAssetPath)),
+            ),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.settings),
-                tooltip: loc.settings,
-                onPressed: () {
-                  final screen = MainSettingsScreen(
-                    isEmbedded: isDesktop,
-                    onToolVisibilityChanged: () {},
-                    initialSectionId:
-                        null, // Let the screen decide the initial view
-                  );
-                  GenericSettingsHelper.showSettings(
-                    context,
-                    GenericSettingsConfig(
-                      title: loc.settings,
-                      settingsLayout: screen,
-                      onSettingsChanged: (newSettings) {},
-                    ),
-                  );
-                },
-              ),
-              if (kIsWeb)
-                IconButton(
-                  icon: const Icon(Icons.download),
-                  tooltip: loc.downloadApp,
-                  onPressed: () {
-                    GenericSettingsHelper.showSettings(
-                      context,
-                      GenericSettingsConfig(
-                        title: loc.downloadApp,
-                        settingsLayout:
-                            VersionCheckService.buildDownloadAppLayout(
-                          context: context,
-                        ),
-                        onSettingsChanged: (newSettings) {},
-                      ),
-                    );
-                  },
-                ),
-              IconButton(
-                icon: const Icon(Icons.info_outline),
-                tooltip: loc.about,
-                onPressed: () {
-                  GenericSettingsHelper.showSettings(
-                    context,
-                    GenericSettingsConfig(
-                      title: loc.about,
-                      settingsLayout: const AboutLayout(),
-                      onSettingsChanged: (newSettings) {},
-                    ),
-                  );
-                },
-              ),
+              _buildActionAppbar(isDesktop, width > 400 ? 4 : 0),
               const SizedBox(width: 8),
             ],
           ),
-          body: const SafeArea(
-            child: RandomToolsScreen(),
+          body: SafeArea(
+            child: isDesktop
+                ? DesktopLayout(key: ValueKey(_rebuildKey))
+                : RandomToolsScreen(key: ValueKey(_rebuildKey)),
           ),
         );
       },

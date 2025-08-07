@@ -517,5 +517,27 @@
 
   "yes": "Yes",
   "no": "No",
-  "dateErrStartEndConflict": "Start date cannot be after end date"
+  "dateErrStartEndConflict": "Start date cannot be after end date",
+  
+  "arrangeTools": "Arrange Tools",
+  "arrangeToolsDesc": "Customize the order of tools in the interface",
+  "howToArrangeTools": "How to arrange tools",
+  "dragAndDropToReorder": "Drag and drop to reorder the tools as you prefer",
+  "defaultOrder": "Default Order",
+  "save": "Save",
+  "reloadTools": "Reload Tools",
+  "compactTabLayout": "Compact Tab Layout",
+  "compactTabLayoutDesc": "Hide icons in tabs for a more compact look",
+  "letterCountRange": "Letter Count Range",
+  "numberRangeFromTo": "Number Range: From {from} to {to}",
+  "@numberRangeFromTo": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  }
 }

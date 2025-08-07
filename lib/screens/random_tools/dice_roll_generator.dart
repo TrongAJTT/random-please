@@ -200,7 +200,7 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
                   label: loc.diceCount,
                   currentValue: _diceCount,
                   options: List.generate(
-                    10,
+                    20,
                     (i) => SliderOption(value: i + 1, label: '${i + 1}'),
                   ),
                   onChanged: (value) {

@@ -11,6 +11,9 @@ import 'package:random_please/widgets/generic/option_grid_picker.dart' as grid;
 import 'package:random_please/widgets/generic/option_item.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/widgets/security/security_settings_widget.dart';
+import 'package:random_please/widgets/generic/generic_settings_helper.dart';
+import 'package:random_please/screens/tool_ordering_screen.dart';
+import 'package:random_please/services/tool_order_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:random_please/main.dart';
 
@@ -37,6 +40,7 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
   bool _loading = true;
   bool _historyEnabled = false;
   bool _saveRandomToolsState = true;
+  bool _compactTabLayout = false;
 
   // Static decorator for settings
   late final OptionSwitchDecorator switchDecorator;
@@ -68,6 +72,7 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
     final historyEnabled = await GenerationHistoryService.isHistoryEnabled();
     final saveRandomToolsState =
         await SettingsService.getSaveRandomToolsState();
+    final compactTabLayout = await SettingsService.getCompactTabLayout();
 
     setState(() {
       _themeMode = themeIndex != null
@@ -77,6 +82,7 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
       _historyEnabled = historyEnabled;
       // _logRetentionDays = logRetentionDays;
       _saveRandomToolsState = saveRandomToolsState;
+      _compactTabLayout = compactTabLayout;
 
       _loading = false;
     });
@@ -147,6 +153,11 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
   void _onSaveRandomToolsStateChanged(bool enabled) async {
     setState(() => _saveRandomToolsState = enabled);
     await SettingsService.updateSaveRandomToolsState(enabled);
+  }
+
+  void _onCompactTabLayoutChanged(bool enabled) async {
+    setState(() => _compactTabLayout = enabled);
+    await SettingsService.updateCompactTabLayout(enabled);
   }
 
   @override
@@ -241,6 +252,8 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
                   _buildLanguageSettings(loc),
                 ],
               ),
+        const SizedBox(height: 24),
+        _buildCompactTabLayoutSettings(loc),
       ],
     );
   }
@@ -253,7 +266,9 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
         VerticalSpacingDivider.both(6),
         _buildSaveRandomToolsStateSettings(loc),
         VerticalSpacingDivider.both(6),
-        const SecuritySettingsWidget(),
+        _buildToolOrderingSettings(loc),
+        VerticalSpacingDivider.both(6),
+        SecuritySettingsWidget(loc: loc),
       ],
     );
   }
@@ -353,6 +368,72 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
       onChanged: _onSaveRandomToolsStateChanged,
       decorator: switchDecorator,
     );
+  }
+
+  Widget _buildCompactTabLayoutSettings(AppLocalizations loc) {
+    return OptionSwitch(
+      title: loc.compactTabLayout,
+      subtitle: loc.compactTabLayoutDesc,
+      value: _compactTabLayout,
+      onChanged: _onCompactTabLayoutChanged,
+      decorator: switchDecorator,
+    );
+  }
+
+  Widget _buildToolOrderingSettings(AppLocalizations loc) {
+    return ListTile(
+      leading: Icon(
+        Icons.reorder,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      title: Text(
+        loc.arrangeTools,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+      ),
+      subtitle: Text(
+        loc.arrangeToolsDesc,
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+      ),
+      trailing: Icon(
+        Icons.arrow_forward_ios,
+        size: 16,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
+      onTap: () => _showToolOrderingScreen(loc),
+      contentPadding: EdgeInsets.zero,
+    );
+  }
+
+  Future<void> _showToolOrderingScreen(AppLocalizations loc) async {
+    // Check the current custom order status
+    final hadCustomOrderBefore = await ToolOrderService.isCustomOrder();
+
+    // Show the tool ordering screen
+    GenericSettingsHelper.showSettings(
+      context,
+      GenericSettingsConfig(
+        title: loc.arrangeTools,
+        settingsLayout: const ToolOrderingScreen(isEmbedded: true),
+        onSettingsChanged: (newSettings) {
+          // Empty lambda as requested
+        },
+      ),
+    );
+
+    // Check if order changed after the screen closes
+    // Note: This is a simplified approach - in a real app you might want
+    // to use a more sophisticated state management solution
+    Future.delayed(const Duration(milliseconds: 500), () async {
+      final hasCustomOrderAfter = await ToolOrderService.isCustomOrder();
+      if (hadCustomOrderBefore != hasCustomOrderAfter &&
+          widget.onToolVisibilityChanged != null) {
+        widget.onToolVisibilityChanged!();
+      }
+    });
   }
 
   Widget _buildCacheManagement(AppLocalizations loc) {

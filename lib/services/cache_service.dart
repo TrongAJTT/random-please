@@ -225,7 +225,7 @@ class CacheService {
         l10n: l10n,
         title: l10n.clearAllCache,
         content: dialogContent,
-        holdDuration: const Duration(seconds: 5),
+        holdDuration: const Duration(seconds: 3),
         onConfirmed: () => Navigator.of(context).pop(true),
         actionText: l10n.clearAll,
         holdText: l10n.holdToClearCache,

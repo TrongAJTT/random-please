@@ -4,7 +4,8 @@ import 'package:random_please/services/security_manager.dart';
 import 'package:random_please/widgets/security/security_dialogs.dart';
 
 class SecuritySettingsWidget extends StatefulWidget {
-  const SecuritySettingsWidget({super.key});
+  final AppLocalizations loc;
+  const SecuritySettingsWidget({super.key, required this.loc});
 
   @override
   State<SecuritySettingsWidget> createState() => _SecuritySettingsWidgetState();
@@ -12,10 +13,16 @@ class SecuritySettingsWidget extends StatefulWidget {
 
 class _SecuritySettingsWidgetState extends State<SecuritySettingsWidget> {
   bool _isLoading = false;
+  late AppLocalizations loc;
+
+  @override
+  void initState() {
+    loc = widget.loc;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
     final securityManager = SecurityManager.instance;
 
     return ListenableBuilder(
@@ -97,8 +104,7 @@ class _SecuritySettingsWidgetState extends State<SecuritySettingsWidget> {
   }
 
   Future<void> _enableSecurity() async {
-    final loc = AppLocalizations.of(context)!;
-
+    if (!mounted) return;
     setState(() {
       _isLoading = true;
     });
@@ -106,25 +112,14 @@ class _SecuritySettingsWidgetState extends State<SecuritySettingsWidget> {
     try {
       // Show create password dialog
       final password =
-          await SecurityDialogs.showCreateMasterPasswordDialog(context);
+          await SecurityDialogs.showCreateMasterPasswordDialog(context, loc);
       if (password == null) {
         return; // User cancelled
-      }
-
-      // Show migration loading dialog
-      if (mounted) {
-        SecurityDialogs.showMigrationLoadingDialog(
-            context, loc.migrationInProgress);
       }
 
       // Enable security
       final success =
           await SecurityManager.instance.enableSecurity(context, password);
-
-      // Close loading dialog
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
 
       if (mounted) {
         if (success) {
@@ -138,11 +133,9 @@ class _SecuritySettingsWidgetState extends State<SecuritySettingsWidget> {
         }
       }
     } catch (e) {
-      // Close loading dialog if still open
       if (mounted) {
-        Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(loc.migrationFailed)),
+          SnackBar(content: Text('${loc.migrationFailed}: $e')),
         );
       }
     } finally {
@@ -155,8 +148,6 @@ class _SecuritySettingsWidgetState extends State<SecuritySettingsWidget> {
   }
 
   Future<void> _disableSecurity() async {
-    final loc = AppLocalizations.of(context)!;
-
     setState(() {
       _isLoading = true;
     });
@@ -164,24 +155,13 @@ class _SecuritySettingsWidgetState extends State<SecuritySettingsWidget> {
     try {
       // Show enter current password dialog
       final password =
-          await SecurityDialogs.showEnterMasterPasswordDialog(context);
+          await SecurityDialogs.showEnterMasterPasswordDialog(context, loc);
       if (password == null) {
         return; // User cancelled
       }
 
-      // Show migration loading dialog
-      if (mounted) {
-        SecurityDialogs.showMigrationLoadingDialog(
-            context, loc.migrationInProgress);
-      }
-
       // Disable security
       final success = await SecurityManager.instance.disableSecurity(password);
-
-      // Close loading dialog
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
 
       if (mounted) {
         if (success) {
@@ -197,9 +177,8 @@ class _SecuritySettingsWidgetState extends State<SecuritySettingsWidget> {
     } catch (e) {
       // Close loading dialog if still open
       if (mounted) {
-        Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(loc.migrationFailed)),
+          SnackBar(content: Text('${loc.migrationFailed}: $e')),
         );
       }
     } finally {

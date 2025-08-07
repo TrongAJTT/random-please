@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/services/security_service.dart';
 import 'package:random_please/services/data_migration_service.dart';
+import 'package:random_please/services/security_manager.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/widgets/generic/hold_button.dart';
 
 class SecurityDialogs {
   /// Show initial security setup dialog (Dialog A)
-  static Future<bool?> showSecuritySetupDialog(BuildContext context) async {
-    final loc = AppLocalizations.of(context)!;
-
+  static Future<bool?> showSecuritySetupDialog(
+      BuildContext context, AppLocalizations loc) async {
     return await showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -17,13 +17,20 @@ class SecurityDialogs {
         title: Text(loc.securitySetupTitle),
         content: Text(loc.securitySetupMessage),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(loc.skipSecurity),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: TextButton(
+              autofocus: true,
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(loc.skipSecurity),
+            ),
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(loc.setMasterPassword),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(loc.setMasterPassword),
+            ),
           ),
         ],
       ),
@@ -32,8 +39,7 @@ class SecurityDialogs {
 
   /// Show create master password dialog (Dialog B)
   static Future<String?> showCreateMasterPasswordDialog(
-      BuildContext context) async {
-    final loc = AppLocalizations.of(context)!;
+      BuildContext context, AppLocalizations loc) async {
     final passwordController = TextEditingController();
     final confirmPasswordController = TextEditingController();
     final formKey = GlobalKey<FormState>();
@@ -137,9 +143,9 @@ class SecurityDialogs {
   }
 
   /// Show enter master password dialog (Dialog C)
-  static Future<String?> showEnterMasterPasswordDialog(BuildContext context,
+  static Future<String?> showEnterMasterPasswordDialog(
+      BuildContext context, AppLocalizations loc,
       {bool showForgotButton = false}) async {
-    final loc = AppLocalizations.of(context)!;
     final passwordController = TextEditingController();
     bool obscurePassword = true;
 
@@ -191,13 +197,6 @@ class SecurityDialogs {
             ),
           ),
           actions: [
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text(loc.cancel),
-              ),
-            ),
             if (showForgotButton)
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
@@ -207,6 +206,13 @@ class SecurityDialogs {
                   child: Text(loc.forgotPasswordButton),
                 ),
               ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(loc.cancel),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: ElevatedButton(
@@ -227,9 +233,7 @@ class SecurityDialogs {
 
   /// Show data loss confirmation dialog (Dialog D)
   static Future<bool?> showDataLossConfirmationDialog(
-      BuildContext context) async {
-    final loc = AppLocalizations.of(context)!;
-
+      BuildContext context, AppLocalizations loc) async {
     return await showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -288,70 +292,85 @@ class SecurityDialogs {
   }
 
   /// Handle complete security setup flow
-  static Future<bool> handleSecuritySetup(BuildContext context) async {
-    final loc = AppLocalizations.of(context)!;
-
+  static Future<bool> handleSecuritySetup(
+      BuildContext context, AppLocalizations loc) async {
     try {
       // Mark that we have shown the setup dialog
       await SecurityService.markSecuritySetupShown();
 
       // Show initial setup dialog
-      final wantsSecurity = await showSecuritySetupDialog(context);
+      final wantsSecurity = await showSecuritySetupDialog(context, loc);
       if (wantsSecurity != true) {
         return false; // User chose to skip security
       }
 
       // Show create password dialog
-      final password = await showCreateMasterPasswordDialog(context);
+      final password = await showCreateMasterPasswordDialog(context, loc);
       if (password == null) {
         return false; // User cancelled
       }
 
-      // Show migration loading dialog
-      if (context.mounted) {
-        showMigrationLoadingDialog(context, loc.migrationInProgress);
-      }
+      bool isLoadingDialogOpen = false;
 
-      // Enable security
-      final securityEnabled = await SecurityService.enableSecurity(password);
-      if (!securityEnabled) {
+      try {
+        // Show migration loading dialog
         if (context.mounted) {
-          Navigator.of(context).pop(); // Close loading dialog
-          SnackBarUtils.showTyped(
-              context, loc.migrationFailed, SnackBarType.error);
+          showMigrationLoadingDialog(context, loc.migrationInProgress);
+          isLoadingDialogOpen = true;
         }
-        return false;
-      }
 
-      // Migrate data to encrypted format
-      final migrationSuccess =
-          await DataMigrationService.migrateToEncrypted(password);
+        // Enable security
+        final securityEnabled = await SecurityService.enableSecurity(password);
+        if (!securityEnabled) {
+          if (context.mounted && isLoadingDialogOpen) {
+            Navigator.of(context).pop(); // Close loading dialog
+            isLoadingDialogOpen = false;
+          }
+          if (context.mounted) {
+            SnackBarUtils.showTyped(
+                context, loc.migrationFailed, SnackBarType.error);
+          }
+          return false;
+        }
 
-      // Close loading dialog
-      if (context.mounted) {
-        Navigator.of(context).pop();
-      }
+        // Migrate data to encrypted format
+        final migrationSuccess =
+            await DataMigrationService.migrateToEncrypted(password);
 
-      if (!migrationSuccess) {
+        // Close loading dialog first
+        if (isLoadingDialogOpen) {
+          Navigator.of(context).pop();
+          isLoadingDialogOpen = false;
+        }
+
+        if (!migrationSuccess) {
+          if (context.mounted) {
+            SnackBarUtils.showTyped(
+                context, loc.migrationFailed, SnackBarType.error);
+          }
+          // Rollback security
+          await SecurityService.disableSecurity();
+          return false;
+        }
+
         if (context.mounted) {
           SnackBarUtils.showTyped(
-              context, loc.migrationFailed, SnackBarType.error);
+              context, loc.securityEnabled, SnackBarType.success);
         }
-        // Rollback security
-        await SecurityService.disableSecurity();
-        return false;
-      }
 
-      if (context.mounted) {
-        SnackBarUtils.showTyped(
-            context, loc.securityEnabled, SnackBarType.success);
-      }
+        // Notify SecurityManager about the change
+        await SecurityManager.instance.updateAfterSetup(password);
 
-      return true;
+        return true;
+      } catch (e) {
+        // Make sure to close loading dialog if it's open
+        if (context.mounted && isLoadingDialogOpen) {
+          Navigator.of(context).pop();
+        }
+        rethrow;
+      }
     } catch (e) {
-      // Close loading dialog if still open
       if (context.mounted) {
-        Navigator.of(context).pop();
         SnackBarUtils.showTyped(
             context, loc.migrationFailed, SnackBarType.error);
       }
@@ -360,12 +379,12 @@ class SecurityDialogs {
   }
 
   /// Handle security login flow
-  static Future<String?> handleSecurityLogin(BuildContext context) async {
-    final loc = AppLocalizations.of(context)!;
+  static Future<String?> handleSecurityLogin(
+      BuildContext context, AppLocalizations loc) async {
     bool showForgotButton = false;
 
     while (true) {
-      final password = await showEnterMasterPasswordDialog(context,
+      final password = await showEnterMasterPasswordDialog(context, loc,
           showForgotButton: showForgotButton);
 
       if (password == null) {
@@ -375,11 +394,15 @@ class SecurityDialogs {
 
       if (password == '__FORGOT_PASSWORD__') {
         // User wants to reset data
-        final confirmed = await showDataLossConfirmationDialog(context);
+        final confirmed = await showDataLossConfirmationDialog(context, loc);
         if (confirmed == true) {
           // Clear all data and disable security
           await DataMigrationService.clearEncryptedData();
           await SecurityService.resetSecurity();
+
+          // Notify SecurityManager about the reset
+          await SecurityManager.instance.resetAll();
+
           if (context.mounted) {
             SnackBarUtils.showTyped(
                 context,

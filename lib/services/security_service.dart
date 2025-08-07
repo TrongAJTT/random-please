@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:random_please/services/app_logger.dart';
+import 'package:flutter/foundation.dart';
 
 class SecurityService {
   static const String _saltKey = 'app_security_salt';
@@ -11,8 +12,17 @@ class SecurityService {
   static const String _encryptedDataTestKey = 'encrypted_data_test';
   static const String _hasShownSecuritySetupKey = 'has_shown_security_setup';
 
-  // PBKDF2 parameters
-  static const int _iterations = 100000; // 100k iterations for security
+  // PBKDF2 parameters - different for web and native for performance
+  static int get _iterations {
+    if (kDebugMode && kIsWeb) {
+      return 1000; // Very fast for web debug
+    } else if (kIsWeb) {
+      return 30000; // 30k for web release
+    } else {
+      return 100000; // 100k for native
+    }
+  }
+
   static const int _keyLength = 32; // 256 bits
   static const int _saltLength = 32; // 256 bits
 
@@ -28,7 +38,11 @@ class SecurityService {
 
   /// Derive encryption key from password using PBKDF2
   static Uint8List _deriveKey(String password, Uint8List salt) {
+    final stopwatch = Stopwatch()..start();
     final passwordBytes = utf8.encode(password);
+
+    logInfo(
+        'SecurityService: Starting PBKDF2 with $_iterations iterations (${kIsWeb ? 'web' : 'native'})');
 
     // PBKDF2 implementation
     final hmac = Hmac(sha256, passwordBytes);
@@ -40,6 +54,10 @@ class SecurityService {
       final end = (start + 32 > _keyLength) ? _keyLength : start + 32;
       derivedKey.setRange(start, end, block);
     }
+
+    stopwatch.stop();
+    logInfo(
+        'SecurityService: PBKDF2 completed in ${stopwatch.elapsedMilliseconds}ms');
 
     return derivedKey;
   }
