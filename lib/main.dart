@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:random_please/l10n/app_localizations.dart';
-import 'package:random_please/models/tool_config.dart';
+import 'package:random_please/screens/about_layout.dart';
+import 'package:random_please/services/version_check_service.dart';
+import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/widgets/generic/generic_settings_helper.dart';
-import 'package:random_please/widgets/tool_card.dart';
 import 'package:random_please/services/cache_service.dart';
-import 'package:random_please/services/quick_actions_service.dart';
 import 'package:random_please/services/hive_service.dart';
 import 'package:random_please/services/settings_service.dart';
 import 'package:random_please/services/app_logger.dart';
@@ -308,8 +308,6 @@ class _HomePageState extends State<HomePage> with WindowListener {
                     initialSectionId:
                         null, // Let the screen decide the initial view
                   );
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) => screen));
                   GenericSettingsHelper.showSettings(
                     context,
                     GenericSettingsConfig(
@@ -320,6 +318,39 @@ class _HomePageState extends State<HomePage> with WindowListener {
                   );
                 },
               ),
+              if (kIsWeb)
+                IconButton(
+                  icon: const Icon(Icons.download),
+                  tooltip: loc.downloadApp,
+                  onPressed: () {
+                    GenericSettingsHelper.showSettings(
+                      context,
+                      GenericSettingsConfig(
+                        title: loc.downloadApp,
+                        settingsLayout:
+                            VersionCheckService.buildDownloadAppLayout(
+                          context: context,
+                        ),
+                        onSettingsChanged: (newSettings) {},
+                      ),
+                    );
+                  },
+                ),
+              IconButton(
+                icon: const Icon(Icons.info_outline),
+                tooltip: loc.about,
+                onPressed: () {
+                  GenericSettingsHelper.showSettings(
+                    context,
+                    GenericSettingsConfig(
+                      title: loc.about,
+                      settingsLayout: const AboutLayout(),
+                      onSettingsChanged: (newSettings) {},
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(width: 8),
             ],
           ),
           body: const SafeArea(
@@ -399,12 +430,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.clearCache),
-            backgroundColor: Colors.green,
-          ),
-        );
+        SnackbarUtils.showTyped(context,
+            AppLocalizations.of(context)!.clearCache, SnackBarType.success);
       }
     } catch (e) {
       setState(() {
@@ -412,9 +439,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-        );
+        SnackbarUtils.showTyped(context, 'Error: $e', SnackBarType.error);
       }
     }
   }

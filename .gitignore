@@ -93,3 +93,6 @@ app.*.map.json
 l10n.yaml
 plan.md
 .cursor/
+.obsidian/
+PLAN.md
+desiredFileName.txt

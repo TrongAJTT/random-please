@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:random_please/l10n/app_localizations.dart';
+import 'package:random_please/utils/date_utils.dart';
 
 class LocalizationUtils {
   static String formatDate(BuildContext context, DateTime date) {
@@ -11,11 +12,33 @@ class LocalizationUtils {
     return formatter.format(date);
   }
 
-  static String formatDateTime(BuildContext context, DateTime dateTime) {
+  static String formatDateTime(
+      {required BuildContext context,
+      required DateTime dateTime,
+      DateTimeFormatType formatType = DateTimeFormatType.full}) {
     final locale = Localizations.localeOf(context).toString();
-    final DateFormat formatter =
-        DateFormat.yMd(locale).add_jms(); // Date and time
-    return formatter.format(dateTime);
+    switch (formatType) {
+      case DateTimeFormatType.full:
+        final DateFormat formatter =
+            DateFormat.yMd(locale).add_jms(); // Date and time
+        return formatter.format(dateTime);
+      case DateTimeFormatType.exceptSec:
+        final DateFormat formatter =
+            DateFormat.yMd(locale).add_jm(); // Date and time without seconds
+        return formatter.format(dateTime);
+      case DateTimeFormatType.message:
+        if (MyDateUtils.isToday(dateTime)) {
+          // Return time only if today
+          return DateFormat.jm(locale).format(dateTime);
+        } else if (MyDateUtils.isWithinWeek(dateTime)) {
+          // Return weekday name if within the week
+          final l10n = AppLocalizations.of(context)!;
+          return getLocalizedWeekdayName(dateTime.weekday, l10n);
+        } else {
+          // Return date only if older than a week
+          return formatDate(context, dateTime);
+        }
+    }
   }
 
   static String getLocalizedWeekdayName(
@@ -75,4 +98,66 @@ class LocalizationUtils {
         return '';
     }
   }
+
+  static String getFormattedDateTimeFromTotalMs(
+      BuildContext context, int timestamp,
+      {bool use24hrFormat = true, bool includeSeconds = false}) {
+    final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    return getFormattedDateTime(context, date,
+        use24hrFormat: use24hrFormat, includeSeconds: includeSeconds);
+  }
+
+  /// Returns a formatted date string according to locale and 24h/12h preference
+  static String getFormattedDateTime(BuildContext context, DateTime date,
+      {bool use24hrFormat = true, bool includeSeconds = false}) {
+    return getDateTimeFormat(context,
+            use24hrFormat: use24hrFormat, includeSeconds: includeSeconds)
+        .format(date);
+  }
+
+  /// Returns a DateFormat for date/time according to locale and 24h/12h preference
+  static DateFormat getDateTimeFormat(BuildContext context,
+      {bool use24hrFormat = true, bool includeSeconds = false}) {
+    final locale = Localizations.localeOf(context).toString();
+    String timeFormat = use24hrFormat ? 'HH:mm:ss' : 'h:mm:ss a';
+    if (!includeSeconds) {
+      timeFormat = timeFormat.replaceAll(':ss', '');
+    }
+    // Return value base on chosen language
+    switch (locale) {
+      case 'en_US':
+        return DateFormat('MM/dd/yyyy $timeFormat');
+      case 'vi_VN':
+        return DateFormat('dd/MM/yyyy $timeFormat');
+      default:
+        return DateFormat('MM/dd/yyyy $timeFormat');
+    }
+  }
+
+  /// Returns a formatted date string according to locale and 24h/12h preference
+  static String getFormattedDateFromTotalMs(
+      BuildContext context, int timestamp) {
+    final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    return getFormattedDate(context, date);
+  }
+
+  /// Returns a DateFormat for date according to locale
+  static String getFormattedDate(BuildContext context, DateTime date) {
+    return getDateFormat(context).format(date);
+  }
+
+  /// Returns a DateFormat for date according to locale
+  static DateFormat getDateFormat(BuildContext context) {
+    final locale = Localizations.localeOf(context).toString();
+    switch (locale) {
+      case 'en_US':
+        return DateFormat('MM/dd/yyyy');
+      case 'vi_VN':
+        return DateFormat('dd/MM/yyyy');
+      default:
+        return DateFormat('MM/dd/yyyy');
+    }
+  }
 }
+
+enum DateTimeFormatType { full, exceptSec, message }

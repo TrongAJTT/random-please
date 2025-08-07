@@ -1,7 +1,7 @@
 name: random_please
-description: random_please - A comprehensive toolkit for everyday utilities
+description: Random Please - A comprehensive toolkit for everyday utilities
 publish_to: 'none'
-version: 1.0.2+2
+version: 1.0.0
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -15,23 +15,17 @@ dependencies:
   shared_preferences: 2.2.2
   crypto: ^3.0.3
   http: ^1.2.1
-  fl_chart: ^0.65.0
   math_expressions: ^2.6.0
-  decimal: ^3.2.1
   flutter_localizations:
     sdk: flutter  
   flutter_gen: 5.10.0  
   logger: 2.5.0
   logging: ^1.2.0
-  quick_actions: ^1.1.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   window_manager: ^0.5.0
   flutter_colorpicker: ^1.1.0
-  flutter_joystick: ^0.2.2
   # P2P Data Transfer dependencies
-  connectivity_plus: ^6.0.5
-  network_info_plus: ^5.0.3
   permission_handler: ^11.3.1
   device_info_plus: ^10.1.2
   multicast_dns: ^0.3.2+6
@@ -45,11 +39,11 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   provider: ^6.1.2
-  open_file: ^3.3.2
-  share_plus: ^7.2.2
   path: ^1.8.3
-  flutter_local_notifications: ^17.2.3
-  workmanager: 0.7.0
+  markdown_widget: ^2.3.2+8
+  url_launcher: ^6.2.4
+  package_info_plus: ^8.3.0
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:
@@ -57,7 +51,10 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   hive_generator: ^2.0.1
   build_runner: ^2.4.12
+  remove_unused_localizations: ^1.0.1
 
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - assets/

@@ -1,5 +1,33 @@
 import 'package:flutter/material.dart';
 
+class IconUtils {
+  static IconData getFileIconFromFileName(String fileName) {
+    final extension = fileName.toLowerCase().split('.').last;
+
+    switch (extension) {
+      case 'apk':
+        return Icons.android;
+      case 'exe':
+      case 'msi':
+        return Icons.computer;
+      case 'dmg':
+      case 'pkg':
+        return Icons.laptop_mac;
+      case 'deb':
+      case 'rpm':
+      case 'appimage':
+        return Icons.desktop_windows;
+      case 'zip':
+      case 'tar':
+      case 'gz':
+      case '7z':
+        return Icons.archive;
+      default:
+        return Icons.insert_drive_file;
+    }
+  }
+}
+
 /// Generic icon widget that can display different types of icons
 class GenericIcon extends StatelessWidget {
   final Widget _iconWidget;
