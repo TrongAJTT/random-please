@@ -945,6 +945,104 @@ class AppLocalizationsVi extends AppLocalizations {
   String get historyItemUnpinned => 'Mục đã bỏ ghim';
 
   @override
+  String get securitySetupTitle => 'Thiết lập bảo mật ứng dụng';
+
+  @override
+  String get securitySetupMessage =>
+      'Bạn có muốn thiết lập mật khẩu chính để bảo vệ dữ liệu không?\nĐiều này sẽ bảo vệ lịch sử khỏi truy cập trái phép và chống đánh cắp dữ liệu.';
+
+  @override
+  String get setMasterPassword => 'Đặt mật khẩu chính';
+
+  @override
+  String get skipSecurity => 'Bỏ qua (Sử dụng không cần mật khẩu)';
+
+  @override
+  String get createMasterPasswordTitle => 'Tạo mật khẩu chính';
+
+  @override
+  String get createMasterPasswordMessage =>
+      'Vui lòng tạo một mật khẩu chính mạnh.\nHãy nhớ kỹ mật khẩu này.\nnếu quên, toàn bộ dữ liệu sẽ bị mất.';
+
+  @override
+  String get enterPassword => 'Nhập mật khẩu';
+
+  @override
+  String get confirmPassword => 'Xác nhận mật khẩu';
+
+  @override
+  String get passwordMismatch => 'Mật khẩu không khớp';
+
+  @override
+  String get passwordTooShort => 'Mật khẩu phải có ít nhất 6 ký tự';
+
+  @override
+  String get showPassword => 'Hiện mật khẩu';
+
+  @override
+  String get hidePassword => 'Ẩn mật khẩu';
+
+  @override
+  String get enterMasterPasswordTitle => 'Nhập mật khẩu chính';
+
+  @override
+  String get enterMasterPasswordMessage =>
+      'Vui lòng nhập mật khẩu chính để truy cập ứng dụng.';
+
+  @override
+  String get wrongPassword => 'Sai mật khẩu. Vui lòng thử lại.';
+
+  @override
+  String get forgotPasswordButton =>
+      'Tôi đã quên mật khẩu và chấp nhận mất dữ liệu';
+
+  @override
+  String get confirm => 'Xác nhận';
+
+  @override
+  String get confirmDataLossTitle => 'Xác nhận mất dữ liệu';
+
+  @override
+  String get confirmDataLossMessage =>
+      'Bạn sẽ có thể tiếp tục sử dụng ứng dụng mà không cần nhập mật khẩu, nhưng toàn bộ dữ liệu lịch sử sẽ bị xóa vĩnh viễn.\nHành động này không thể hoàn tác.';
+
+  @override
+  String get holdToConfirm => 'Giữ để xác nhận';
+
+  @override
+  String get dataProtectionSettings => 'Cài đặt bảo vệ dữ liệu';
+
+  @override
+  String get enableDataProtection => 'Bật bảo vệ dữ liệu';
+
+  @override
+  String get disableDataProtection => 'Tắt bảo vệ dữ liệu';
+
+  @override
+  String get dataProtectionEnabled => 'Bảo vệ dữ liệu hiện đang được bật';
+
+  @override
+  String get dataProtectionDisabled => 'Bảo vệ dữ liệu hiện đang được tắt';
+
+  @override
+  String get enterCurrentPassword => 'Nhập mật khẩu hiện tại để tắt bảo vệ';
+
+  @override
+  String get securityEnabled => 'Bảo mật đã được bật thành công';
+
+  @override
+  String get securityDisabled => 'Bảo mật đã được tắt thành công';
+
+  @override
+  String get migrationInProgress => 'Đang di chuyển dữ liệu...';
+
+  @override
+  String get migrationCompleted => 'Hoàn tất di chuyển dữ liệu';
+
+  @override
+  String get migrationFailed => 'Di chuyển dữ liệu thất bại';
+
+  @override
   String get solid => 'Đặc';
 
   @override

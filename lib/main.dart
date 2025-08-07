@@ -10,6 +10,7 @@ import 'package:random_please/services/cache_service.dart';
 import 'package:random_please/services/hive_service.dart';
 import 'package:random_please/services/settings_service.dart';
 import 'package:random_please/services/app_logger.dart';
+import 'package:random_please/services/security_manager.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/models/settings_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -232,16 +233,44 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WindowListener {
+  bool _isSecurityChecked = false;
+
   @override
   void initState() {
     super.initState();
     windowManager.addListener(this);
 
-    // Show first time setup snackbar if needed
-    if (_isFirstTimeSetup) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showFirstTimeSetupSnackbar();
-      });
+    // Handle security setup on app launch
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _handleAppLaunch();
+    });
+  }
+
+  Future<void> _handleAppLaunch() async {
+    if (!mounted) return;
+
+    try {
+      // Handle security flow
+      final securityManager = SecurityManager.instance;
+      final success = await securityManager.handleAppLaunch(context);
+
+      if (mounted) {
+        setState(() {
+          _isSecurityChecked = true;
+        });
+
+        // Show first time setup snackbar if needed after security
+        if (_isFirstTimeSetup && success) {
+          _showFirstTimeSetupSnackbar();
+        }
+      }
+    } catch (e) {
+      // Handle error - for now just mark as checked so app can continue
+      if (mounted) {
+        setState(() {
+          _isSecurityChecked = true;
+        });
+      }
     }
   }
 
@@ -291,6 +320,18 @@ class _HomePageState extends State<HomePage> with WindowListener {
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.of(context).size.width >= 600;
     final loc = AppLocalizations.of(context)!;
+
+    // Show loading screen while security is being checked
+    if (!_isSecurityChecked) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(loc.title),
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
 
     return LayoutBuilder(
       builder: (context, constraints) {

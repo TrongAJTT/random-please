@@ -10,6 +10,7 @@ import 'package:random_please/widgets/generic/section_item.dart';
 import 'package:random_please/widgets/generic/option_grid_picker.dart' as grid;
 import 'package:random_please/widgets/generic/option_item.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
+import 'package:random_please/widgets/security/security_settings_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:random_please/main.dart';
 
@@ -251,6 +252,8 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
         _buildHistorySettings(loc),
         VerticalSpacingDivider.both(6),
         _buildSaveRandomToolsStateSettings(loc),
+        VerticalSpacingDivider.both(6),
+        const SecuritySettingsWidget(),
       ],
     );
   }

@@ -1832,6 +1832,192 @@ abstract class AppLocalizations {
   /// **'Item unpinned'**
   String get historyItemUnpinned;
 
+  /// No description provided for @securitySetupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'App Security Setup'**
+  String get securitySetupTitle;
+
+  /// No description provided for @securitySetupMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to set up a master password to protect your data?\nThis will secure your history from unauthorized access and protect it from data theft.'**
+  String get securitySetupMessage;
+
+  /// No description provided for @setMasterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Master Password'**
+  String get setMasterPassword;
+
+  /// No description provided for @skipSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip (Use without password)'**
+  String get skipSecurity;
+
+  /// No description provided for @createMasterPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Master Password'**
+  String get createMasterPasswordTitle;
+
+  /// No description provided for @createMasterPasswordMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please create a strong master password.\nRemember this password carefully.\nIf you forget it, all your data will be lost.'**
+  String get createMasterPasswordMessage;
+
+  /// No description provided for @enterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter password'**
+  String get enterPassword;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get confirmPassword;
+
+  /// No description provided for @passwordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordMismatch;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordTooShort;
+
+  /// No description provided for @showPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get hidePassword;
+
+  /// No description provided for @enterMasterPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Master Password'**
+  String get enterMasterPasswordTitle;
+
+  /// No description provided for @enterMasterPasswordMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your master password to access the app.'**
+  String get enterMasterPasswordMessage;
+
+  /// No description provided for @wrongPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong password. Please try again.'**
+  String get wrongPassword;
+
+  /// No description provided for @forgotPasswordButton.
+  ///
+  /// In en, this message translates to:
+  /// **'I forgot my password and accept data loss'**
+  String get forgotPasswordButton;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @confirmDataLossTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Data Loss'**
+  String get confirmDataLossTitle;
+
+  /// No description provided for @confirmDataLossMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You will be able to continue using the app without entering a password, but all your history data will be permanently deleted.\nThis action cannot be undone.'**
+  String get confirmDataLossMessage;
+
+  /// No description provided for @holdToConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold to confirm'**
+  String get holdToConfirm;
+
+  /// No description provided for @dataProtectionSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Protection Settings'**
+  String get dataProtectionSettings;
+
+  /// No description provided for @enableDataProtection.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Data Protection'**
+  String get enableDataProtection;
+
+  /// No description provided for @disableDataProtection.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable Data Protection'**
+  String get disableDataProtection;
+
+  /// No description provided for @dataProtectionEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Data protection is currently enabled'**
+  String get dataProtectionEnabled;
+
+  /// No description provided for @dataProtectionDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Data protection is currently disabled'**
+  String get dataProtectionDisabled;
+
+  /// No description provided for @enterCurrentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter current password to disable protection'**
+  String get enterCurrentPassword;
+
+  /// No description provided for @securityEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Security enabled successfully'**
+  String get securityEnabled;
+
+  /// No description provided for @securityDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Security disabled successfully'**
+  String get securityDisabled;
+
+  /// No description provided for @migrationInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Migrating data...'**
+  String get migrationInProgress;
+
+  /// No description provided for @migrationCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Data migration completed'**
+  String get migrationCompleted;
+
+  /// No description provided for @migrationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Data migration failed'**
+  String get migrationFailed;
+
   /// No description provided for @solid.
   ///
   /// In en, this message translates to:

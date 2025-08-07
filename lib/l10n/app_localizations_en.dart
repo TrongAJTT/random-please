@@ -947,6 +947,105 @@ class AppLocalizationsEn extends AppLocalizations {
   String get historyItemUnpinned => 'Item unpinned';
 
   @override
+  String get securitySetupTitle => 'App Security Setup';
+
+  @override
+  String get securitySetupMessage =>
+      'Would you like to set up a master password to protect your data?\nThis will secure your history from unauthorized access and protect it from data theft.';
+
+  @override
+  String get setMasterPassword => 'Set Master Password';
+
+  @override
+  String get skipSecurity => 'Skip (Use without password)';
+
+  @override
+  String get createMasterPasswordTitle => 'Create Master Password';
+
+  @override
+  String get createMasterPasswordMessage =>
+      'Please create a strong master password.\nRemember this password carefully.\nIf you forget it, all your data will be lost.';
+
+  @override
+  String get enterPassword => 'Enter password';
+
+  @override
+  String get confirmPassword => 'Confirm password';
+
+  @override
+  String get passwordMismatch => 'Passwords do not match';
+
+  @override
+  String get passwordTooShort => 'Password must be at least 6 characters';
+
+  @override
+  String get showPassword => 'Show password';
+
+  @override
+  String get hidePassword => 'Hide password';
+
+  @override
+  String get enterMasterPasswordTitle => 'Enter Master Password';
+
+  @override
+  String get enterMasterPasswordMessage =>
+      'Please enter your master password to access the app.';
+
+  @override
+  String get wrongPassword => 'Wrong password. Please try again.';
+
+  @override
+  String get forgotPasswordButton =>
+      'I forgot my password and accept data loss';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get confirmDataLossTitle => 'Confirm Data Loss';
+
+  @override
+  String get confirmDataLossMessage =>
+      'You will be able to continue using the app without entering a password, but all your history data will be permanently deleted.\nThis action cannot be undone.';
+
+  @override
+  String get holdToConfirm => 'Hold to confirm';
+
+  @override
+  String get dataProtectionSettings => 'Data Protection Settings';
+
+  @override
+  String get enableDataProtection => 'Enable Data Protection';
+
+  @override
+  String get disableDataProtection => 'Disable Data Protection';
+
+  @override
+  String get dataProtectionEnabled => 'Data protection is currently enabled';
+
+  @override
+  String get dataProtectionDisabled => 'Data protection is currently disabled';
+
+  @override
+  String get enterCurrentPassword =>
+      'Enter current password to disable protection';
+
+  @override
+  String get securityEnabled => 'Security enabled successfully';
+
+  @override
+  String get securityDisabled => 'Security disabled successfully';
+
+  @override
+  String get migrationInProgress => 'Migrating data...';
+
+  @override
+  String get migrationCompleted => 'Data migration completed';
+
+  @override
+  String get migrationFailed => 'Data migration failed';
+
+  @override
   String get solid => 'Solid';
 
   @override

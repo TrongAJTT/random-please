@@ -89,6 +89,16 @@ class GenerationHistoryService {
     }
   }
 
+  /// Public method to decrypt old format data (for migration)
+  static String decryptOldFormat(String encryptedText) {
+    return _decrypt(encryptedText);
+  }
+
+  /// Public method to encrypt to old format data (for migration)
+  static String encryptOldFormat(String plainText) {
+    return _encrypt(plainText);
+  }
+
   /// Add a new item to history
   static Future<void> addHistoryItem(String value, String type) async {
     final enabled = await isHistoryEnabled();
