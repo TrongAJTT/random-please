@@ -251,6 +251,11 @@ class AppLocalizationsVi extends AppLocalizations {
   String get generate => 'Tạo';
 
   @override
+  String generatedAtTime(String time) {
+    return 'Tạo vào $time';
+  }
+
+  @override
   String get generatedPassword => 'Mật khẩu đã tạo';
 
   @override
@@ -343,6 +348,12 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get historyCleared => 'Đã xóa lịch sử tính toán';
+
+  @override
+  String get pinnedHistoryCleared => 'Đã xóa lịch sử ghim';
+
+  @override
+  String get unpinnedHistoryCleared => 'Đã xóa lịch sử chưa ghim';
 
   @override
   String get numberGenerator => 'Tạo số ngẫu nhiên';
@@ -530,6 +541,27 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get clearHistory => 'Xóa lịch sử';
+
+  @override
+  String get clearAllItems => 'Xóa Tất Cả Lịch Sử';
+
+  @override
+  String get confirmClearAllHistory =>
+      'Bạn có chắc chắn muốn xóa TẤT CẢ lịch sử không? Điều này sẽ xóa tất cả lịch sử của công cụ này ngay cả các mục đã ghim của bạn.\nHãy chắc chắn rằng bạn đã lưu bất kỳ kết quả quan trọng nào trước khi tiếp tục.';
+
+  @override
+  String get clearPinnedItems => 'Xóa Các Mục Đã Ghim';
+
+  @override
+  String get clearPinnedItemsDesc =>
+      'Xóa tất cả các mục đã ghim khỏi lịch sử? Điều này sẽ không ảnh hưởng đến các mục chưa ghim.\nHãy chắc chắn rằng bạn đã lưu bất kỳ kết quả quan trọng nào trước khi tiếp tục.';
+
+  @override
+  String get clearUnpinnedItems => 'Xóa Các Mục Chưa Ghim';
+
+  @override
+  String get clearUnpinnedItemsDesc =>
+      'Xóa tất cả các mục chưa ghim khỏi lịch sử? Điều này sẽ không ảnh hưởng đến các mục đã ghim.\nHãy chắc chắn rằng bạn đã lưu bất kỳ kết quả quan trọng nào trước khi tiếp tục.';
 
   @override
   String get typeConfirmToProceed => 'Nhập \"confirm\" để tiếp tục:';
@@ -818,6 +850,9 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String get confirmDelete => 'Xác nhận xóa';
+
+  @override
   String get confirmDownload => 'Xác nhận tải xuống';
 
   @override
@@ -887,4 +922,49 @@ class AppLocalizationsVi extends AppLocalizations {
   String productCount(int count) {
     return '$count sản phẩm';
   }
+
+  @override
+  String get deleteHistoryItem => 'Xóa mục';
+
+  @override
+  String get tapDeleteAgainToConfirm => 'Nhấn xóa lần nữa để xác nhận';
+
+  @override
+  String get historyItemDeleted => 'Mục lịch sử đã bị xóa';
+
+  @override
+  String get pinHistoryItem => 'Ghim mục';
+
+  @override
+  String get unpinHistoryItem => 'Bỏ ghim mục';
+
+  @override
+  String get historyItemPinned => 'Mục đã được ghim';
+
+  @override
+  String get historyItemUnpinned => 'Mục đã bỏ ghim';
+
+  @override
+  String get solid => 'Đặc';
+
+  @override
+  String get includeAlpha => 'Bao gồm dãy màu Alpha';
+
+  @override
+  String totalANumber(int total) {
+    return 'Tổng: $total';
+  }
+
+  @override
+  String get numberType => 'Loại số';
+
+  @override
+  String get yes => 'Có';
+
+  @override
+  String get no => 'Không';
+
+  @override
+  String get dateErrStartEndConflict =>
+      'Ngày bắt đầu không thể sau ngày kết thúc';
 }

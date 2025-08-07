@@ -7,6 +7,7 @@ import 'package:random_please/services/generation_history_service.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/services/random_services/random_state_service.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
+import 'package:random_please/utils/size_utils.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
@@ -38,6 +39,8 @@ class _DateTimeGeneratorScreenState extends State<DateTimeGeneratorScreen>
   late AnimationController _animationController;
   List<GenerationHistoryItem> _history = [];
   bool _historyEnabled = false;
+
+  static const String _historyType = 'date_time';
 
   @override
   void initState() {
@@ -89,7 +92,7 @@ class _DateTimeGeneratorScreenState extends State<DateTimeGeneratorScreen>
 
   Future<void> _loadHistory() async {
     final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory('date_time');
+    final history = await GenerationHistoryService.getHistory(_historyType);
     setState(() {
       _historyEnabled = enabled;
       _history = history;
@@ -164,35 +167,31 @@ class _DateTimeGeneratorScreenState extends State<DateTimeGeneratorScreen>
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return RandomGeneratorHistoryWidget(
-      historyType: 'date_time',
+      historyType: _historyType,
       history: _history,
       title: loc.generationHistory,
-      onClearHistory: () async {
-        await GenerationHistoryService.clearHistory('date_time');
+      onClearAllHistory: () async {
+        await GenerationHistoryService.clearHistory(_historyType);
+        await _loadHistory();
+      },
+      onClearPinnedHistory: () async {
+        await GenerationHistoryService.clearPinnedHistory(_historyType);
+        await _loadHistory();
+      },
+      onClearUnpinnedHistory: () async {
+        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
         await _loadHistory();
       },
       onCopyItem: _copyHistoryItem,
-      customItemBuilder: (item, context) => ListTile(
-        dense: true,
-        title: Text(
-          item.value,
-          style: const TextStyle(
-            fontFamily: 'monospace',
-            fontSize: 14,
-          ),
-          maxLines: 3,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Text(
-          '${loc.generatedAt}: ${item.timestamp.toString().split('.')[0]}',
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.copy, size: 18),
-          onPressed: () => _copyHistoryItem(item.value),
-          tooltip: loc.copyToClipboard,
-        ),
-      ),
+      onDeleteItem: (index) async {
+        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
+        await _loadHistory();
+      },
+      onTogglePin: (index) async {
+        await GenerationHistoryService.togglePinHistoryItem(
+            _historyType, index);
+        await _loadHistory();
+      },
     );
   }
 
@@ -306,20 +305,18 @@ class _DateTimeGeneratorScreenState extends State<DateTimeGeneratorScreen>
 
   Widget _buildDateTimeSelectors(AppLocalizations loc) {
     return WidgetLayoutRenderHelper.twoEqualWidthInRow(
-      _buildDateTimeField(
-        loc.startDate,
-        _startDateTime,
-        _selectStartDateTime,
-      ),
-      _buildDateTimeField(
-        loc.endDate,
-        _endDateTime,
-        _selectEndDateTime,
-      ),
-      minWidth: 360,
-      horizontalSpacing: 20,
-      verticalSpacing: 8,
-    );
+        _buildDateTimeField(
+          loc.startDate,
+          _startDateTime,
+          _selectStartDateTime,
+        ),
+        _buildDateTimeField(
+          loc.endDate,
+          _endDateTime,
+          _selectEndDateTime,
+        ),
+        minWidth: 360,
+        spacing: TwoDimSpacing.specific(vertical: 8, horizontal: 20));
   }
 
   Widget _buildCountSlider(AppLocalizations loc) {
@@ -343,32 +340,30 @@ class _DateTimeGeneratorScreenState extends State<DateTimeGeneratorScreen>
 
   Widget _buildOptionsSection(AppLocalizations loc) {
     return WidgetLayoutRenderHelper.twoEqualWidthInRow(
-      OptionSwitch(
-        title: loc.includeSeconds,
-        value: _includeSeconds,
-        onChanged: (value) {
-          setState(() {
-            _includeSeconds = value;
-          });
-          // Don't save state immediately, only save when generating
-        },
-        decorator: OptionSwitchDecorator.compact(context),
-      ),
-      OptionSwitch(
-        title: loc.allowDuplicates,
-        value: _allowDuplicates,
-        onChanged: (value) {
-          setState(() {
-            _allowDuplicates = value;
-          });
-          // Don't save state immediately, only save when generating
-        },
-        decorator: OptionSwitchDecorator.compact(context),
-      ),
-      minWidth: 350,
-      horizontalSpacing: 20,
-      verticalSpacing: 8,
-    );
+        OptionSwitch(
+          title: loc.includeSeconds,
+          value: _includeSeconds,
+          onChanged: (value) {
+            setState(() {
+              _includeSeconds = value;
+            });
+            // Don't save state immediately, only save when generating
+          },
+          decorator: OptionSwitchDecorator.compact(context),
+        ),
+        OptionSwitch(
+          title: loc.allowDuplicates,
+          value: _allowDuplicates,
+          onChanged: (value) {
+            setState(() {
+              _allowDuplicates = value;
+            });
+            // Don't save state immediately, only save when generating
+          },
+          decorator: OptionSwitchDecorator.compact(context),
+        ),
+        minWidth: 350,
+        spacing: TwoDimSpacing.specific(vertical: 8, horizontal: 20));
   }
 
   @override

@@ -430,7 +430,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       });
 
       if (mounted) {
-        SnackbarUtils.showTyped(context,
+        SnackBarUtils.showTyped(context,
             AppLocalizations.of(context)!.clearCache, SnackBarType.success);
       }
     } catch (e) {
@@ -439,7 +439,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       });
 
       if (mounted) {
-        SnackbarUtils.showTyped(context, 'Error: $e', SnackBarType.error);
+        SnackBarUtils.showTyped(context, 'Error: $e', SnackBarType.error);
       }
     }
   }

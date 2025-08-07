@@ -250,6 +250,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generate => 'Generate';
 
   @override
+  String generatedAtTime(String time) {
+    return 'Generated at $time';
+  }
+
+  @override
   String get generatedPassword => 'Generated Password';
 
   @override
@@ -342,6 +347,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get historyCleared => 'History cleared successfully';
+
+  @override
+  String get pinnedHistoryCleared => 'Pinned history cleared successfully';
+
+  @override
+  String get unpinnedHistoryCleared => 'Unpinned history cleared successfully';
 
   @override
   String get numberGenerator => 'Number Generator';
@@ -532,6 +543,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clearHistory => 'Clear History';
+
+  @override
+  String get clearAllItems => 'Clear All History';
+
+  @override
+  String get confirmClearAllHistory =>
+      'Are you sure you want to clear ALL history? This will remove all history of this tool even your pinned items.\nMake sure you have saved any important results before proceeding.';
+
+  @override
+  String get clearPinnedItems => 'Clear Pinned Items';
+
+  @override
+  String get clearPinnedItemsDesc =>
+      'Remove all pinned items from history? This will not affect unpinned items.\nMake sure you have saved any important results before proceeding.';
+
+  @override
+  String get clearUnpinnedItems => 'Clear Unpinned Items';
+
+  @override
+  String get clearUnpinnedItemsDesc =>
+      'Remove all unpinned items from history? This will not affect pinned items.\nMake sure you have saved any important results before proceeding.';
 
   @override
   String get typeConfirmToProceed => 'Type \"confirm\" to proceed:';
@@ -820,6 +852,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get confirmDelete => 'Confirm Delete';
+
+  @override
   String get confirmDownload => 'Confirm download';
 
   @override
@@ -889,4 +924,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String productCount(int count) {
     return '$count product(s)';
   }
+
+  @override
+  String get deleteHistoryItem => 'Delete item';
+
+  @override
+  String get tapDeleteAgainToConfirm => 'Tap delete again to confirm removal';
+
+  @override
+  String get historyItemDeleted => 'History item deleted';
+
+  @override
+  String get pinHistoryItem => 'Pin item';
+
+  @override
+  String get unpinHistoryItem => 'Unpin item';
+
+  @override
+  String get historyItemPinned => 'Item pinned';
+
+  @override
+  String get historyItemUnpinned => 'Item unpinned';
+
+  @override
+  String get solid => 'Solid';
+
+  @override
+  String get includeAlpha => 'Include Alpha';
+
+  @override
+  String totalANumber(int total) {
+    return 'Total: $total';
+  }
+
+  @override
+  String get numberType => 'Number Type';
+
+  @override
+  String get yes => 'Yes';
+
+  @override
+  String get no => 'No';
+
+  @override
+  String get dateErrStartEndConflict => 'Start date cannot be after end date';
 }

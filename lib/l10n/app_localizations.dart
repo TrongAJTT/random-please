@@ -548,6 +548,12 @@ abstract class AppLocalizations {
   /// **'Generate'**
   String get generate;
 
+  /// No description provided for @generatedAtTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated at {time}'**
+  String generatedAtTime(String time);
+
   /// No description provided for @generatedPassword.
   ///
   /// In en, this message translates to:
@@ -733,6 +739,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'History cleared successfully'**
   String get historyCleared;
+
+  /// No description provided for @pinnedHistoryCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned history cleared successfully'**
+  String get pinnedHistoryCleared;
+
+  /// No description provided for @unpinnedHistoryCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpinned history cleared successfully'**
+  String get unpinnedHistoryCleared;
 
   /// No description provided for @numberGenerator.
   ///
@@ -1093,6 +1111,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Clear History'**
   String get clearHistory;
+
+  /// No description provided for @clearAllItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All History'**
+  String get clearAllItems;
+
+  /// No description provided for @confirmClearAllHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to clear ALL history? This will remove all history of this tool even your pinned items.\nMake sure you have saved any important results before proceeding.'**
+  String get confirmClearAllHistory;
+
+  /// No description provided for @clearPinnedItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Pinned Items'**
+  String get clearPinnedItems;
+
+  /// No description provided for @clearPinnedItemsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove all pinned items from history? This will not affect unpinned items.\nMake sure you have saved any important results before proceeding.'**
+  String get clearPinnedItemsDesc;
+
+  /// No description provided for @clearUnpinnedItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Unpinned Items'**
+  String get clearUnpinnedItems;
+
+  /// No description provided for @clearUnpinnedItemsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove all unpinned items from history? This will not affect pinned items.\nMake sure you have saved any important results before proceeding.'**
+  String get clearUnpinnedItemsDesc;
 
   /// No description provided for @typeConfirmToProceed.
   ///
@@ -1604,6 +1658,12 @@ abstract class AppLocalizations {
   /// **'Upload date: {updatedAt}'**
   String uploadDate(String updatedAt);
 
+  /// No description provided for @confirmDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Delete'**
+  String get confirmDelete;
+
   /// No description provided for @confirmDownload.
   ///
   /// In en, this message translates to:
@@ -1729,6 +1789,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} product(s)'**
   String productCount(int count);
+
+  /// No description provided for @deleteHistoryItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete item'**
+  String get deleteHistoryItem;
+
+  /// No description provided for @tapDeleteAgainToConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap delete again to confirm removal'**
+  String get tapDeleteAgainToConfirm;
+
+  /// No description provided for @historyItemDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'History item deleted'**
+  String get historyItemDeleted;
+
+  /// No description provided for @pinHistoryItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin item'**
+  String get pinHistoryItem;
+
+  /// No description provided for @unpinHistoryItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin item'**
+  String get unpinHistoryItem;
+
+  /// No description provided for @historyItemPinned.
+  ///
+  /// In en, this message translates to:
+  /// **'Item pinned'**
+  String get historyItemPinned;
+
+  /// No description provided for @historyItemUnpinned.
+  ///
+  /// In en, this message translates to:
+  /// **'Item unpinned'**
+  String get historyItemUnpinned;
+
+  /// No description provided for @solid.
+  ///
+  /// In en, this message translates to:
+  /// **'Solid'**
+  String get solid;
+
+  /// No description provided for @includeAlpha.
+  ///
+  /// In en, this message translates to:
+  /// **'Include Alpha'**
+  String get includeAlpha;
+
+  /// No description provided for @totalANumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Total: {total}'**
+  String totalANumber(int total);
+
+  /// No description provided for @numberType.
+  ///
+  /// In en, this message translates to:
+  /// **'Number Type'**
+  String get numberType;
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
+
+  /// No description provided for @dateErrStartEndConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date cannot be after end date'**
+  String get dateErrStartEndConflict;
 }
 
 class _AppLocalizationsDelegate

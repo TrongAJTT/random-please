@@ -77,6 +77,14 @@
   "includeNumbers": "Bao gồm số",
   "includeSpecial": "Bao gồm ký tự đặc biệt",
   "generate": "Tạo",
+  "generatedAtTime": "Tạo vào {time}",
+  "@generatedAtTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "generatedPassword": "Mật khẩu đã tạo",
   "copyToClipboard": "Sao chép",
   "copied": "Đã sao chép!",
@@ -155,6 +163,12 @@
   "clearHistory": "Xóa lịch sử",
   "confirmClearHistory": "Bạn có chắc chắn muốn xóa lịch sử không?",
   "confirmClearHistoryMessage": "Điều này sẽ xóa tất cả các mục lịch sử đã lưu. Hành động này không thể hoàn tác.\nHãy chắc chắn rằng bạn đã lưu bất kỳ kết quả quan trọng nào trước khi tiếp tục.",
+  "clearAllItems": "Xóa Tất Cả Lịch Sử",
+  "confirmClearAllHistory": "Bạn có chắc chắn muốn xóa TẤT CẢ lịch sử không? Điều này sẽ xóa tất cả lịch sử của công cụ này ngay cả các mục đã ghim của bạn.\nHãy chắc chắn rằng bạn đã lưu bất kỳ kết quả quan trọng nào trước khi tiếp tục.",
+  "clearPinnedItems": "Xóa Các Mục Đã Ghim",
+  "clearPinnedItemsDesc": "Xóa tất cả các mục đã ghim khỏi lịch sử? Điều này sẽ không ảnh hưởng đến các mục chưa ghim.\nHãy chắc chắn rằng bạn đã lưu bất kỳ kết quả quan trọng nào trước khi tiếp tục.",
+  "clearUnpinnedItems": "Xóa Các Mục Chưa Ghim",
+  "clearUnpinnedItemsDesc": "Xóa tất cả các mục chưa ghim khỏi lịch sử? Điều này sẽ không ảnh hưởng đến các mục đã ghim.\nHãy chắc chắn rằng bạn đã lưu bất kỳ kết quả quan trọng nào trước khi tiếp tục.",
   "typeConfirmToProceed": "Nhập \"confirm\" để tiếp tục:",
   "clearAll": "Xóa tất cả",
   "converterTools": "Công cụ chuyển đổi",
@@ -182,6 +196,8 @@
   "november": "Tháng 11",
   "december": "Tháng 12",
   "historyCleared": "Đã xóa lịch sử tính toán",
+  "pinnedHistoryCleared": "Đã xóa lịch sử ghim",
+  "unpinnedHistoryCleared": "Đã xóa lịch sử chưa ghim",
   "clearAllHistory": "Xóa toàn bộ lịch sử tính toán",
   "success": "Thành công",
   "calculate": "Tính toán",
@@ -371,6 +387,7 @@
       }
     }
   },
+  "confirmDelete": "Xác nhận xóa",
   "confirmDownload": "Xác nhận tải xuống",
   "confirmDownloadMessage": "Bạn có chắc chắn muốn tải phiên bản này xuống?\n\nTên tệp: {name}\nKích thước: {sizeInMB}",
   "@confirmDownloadMessage": {
@@ -410,5 +427,29 @@
         "type": "int"
       }
     }
-  }
+  },
+
+  "deleteHistoryItem": "Xóa mục",
+  "tapDeleteAgainToConfirm": "Nhấn xóa lần nữa để xác nhận",
+  "historyItemDeleted": "Mục lịch sử đã bị xóa",
+  "pinHistoryItem": "Ghim mục",
+  "unpinHistoryItem": "Bỏ ghim mục",
+  "historyItemPinned": "Mục đã được ghim",
+  "historyItemUnpinned": "Mục đã bỏ ghim",
+
+  "solid": "Đặc",
+  "includeAlpha": "Bao gồm dãy màu Alpha",
+  "totalANumber": "Tổng: {total}",
+  "@totalANumber": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "numberType": "Loại số",
+
+  "yes": "Có",
+  "no": "Không",
+  "dateErrStartEndConflict": "Ngày bắt đầu không thể sau ngày kết thúc"
 }

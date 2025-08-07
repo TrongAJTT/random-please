@@ -7,6 +7,8 @@ import 'package:random_please/services/generation_history_service.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/services/random_services/random_state_service.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
+import 'package:random_please/utils/size_utils.dart';
+import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/utils/widget_layout_render_helper.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
@@ -25,13 +27,16 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
   DateTime _startDate = DateTime.now().subtract(const Duration(days: 365));
   DateTime _endDate = DateTime.now().add(const Duration(days: 365));
   int _dateCount = 5;
-  double _dateCountSlider = 5.0;
   bool _allowDuplicates = true;
   List<DateTime> _generatedDates = [];
   bool _copied = false;
   List<GenerationHistoryItem> _history = [];
   bool _historyEnabled = false;
   final _dateFormat = DateFormat('yyyy-MM-dd');
+
+  late AppLocalizations loc;
+
+  static const String _historyType = 'date';
 
   @override
   void initState() {
@@ -48,7 +53,6 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
           _startDate = state.startDate;
           _endDate = state.endDate;
           _dateCount = state.dateCount;
-          _dateCountSlider = state.dateCount.toDouble();
           _allowDuplicates = state.allowDuplicates;
         });
       }
@@ -84,12 +88,8 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
   void _generateDates() {
     try {
       if (_startDate.isAfter(_endDate)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Start date must be before end date.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarUtils.showTyped(
+            context, loc.dateErrStartEndConflict, SnackBarType.error);
         return;
       }
 
@@ -112,7 +112,7 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
             _generatedDates.map((date) => _dateFormat.format(date)).join(', ');
         GenerationHistoryService.addHistoryItem(
           datesText,
-          'date',
+          _historyType,
         ).then((_) => _loadHistory()); // Refresh history
       }
     } catch (e) {
@@ -231,42 +231,36 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
       startDateSelector,
       endDateSelector,
       minWidth: 300,
-      horizontalSpacing: 16,
+      spacing: TwoDimSpacing.specific(vertical: 8, horizontal: 16),
     );
   }
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return RandomGeneratorHistoryWidget(
-      historyType: 'date',
+      historyType: _historyType,
       history: _history,
       title: loc.generationHistory,
-      onClearHistory: () async {
-        await GenerationHistoryService.clearHistory('date');
+      onClearAllHistory: () async {
+        await GenerationHistoryService.clearHistory(_historyType);
+        await _loadHistory();
+      },
+      onClearPinnedHistory: () async {
+        await GenerationHistoryService.clearPinnedHistory(_historyType);
+        await _loadHistory();
+      },
+      onClearUnpinnedHistory: () async {
+        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
         await _loadHistory();
       },
       onCopyItem: _copyHistoryItem,
-      customItemBuilder: (item, context) {
-        return ListTile(
-          dense: true,
-          title: Text(
-            item.value,
-            style: const TextStyle(
-              fontFamily: 'monospace',
-              fontSize: 14,
-            ),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
-          subtitle: Text(
-            '${loc.generatedAt}: ${item.timestamp.toString().substring(0, 19)}',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          trailing: IconButton(
-            icon: const Icon(Icons.copy, size: 18),
-            onPressed: () => _copyHistoryItem(item.value),
-            tooltip: loc.copyToClipboard,
-          ),
-        );
+      onDeleteItem: (index) async {
+        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
+        await _loadHistory();
+      },
+      onTogglePin: (index) async {
+        await GenerationHistoryService.togglePinHistoryItem(
+            _historyType, index);
+        await _loadHistory();
       },
     );
   }

@@ -7,7 +7,7 @@ enum SnackBarType { success, info, warning, error }
 ///
 /// This utility ensures that only one SnackBar is visible at a time by
 /// hiding the current one before showing a new one.
-class SnackbarUtils {
+class SnackBarUtils {
   /// Shows a SnackBar, immediately clearing any currently displayed SnackBar.
   ///
   /// This is the core method used by other helpers in this class.

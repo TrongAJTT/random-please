@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/utils/icon_utils.dart';
 import 'package:random_please/utils/size_utils.dart';
+import 'package:random_please/utils/widget_layout_render_helper.dart';
 
 /// A decorator class to customize the appearance of a [GenericDialog].
 @immutable
@@ -11,6 +13,7 @@ class GenericDialogDecorator {
   final EdgeInsetsGeometry? bodyPadding;
   final EdgeInsetsGeometry? footerPadding;
   final Color? headerBackColor;
+  final Color? headerTextColor;
   final Color? bodyBackColor;
   final Color? footerBackColor;
   final bool displayTopDivider;
@@ -23,6 +26,7 @@ class GenericDialogDecorator {
     this.bodyPadding,
     this.footerPadding,
     this.headerBackColor,
+    this.headerTextColor,
     this.bodyBackColor,
     this.footerBackColor,
     this.displayTopDivider = false,
@@ -39,6 +43,7 @@ class GenericDialogHeader extends StatelessWidget {
   final TextStyle? subtitleStyle;
   final bool displayExitButton;
   final GenericIcon? customExitIcon;
+  final Color? headerTextColor;
 
   const GenericDialogHeader({
     super.key,
@@ -49,6 +54,7 @@ class GenericDialogHeader extends StatelessWidget {
     this.subtitleStyle,
     this.displayExitButton = false,
     this.customExitIcon,
+    this.headerTextColor,
   }) : assert(customExitIcon == null || displayExitButton,
             'customExitIcon can only be used when displayExitButton is true.');
 
@@ -72,6 +78,7 @@ class GenericDialogHeader extends StatelessWidget {
                 style: titleStyle ??
                     theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: headerTextColor,
                     ),
               ),
               if (subtitle != null) ...[
@@ -80,7 +87,8 @@ class GenericDialogHeader extends StatelessWidget {
                   subtitle!,
                   style: subtitleStyle ??
                       theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                        color: headerTextColor ??
+                            theme.colorScheme.onSurfaceVariant,
                       ),
                 ),
               ],
@@ -104,6 +112,11 @@ class GenericDialogFooter extends StatelessWidget {
 
   const GenericDialogFooter({super.key, required this.child});
 
+  /// Layout: Empty
+  factory GenericDialogFooter.empty() {
+    return const GenericDialogFooter(child: SizedBox.shrink());
+  }
+
   /// Layout: [Reset to Default]...[Cancel][Save]
   factory GenericDialogFooter.defaultCancelSave({
     required VoidCallback onReset,
@@ -116,67 +129,79 @@ class GenericDialogFooter extends StatelessWidget {
     return GenericDialogFooter(
       child: Builder(builder: (context) {
         final l10n = MaterialLocalizations.of(context);
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            // Use a breakpoint to decide between wide and narrow layout
-            final isWide = constraints.maxWidth > 380;
+        final theme = Theme.of(context);
 
-            if (isWide) {
-              // WIDE LAYOUT: [Reset]......[Cancel][Save]
-              return Row(
-                children: [
-                  TextButton.icon(
-                    onPressed: onReset,
-                    icon: const Icon(Icons.refresh),
-                    label: Text(resetText ?? "Reset to Default"),
-                  ),
-                  const Spacer(),
-                  TextButton(
-                    onPressed: onCancel,
-                    child: Text(cancelText ?? l10n.cancelButtonLabel),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: onSave,
-                    child: Text(saveText ?? l10n.okButtonLabel),
-                  ),
-                ],
-              );
-            } else {
-              // NARROW LAYOUT:
-              // [    Reset     ]
-              // [Cancel] [Save]
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  OutlinedButton.icon(
-                    onPressed: onReset,
-                    icon: const Icon(Icons.refresh),
-                    label: Text(resetText ?? "Reset to Default"),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: onCancel,
-                          child: Text(cancelText ?? l10n.cancelButtonLabel),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: onSave,
-                          child: Text(saveText ?? l10n.okButtonLabel),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              );
-            }
-          },
+        const buttonRadius = 8.0;
+
+        return WidgetLayoutRenderHelper.oneLeftTwoRight(
+          // Reset to Default (minimal, icon left, subtle style)
+          TextButton.icon(
+            onPressed: onReset,
+            icon:
+                Icon(Icons.refresh, size: 20, color: theme.colorScheme.primary),
+            label: Text(
+              resetText ?? "Reset to Default",
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.primary,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(buttonRadius),
+              ),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              minimumSize: const Size(0, 36),
+            ),
+          ),
+          // Cancel (minimal, text only)
+          TextButton(
+            onPressed: onCancel,
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(buttonRadius),
+              ),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              minimumSize: const Size(0, 36),
+            ),
+            child: Text(
+              cancelText ?? l10n.cancelButtonLabel,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          // Save (primary, filled, rounded)
+          ElevatedButton(
+            onPressed: onSave,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.colorScheme.surfaceContainerHighest,
+              foregroundColor: theme.colorScheme.onSurface,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(buttonRadius),
+              ),
+              minimumSize: const Size(120, 40),
+              textStyle: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            child: Text(
+              saveText ?? l10n.okButtonLabel,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          threeInARowMinWidth: 400.0,
+          twoInARowMinWidth: 200.0,
+          singleRowWidgetOnTop: true,
+          spacing: TwoDimSpacing.both(8.0),
         );
       }),
     );
@@ -194,24 +219,24 @@ class GenericDialogFooter extends StatelessWidget {
     return GenericDialogFooter(
       child: Builder(builder: (context) {
         final l10n = MaterialLocalizations.of(context);
-        return Row(
-          children: [
-            TextButton.icon(
-              onPressed: onClear,
-              icon: const Icon(Icons.clear_all),
-              label: Text(clearText ?? "Clear"),
-            ),
-            const Spacer(),
-            TextButton(
-              onPressed: onCancel,
-              child: Text(cancelText ?? l10n.cancelButtonLabel),
-            ),
-            const SizedBox(width: 8),
-            ElevatedButton(
-              onPressed: onSave,
-              child: Text(saveText ?? l10n.okButtonLabel),
-            ),
-          ],
+        return WidgetLayoutRenderHelper.oneLeftTwoRight(
+          TextButton.icon(
+            onPressed: onClear,
+            icon: const Icon(Icons.clear_all),
+            label: Text(clearText ?? "Clear"),
+          ),
+          TextButton(
+            onPressed: onCancel,
+            child: Text(cancelText ?? l10n.cancelButtonLabel),
+          ),
+          ElevatedButton(
+            onPressed: onSave,
+            child: Text(saveText ?? l10n.okButtonLabel),
+          ),
+          threeInARowMinWidth: 400.0,
+          twoInARowMinWidth: 0,
+          singleRowWidgetOnTop: false,
+          spacing: TwoDimSpacing.both(8.0),
         );
       }),
     );
@@ -220,7 +245,7 @@ class GenericDialogFooter extends StatelessWidget {
   /// Layout: [Cancel] [Save] (with configurable flex)
   factory GenericDialogFooter.cancelSave({
     required VoidCallback onCancel,
-    required VoidCallback onSave,
+    required VoidCallback? onSave,
     String? cancelText,
     String? saveText,
     int cancelFlex = 1,
@@ -252,6 +277,79 @@ class GenericDialogFooter extends StatelessWidget {
     );
   }
 
+  /// Layout: ... [ButtonLeft] [ButtonRight]
+  factory GenericDialogFooter.twoCustomButtons({
+    required BuildContext context,
+    required TextButton leftButton,
+    required TextButton rightButton,
+    double minToggleDisplayWidth = 600.0,
+    double spacing = 8.0,
+  }) {
+    // Get widget width
+    final widgetSize = MediaQuery.of(context).size;
+    return GenericDialogFooter(
+        child: (widgetSize.width >= minToggleDisplayWidth)
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  leftButton,
+                  SizedBox(width: spacing),
+                  rightButton,
+                ],
+              )
+            : WidgetLayoutRenderHelper.twoEqualWidthInRow(
+                leftButton,
+                rightButton,
+                minWidth: minToggleDisplayWidth / 2,
+                spacing: TwoDimSpacing.both(spacing),
+              ));
+  }
+
+  /// Factory: ... [ButtonLeft] [ButtonRight]
+  factory GenericDialogFooter.twoSimpleButtons({
+    required BuildContext context,
+    required String leftText,
+    required String rightText,
+    required VoidCallback onLeft,
+    required VoidCallback onRight,
+    double minToggleDisplayWidth = 600.0,
+    double spacing = 8.0,
+  }) {
+    return GenericDialogFooter.twoCustomButtons(
+      context: context,
+      leftButton: TextButton(
+        onPressed: onLeft,
+        child: Text(leftText),
+      ),
+      rightButton: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        ),
+        onPressed: onRight,
+        child: Text(rightText),
+      ),
+      minToggleDisplayWidth: minToggleDisplayWidth,
+      spacing: spacing,
+    );
+  }
+
+  /// Layout: ... [No] [Yes]
+  factory GenericDialogFooter.yesNo({
+    required BuildContext context,
+    required VoidCallback onYes,
+    required VoidCallback onNo,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+    return GenericDialogFooter.twoSimpleButtons(
+      context: context,
+      leftText: l10n.no,
+      rightText: l10n.yes,
+      onLeft: onNo,
+      onRight: onYes,
+    );
+  }
+
   /// Layout for a single button (e.g., Save, OK, I Know, Close)
   factory GenericDialogFooter.singleButton({
     required String text,
@@ -267,6 +365,27 @@ class GenericDialogFooter extends StatelessWidget {
             child: Text(text),
           ),
         ],
+      ),
+    );
+  }
+
+  /// Layout: [left][right] ngang, width tuỳ chọn, chia đều
+  factory GenericDialogFooter.twoInARow({
+    required Widget left,
+    required Widget right,
+    double width = 300,
+  }) {
+    return GenericDialogFooter(
+      child: SizedBox(
+        width: width,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(child: left),
+            const SizedBox(width: 16),
+            Expanded(child: right),
+          ],
+        ),
       ),
     );
   }
@@ -299,7 +418,7 @@ class GenericDialog extends StatelessWidget {
     // Use provided decorator or default values
     final effectiveDecorator = decorator ??
         GenericDialogDecorator(
-          width: DynamicDimension.flexibility(90, 600),
+          width: DynamicDimension.flexibilityMax(90, 600),
         );
 
     final dialogWidth = effectiveDecorator.width.calculate(screenSize.width);

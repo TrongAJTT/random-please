@@ -36,6 +36,8 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
   List<GenerationHistoryItem> _history = [];
   bool _historyEnabled = false;
 
+  static const String _historyType = 'latin_letter';
+
   @override
   void initState() {
     super.initState();
@@ -86,7 +88,7 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
 
   Future<void> _loadHistory() async {
     final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory('latin_letter');
+    final history = await GenerationHistoryService.getHistory(_historyType);
     setState(() {
       _historyEnabled = enabled;
       _history = history;
@@ -124,12 +126,12 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
       if (_historyEnabled && _generatedLetters.isNotEmpty) {
         GenerationHistoryService.addHistoryItem(
           _generatedLetters.join(''),
-          'latin_letter',
+          _historyType,
         ).then((_) => _loadHistory()); // Refresh history
       }
     } on ArgumentError {
       final loc = AppLocalizations.of(context)!;
-      SnackbarUtils.showTyped(
+      SnackBarUtils.showTyped(
         context,
         loc.latinLetterGenerationError(_letterCount),
         SnackBarType.error,
@@ -156,14 +158,31 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return RandomGeneratorHistoryWidget(
-      historyType: 'latin_letter',
+      historyType: _historyType,
       history: _history,
       title: loc.generationHistory,
-      onClearHistory: () async {
-        await GenerationHistoryService.clearHistory('latin_letter');
+      onClearAllHistory: () async {
+        await GenerationHistoryService.clearHistory(_historyType);
+        await _loadHistory();
+      },
+      onClearPinnedHistory: () async {
+        await GenerationHistoryService.clearPinnedHistory(_historyType);
+        await _loadHistory();
+      },
+      onClearUnpinnedHistory: () async {
+        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
         await _loadHistory();
       },
       onCopyItem: _copyHistoryItem,
+      onDeleteItem: (index) async {
+        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
+        await _loadHistory();
+      },
+      onTogglePin: (index) async {
+        await GenerationHistoryService.togglePinHistoryItem(
+            _historyType, index);
+        await _loadHistory();
+      },
     );
   }
 

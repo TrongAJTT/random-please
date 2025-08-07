@@ -6,6 +6,7 @@ import 'package:random_please/services/generation_history_service.dart';
 import 'package:random_please/services/random_services/random_state_service.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
+import 'package:random_please/utils/size_utils.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/utils/widget_layout_render_helper.dart';
 import 'package:random_please/widgets/generic/option_grid_picker.dart' as grid;
@@ -33,6 +34,8 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
   List<GenerationHistoryItem> _history = [];
   bool _historyEnabled = false;
 
+  static const String _historyType = 'number';
+
   final TextEditingController _minValueController =
       TextEditingController(text: '1');
   final TextEditingController _maxValueController =
@@ -47,7 +50,7 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
 
   Future<void> _loadHistory() async {
     final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory('number');
+    final history = await GenerationHistoryService.getHistory(_historyType);
     if (!mounted) return;
     setState(() {
       _historyEnabled = enabled;
@@ -147,7 +150,7 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
 
         GenerationHistoryService.addHistoryItem(
           numbersText,
-          'number',
+          _historyType,
         ).then((_) => _loadHistory()); // Refresh history
       }
     } catch (e) {
@@ -197,14 +200,31 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return RandomGeneratorHistoryWidget(
-      historyType: 'number',
+      historyType: _historyType,
       history: _history,
       title: loc.generationHistory,
-      onClearHistory: () async {
-        await GenerationHistoryService.clearHistory('number');
+      onClearAllHistory: () async {
+        await GenerationHistoryService.clearHistory(_historyType);
+        await _loadHistory();
+      },
+      onClearPinnedHistory: () async {
+        await GenerationHistoryService.clearPinnedHistory(_historyType);
+        await _loadHistory();
+      },
+      onClearUnpinnedHistory: () async {
+        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
         await _loadHistory();
       },
       onCopyItem: _copyHistoryItem,
+      onDeleteItem: (index) async {
+        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
+        await _loadHistory();
+      },
+      onTogglePin: (index) async {
+        await GenerationHistoryService.togglePinHistoryItem(
+            _historyType, index);
+        await _loadHistory();
+      },
     );
   }
 
@@ -224,7 +244,7 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
               children: [
                 // 1. Number Type Picker
                 grid.AutoScaleOptionGridPicker<bool>(
-                  title: 'Number Type',
+                  title: loc.numberType,
                   options: [
                     OptionItem(value: true, label: loc.integers),
                     OptionItem(value: false, label: loc.floatingPoint),
@@ -279,7 +299,7 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
                       _maxValue = double.tryParse(value) ?? _maxValue;
                     },
                   ),
-                  horizontalSpacing: 16,
+                  spacing: TwoDimSpacing.specific(vertical: 8, horizontal: 16),
                   minWidth: 300,
                 ),
                 const SizedBox(height: 8),

@@ -31,6 +31,8 @@ class _CoinFlipGeneratorScreenState extends State<CoinFlipGeneratorScreen>
   List<GenerationHistoryItem> _history = [];
   bool _historyEnabled = false;
 
+  static const String _historyType = 'coin_flip';
+
   @override
   void initState() {
     super.initState();
@@ -97,7 +99,7 @@ class _CoinFlipGeneratorScreenState extends State<CoinFlipGeneratorScreen>
 
   Future<void> _loadHistory() async {
     final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory('coin_flip');
+    final history = await GenerationHistoryService.getHistory(_historyType);
     setState(() {
       _historyEnabled = enabled;
       _history = history;
@@ -154,7 +156,7 @@ class _CoinFlipGeneratorScreenState extends State<CoinFlipGeneratorScreen>
       String resultText = _finalResult! ? loc.heads : loc.tails;
       GenerationHistoryService.addHistoryItem(
         resultText,
-        'coin_flip',
+        _historyType,
       ).then((_) => _loadHistory());
     }
   }
@@ -168,14 +170,31 @@ class _CoinFlipGeneratorScreenState extends State<CoinFlipGeneratorScreen>
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return RandomGeneratorHistoryWidget(
-      historyType: 'coin_flip',
+      historyType: _historyType,
       history: _history,
       title: loc.generationHistory,
-      onClearHistory: () async {
-        await GenerationHistoryService.clearHistory('coin_flip');
+      onClearAllHistory: () async {
+        await GenerationHistoryService.clearHistory(_historyType);
+        await _loadHistory();
+      },
+      onClearPinnedHistory: () async {
+        await GenerationHistoryService.clearPinnedHistory(_historyType);
+        await _loadHistory();
+      },
+      onClearUnpinnedHistory: () async {
+        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
         await _loadHistory();
       },
       onCopyItem: _copyHistoryItem,
+      onDeleteItem: (index) async {
+        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
+        await _loadHistory();
+      },
+      onTogglePin: (index) async {
+        await GenerationHistoryService.togglePinHistoryItem(
+            _historyType, index);
+        await _loadHistory();
+      },
     );
   }
 

@@ -27,8 +27,11 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
   List<int> _results = [];
   late AnimationController _rollController;
   late Animation<double> _rollAnimation;
+  late AppLocalizations loc;
   List<GenerationHistoryItem> _history = [];
   bool _historyEnabled = false;
+
+  static const String _historyType = 'dice_roll';
 
   final List<int> _availableSides = [
     3,
@@ -64,6 +67,12 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
     _loadHistory();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    loc = AppLocalizations.of(context)!;
+  }
+
   Future<void> _loadState() async {
     try {
       final state = await RandomStateService.getDiceRollGeneratorState();
@@ -93,7 +102,7 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
 
   Future<void> _loadHistory() async {
     final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory('dice_roll');
+    final history = await GenerationHistoryService.getHistory(_historyType);
     setState(() {
       _historyEnabled = enabled;
       _history = history;
@@ -124,10 +133,10 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
     if (_historyEnabled && _results.isNotEmpty) {
       String resultText = _results.length == 1
           ? 'd$_diceSides: ${_results[0]}'
-          : '${_results.length}d$_diceSides: ${_results.join(", ")} (Total: ${_getTotal()})';
+          : '${_results.length}d$_diceSides: ${_results.join(", ")} (${loc.totalANumber(_getTotal())})';
       GenerationHistoryService.addHistoryItem(
         resultText,
-        'dice_roll',
+        _historyType,
       ).then((_) => _loadHistory());
     }
   }
@@ -141,38 +150,30 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return RandomGeneratorHistoryWidget(
-      historyType: 'dice',
+      historyType: _historyType,
       history: _history,
       title: loc.generationHistory,
-      onClearHistory: () async {
-        await GenerationHistoryService.clearHistory('dice');
+      onClearAllHistory: () async {
+        await GenerationHistoryService.clearHistory(_historyType);
+        await _loadHistory();
+      },
+      onClearPinnedHistory: () async {
+        await GenerationHistoryService.clearPinnedHistory(_historyType);
+        await _loadHistory();
+      },
+      onClearUnpinnedHistory: () async {
+        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
         await _loadHistory();
       },
       onCopyItem: _copyHistoryItem,
-      customItemBuilder: (item, context) {
-        return ListTile(
-          dense: true,
-          leading: Icon(
-            Icons.casino,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          title: Text(
-            item.value,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          subtitle: Text(
-            'Generated at: ${item.timestamp.toString().substring(0, 19)}',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          trailing: IconButton(
-            icon: const Icon(Icons.copy, size: 18),
-            onPressed: () => _copyHistoryItem(item.value),
-            tooltip: 'Copy to Clipboard',
-          ),
-        );
+      onDeleteItem: (index) async {
+        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
+        await _loadHistory();
+      },
+      onTogglePin: (index) async {
+        await GenerationHistoryService.togglePinHistoryItem(
+            _historyType, index);
+        await _loadHistory();
       },
     );
   }
@@ -297,7 +298,7 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: Text(
-                        'Total: ${_getTotal()}',
+                        loc.totalANumber(_getTotal()),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color:

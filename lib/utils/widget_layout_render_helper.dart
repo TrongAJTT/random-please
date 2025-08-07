@@ -40,12 +40,60 @@ class _AutoCondition extends TwoInARowConditionType {
   const _AutoCondition();
 }
 
+/// Group widget positioning for three-in-a-row layout
+enum ThreeInARowGroupWidget {
+  /// Group first two widgets on the left, third widget on the right
+  leftMiddle,
+
+  /// Group first widget on the left, last two widgets on the right
+  middleRight,
+}
+
+/// Decorator for styling three widgets in a row layout
+class ThreeInARowDecorator {
+  final DynamicDimension? widthWidget1;
+  final DynamicDimension? widthWidget2;
+  final DynamicDimension? widthWidget3;
+  final ThreeInARowGroupWidget groupWidget;
+  final MainAxisAlignment mainAxisAlignment;
+  final CrossAxisAlignment crossAxisAlignment;
+  final MainAxisSize mainAxisSize;
+
+  const ThreeInARowDecorator({
+    this.widthWidget1,
+    this.widthWidget2,
+    this.widthWidget3,
+    this.groupWidget = ThreeInARowGroupWidget.middleRight,
+    this.mainAxisAlignment = MainAxisAlignment.start,
+    this.crossAxisAlignment = CrossAxisAlignment.center,
+    this.mainAxisSize = MainAxisSize.max,
+  });
+
+  ThreeInARowDecorator copyWith({
+    DynamicDimension? widthWidget1,
+    DynamicDimension? widthWidget2,
+    DynamicDimension? widthWidget3,
+    ThreeInARowGroupWidget? groupWidget,
+    MainAxisAlignment? mainAxisAlignment,
+    CrossAxisAlignment? crossAxisAlignment,
+    MainAxisSize? mainAxisSize,
+  }) {
+    return ThreeInARowDecorator(
+      widthWidget1: widthWidget1 ?? this.widthWidget1,
+      widthWidget2: widthWidget2 ?? this.widthWidget2,
+      widthWidget3: widthWidget3 ?? this.widthWidget3,
+      groupWidget: groupWidget ?? this.groupWidget,
+      mainAxisAlignment: mainAxisAlignment ?? this.mainAxisAlignment,
+      crossAxisAlignment: crossAxisAlignment ?? this.crossAxisAlignment,
+      mainAxisSize: mainAxisSize ?? this.mainAxisSize,
+    );
+  }
+}
+
 /// Decorator for styling two widgets in a row layout
 class TwoInARowDecorator {
   final DynamicDimension? widthWidget1;
   final DynamicDimension? widthWidget2;
-  final double horizontalSpacing;
-  final double verticalSpacing;
   final MainAxisAlignment mainAxisAlignment;
   final CrossAxisAlignment crossAxisAlignment;
   final MainAxisSize mainAxisSize;
@@ -53,18 +101,29 @@ class TwoInARowDecorator {
   const TwoInARowDecorator({
     this.widthWidget1,
     this.widthWidget2,
-    this.horizontalSpacing = 8.0,
-    this.verticalSpacing = 8.0,
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.center,
     this.mainAxisSize = MainAxisSize.max,
   });
 
+  /// Factory method for equal flex layout (1:1 ratio)
+  factory TwoInARowDecorator.flexEqual({
+    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start,
+    CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.center,
+    MainAxisSize mainAxisSize = MainAxisSize.max,
+  }) {
+    return TwoInARowDecorator(
+      widthWidget1: DynamicDimension.expanded(),
+      widthWidget2: DynamicDimension.expanded(),
+      mainAxisAlignment: mainAxisAlignment,
+      crossAxisAlignment: crossAxisAlignment,
+      mainAxisSize: mainAxisSize,
+    );
+  }
+
   TwoInARowDecorator copyWith({
     DynamicDimension? widthWidget1,
     DynamicDimension? widthWidget2,
-    double? horizontalSpacing,
-    double? verticalSpacing,
     MainAxisAlignment? mainAxisAlignment,
     CrossAxisAlignment? crossAxisAlignment,
     MainAxisSize? mainAxisSize,
@@ -72,8 +131,6 @@ class TwoInARowDecorator {
     return TwoInARowDecorator(
       widthWidget1: widthWidget1 ?? this.widthWidget1,
       widthWidget2: widthWidget2 ?? this.widthWidget2,
-      horizontalSpacing: horizontalSpacing ?? this.horizontalSpacing,
-      verticalSpacing: verticalSpacing ?? this.verticalSpacing,
       mainAxisAlignment: mainAxisAlignment ?? this.mainAxisAlignment,
       crossAxisAlignment: crossAxisAlignment ?? this.crossAxisAlignment,
       mainAxisSize: mainAxisSize ?? this.mainAxisSize,
@@ -134,8 +191,12 @@ class WidgetLayoutRenderHelper {
     Widget widget1,
     Widget widget2,
     TwoInARowDecorator decorator,
-    TwoInARowConditionType conditionType,
-  ) {
+    TwoInARowConditionType conditionType, {
+    TwoDimSpacing? spacing,
+  }) {
+    final defaultSpacing =
+        spacing ?? TwoDimSpacing.specific(vertical: 8.0, horizontal: 8.0);
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final shouldRenderInRow = _shouldRenderInRow(
@@ -145,12 +206,65 @@ class WidgetLayoutRenderHelper {
           decorator,
           conditionType,
           context,
+          defaultSpacing,
         );
 
         if (shouldRenderInRow) {
-          return _buildRowLayout(widget1, widget2, decorator);
+          return _buildRowLayout(widget1, widget2, decorator, defaultSpacing);
         } else {
-          return _buildColumnLayout(widget1, widget2, decorator);
+          return _buildColumnLayout(
+              widget1, widget2, decorator, defaultSpacing);
+        }
+      },
+    );
+  }
+
+  /// Renders three widgets in a row based on width thresholds
+  static Widget threeInARowThreshold(
+    Widget widget1,
+    Widget widget2,
+    Widget widget3, {
+    required double threeInARowWidthThreshold,
+    required ThreeInARowDecorator threeInARowDecorator,
+    required double twoInARowWidthThreshold,
+    required bool singleRowWidgetOnTop,
+    required TwoInARowDecorator twoInARowDecorator,
+    TwoDimSpacing? spacing,
+  }) {
+    final defaultSpacing =
+        spacing ?? TwoDimSpacing.specific(vertical: 8.0, horizontal: 8.0);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableWidth = constraints.maxWidth;
+
+        if (availableWidth >= threeInARowWidthThreshold) {
+          // Render all three widgets in a single row
+          return _buildThreeInRowLayout(
+            widget1,
+            widget2,
+            widget3,
+            threeInARowDecorator,
+            defaultSpacing,
+          );
+        } else if (availableWidth >= twoInARowWidthThreshold) {
+          // Render two rows: one with single widget, one with two widgets
+          return _buildTwoRowLayout(
+            widget1,
+            widget2,
+            widget3,
+            singleRowWidgetOnTop,
+            twoInARowDecorator,
+            defaultSpacing,
+          );
+        } else {
+          // Render three rows: one widget per row
+          return _buildThreeRowLayout(
+            widget1,
+            widget2,
+            widget3,
+            defaultSpacing,
+          );
         }
       },
     );
@@ -164,6 +278,7 @@ class WidgetLayoutRenderHelper {
     TwoInARowDecorator decorator,
     TwoInARowConditionType conditionType,
     BuildContext context,
+    TwoDimSpacing spacing,
   ) {
     return switch (conditionType) {
       _OverallWidthCondition(value: final threshold) =>
@@ -178,6 +293,7 @@ class WidgetLayoutRenderHelper {
           decorator,
           constraints,
           context,
+          spacing,
         ),
     };
   }
@@ -187,6 +303,7 @@ class WidgetLayoutRenderHelper {
     Widget widget1,
     Widget widget2,
     TwoInARowDecorator decorator,
+    TwoDimSpacing spacing,
   ) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -211,7 +328,7 @@ class WidgetLayoutRenderHelper {
           } else {
             // For percentage and flex, calculate actual width
             final calculatedWidth = dimension1
-                .calculate(constraints.maxWidth - decorator.horizontalSpacing);
+                .calculate(constraints.maxWidth - spacing.horizontalSpacing);
             children.add(
               SizedBox(
                 width: calculatedWidth,
@@ -225,8 +342,8 @@ class WidgetLayoutRenderHelper {
         }
 
         // Add spacing
-        if (decorator.horizontalSpacing > 0) {
-          children.add(SizedBox(width: decorator.horizontalSpacing));
+        if (spacing.horizontalSpacing > 0) {
+          children.add(SizedBox(width: spacing.horizontalSpacing));
         }
 
         // Add second widget with appropriate sizing
@@ -248,7 +365,7 @@ class WidgetLayoutRenderHelper {
           } else {
             // For percentage and flex, calculate actual width
             final remainingWidth =
-                constraints.maxWidth - decorator.horizontalSpacing;
+                constraints.maxWidth - spacing.horizontalSpacing;
             final calculatedWidth = dimension2.calculate(remainingWidth);
             children.add(
               SizedBox(
@@ -277,18 +394,180 @@ class WidgetLayoutRenderHelper {
     Widget widget1,
     Widget widget2,
     TwoInARowDecorator decorator,
+    TwoDimSpacing spacing,
   ) {
     return Column(
       mainAxisSize: decorator.mainAxisSize,
-      crossAxisAlignment: decorator.crossAxisAlignment,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisAlignment: decorator.mainAxisAlignment,
       children: [
         widget1,
-        if (decorator.verticalSpacing > 0)
-          SizedBox(height: decorator.verticalSpacing),
+        if (spacing.verticalSpacing > 0)
+          SizedBox(height: spacing.verticalSpacing),
         widget2,
       ],
     );
+  }
+
+  /// Builds three widgets in a single row layout
+  static Widget _buildThreeInRowLayout(
+    Widget widget1,
+    Widget widget2,
+    Widget widget3,
+    ThreeInARowDecorator decorator,
+    TwoDimSpacing spacing,
+  ) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final List<Widget> children = [];
+
+        if (decorator.groupWidget == ThreeInARowGroupWidget.leftMiddle) {
+          // Group first two widgets on the left, third widget on the right
+          final leftGroup = _buildGroupedWidgets(
+            widget1,
+            widget2,
+            decorator.widthWidget1,
+            decorator.widthWidget2,
+            spacing,
+            constraints,
+          );
+          children.add(leftGroup);
+
+          if (spacing.horizontalSpacing > 0) {
+            children.add(SizedBox(width: spacing.horizontalSpacing));
+          }
+
+          children.add(
+              _buildSizedWidget(widget3, decorator.widthWidget3, constraints));
+        } else {
+          // Group first widget on the left, last two widgets on the right
+          children.add(
+              _buildSizedWidget(widget1, decorator.widthWidget1, constraints));
+
+          if (spacing.horizontalSpacing > 0) {
+            children.add(SizedBox(width: spacing.horizontalSpacing));
+          }
+
+          final rightGroup = _buildGroupedWidgets(
+            widget2,
+            widget3,
+            decorator.widthWidget2,
+            decorator.widthWidget3,
+            spacing,
+            constraints,
+          );
+          children.add(rightGroup);
+        }
+
+        return Row(
+          mainAxisAlignment: decorator.mainAxisAlignment,
+          crossAxisAlignment: decorator.crossAxisAlignment,
+          mainAxisSize: decorator.mainAxisSize,
+          children: children,
+        );
+      },
+    );
+  }
+
+  /// Builds two-row layout for three widgets
+  static Widget _buildTwoRowLayout(
+    Widget widget1,
+    Widget widget2,
+    Widget widget3,
+    bool singleRowWidgetOnTop,
+    TwoInARowDecorator twoInARowDecorator,
+    TwoDimSpacing spacing,
+  ) {
+    if (singleRowWidgetOnTop) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          widget1,
+          if (spacing.verticalSpacing > 0)
+            SizedBox(height: spacing.verticalSpacing),
+          _buildRowLayout(widget2, widget3, twoInARowDecorator, spacing),
+        ],
+      );
+    } else {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildRowLayout(widget1, widget2, twoInARowDecorator, spacing),
+          if (spacing.verticalSpacing > 0)
+            SizedBox(height: spacing.verticalSpacing),
+          widget3,
+        ],
+      );
+    }
+  }
+
+  /// Builds three-row layout for three widgets
+  static Widget _buildThreeRowLayout(
+    Widget widget1,
+    Widget widget2,
+    Widget widget3,
+    TwoDimSpacing spacing,
+  ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        widget1,
+        if (spacing.verticalSpacing > 0)
+          SizedBox(height: spacing.verticalSpacing),
+        widget2,
+        if (spacing.verticalSpacing > 0)
+          SizedBox(height: spacing.verticalSpacing),
+        widget3,
+      ],
+    );
+  }
+
+  /// Helper method to build grouped widgets
+  static Widget _buildGroupedWidgets(
+    Widget widget1,
+    Widget widget2,
+    DynamicDimension? dimension1,
+    DynamicDimension? dimension2,
+    TwoDimSpacing spacing,
+    BoxConstraints constraints,
+  ) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildSizedWidget(widget1, dimension1, constraints),
+        if (spacing.horizontalSpacing > 0)
+          SizedBox(width: spacing.horizontalSpacing),
+        _buildSizedWidget(widget2, dimension2, constraints),
+      ],
+    );
+  }
+
+  /// Helper method to build a widget with specified dimensions
+  static Widget _buildSizedWidget(
+    Widget widget,
+    DynamicDimension? dimension,
+    BoxConstraints constraints,
+  ) {
+    if (dimension == null) {
+      return widget;
+    }
+
+    switch (dimension.type) {
+      case DimensionType.fixed:
+        return SizedBox(
+          width: dimension.value,
+          child: widget,
+        );
+      case DimensionType.expanded:
+        return Expanded(child: widget);
+      case DimensionType.percentage:
+      case DimensionType.flex:
+        final calculatedWidth = dimension.calculate(constraints.maxWidth);
+        return SizedBox(
+          width: calculatedWidth,
+          child: widget,
+        );
+    }
   }
 
   /// Gets the preferred width of a widget by measuring it
@@ -315,6 +594,7 @@ class WidgetLayoutRenderHelper {
     TwoInARowDecorator decorator,
     BoxConstraints constraints,
     BuildContext context,
+    TwoDimSpacing spacing,
   ) {
     // If using expanded or percentage/flex widths, they should fit
     if (decorator.widthWidget1?.type == DimensionType.expanded ||
@@ -327,7 +607,7 @@ class WidgetLayoutRenderHelper {
     }
 
     // Calculate required width
-    double requiredWidth = decorator.horizontalSpacing;
+    double requiredWidth = spacing.horizontalSpacing;
 
     if (decorator.widthWidget1?.type == DimensionType.fixed) {
       requiredWidth += decorator.widthWidget1!.value;
@@ -353,8 +633,7 @@ class WidgetLayoutRenderHelper {
     Widget widget1,
     Widget widget2, {
     double minWidth = 600,
-    double horizontalSpacing = 16.0,
-    double verticalSpacing = 16.0,
+    TwoDimSpacing? spacing,
   }) {
     return twoInARowThreshold(
       widget1,
@@ -362,10 +641,9 @@ class WidgetLayoutRenderHelper {
       TwoInARowDecorator(
         widthWidget1: DynamicDimension.expanded(),
         widthWidget2: DynamicDimension.expanded(),
-        horizontalSpacing: horizontalSpacing,
-        verticalSpacing: verticalSpacing,
       ),
       TwoInARowConditionType.overallWidth(minWidth),
+      spacing: spacing ?? TwoDimSpacing.both(16.0),
     );
   }
 
@@ -374,7 +652,7 @@ class WidgetLayoutRenderHelper {
     Widget fixedWidget,
     Widget flexWidget, {
     required double fixedWidth,
-    double spacing = 8.0,
+    TwoDimSpacing? spacing,
     double minOverallWidth = 400.0,
     bool fixedFirst = true,
   }) {
@@ -385,7 +663,6 @@ class WidgetLayoutRenderHelper {
       widthWidget2: fixedFirst
           ? DynamicDimension.expanded()
           : DynamicDimension.fix(fixedWidth),
-      horizontalSpacing: spacing,
     );
 
     return twoInARowThreshold(
@@ -393,6 +670,7 @@ class WidgetLayoutRenderHelper {
       fixedFirst ? flexWidget : fixedWidget,
       decorator,
       TwoInARowConditionType.overallWidth(minOverallWidth),
+      spacing: spacing ?? TwoDimSpacing.both(8.0),
     );
   }
 
@@ -400,15 +678,121 @@ class WidgetLayoutRenderHelper {
   static Widget autoWrapTwoWidgets(
     Widget widget1,
     Widget widget2, {
-    double spacing = 8.0,
+    TwoDimSpacing? spacing,
   }) {
     return twoInARowThreshold(
       widget1,
       widget2,
-      TwoInARowDecorator(
-        horizontalSpacing: spacing,
+      const TwoInARowDecorator(),
+      const TwoInARowConditionType.auto(),
+      spacing: spacing ?? TwoDimSpacing.both(8.0),
+    );
+  }
+
+  /// Convenience method for one widget on left, two widgets on right layout
+  static Widget oneLeftTwoRight(
+    Widget widget1,
+    Widget widget2,
+    Widget widget3, {
+    double threeInARowMinWidth = 800.0,
+    double twoInARowMinWidth = 500.0,
+    bool singleRowWidgetOnTop = true,
+    TwoDimSpacing? spacing,
+  }) {
+    return threeInARowThreshold(
+      widget1,
+      widget2,
+      widget3,
+      threeInARowWidthThreshold: threeInARowMinWidth,
+      threeInARowDecorator: const ThreeInARowDecorator(
+        groupWidget: ThreeInARowGroupWidget.middleRight,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
       ),
-      TwoInARowConditionType.auto(),
+      twoInARowWidthThreshold: twoInARowMinWidth,
+      singleRowWidgetOnTop: singleRowWidgetOnTop,
+      twoInARowDecorator: TwoInARowDecorator.flexEqual(),
+      spacing: spacing ?? TwoDimSpacing.both(8.0),
+    );
+  }
+
+  /// Convenience method for one widget on left, two widgets on right layout with flex sizing
+  static Widget oneLeftTwoRightFlex(
+    Widget widget1,
+    Widget widget2,
+    Widget widget3, {
+    double threeInARowMinWidth = 800.0,
+    double twoInARowMinWidth = 500.0,
+    bool singleRowWidgetOnTop = true,
+    TwoDimSpacing? spacing,
+  }) {
+    return threeInARowThreshold(
+      widget1,
+      widget2,
+      widget3,
+      threeInARowWidthThreshold: threeInARowMinWidth,
+      threeInARowDecorator: ThreeInARowDecorator(
+        widthWidget1: DynamicDimension.percentage(50), // 2/4 = 50%
+        widthWidget2: DynamicDimension.percentage(25), // 1/4 = 25%
+        widthWidget3: DynamicDimension.percentage(25), // 1/4 = 25%
+        groupWidget: ThreeInARowGroupWidget.middleRight,
+      ),
+      twoInARowWidthThreshold: twoInARowMinWidth,
+      singleRowWidgetOnTop: singleRowWidgetOnTop,
+      twoInARowDecorator: TwoInARowDecorator.flexEqual(),
+      spacing: spacing ?? TwoDimSpacing.both(8.0),
+    );
+  }
+
+  /// Convenience method for two widgets on left, one widget on right layout
+  static Widget twoLeftOneRight(
+    Widget widget1,
+    Widget widget2,
+    Widget widget3, {
+    double threeInARowMinWidth = 800.0,
+    double twoInARowMinWidth = 500.0,
+    bool singleRowWidgetOnTop = false,
+    TwoDimSpacing? spacing,
+  }) {
+    return threeInARowThreshold(
+      widget1,
+      widget2,
+      widget3,
+      threeInARowWidthThreshold: threeInARowMinWidth,
+      threeInARowDecorator: const ThreeInARowDecorator(
+        groupWidget: ThreeInARowGroupWidget.leftMiddle,
+      ),
+      twoInARowWidthThreshold: twoInARowMinWidth,
+      singleRowWidgetOnTop: singleRowWidgetOnTop,
+      twoInARowDecorator: TwoInARowDecorator.flexEqual(),
+      spacing: spacing ?? TwoDimSpacing.both(8.0),
+    );
+  }
+
+  /// Convenience method for two widgets on left, one widget on right layout with flex sizing
+  static Widget twoLeftOneRightFlex(
+    Widget widget1,
+    Widget widget2,
+    Widget widget3, {
+    double threeInARowMinWidth = 800.0,
+    double twoInARowMinWidth = 500.0,
+    bool singleRowWidgetOnTop = false,
+    TwoDimSpacing? spacing,
+  }) {
+    return threeInARowThreshold(
+      widget1,
+      widget2,
+      widget3,
+      threeInARowWidthThreshold: threeInARowMinWidth,
+      threeInARowDecorator: ThreeInARowDecorator(
+        widthWidget1: DynamicDimension.percentage(25), // 1/4 = 25%
+        widthWidget2: DynamicDimension.percentage(25), // 1/4 = 25%
+        widthWidget3: DynamicDimension.percentage(50), // 2/4 = 50%
+        groupWidget: ThreeInARowGroupWidget.leftMiddle,
+      ),
+      twoInARowWidthThreshold: twoInARowMinWidth,
+      singleRowWidgetOnTop: singleRowWidgetOnTop,
+      twoInARowDecorator: TwoInARowDecorator.flexEqual(),
+      spacing: spacing ?? TwoDimSpacing.both(8.0),
     );
   }
 }

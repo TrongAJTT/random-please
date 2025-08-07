@@ -7,11 +7,13 @@ class GenerationHistoryItem {
   final String value;
   final DateTime timestamp;
   final String type; // 'password', 'number', 'date', 'color', etc.
+  final bool isPinned;
 
   GenerationHistoryItem({
     required this.value,
     required this.timestamp,
     required this.type,
+    this.isPinned = false,
   });
 
   Map<String, dynamic> toJson() {
@@ -19,6 +21,7 @@ class GenerationHistoryItem {
       'value': value,
       'timestamp': timestamp.toIso8601String(),
       'type': type,
+      'isPinned': isPinned,
     };
   }
 
@@ -27,6 +30,7 @@ class GenerationHistoryItem {
       value: json['value'],
       timestamp: DateTime.parse(json['timestamp']),
       type: json['type'],
+      isPinned: json['isPinned'] ?? false,
     );
   }
 }
@@ -99,9 +103,17 @@ class GenerationHistoryService {
         value: value,
         timestamp: DateTime.now(),
         type: type,
+        isPinned: false, // New items are not pinned by default
       );
 
       history.insert(0, newItem);
+
+      // Sort history: pinned items first, then by timestamp
+      history.sort((a, b) {
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        return b.timestamp.compareTo(a.timestamp);
+      });
 
       // Keep only the latest items
       if (history.length > maxHistoryItems) {
@@ -136,9 +148,17 @@ class GenerationHistoryService {
       if (decryptedData.isEmpty) return [];
 
       final jsonList = json.decode(decryptedData) as List;
-      return jsonList
-          .map((json) => GenerationHistoryItem.fromJson(json))
-          .toList();
+      final history =
+          jsonList.map((json) => GenerationHistoryItem.fromJson(json)).toList();
+
+      // Sort history: pinned items first, then by timestamp
+      history.sort((a, b) {
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        return b.timestamp.compareTo(a.timestamp);
+      });
+
+      return history;
     } catch (e) {
       // If parsing fails, return empty list
       return [];
@@ -150,6 +170,93 @@ class GenerationHistoryService {
     try {
       final box = HiveService.historyBox;
       await box.delete('${_historyKey}_$type');
+    } catch (e) {
+      // Silently fail to avoid breaking the app
+    }
+  }
+
+  /// Clear all pinned history items for a specific type
+  static Future<void> clearPinnedHistory(String type) async {
+    try {
+      final history = await getHistory(type);
+      final unpinnedHistory = history.where((item) => !item.isPinned).toList();
+
+      // Save unpinned history back
+      final box = HiveService.historyBox;
+      final jsonList = unpinnedHistory.map((item) => item.toJson()).toList();
+      final jsonString = json.encode(jsonList);
+      final encryptedData = _encrypt(jsonString);
+
+      await box.put('${_historyKey}_$type', encryptedData);
+    } catch (e) {
+      // Silently fail to avoid breaking the app
+    }
+  }
+
+  /// Clear all unpinned history items for a specific type
+  static Future<void> clearUnpinnedHistory(String type) async {
+    try {
+      final history = await getHistory(type);
+      final pinnedHistory = history.where((item) => item.isPinned).toList();
+      // Save pinned history back
+      final box = HiveService.historyBox;
+      final jsonList = pinnedHistory.map((item) => item.toJson()).toList();
+      final jsonString = json.encode(jsonList);
+      final encryptedData = _encrypt(jsonString);
+      await box.put('${_historyKey}_$type', encryptedData);
+    } catch (e) {
+      // Silently fail to avoid breaking the app
+    }
+  }
+
+  /// Delete a specific history item by index
+  static Future<void> deleteHistoryItem(String type, int index) async {
+    try {
+      final history = await getHistory(type);
+      if (index >= 0 && index < history.length) {
+        history.removeAt(index);
+
+        final box = HiveService.historyBox;
+        final jsonList = history.map((item) => item.toJson()).toList();
+        final jsonString = json.encode(jsonList);
+        final encryptedData = _encrypt(jsonString);
+
+        await box.put('${_historyKey}_$type', encryptedData);
+      }
+    } catch (e) {
+      // Silently fail to avoid breaking the app
+    }
+  }
+
+  /// Toggle pin status of a specific history item by index
+  static Future<void> togglePinHistoryItem(String type, int index) async {
+    try {
+      final history = await getHistory(type);
+      if (index >= 0 && index < history.length) {
+        final item = history[index];
+        final updatedItem = GenerationHistoryItem(
+          value: item.value,
+          timestamp: item.timestamp,
+          type: item.type,
+          isPinned: !item.isPinned,
+        );
+
+        history[index] = updatedItem;
+
+        // Sort history: pinned items first, then by timestamp
+        history.sort((a, b) {
+          if (a.isPinned && !b.isPinned) return -1;
+          if (!a.isPinned && b.isPinned) return 1;
+          return b.timestamp.compareTo(a.timestamp);
+        });
+
+        final box = HiveService.historyBox;
+        final jsonList = history.map((item) => item.toJson()).toList();
+        final jsonString = json.encode(jsonList);
+        final encryptedData = _encrypt(jsonString);
+
+        await box.put('${_historyKey}_$type', encryptedData);
+      }
     } catch (e) {
       // Silently fail to avoid breaking the app
     }

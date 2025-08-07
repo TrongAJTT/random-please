@@ -1,7 +1,81 @@
 import 'package:flutter/material.dart';
 import 'package:random_please/l10n/app_localizations.dart';
-import 'package:intl/intl.dart';
+import 'package:random_please/services/app_logger.dart';
+import 'package:random_please/services/generation_history_service.dart';
+import 'package:random_please/utils/generic_dialog_utils.dart';
+import 'package:random_please/utils/localization_utils.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
+import 'package:random_please/widgets/generic/generic_context_menu.dart';
+import 'package:random_please/widgets/generic/icon_button_list.dart';
+
+/// Typedef for double-tap confirmation callback
+typedef DoubleConfirmCallback = void Function(int index);
+
+/// Helper class for double-tap confirmation logic
+class DoubleConfirmHelper {
+  int? _pendingIndex;
+  VoidCallback? _clearPendingCallback;
+
+  /// Handle double-tap confirmation for any action
+  void handleConfirmationTap({
+    required BuildContext context,
+    required int index,
+    required DoubleConfirmCallback onConfirm,
+    required String confirmMessage,
+    required String successMessage,
+    required VoidCallback onStateChange,
+    Duration timeout = const Duration(seconds: 3),
+  }) {
+    if (_pendingIndex == index) {
+      // Second tap - confirm action
+      onConfirm(index);
+      _clearPending();
+      onStateChange();
+      SnackBarUtils.showTyped(
+        context,
+        successMessage,
+        SnackBarType.success,
+      );
+    } else {
+      // First tap - show confirmation message
+      _pendingIndex = index;
+      onStateChange();
+      SnackBarUtils.showTyped(
+        context,
+        confirmMessage,
+        SnackBarType.warning,
+      );
+
+      // Clear pending action after timeout
+      _clearPendingCallback?.call();
+      _clearPendingCallback = () {
+        if (_pendingIndex == index) {
+          _clearPending();
+          onStateChange();
+        }
+      };
+
+      Future.delayed(timeout, () {
+        _clearPendingCallback?.call();
+        _clearPendingCallback = null;
+      });
+    }
+  }
+
+  /// Check if an index is pending confirmation
+  bool isPending(int index) => _pendingIndex == index;
+
+  /// Clear pending confirmation
+  void _clearPending() {
+    _pendingIndex = null;
+  }
+
+  /// Dispose resources
+  void dispose() {
+    _clearPendingCallback = null;
+    _pendingIndex = null;
+  }
+}
 
 /// Generic layout widget for all random generators to ensure consistency
 class RandomGeneratorLayout extends StatefulWidget {
@@ -161,107 +235,267 @@ class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
   }
 }
 
+typedef CustomHeaderBuilder = Widget Function(List<dynamic> history, int index);
+
 /// Generic history widget builder for consistency
-class RandomGeneratorHistoryWidget extends StatelessWidget {
+class RandomGeneratorHistoryWidget extends StatefulWidget {
   final String historyType;
-  final List<dynamic> history;
+  final List<GenerationHistoryItem> history;
   final String title;
-  final VoidCallback onClearHistory;
+  final CustomHeaderBuilder? customHeader;
+  final VoidCallback onClearAllHistory;
+  final VoidCallback onClearPinnedHistory;
+  final VoidCallback onClearUnpinnedHistory;
   final void Function(String) onCopyItem;
-  final Widget Function(dynamic item, BuildContext context)? customItemBuilder;
+  final void Function(int index) onDeleteItem;
+  final void Function(int index) onTogglePin;
 
   const RandomGeneratorHistoryWidget({
     super.key,
     required this.historyType,
     required this.history,
     required this.title,
-    required this.onClearHistory,
+    required this.onClearAllHistory,
+    required this.onClearPinnedHistory,
+    required this.onClearUnpinnedHistory,
     required this.onCopyItem,
-    this.customItemBuilder,
+    required this.onDeleteItem,
+    required this.onTogglePin,
+    this.customHeader,
   });
 
-  Widget _buildListItem(dynamic item, BuildContext context) {
-    if (customItemBuilder != null) {
-      return customItemBuilder!(item, context);
-    }
+  @override
+  State<RandomGeneratorHistoryWidget> createState() =>
+      _RandomGeneratorHistoryWidgetState();
+}
 
+class _RandomGeneratorHistoryWidgetState
+    extends State<RandomGeneratorHistoryWidget> {
+  late DoubleConfirmHelper _confirmHelper;
+  late AppLocalizations loc;
+
+  @override
+  void initState() {
+    super.initState();
+    _confirmHelper = DoubleConfirmHelper();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    loc = AppLocalizations.of(context)!;
+  }
+
+  @override
+  void dispose() {
+    _confirmHelper.dispose();
+    super.dispose();
+  }
+
+  void _handleDeleteTap(int index) {
     final loc = AppLocalizations.of(context)!;
 
-    // Format timestamp based on locale
-    String formattedTimestamp;
-    try {
-      final timestamp = item.timestamp as DateTime;
-      final locale = Localizations.localeOf(context);
-
-      if (locale.languageCode == 'vi') {
-        // Vietnamese format: dd/MM/yyyy HH:mm
-        formattedTimestamp =
-            DateFormat('dd/MM/yyyy HH:mm', 'vi').format(timestamp);
-      } else {
-        // International format: yyyy-MM-dd HH:mm
-        formattedTimestamp =
-            DateFormat('yyyy-MM-dd HH:mm', 'en').format(timestamp);
-      }
-    } catch (e) {
-      // Fallback if timestamp parsing fails
-      formattedTimestamp = item.timestamp.toString().substring(0, 19);
-    }
-
-    // Default item builder
-    return ListTile(
-      dense: true,
-      title: Text(
-        item.value.toString(),
-        style: const TextStyle(
-          fontFamily: 'monospace',
-          fontSize: 14,
-        ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Text(
-        '${loc.generatedAt}: $formattedTimestamp',
-        style: Theme.of(context).textTheme.bodySmall,
-      ),
-      trailing: IconButton(
-        icon: const Icon(Icons.copy, size: 18),
-        onPressed: () => onCopyItem(item.value.toString()),
-        tooltip: loc.copyToClipboard,
-      ),
+    _confirmHelper.handleConfirmationTap(
+      context: context,
+      index: index,
+      onConfirm: widget.onDeleteItem,
+      confirmMessage: loc.tapDeleteAgainToConfirm,
+      successMessage: loc.historyItemDeleted,
+      onStateChange: () => setState(() {}),
     );
   }
 
-  Future<void> _showClearHistoryDialog(
-      BuildContext context, AppLocalizations loc) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(loc.confirmClearHistory),
-        content: Text(loc.confirmClearHistoryMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(loc.cancel),
-          ),
-          TextButton(
-            autofocus: true,
-            onPressed: () {
-              onClearHistory();
-              Navigator.of(context).pop(true);
-            },
-            child: Text(loc.clearHistory),
-          ),
-        ],
+  void _handlePinTap(int index) {
+    final loc = AppLocalizations.of(context)!;
+    final item = widget.history[index];
+    final isPinned = item.isPinned;
+
+    widget.onTogglePin(index);
+
+    SnackBarUtils.showTyped(
+      context,
+      isPinned ? loc.historyItemUnpinned : loc.historyItemPinned,
+      SnackBarType.info,
+    );
+  }
+
+  List<IconButtonListItem> _buildIconButon({
+    required dynamic item,
+    required int index,
+    required bool isPinned,
+    required bool isPendingDelete,
+  }) {
+    return [
+      IconButtonListItem(
+        icon: isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+        color: isPinned ? Colors.orange : null,
+        onPressed: () => _handlePinTap(index),
+        label: isPinned ? loc.unpinHistoryItem : loc.pinHistoryItem,
       ),
+      IconButtonListItem(
+        icon: Icons.copy,
+        onPressed: () => widget.onCopyItem(item.value.toString()),
+        label: loc.copyToClipboard,
+      ),
+      IconButtonListItem(
+        icon: isPendingDelete ? Icons.warning : Icons.delete,
+        color: isPendingDelete ? Colors.red : null,
+        onPressed: () => _handleDeleteTap(index),
+        label: isPendingDelete ? loc.confirmDelete : loc.deleteHistoryItem,
+      ),
+    ];
+  }
+
+  Widget _buildListItem(
+      GenerationHistoryItem item, BuildContext context, int index) {
+    final width = MediaQuery.of(context).size.width;
+
+    // Format timestamp based on locale
+    String formattedTimestamp = LocalizationUtils.formatDateTime(
+        context: context,
+        dateTime: item.timestamp,
+        formatType: DateTimeFormatType.exceptSec);
+    final isPendingDelete = _confirmHelper.isPending(index);
+    final isPinned = item.isPinned;
+
+    final iconButtons = _buildIconButon(
+      item: item,
+      index: index,
+      isPinned: isPinned,
+      isPendingDelete: isPendingDelete,
+    );
+    final visibleCount = width > 480 ? iconButtons.length : 0;
+
+    // Item builder
+    return ListTile(
+        dense: true,
+        leading: widget.customHeader != null
+            ? widget.customHeader!(widget.history, index)
+            : isPinned
+                ? const Icon(
+                    Icons.push_pin,
+                    size: 16,
+                    color: Colors.orange,
+                  )
+                : null,
+        tileColor: isPendingDelete ? Colors.red.withValues(alpha: 0.1) : null,
+        title: Text(
+          item.value.toString(),
+          style: TextStyle(
+            fontFamily: 'monospace',
+            fontSize: 14,
+            color: isPendingDelete ? Colors.red : null,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text(
+          loc.generatedAtTime(formattedTimestamp),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color:
+                    isPendingDelete ? Colors.red.withValues(alpha: 0.7) : null,
+              ),
+        ),
+        trailing: IconButtonList(
+          buttons: iconButtons,
+          visibleCount: visibleCount,
+          spacing: 4,
+        ));
+  }
+
+  Future<void> _showClearAllHistoryDialog(
+      BuildContext context, bool containsPinned) async {
+    final confirmed = await GenericDialogUtils.showSimpleGenericClearDialog(
+      context: context,
+      onConfirm: widget.onClearAllHistory,
+      title: containsPinned ? loc.clearAllItems : loc.confirmClearHistory,
+      description: containsPinned
+          ? loc.confirmClearAllHistory
+          : loc.confirmClearHistoryMessage,
     );
 
     if (confirmed == true && context.mounted) {
-      SnackbarUtils.showTyped(context, loc.historyCleared, SnackBarType.info);
+      SnackBarUtils.showTyped(context, loc.historyCleared, SnackBarType.info);
     }
   }
 
+  Future<void> _showClearPinnedHistoryDialog(BuildContext context) async {
+    final confirmed = await GenericDialogUtils.showSimpleGenericClearDialog(
+      context: context,
+      onConfirm: widget.onClearPinnedHistory,
+      title: loc.clearPinnedItems,
+      description: loc.clearPinnedItemsDesc,
+    );
+
+    if (confirmed == true && context.mounted) {
+      SnackBarUtils.showTyped(
+          context, loc.pinnedHistoryCleared, SnackBarType.info);
+    }
+  }
+
+  Future<void> _showClearUnpinnedHistoryDialog(BuildContext context) async {
+    final confirmed = await GenericDialogUtils.showSimpleGenericClearDialog(
+      context: context,
+      onConfirm: widget.onClearUnpinnedHistory,
+      title: loc.clearUnpinnedItems,
+      description: loc.clearUnpinnedItemsDesc,
+    );
+
+    if (confirmed == true && context.mounted) {
+      SnackBarUtils.showTyped(
+          context, loc.unpinnedHistoryCleared, SnackBarType.info);
+    }
+  }
+
+  Future<void> _showClearOptionsContextMenu(Offset position) async {
+    GenericContextMenu.show(
+      context: context,
+      position: position,
+      actions: [
+        OptionItem(
+            label: loc.clearUnpinnedItems,
+            icon: Icons.delete,
+            onTap: () => _showClearUnpinnedHistoryDialog(context)),
+        OptionItem(
+            label: loc.clearPinnedItems,
+            icon: Icons.push_pin,
+            onTap: () => _showClearPinnedHistoryDialog(context)),
+        OptionItem(
+          label: loc.clearAllItems,
+          icon: Icons.delete_sweep,
+          onTap: () => _showClearAllHistoryDialog(context, true),
+        ),
+      ],
+      desktopDialogWidth: 240,
+    );
+  }
+
+  Widget _buildClearButton() {
+    final fullClearShow = widget.history.any((item) => item.isPinned);
+
+    return fullClearShow
+        ? GestureDetector(
+            child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text(
+                    '${loc.clear}...',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                )),
+            onTapDown: (d) => _showClearOptionsContextMenu(d.globalPosition),
+          )
+        : TextButton(
+            onPressed: () => _showClearAllHistoryDialog(context, false),
+            child: Text(loc.clearHistory),
+          );
+  }
+
   Widget _buildHeader(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth < 300) {
@@ -269,18 +503,12 @@ class RandomGeneratorHistoryWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                title,
+                widget.title,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () => _showClearHistoryDialog(context, loc),
-                  child: Text(loc.clearHistory),
-                ),
-              ),
+              _buildClearButton()
             ],
           );
         } else {
@@ -289,16 +517,13 @@ class RandomGeneratorHistoryWidget extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  title,
+                  widget.title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                 ),
               ),
-              TextButton(
-                onPressed: () => _showClearHistoryDialog(context, loc),
-                child: Text(loc.clearHistory),
-              ),
+              _buildClearButton()
             ],
           );
         }
@@ -308,7 +533,7 @@ class RandomGeneratorHistoryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (history.isEmpty) {
+    if (widget.history.isEmpty) {
       final loc = AppLocalizations.of(context)!;
       return Center(
         child: Column(
@@ -355,11 +580,11 @@ class RandomGeneratorHistoryWidget extends StatelessWidget {
                   const Divider(),
                   Expanded(
                     child: ListView.separated(
-                      itemCount: history.length,
+                      itemCount: widget.history.length,
                       separatorBuilder: (context, index) =>
                           const Divider(height: 1),
                       itemBuilder: (context, index) =>
-                          _buildListItem(history[index], context),
+                          _buildListItem(widget.history[index], context, index),
                     ),
                   ),
                 ],
@@ -378,11 +603,11 @@ class RandomGeneratorHistoryWidget extends StatelessWidget {
                   const Divider(),
                   Expanded(
                     child: ListView.separated(
-                      itemCount: history.length,
+                      itemCount: widget.history.length,
                       separatorBuilder: (context, index) =>
                           const Divider(height: 1),
                       itemBuilder: (context, index) =>
-                          _buildListItem(history[index], context),
+                          _buildListItem(widget.history[index], context, index),
                     ),
                   ),
                 ],

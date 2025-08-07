@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:random_please/services/app_logger.dart';
 import 'package:random_please/models/settings_model.dart';
+import 'package:uuid/uuid.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
 
 // These imports will fail on web, but we'll handle it with try-catch
 import 'dart:io';
@@ -13,10 +16,16 @@ class HiveService {
   static const String historyBoxName = 'history';
   static const String currencyCacheBoxName = 'currency_cache';
   static const String settingsBoxName = 'settings';
+  static const String encryptionKeyBoxName = 'encryption_keys';
+
+  // Encryption key constants
+  static const String historyEncryptionKeyName = 'history_encryption_key';
+  static const String fixedEncryptionKey = 'NzlPXKorUdulsHS9Y0hvf2kw4zmNoTW5';
 
   // Box instances
   static Box? _templatesBox;
   static Box? _historyBox;
+  static Box? _encryptionKeyBox;
 
   /// Initialize Hive database with custom path
   static Future<void> initialize() async {
@@ -64,15 +73,66 @@ class HiveService {
         Hive.registerAdapter(SettingsModelAdapter());
       }
 
+      // Open encryption keys box first (encrypted with fixed key)
+      final fixedKey = _generateFixedEncryptionKey();
+      _encryptionKeyBox = await Hive.openBox(
+        encryptionKeyBoxName,
+        encryptionCipher: HiveAesCipher(fixedKey),
+      );
+
+      // Generate or retrieve encryption key for history
+      final historyEncryptionKey = await _getOrCreateHistoryEncryptionKey();
+
       // Open boxes
       _templatesBox = await Hive.openBox(templatesBoxName);
-      _historyBox = await Hive.openBox(historyBoxName);
+      _historyBox = await Hive.openBox(
+        historyBoxName,
+        encryptionCipher: HiveAesCipher(historyEncryptionKey),
+      );
 
       logInfo('HiveService: Initialized successfully with custom path');
     } catch (e) {
       logFatal('HiveService: Failed to initialize: $e');
       rethrow;
     }
+  }
+
+  /// Generate fixed encryption key from constant string
+  static List<int> _generateFixedEncryptionKey() {
+    // Convert fixed key to bytes and create 256-bit key using SHA-256
+    final keyBytes = utf8.encode(fixedEncryptionKey);
+    final digest = sha256.convert(keyBytes);
+    return digest.bytes;
+  }
+
+  /// Generate or retrieve encryption key for history box
+  static Future<List<int>> _getOrCreateHistoryEncryptionKey() async {
+    if (_encryptionKeyBox == null) {
+      throw Exception('Encryption key box is not initialized');
+    }
+
+    // Check if encryption key already exists
+    final existingKey = _encryptionKeyBox!.get(historyEncryptionKeyName);
+    if (existingKey != null && existingKey is List) {
+      logInfo('HiveService: Using existing history encryption key');
+      return List<int>.from(existingKey);
+    }
+
+    // Generate new UUID v4 and convert to encryption key
+    const uuid = Uuid();
+    final uuidString = uuid.v4();
+
+    // Convert UUID to bytes and create 256-bit key using SHA-256
+    final uuidBytes = utf8.encode(uuidString);
+    final digest = sha256.convert(uuidBytes);
+    final encryptionKey = digest.bytes;
+
+    // Store the encryption key
+    await _encryptionKeyBox!.put(historyEncryptionKeyName, encryptionKey);
+
+    logInfo(
+        'HiveService: Generated new history encryption key from UUID: ${uuidString.substring(0, 8)}...');
+    return encryptionKey;
   }
 
   /// Get templates box
@@ -98,6 +158,7 @@ class HiveService {
     try {
       await _templatesBox?.close();
       await _historyBox?.close();
+      await _encryptionKeyBox?.close();
       logInfo('All Hive boxes closed');
     } catch (e) {
       logError('Error closing Hive boxes: $e');

@@ -26,6 +26,8 @@ class _YesNoGeneratorScreenState extends State<YesNoGeneratorScreen>
   List<GenerationHistoryItem> _history = [];
   bool _historyEnabled = false;
 
+  static const String _historyType = 'yes_no';
+
   @override
   void initState() {
     super.initState();
@@ -74,7 +76,7 @@ class _YesNoGeneratorScreenState extends State<YesNoGeneratorScreen>
 
   Future<void> _loadHistory() async {
     final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory('yes_no');
+    final history = await GenerationHistoryService.getHistory(_historyType);
     setState(() {
       _historyEnabled = enabled;
       _history = history;
@@ -104,7 +106,7 @@ class _YesNoGeneratorScreenState extends State<YesNoGeneratorScreen>
     if (_historyEnabled && _result.isNotEmpty) {
       await GenerationHistoryService.addHistoryItem(
         _result,
-        'yes_no',
+        _historyType,
       );
       await _loadHistory(); // Refresh history
     }
@@ -119,14 +121,31 @@ class _YesNoGeneratorScreenState extends State<YesNoGeneratorScreen>
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return RandomGeneratorHistoryWidget(
-      historyType: 'yes_no',
+      historyType: _historyType,
       history: _history,
       title: loc.generationHistory,
-      onClearHistory: () async {
-        await GenerationHistoryService.clearHistory('yes_no');
+      onClearAllHistory: () async {
+        await GenerationHistoryService.clearHistory(_historyType);
+        await _loadHistory();
+      },
+      onClearPinnedHistory: () async {
+        await GenerationHistoryService.clearPinnedHistory(_historyType);
+        await _loadHistory();
+      },
+      onClearUnpinnedHistory: () async {
+        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
         await _loadHistory();
       },
       onCopyItem: _copyHistoryItem,
+      onDeleteItem: (index) async {
+        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
+        await _loadHistory();
+      },
+      onTogglePin: (index) async {
+        await GenerationHistoryService.togglePinHistoryItem(
+            _historyType, index);
+        await _loadHistory();
+      },
     );
   }
 

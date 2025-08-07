@@ -114,7 +114,7 @@ class UriUtils {
                 onPressed: () async {
                   await Clipboard.setData(ClipboardData(text: url));
                   if (context.mounted) {
-                    SnackbarUtils.showTyped(
+                    SnackBarUtils.showTyped(
                       context,
                       loc.linkCopiedToClipboard,
                       SnackBarType.success,

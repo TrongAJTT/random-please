@@ -85,6 +85,14 @@
   "includeNumbers": "Include numbers",
   "includeSpecial": "Include special characters",
   "generate": "Generate",
+  "generatedAtTime": "Generated at {time}",
+  "@generatedAtTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "generatedPassword": "Generated Password",
   "copyToClipboard": "Copy to Clipboard",
   "copied": "Copied!",
@@ -116,6 +124,8 @@
   "confirmClearHistory": "Are you sure you want to clear history?",
   "confirmClearHistoryMessage": "This will remove all saved history items. This action cannot be undone.\nMake sure you have saved any important results before proceeding.",
   "historyCleared": "History cleared successfully",
+  "pinnedHistoryCleared": "Pinned history cleared successfully",
+  "unpinnedHistoryCleared": "Unpinned history cleared successfully",
   "numberGenerator": "Number Generator",
   "numberGeneratorDesc": "Generate random numbers and sequences",
   "integers": "Integers",
@@ -183,6 +193,12 @@
   "generatedAt": "Generated at",
   "noHistoryMessage": "Your generation history items will appear here",
   "clearHistory": "Clear History",
+  "clearAllItems": "Clear All History",
+  "confirmClearAllHistory": "Are you sure you want to clear ALL history? This will remove all history of this tool even your pinned items.\nMake sure you have saved any important results before proceeding.",
+  "clearPinnedItems": "Clear Pinned Items",
+  "clearPinnedItemsDesc": "Remove all pinned items from history? This will not affect unpinned items.\nMake sure you have saved any important results before proceeding.",
+  "clearUnpinnedItems": "Clear Unpinned Items",
+  "clearUnpinnedItemsDesc": "Remove all unpinned items from history? This will not affect pinned items.\nMake sure you have saved any important results before proceeding.",
   "typeConfirmToProceed": "Type \"confirm\" to proceed:",
   "clearAll": "Clear All",
   "converterTools": "Converter Tools",
@@ -406,6 +422,7 @@
       }
     }
   },
+  "confirmDelete": "Confirm Delete",
   "confirmDownload": "Confirm download",
   "confirmDownloadMessage": "Are you sure you want to download this version?\n\nFile name: {name}\nSize: {sizeInMB}",
   "@confirmDownloadMessage": {
@@ -445,5 +462,28 @@
         "type": "int"
       }
     }
-  }
+  },
+  "deleteHistoryItem": "Delete item",
+  "tapDeleteAgainToConfirm": "Tap delete again to confirm removal",
+  "historyItemDeleted": "History item deleted",
+  "pinHistoryItem": "Pin item",
+  "unpinHistoryItem": "Unpin item",
+  "historyItemPinned": "Item pinned",
+  "historyItemUnpinned": "Item unpinned",
+
+  "solid": "Solid",
+  "includeAlpha": "Include Alpha",
+  "totalANumber" : "Total: {total}",
+  "@totalANumber": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "numberType": "Number Type",
+
+  "yes": "Yes",
+  "no": "No",
+  "dateErrStartEndConflict": "Start date cannot be after end date"
 }
