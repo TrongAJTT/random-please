@@ -7,6 +7,7 @@ import 'package:random_please/services/generation_history_service.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/services/random_services/random_state_service.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
+import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/size_utils.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
@@ -261,6 +262,12 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
         await GenerationHistoryService.togglePinHistoryItem(
             _historyType, index);
         await _loadHistory();
+      },
+      onTapItem: (item) {
+        HistoryViewDialog.show(
+          context: context,
+          item: item,
+        );
       },
     );
   }

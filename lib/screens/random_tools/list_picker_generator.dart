@@ -6,6 +6,7 @@ import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/utils/generic_dialog_utils.dart';
 import 'package:random_please/services/generation_history_service.dart';
+import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 
@@ -802,6 +803,12 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
         await GenerationHistoryService.togglePinHistoryItem(
             _historyType, index);
         await _loadHistory();
+      },
+      onTapItem: (item) {
+        HistoryViewDialog.show(
+          context: context,
+          item: item,
+        );
       },
     );
   }

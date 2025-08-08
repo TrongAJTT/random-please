@@ -3,6 +3,7 @@ import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/services/generation_history_service.dart';
 import 'package:random_please/services/settings_service.dart';
 import 'package:random_please/utils/generic_dialog_utils.dart';
+import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/localization_utils.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/widgets/generic/generic_context_menu.dart';
@@ -270,6 +271,7 @@ class RandomGeneratorHistoryWidget extends StatefulWidget {
   final void Function(String) onCopyItem;
   final void Function(int index) onDeleteItem;
   final void Function(int index) onTogglePin;
+  final void Function(GenerationHistoryItem item)? onTapItem;
 
   const RandomGeneratorHistoryWidget({
     super.key,
@@ -283,6 +285,7 @@ class RandomGeneratorHistoryWidget extends StatefulWidget {
     required this.onDeleteItem,
     required this.onTogglePin,
     this.customHeader,
+    this.onTapItem,
   });
 
   @override
@@ -424,6 +427,7 @@ class _RandomGeneratorHistoryWidgetState
           visibleCount: visibleCount,
           spacing: 4,
         ),
+        onTap: widget.onTapItem != null ? () => widget.onTapItem!(item) : null,
       ),
     );
   }

@@ -7,20 +7,20 @@ class ToolOrderService {
 
   /// Default tool order (when no custom order is saved)
   static const List<String> _defaultToolOrder = [
-    'password',
     'number',
-    'yesno',
-    'coin',
-    'rps',
+    'password',
+    'listpicker',
     'dice',
+    'coin',
+    'yesno',
     'color',
-    'letters',
-    'cards',
     'date',
     'time',
     'datetime',
+    'letters',
+    'cards',
+    'rps',
     'lorem',
-    'listpicker',
   ];
 
   /// Get the current tool order from storage
