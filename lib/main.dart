@@ -140,6 +140,9 @@ void _registerRandomStateAdapters() {
   if (!Hive.isAdapterRegistered(73)) {
     Hive.registerAdapter(ListItemAdapter());
   }
+  if (!Hive.isAdapterRegistered(77)) {
+    Hive.registerAdapter(ListPickerModeAdapter());
+  }
 }
 
 class SettingsController extends ChangeNotifier {

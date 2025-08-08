@@ -193,6 +193,17 @@ class RandomStateService {
         'rock_paper_scissors_generator', SimpleGeneratorState.createDefault());
   }
 
+  // Lorem Ipsum Generator
+  static Future<void> saveLoremIpsumGeneratorState(
+      LoremIpsumGeneratorState state) async {
+    await _saveState('lorem_ipsum_generator', state);
+  }
+
+  static Future<LoremIpsumGeneratorState> getLoremIpsumGeneratorState() async {
+    return await _loadState(
+        'lorem_ipsum_generator', LoremIpsumGeneratorState.createDefault());
+  }
+
   // Clear all states
   static Future<void> clearAllStates() async {
     try {

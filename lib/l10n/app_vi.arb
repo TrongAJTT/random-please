@@ -490,5 +490,46 @@
   "paragraphCount": "Số lượng đoạn văn",
   "numberOfParagraphsToGenerate": "Số lượng đoạn văn cần tạo",
   "startWithLorem": "Bắt đầu bằng Lorem",
-  "startWithLoremDesc": "Bắt đầu bằng câu kinh điển 'Lorem ipsum dolor sit amet...'"
+  "startWithLoremDesc": "Bắt đầu bằng câu kinh điển 'Lorem ipsum dolor sit amet...'",
+  "listPicker": "Chọn từ danh sách",
+  "listPickerDesc": "Chọn từ các danh sách tùy chỉnh",
+  "selectList": "Chọn danh sách",
+  "createNewList": "Tạo danh sách mới",
+  "noListsAvailable": "Không có danh sách nào",
+  "selectOrCreateList": "Chọn hoặc tạo danh sách để bắt đầu chọn",
+  "manageList": "Quản lý danh sách",
+  "addItem": "Thêm mục",
+  "items": "Items",
+  "generatorOptions": "Tùy chọn trình tạo",
+  "allowDuplicatesDescription": "Cho phép chọn cùng một mục nhiều lần",
+  "results": "Kết quả",
+  "generateRandom": "Chọn ngẫu nhiên",
+  "listName": "Tên danh sách",
+  "create": "Tạo",
+  "listPickerMode": "Chế độ",
+  "modeRandom": "Ngẫu nhiên",
+  "modeRandomDesc": "Chọn các mục ngẫu nhiên từ danh sách",
+  "modeShuffle": "Xáo trộn",
+  "modeShuffleDesc": "Xáo trộn và chọn các mục theo thứ tự",
+  "modeTeam": "Chia đội",
+  "modeTeamDesc": "Chia các mục thành các đội",
+  "createListDialog": "Tạo danh sách mới",
+  "enterListName": "Nhập tên danh sách (tối đa 30 ký tự)",
+  "listNameRequired": "Tên danh sách là bắt buộc",
+  "listNameTooLong": "Tên danh sách quá dài (tối đa 30 ký tự)",
+  "listNameExists": "Đã tồn tại danh sách với tên này",
+  "teams": "Đội",
+  "itemsPerTeam": "Số mục mỗi đội",
+  "deleteList": "Xóa danh sách",
+  "deleteListConfirm": "Bạn có chắc chắn muốn xóa \"{listName}\"? Hành động này không thể hoàn tác.",
+  "@deleteListConfirm": {
+    "placeholders": {
+      "listName": {
+        "type": "String"
+      }
+    }
+  },
+  "expand": "Mở rộng",
+  "collapse": "Thu gọn",
+  "viewDetails": "Xem chi tiết"
 }

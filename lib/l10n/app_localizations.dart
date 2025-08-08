@@ -2293,6 +2293,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create'**
   String get create;
+
+  /// No description provided for @listPickerMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Mode'**
+  String get listPickerMode;
+
+  /// No description provided for @modeRandom.
+  ///
+  /// In en, this message translates to:
+  /// **'Random'**
+  String get modeRandom;
+
+  /// No description provided for @modeRandomDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick random items from the list'**
+  String get modeRandomDesc;
+
+  /// No description provided for @modeShuffle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shuffle'**
+  String get modeShuffle;
+
+  /// No description provided for @modeShuffleDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Shuffle and pick items in order'**
+  String get modeShuffleDesc;
+
+  /// No description provided for @modeTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'Team'**
+  String get modeTeam;
+
+  /// No description provided for @modeTeamDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Divide items into teams'**
+  String get modeTeamDesc;
+
+  /// No description provided for @createListDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New List'**
+  String get createListDialog;
+
+  /// No description provided for @enterListName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter list name (max 30 characters)'**
+  String get enterListName;
+
+  /// No description provided for @listNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'List name is required'**
+  String get listNameRequired;
+
+  /// No description provided for @listNameTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'List name is too long (max 30 characters)'**
+  String get listNameTooLong;
+
+  /// No description provided for @listNameExists.
+  ///
+  /// In en, this message translates to:
+  /// **'A list with this name already exists'**
+  String get listNameExists;
+
+  /// No description provided for @teams.
+  ///
+  /// In en, this message translates to:
+  /// **'Teams'**
+  String get teams;
+
+  /// No description provided for @itemsPerTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'Items per team'**
+  String get itemsPerTeam;
+
+  /// No description provided for @deleteList.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete List'**
+  String get deleteList;
+
+  /// No description provided for @deleteListConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{listName}\"? This action cannot be undone.'**
+  String deleteListConfirm(String listName);
+
+  /// No description provided for @expand.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand'**
+  String get expand;
+
+  /// No description provided for @collapse.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse'**
+  String get collapse;
+
+  /// No description provided for @viewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get viewDetails;
 }
 
 class _AppLocalizationsDelegate

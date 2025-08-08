@@ -587,3 +587,274 @@ class SimpleGeneratorStateModelAdapter
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+class LoremIpsumGeneratorStateAdapter
+    extends TypeAdapter<LoremIpsumGeneratorState> {
+  @override
+  final int typeId = 70;
+
+  @override
+  LoremIpsumGeneratorState read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return LoremIpsumGeneratorState(
+      generationType: fields[0] as LoremIpsumType,
+      wordCount: fields[1] as int,
+      sentenceCount: fields[2] as int,
+      paragraphCount: fields[3] as int,
+      startWithLorem: fields[4] as bool,
+      lastUpdated: fields[5] as DateTime,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, LoremIpsumGeneratorState obj) {
+    writer
+      ..writeByte(6)
+      ..writeByte(0)
+      ..write(obj.generationType)
+      ..writeByte(1)
+      ..write(obj.wordCount)
+      ..writeByte(2)
+      ..write(obj.sentenceCount)
+      ..writeByte(3)
+      ..write(obj.paragraphCount)
+      ..writeByte(4)
+      ..write(obj.startWithLorem)
+      ..writeByte(5)
+      ..write(obj.lastUpdated);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LoremIpsumGeneratorStateAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class ListPickerGeneratorStateAdapter
+    extends TypeAdapter<ListPickerGeneratorState> {
+  @override
+  final int typeId = 71;
+
+  @override
+  ListPickerGeneratorState read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return ListPickerGeneratorState(
+      quantity: fields[0] as int,
+      currentList: fields[1] as CustomList?,
+      savedLists: (fields[2] as List).cast<CustomList>(),
+      lastUpdated: fields[3] as DateTime,
+      mode: fields[4] as ListPickerMode,
+      isListSelectorCollapsed: fields[5] as bool,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, ListPickerGeneratorState obj) {
+    writer
+      ..writeByte(6)
+      ..writeByte(0)
+      ..write(obj.quantity)
+      ..writeByte(1)
+      ..write(obj.currentList)
+      ..writeByte(2)
+      ..write(obj.savedLists)
+      ..writeByte(3)
+      ..write(obj.lastUpdated)
+      ..writeByte(4)
+      ..write(obj.mode)
+      ..writeByte(5)
+      ..write(obj.isListSelectorCollapsed);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ListPickerGeneratorStateAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class CustomListAdapter extends TypeAdapter<CustomList> {
+  @override
+  final int typeId = 72;
+
+  @override
+  CustomList read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return CustomList(
+      id: fields[0] as String,
+      name: fields[1] as String,
+      items: (fields[2] as List).cast<ListItem>(),
+      createdAt: fields[3] as DateTime,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, CustomList obj) {
+    writer
+      ..writeByte(4)
+      ..writeByte(0)
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.name)
+      ..writeByte(2)
+      ..write(obj.items)
+      ..writeByte(3)
+      ..write(obj.createdAt);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CustomListAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class ListItemAdapter extends TypeAdapter<ListItem> {
+  @override
+  final int typeId = 73;
+
+  @override
+  ListItem read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return ListItem(
+      id: fields[0] as String,
+      value: fields[1] as String,
+      createdAt: fields[2] as DateTime,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, ListItem obj) {
+    writer
+      ..writeByte(3)
+      ..writeByte(0)
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.value)
+      ..writeByte(2)
+      ..write(obj.createdAt);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ListItemAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class LoremIpsumTypeAdapter extends TypeAdapter<LoremIpsumType> {
+  @override
+  final int typeId = 76;
+
+  @override
+  LoremIpsumType read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return LoremIpsumType.words;
+      case 1:
+        return LoremIpsumType.sentences;
+      case 2:
+        return LoremIpsumType.paragraphs;
+      default:
+        return LoremIpsumType.words;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, LoremIpsumType obj) {
+    switch (obj) {
+      case LoremIpsumType.words:
+        writer.writeByte(0);
+        break;
+      case LoremIpsumType.sentences:
+        writer.writeByte(1);
+        break;
+      case LoremIpsumType.paragraphs:
+        writer.writeByte(2);
+        break;
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LoremIpsumTypeAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class ListPickerModeAdapter extends TypeAdapter<ListPickerMode> {
+  @override
+  final int typeId = 77;
+
+  @override
+  ListPickerMode read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return ListPickerMode.random;
+      case 1:
+        return ListPickerMode.shuffle;
+      case 2:
+        return ListPickerMode.team;
+      default:
+        return ListPickerMode.random;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, ListPickerMode obj) {
+    switch (obj) {
+      case ListPickerMode.random:
+        writer.writeByte(0);
+        break;
+      case ListPickerMode.shuffle:
+        writer.writeByte(1);
+        break;
+      case ListPickerMode.team:
+        writer.writeByte(2);
+        break;
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ListPickerModeAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}

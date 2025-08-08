@@ -1134,48 +1134,107 @@ class AppLocalizationsVi extends AppLocalizations {
       'Bắt đầu bằng câu kinh điển \'Lorem ipsum dolor sit amet...\'';
 
   @override
-  String get listPicker => 'Pick from List';
+  String get listPicker => 'Chọn từ danh sách';
 
   @override
-  String get listPickerDesc => 'Pick from custom lists';
+  String get listPickerDesc => 'Chọn từ các danh sách tùy chỉnh';
 
   @override
-  String get selectList => 'Select List';
+  String get selectList => 'Chọn danh sách';
 
   @override
-  String get createNewList => 'Create New List';
+  String get createNewList => 'Tạo danh sách mới';
 
   @override
-  String get noListsAvailable => 'No lists available';
+  String get noListsAvailable => 'Không có danh sách nào';
 
   @override
-  String get selectOrCreateList => 'Select or create a list to start picking';
+  String get selectOrCreateList => 'Chọn hoặc tạo danh sách để bắt đầu chọn';
 
   @override
-  String get manageList => 'Manage List';
+  String get manageList => 'Quản lý danh sách';
 
   @override
-  String get addItem => 'Add Item';
+  String get addItem => 'Thêm mục';
 
   @override
   String get items => 'Items';
 
   @override
-  String get generatorOptions => 'Generator Options';
+  String get generatorOptions => 'Tùy chọn trình tạo';
 
   @override
   String get allowDuplicatesDescription =>
-      'Allow picking the same item multiple times';
+      'Cho phép chọn cùng một mục nhiều lần';
 
   @override
-  String get results => 'Results';
+  String get results => 'Kết quả';
 
   @override
-  String get generateRandom => 'Pick Random';
+  String get generateRandom => 'Chọn ngẫu nhiên';
 
   @override
-  String get listName => 'List Name';
+  String get listName => 'Tên danh sách';
 
   @override
-  String get create => 'Create';
+  String get create => 'Tạo';
+
+  @override
+  String get listPickerMode => 'Chế độ';
+
+  @override
+  String get modeRandom => 'Ngẫu nhiên';
+
+  @override
+  String get modeRandomDesc => 'Chọn các mục ngẫu nhiên từ danh sách';
+
+  @override
+  String get modeShuffle => 'Xáo trộn';
+
+  @override
+  String get modeShuffleDesc => 'Xáo trộn và chọn các mục theo thứ tự';
+
+  @override
+  String get modeTeam => 'Chia đội';
+
+  @override
+  String get modeTeamDesc => 'Chia các mục thành các đội';
+
+  @override
+  String get createListDialog => 'Tạo danh sách mới';
+
+  @override
+  String get enterListName => 'Nhập tên danh sách (tối đa 30 ký tự)';
+
+  @override
+  String get listNameRequired => 'Tên danh sách là bắt buộc';
+
+  @override
+  String get listNameTooLong => 'Tên danh sách quá dài (tối đa 30 ký tự)';
+
+  @override
+  String get listNameExists => 'Đã tồn tại danh sách với tên này';
+
+  @override
+  String get teams => 'Đội';
+
+  @override
+  String get itemsPerTeam => 'Số mục mỗi đội';
+
+  @override
+  String get deleteList => 'Xóa danh sách';
+
+  @override
+  String deleteListConfirm(String listName) {
+    return 'Bạn có chắc chắn muốn xóa \"$listName\"? Hành động này không thể hoàn tác.';
+  }
+
+  @override
+  String get expand => 'Mở rộng';
+
+  @override
+  String get collapse => 'Thu gọn';
+
+  @override
+  String get viewDetails => 'Xem chi tiết';
 }

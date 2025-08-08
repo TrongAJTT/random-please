@@ -538,5 +538,31 @@
   "results": "Results",
   "generateRandom": "Pick Random",
   "listName": "List Name",
-  "create": "Create"
+  "create": "Create",
+  "listPickerMode": "Mode",
+  "modeRandom": "Random",
+  "modeRandomDesc": "Pick random items from the list",
+  "modeShuffle": "Shuffle",
+  "modeShuffleDesc": "Shuffle and pick items in order",
+  "modeTeam": "Team",
+  "modeTeamDesc": "Divide items into teams",
+  "createListDialog": "Create New List",
+  "enterListName": "Enter list name (max 30 characters)",
+  "listNameRequired": "List name is required",
+  "listNameTooLong": "List name is too long (max 30 characters)",
+  "listNameExists": "A list with this name already exists",
+  "teams": "Teams",
+  "itemsPerTeam": "Items per team",
+  "deleteList": "Delete List",
+  "deleteListConfirm": "Are you sure you want to delete \"{listName}\"? This action cannot be undone.",
+  "@deleteListConfirm": {
+    "placeholders": {
+      "listName": {
+        "type": "String"
+      }
+    }
+  },
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "viewDetails": "View Details"
 }

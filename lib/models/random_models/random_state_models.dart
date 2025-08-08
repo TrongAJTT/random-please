@@ -860,3 +860,253 @@ class SimpleGeneratorStateModel extends HiveObject {
     );
   }
 }
+
+// Lorem Ipsum generator state
+@HiveType(typeId: 76)
+enum LoremIpsumType {
+  @HiveField(0)
+  words,
+  @HiveField(1)
+  sentences,
+  @HiveField(2)
+  paragraphs
+}
+
+@HiveType(typeId: 70)
+class LoremIpsumGeneratorState {
+  @HiveField(0)
+  final LoremIpsumType generationType;
+  @HiveField(1)
+  final int wordCount;
+  @HiveField(2)
+  final int sentenceCount;
+  @HiveField(3)
+  final int paragraphCount;
+  @HiveField(4)
+  final bool startWithLorem;
+  @HiveField(5)
+  final DateTime lastUpdated;
+
+  LoremIpsumGeneratorState({
+    required this.generationType,
+    required this.wordCount,
+    required this.sentenceCount,
+    required this.paragraphCount,
+    required this.startWithLorem,
+    required this.lastUpdated,
+  });
+
+  static LoremIpsumGeneratorState createDefault() {
+    return LoremIpsumGeneratorState(
+      generationType: LoremIpsumType.sentences,
+      wordCount: 50,
+      sentenceCount: 5,
+      paragraphCount: 3,
+      startWithLorem: true,
+      lastUpdated: DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'generationType': generationType.index,
+      'wordCount': wordCount,
+      'sentenceCount': sentenceCount,
+      'paragraphCount': paragraphCount,
+      'startWithLorem': startWithLorem,
+      'lastUpdated': lastUpdated.toIso8601String(),
+    };
+  }
+
+  factory LoremIpsumGeneratorState.fromJson(Map<String, dynamic> json) {
+    return LoremIpsumGeneratorState(
+      generationType: LoremIpsumType.values[json['generationType'] ?? 1],
+      wordCount: json['wordCount'] ?? 50,
+      sentenceCount: json['sentenceCount'] ?? 5,
+      paragraphCount: json['paragraphCount'] ?? 3,
+      startWithLorem: json['startWithLorem'] ?? true,
+      lastUpdated: json['lastUpdated'] != null
+          ? DateTime.parse(json['lastUpdated'])
+          : DateTime.now(),
+    );
+  }
+
+  LoremIpsumGeneratorState copyWith({
+    LoremIpsumType? generationType,
+    int? wordCount,
+    int? sentenceCount,
+    int? paragraphCount,
+    bool? startWithLorem,
+  }) {
+    return LoremIpsumGeneratorState(
+      generationType: generationType ?? this.generationType,
+      wordCount: wordCount ?? this.wordCount,
+      sentenceCount: sentenceCount ?? this.sentenceCount,
+      paragraphCount: paragraphCount ?? this.paragraphCount,
+      startWithLorem: startWithLorem ?? this.startWithLorem,
+      lastUpdated: DateTime.now(),
+    );
+  }
+}
+
+// List Picker generator state
+@HiveType(typeId: 77)
+enum ListPickerMode {
+  @HiveField(0)
+  random,
+  @HiveField(1)
+  shuffle,
+  @HiveField(2)
+  team,
+}
+
+@HiveType(typeId: 71)
+class ListPickerGeneratorState {
+  @HiveField(0)
+  int quantity;
+
+  @HiveField(1)
+  CustomList? currentList;
+
+  @HiveField(2)
+  List<CustomList> savedLists;
+
+  @HiveField(3)
+  DateTime lastUpdated;
+
+  @HiveField(4)
+  ListPickerMode mode;
+
+  @HiveField(5)
+  bool isListSelectorCollapsed;
+
+  ListPickerGeneratorState({
+    required this.quantity,
+    this.currentList,
+    required this.savedLists,
+    required this.lastUpdated,
+    this.mode = ListPickerMode.random,
+    this.isListSelectorCollapsed = false,
+  });
+
+  static ListPickerGeneratorState createDefault() {
+    return ListPickerGeneratorState(
+      quantity: 1,
+      currentList: null,
+      savedLists: [],
+      lastUpdated: DateTime.now(),
+      mode: ListPickerMode.random,
+      isListSelectorCollapsed: false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'quantity': quantity,
+      'currentList': currentList?.toJson(),
+      'savedLists': savedLists.map((list) => list.toJson()).toList(),
+      'lastUpdated': lastUpdated.toIso8601String(),
+      'mode': mode.name,
+      'isListSelectorCollapsed': isListSelectorCollapsed,
+    };
+  }
+
+  factory ListPickerGeneratorState.fromJson(Map<String, dynamic> json) {
+    return ListPickerGeneratorState(
+      quantity: json['quantity'] ?? 1,
+      currentList: json['currentList'] != null
+          ? CustomList.fromJson(json['currentList'])
+          : null,
+      savedLists: (json['savedLists'] as List<dynamic>?)
+              ?.map((listJson) => CustomList.fromJson(listJson))
+              .toList() ??
+          [],
+      lastUpdated: DateTime.parse(
+          json['lastUpdated'] ?? DateTime.now().toIso8601String()),
+      mode: ListPickerMode.values.firstWhere(
+        (mode) => mode.name == (json['mode'] ?? 'random'),
+        orElse: () => ListPickerMode.random,
+      ),
+      isListSelectorCollapsed: json['isListSelectorCollapsed'] ?? false,
+    );
+  }
+}
+
+@HiveType(typeId: 72)
+class CustomList {
+  @HiveField(0)
+  String id;
+
+  @HiveField(1)
+  String name;
+
+  @HiveField(2)
+  List<ListItem> items;
+
+  @HiveField(3)
+  DateTime createdAt;
+
+  CustomList({
+    required this.id,
+    required this.name,
+    required this.items,
+    required this.createdAt,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'items': items.map((item) => item.toJson()).toList(),
+      'createdAt': createdAt.toIso8601String(),
+    };
+  }
+
+  factory CustomList.fromJson(Map<String, dynamic> json) {
+    return CustomList(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      items: (json['items'] as List<dynamic>?)
+              ?.map((itemJson) => ListItem.fromJson(itemJson))
+              .toList() ??
+          [],
+      createdAt:
+          DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
+    );
+  }
+}
+
+@HiveType(typeId: 73)
+class ListItem {
+  @HiveField(0)
+  String id;
+
+  @HiveField(1)
+  String value;
+
+  @HiveField(2)
+  DateTime createdAt;
+
+  ListItem({
+    required this.id,
+    required this.value,
+    required this.createdAt,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'value': value,
+      'createdAt': createdAt.toIso8601String(),
+    };
+  }
+
+  factory ListItem.fromJson(Map<String, dynamic> json) {
+    return ListItem(
+      id: json['id'] ?? '',
+      value: json['value'] ?? '',
+      createdAt:
+          DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
+    );
+  }
+}

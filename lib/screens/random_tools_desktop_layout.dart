@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:random_please/l10n/app_localizations.dart';
+import 'package:random_please/services/app_logger.dart';
 import 'package:random_please/services/random_tools_manager.dart';
 import 'package:random_please/services/tool_order_service.dart';
 

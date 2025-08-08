@@ -161,7 +161,7 @@ class RandomToolsManager {
         icon: Icons.format_list_bulleted,
         color: Colors.deepOrange,
         screenBuilder: (isEmbedded) =>
-            const ListPickerGeneratorScreen(),
+            ListPickerGeneratorScreen(isEmbedded: isEmbedded),
       ),
     ];
   }

@@ -1181,4 +1181,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get create => 'Create';
+
+  @override
+  String get listPickerMode => 'Mode';
+
+  @override
+  String get modeRandom => 'Random';
+
+  @override
+  String get modeRandomDesc => 'Pick random items from the list';
+
+  @override
+  String get modeShuffle => 'Shuffle';
+
+  @override
+  String get modeShuffleDesc => 'Shuffle and pick items in order';
+
+  @override
+  String get modeTeam => 'Team';
+
+  @override
+  String get modeTeamDesc => 'Divide items into teams';
+
+  @override
+  String get createListDialog => 'Create New List';
+
+  @override
+  String get enterListName => 'Enter list name (max 30 characters)';
+
+  @override
+  String get listNameRequired => 'List name is required';
+
+  @override
+  String get listNameTooLong => 'List name is too long (max 30 characters)';
+
+  @override
+  String get listNameExists => 'A list with this name already exists';
+
+  @override
+  String get teams => 'Teams';
+
+  @override
+  String get itemsPerTeam => 'Items per team';
+
+  @override
+  String get deleteList => 'Delete List';
+
+  @override
+  String deleteListConfirm(String listName) {
+    return 'Are you sure you want to delete \"$listName\"? This action cannot be undone.';
+  }
+
+  @override
+  String get expand => 'Expand';
+
+  @override
+  String get collapse => 'Collapse';
+
+  @override
+  String get viewDetails => 'View Details';
 }
