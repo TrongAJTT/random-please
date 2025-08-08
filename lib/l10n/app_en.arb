@@ -509,5 +509,34 @@
         "type": "String"
       }
     }
-  }
+  },
+  "loremIpsumGenerator": "Lorem Ipsum Generator",
+  "loremIpsumGeneratorDesc": "Lorem Ipsum",
+  "generationType": "Generation Type",
+  "words": "Words",
+  "sentences": "Sentences",
+  "paragraphs": "Paragraphs",
+  "wordCount": "Word Count",
+  "numberOfWordsToGenerate": "Number of words to generate",
+  "sentenceCount": "Sentence Count", 
+  "numberOfSentencesToGenerate": "Number of sentences to generate",
+  "paragraphCount": "Paragraph Count",
+  "numberOfParagraphsToGenerate": "Number of paragraphs to generate",
+  "startWithLorem": "Start with Lorem",
+  "startWithLoremDesc": "Begin with classic 'Lorem ipsum dolor sit amet...'",
+  "listPicker": "Pick from List",
+  "listPickerDesc": "Pick from custom lists",
+  "selectList": "Select List",
+  "createNewList": "Create New List",
+  "noListsAvailable": "No lists available",
+  "selectOrCreateList": "Select or create a list to start picking",
+  "manageList": "Manage List",
+  "addItem": "Add Item",
+  "items": "Items",
+  "generatorOptions": "Generator Options",
+  "allowDuplicatesDescription": "Allow picking the same item multiple times",
+  "results": "Results",
+  "generateRandom": "Pick Random",
+  "listName": "List Name",
+  "create": "Create"
 }

@@ -2119,6 +2119,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Number Range: From {from} to {to}'**
   String numberRangeFromTo(String from, String to);
+
+  /// No description provided for @loremIpsumGenerator.
+  ///
+  /// In en, this message translates to:
+  /// **'Lorem Ipsum Generator'**
+  String get loremIpsumGenerator;
+
+  /// No description provided for @loremIpsumGeneratorDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Lorem Ipsum'**
+  String get loremIpsumGeneratorDesc;
+
+  /// No description provided for @generationType.
+  ///
+  /// In en, this message translates to:
+  /// **'Generation Type'**
+  String get generationType;
+
+  /// No description provided for @words.
+  ///
+  /// In en, this message translates to:
+  /// **'Words'**
+  String get words;
+
+  /// No description provided for @sentences.
+  ///
+  /// In en, this message translates to:
+  /// **'Sentences'**
+  String get sentences;
+
+  /// No description provided for @paragraphs.
+  ///
+  /// In en, this message translates to:
+  /// **'Paragraphs'**
+  String get paragraphs;
+
+  /// No description provided for @wordCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Word Count'**
+  String get wordCount;
+
+  /// No description provided for @numberOfWordsToGenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of words to generate'**
+  String get numberOfWordsToGenerate;
+
+  /// No description provided for @sentenceCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Sentence Count'**
+  String get sentenceCount;
+
+  /// No description provided for @numberOfSentencesToGenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of sentences to generate'**
+  String get numberOfSentencesToGenerate;
+
+  /// No description provided for @paragraphCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Paragraph Count'**
+  String get paragraphCount;
+
+  /// No description provided for @numberOfParagraphsToGenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of paragraphs to generate'**
+  String get numberOfParagraphsToGenerate;
+
+  /// No description provided for @startWithLorem.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with Lorem'**
+  String get startWithLorem;
+
+  /// No description provided for @startWithLoremDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Begin with classic \'Lorem ipsum dolor sit amet...\''**
+  String get startWithLoremDesc;
+
+  /// No description provided for @listPicker.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick from List'**
+  String get listPicker;
+
+  /// No description provided for @listPickerDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick from custom lists'**
+  String get listPickerDesc;
+
+  /// No description provided for @selectList.
+  ///
+  /// In en, this message translates to:
+  /// **'Select List'**
+  String get selectList;
+
+  /// No description provided for @createNewList.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New List'**
+  String get createNewList;
+
+  /// No description provided for @noListsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No lists available'**
+  String get noListsAvailable;
+
+  /// No description provided for @selectOrCreateList.
+  ///
+  /// In en, this message translates to:
+  /// **'Select or create a list to start picking'**
+  String get selectOrCreateList;
+
+  /// No description provided for @manageList.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage List'**
+  String get manageList;
+
+  /// No description provided for @addItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Item'**
+  String get addItem;
+
+  /// No description provided for @items.
+  ///
+  /// In en, this message translates to:
+  /// **'Items'**
+  String get items;
+
+  /// No description provided for @generatorOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Generator Options'**
+  String get generatorOptions;
+
+  /// No description provided for @allowDuplicatesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow picking the same item multiple times'**
+  String get allowDuplicatesDescription;
+
+  /// No description provided for @results.
+  ///
+  /// In en, this message translates to:
+  /// **'Results'**
+  String get results;
+
+  /// No description provided for @generateRandom.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick Random'**
+  String get generateRandom;
+
+  /// No description provided for @listName.
+  ///
+  /// In en, this message translates to:
+  /// **'List Name'**
+  String get listName;
+
+  /// No description provided for @create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
 }
 
 class _AppLocalizationsDelegate

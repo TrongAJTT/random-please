@@ -19,6 +19,7 @@ class ToolOrderService {
     'date',
     'time',
     'datetime',
+    'lorem'
   ];
 
   /// Get the current tool order from storage

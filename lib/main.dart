@@ -125,6 +125,21 @@ void _registerRandomStateAdapters() {
   if (!Hive.isAdapterRegistered(69)) {
     Hive.registerAdapter(SimpleGeneratorStateAdapter());
   }
+  if (!Hive.isAdapterRegistered(70)) {
+    Hive.registerAdapter(LoremIpsumGeneratorStateAdapter());
+  }
+  if (!Hive.isAdapterRegistered(76)) {
+    Hive.registerAdapter(LoremIpsumTypeAdapter());
+  }
+  if (!Hive.isAdapterRegistered(71)) {
+    Hive.registerAdapter(ListPickerGeneratorStateAdapter());
+  }
+  if (!Hive.isAdapterRegistered(72)) {
+    Hive.registerAdapter(CustomListAdapter());
+  }
+  if (!Hive.isAdapterRegistered(73)) {
+    Hive.registerAdapter(ListItemAdapter());
+  }
 }
 
 class SettingsController extends ChangeNotifier {

@@ -1089,4 +1089,93 @@ class AppLocalizationsVi extends AppLocalizations {
   String numberRangeFromTo(String from, String to) {
     return 'Khoảng giá trị: Từ $from đến $to';
   }
+
+  @override
+  String get loremIpsumGenerator => 'Tạo văn bản giả';
+
+  @override
+  String get loremIpsumGeneratorDesc => 'Lorem Ipsum';
+
+  @override
+  String get generationType => 'Loại tạo văn bản';
+
+  @override
+  String get words => 'Từ';
+
+  @override
+  String get sentences => 'Câu';
+
+  @override
+  String get paragraphs => 'Đoạn văn';
+
+  @override
+  String get wordCount => 'Số lượng từ';
+
+  @override
+  String get numberOfWordsToGenerate => 'Số lượng từ cần tạo';
+
+  @override
+  String get sentenceCount => 'Số lượng câu';
+
+  @override
+  String get numberOfSentencesToGenerate => 'Số lượng câu cần tạo';
+
+  @override
+  String get paragraphCount => 'Số lượng đoạn văn';
+
+  @override
+  String get numberOfParagraphsToGenerate => 'Số lượng đoạn văn cần tạo';
+
+  @override
+  String get startWithLorem => 'Bắt đầu bằng Lorem';
+
+  @override
+  String get startWithLoremDesc =>
+      'Bắt đầu bằng câu kinh điển \'Lorem ipsum dolor sit amet...\'';
+
+  @override
+  String get listPicker => 'Pick from List';
+
+  @override
+  String get listPickerDesc => 'Pick from custom lists';
+
+  @override
+  String get selectList => 'Select List';
+
+  @override
+  String get createNewList => 'Create New List';
+
+  @override
+  String get noListsAvailable => 'No lists available';
+
+  @override
+  String get selectOrCreateList => 'Select or create a list to start picking';
+
+  @override
+  String get manageList => 'Manage List';
+
+  @override
+  String get addItem => 'Add Item';
+
+  @override
+  String get items => 'Items';
+
+  @override
+  String get generatorOptions => 'Generator Options';
+
+  @override
+  String get allowDuplicatesDescription =>
+      'Allow picking the same item multiple times';
+
+  @override
+  String get results => 'Results';
+
+  @override
+  String get generateRandom => 'Pick Random';
+
+  @override
+  String get listName => 'List Name';
+
+  @override
+  String get create => 'Create';
 }

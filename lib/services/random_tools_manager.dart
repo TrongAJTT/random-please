@@ -14,6 +14,8 @@ import 'package:random_please/screens/random_tools/playing_card_generator.dart';
 import 'package:random_please/screens/random_tools/date_generator.dart';
 import 'package:random_please/screens/random_tools/time_generator.dart';
 import 'package:random_please/screens/random_tools/date_time_generator.dart';
+import 'package:random_please/screens/random_tools/lorem_ipsum_generator.dart';
+import 'package:random_please/screens/random_tools/list_picker_generator.dart';
 
 /// Manages the list and order of all random tools
 class RandomToolsManager {
@@ -142,6 +144,24 @@ class RandomToolsManager {
         color: Colors.deepPurple,
         screenBuilder: (isEmbedded) =>
             DateTimeGeneratorScreen(isEmbedded: isEmbedded),
+      ),
+      ToolItem(
+        id: 'lorem',
+        title: loc.loremIpsumGenerator,
+        subtitle: loc.loremIpsumGeneratorDesc,
+        icon: Icons.text_fields,
+        color: Colors.teal.shade700,
+        screenBuilder: (isEmbedded) =>
+            LoremIpsumGeneratorScreen(isEmbedded: isEmbedded),
+      ),
+      ToolItem(
+        id: 'listpicker',
+        title: loc.listPicker,
+        subtitle: loc.listPickerDesc,
+        icon: Icons.format_list_bulleted,
+        color: Colors.deepOrange,
+        screenBuilder: (isEmbedded) =>
+            const ListPickerGeneratorScreen(),
       ),
     ];
   }

@@ -476,5 +476,19 @@
         "type": "String"
       }
     }
-  }
+  },
+  "loremIpsumGenerator": "Tạo văn bản giả",
+  "loremIpsumGeneratorDesc": "Lorem Ipsum",
+  "generationType": "Loại tạo văn bản",
+  "words": "Từ",
+  "sentences": "Câu",
+  "paragraphs": "Đoạn văn",
+  "wordCount": "Số lượng từ",
+  "numberOfWordsToGenerate": "Số lượng từ cần tạo",
+  "sentenceCount": "Số lượng câu",
+  "numberOfSentencesToGenerate": "Số lượng câu cần tạo", 
+  "paragraphCount": "Số lượng đoạn văn",
+  "numberOfParagraphsToGenerate": "Số lượng đoạn văn cần tạo",
+  "startWithLorem": "Bắt đầu bằng Lorem",
+  "startWithLoremDesc": "Bắt đầu bằng câu kinh điển 'Lorem ipsum dolor sit amet...'"
 }

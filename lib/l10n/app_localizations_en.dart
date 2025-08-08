@@ -1092,4 +1092,93 @@ class AppLocalizationsEn extends AppLocalizations {
   String numberRangeFromTo(String from, String to) {
     return 'Number Range: From $from to $to';
   }
+
+  @override
+  String get loremIpsumGenerator => 'Lorem Ipsum Generator';
+
+  @override
+  String get loremIpsumGeneratorDesc => 'Lorem Ipsum';
+
+  @override
+  String get generationType => 'Generation Type';
+
+  @override
+  String get words => 'Words';
+
+  @override
+  String get sentences => 'Sentences';
+
+  @override
+  String get paragraphs => 'Paragraphs';
+
+  @override
+  String get wordCount => 'Word Count';
+
+  @override
+  String get numberOfWordsToGenerate => 'Number of words to generate';
+
+  @override
+  String get sentenceCount => 'Sentence Count';
+
+  @override
+  String get numberOfSentencesToGenerate => 'Number of sentences to generate';
+
+  @override
+  String get paragraphCount => 'Paragraph Count';
+
+  @override
+  String get numberOfParagraphsToGenerate => 'Number of paragraphs to generate';
+
+  @override
+  String get startWithLorem => 'Start with Lorem';
+
+  @override
+  String get startWithLoremDesc =>
+      'Begin with classic \'Lorem ipsum dolor sit amet...\'';
+
+  @override
+  String get listPicker => 'Pick from List';
+
+  @override
+  String get listPickerDesc => 'Pick from custom lists';
+
+  @override
+  String get selectList => 'Select List';
+
+  @override
+  String get createNewList => 'Create New List';
+
+  @override
+  String get noListsAvailable => 'No lists available';
+
+  @override
+  String get selectOrCreateList => 'Select or create a list to start picking';
+
+  @override
+  String get manageList => 'Manage List';
+
+  @override
+  String get addItem => 'Add Item';
+
+  @override
+  String get items => 'Items';
+
+  @override
+  String get generatorOptions => 'Generator Options';
+
+  @override
+  String get allowDuplicatesDescription =>
+      'Allow picking the same item multiple times';
+
+  @override
+  String get results => 'Results';
+
+  @override
+  String get generateRandom => 'Pick Random';
+
+  @override
+  String get listName => 'List Name';
+
+  @override
+  String get create => 'Create';
 }
