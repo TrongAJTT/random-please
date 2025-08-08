@@ -29,6 +29,11 @@
   "theme": "Theme",
   "language": "Language",
   "userInterface": "User Interface",
+  "userInterfaceDesc": "Customize the theme, language, and display style",
+  "randomTools": "Random Tools",
+  "randomToolsDesc": "History, status, tools arrangement, and data protection",
+  "dataManager": "Data Managerment",
+  "dataManagerDesc": "Delete all data",
   "system": "System",
   "light": "Light",
   "dark": "Dark",
@@ -50,9 +55,10 @@
     }
   },
   "logRetentionForever": "Keep forever",
+  "historyManager": "History Managerment",
   "logRetentionDescDetail": "Choose log retention period (5-30 days in 5-day intervals, or forever)",
   "dataAndStorage": "Data & Storage",
-  "confirmClearAllCache": "Are you sure you want to clear ALL cache data? This will remove all saved templates but preserve your settings.",
+  "confirmClearAllCache": "Are you sure you want to clear ALL cache data? This will remove all history from all tools but preserve your settings.",
   "cannotClearFollowingCaches": "The following caches cannot be cleared because they are currently in use:",
   "@cannotClearFollowingCaches": {
     "description": "Warning text for caches that cannot be cleared"
@@ -75,8 +81,6 @@
   "holdToClearCache": "Hold to clear...",
   "clearingCache": "Clearing cache...",
   "batchDelete": "Delete Selected",
-  "confirmBatchDelete": "Confirm Batch Delete",
-  "typeConfirmToDelete": "Type \"confirm\" to delete {count} selected templates:",
   "passwordGenerator": "Password Generator",
   "passwordGeneratorDesc": "Generate secure random passwords",
   "numCharacters": "Number of characters",
@@ -159,15 +163,6 @@
   "from": "From",
   "actions": "Actions",
   "delete": "Delete",
-  "fetchTimeoutSeconds": "{seconds}s",
-  "fetchRetryTimes": "{times} retries",
-  "@fetchRetryTimes": {
-    "placeholders": {
-      "times": {
-        "type": "int"
-      }
-    }
-  },
   "dateGenerator": "Date Generator",
   "dateGeneratorDesc": "Generate random dates within ranges",
   "dateCount": "Number of dates",
@@ -187,6 +182,13 @@
   "skipAnimation": "Skip Animation",
   "skipAnimationDesc": "Show result immediately without visual effects",
   "latinLetterGenerationError": "Cannot generate {count} unique letters from the available set. Please reduce the count or allow duplicates.",
+  "@latinLetterGenerationError": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "saveGenerationHistory": "Save Generation History",
   "saveGenerationHistoryDesc": "Remember and display history of generated items",
   "generationHistory": "Generation History",
@@ -206,42 +208,10 @@
   "calculatorTools": "Calculator Tools",
   "calculatorToolsDesc": "Specialized calculators for health, finance, and more",
   "value": "Value",
-  "cacheWithLogSize": "Cache: {cacheSize} (+{logSize} log)",
-  "@cacheWithLogSize": {
-    "description": "Cache info with log size",
-    "placeholders": {
-      "cacheSize": {
-        "type": "String",
-        "example": "180.5KB"
-      },
-      "logSize": {
-        "type": "String",
-        "example": "3.05MB"
-      }
-    }
-  },
-  "@cacheSize": {
-    "description": "Cache size information",
-    "placeholders": {
-      "size": {
-        "type": "String",
-        "example": "180.5KB"
-      }
-    }
-  },
   "success": "Success",
   "calculate": "Calculate",
   "calculating": "Calculating...",
   "unknown": "Unknown",
-  "logsManagement": "App logs management and storage settings",
-  "statusInfo": "Status: {info}",
-  "@statusInfo": {
-    "placeholders": {
-      "info": {
-        "type": "String"
-      }
-    }
-  },
   "logsAvailable": "Logs available",
   "scrollToTop": "Scroll to Top",
   "scrollToBottom": "Scroll to Bottom",

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:http/http.dart' as http;
-import 'package:markdown_widget/widget/markdown.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/utils/icon_utils.dart';
 import 'package:random_please/utils/localization_utils.dart';
@@ -335,34 +335,26 @@ class VersionCheckService {
                       const SizedBox(height: 8),
 
                       // Markdown content in a container with max height
+                      // Markdown content in a container with max height
                       Container(
                         constraints: const BoxConstraints(maxHeight: 400),
                         decoration: BoxDecoration(
                           border: Border.all(
-                              color: Colors.grey.withValues(alpha: .3)),
+                              color: Colors.grey.withValues(alpha: 0.3)),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: SingleChildScrollView(
+                        child: Markdown(
+                          data: releaseInfo.body.isEmpty
+                              ? loc.noReleaseNotes
+                              : releaseInfo.body,
+                          shrinkWrap: true,
                           physics: const ClampingScrollPhysics(),
                           padding: const EdgeInsets.all(12),
-                          child: MarkdownWidget(
-                            data: releaseInfo.body.isEmpty
-                                ? loc.noReleaseNotes
-                                : releaseInfo.body,
-                            // styleConfig: StyleConfig(
-                            //   pConfig: PConfig(
-                            //   textStyle: Theme.of(context).textTheme.bodyMedium,
-                            //   ),
-                            //   h1Config: HeaderConfig(
-                            //   textStyle: Theme.of(context).textTheme.titleLarge,
-                            //   ),
-                            //   h2Config: HeaderConfig(
-                            //   textStyle: Theme.of(context).textTheme.titleMedium,
-                            //   ),
-                            //   h3Config: HeaderConfig(
-                            //   textStyle: Theme.of(context).textTheme.titleSmall,
-                            //   ),
-                            // ),
+                          styleSheet: MarkdownStyleSheet(
+                            p: Theme.of(context).textTheme.bodyMedium,
+                            h1: Theme.of(context).textTheme.titleLarge,
+                            h2: Theme.of(context).textTheme.titleMedium,
+                            h3: Theme.of(context).textTheme.titleSmall,
                           ),
                         ),
                       ),

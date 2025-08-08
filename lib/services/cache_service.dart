@@ -219,20 +219,24 @@ class CacheService {
     }
 
     // Show the hold-to-confirm dialog.
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => HoldToConfirmDialog(
-        l10n: l10n,
-        title: l10n.clearAllCache,
-        content: dialogContent,
-        holdDuration: const Duration(seconds: 3),
-        onConfirmed: () => Navigator.of(context).pop(true),
-        actionText: l10n.clearAll,
-        holdText: l10n.holdToClearCache,
-        processingText: l10n.clearingCache,
-        actionIcon: Icons.delete_sweep,
-      ),
-    );
+    bool? confirmed = false;
+
+    if (context.mounted) {
+      confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => HoldToConfirmDialog(
+          l10n: l10n,
+          title: l10n.clearAllCache,
+          content: dialogContent,
+          holdDuration: const Duration(seconds: 3),
+          onConfirmed: () => Navigator.of(context).pop(true),
+          actionText: l10n.clearAll,
+          holdText: l10n.holdToClearCache,
+          processingText: l10n.clearingCache,
+          actionIcon: Icons.delete_sweep,
+        ),
+      );
+    }
 
     if (confirmed == true) {
       await clearAllCache();

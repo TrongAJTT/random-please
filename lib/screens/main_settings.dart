@@ -36,7 +36,6 @@ class MainSettingsScreen extends StatefulWidget {
 class _MainSettingsScreenState extends State<MainSettingsScreen> {
   late ThemeMode _themeMode = settingsController.themeMode;
   late String _language = settingsController.locale.languageCode;
-  String _cacheInfo = '';
   bool _loading = true;
   bool _historyEnabled = false;
   bool _saveRandomToolsState = true;
@@ -58,10 +57,6 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
     if (!_isDecoratorInitialized) {
       switchDecorator = OptionSwitchDecorator.compact(context);
       _isDecoratorInitialized = true;
-    }
-    if (_loading) {
-      _loadCacheInfo();
-      // _loadLogInfo();
     }
   }
 
@@ -88,42 +83,10 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
     });
   }
 
-  Future<void> _loadCacheInfo() async {
-    if (!mounted) return;
-
-    final l10n = AppLocalizations.of(context)!;
-    if (mounted) {
-      setState(() {
-        _cacheInfo = l10n.calculating;
-      });
-    }
-
-    try {
-      final totalCacheSize = await CacheService.getTotalCacheSize();
-      // final totalLogSize = await CacheService.getTotalLogSize();
-
-      if (mounted) {
-        setState(() {
-          final cacheFormated = CacheService.formatCacheSize(totalCacheSize);
-          // final logFormated = CacheService.formatCacheSize(totalLogSize);
-          // _cacheInfo = l10n.cacheWithLogSize(cacheFormated, logFormated);
-          _cacheInfo = l10n.cacheSize(cacheFormated);
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _cacheInfo = l10n.unknown;
-        });
-      }
-    }
-  }
-
   Future<void> _clearCache() async {
     final l10n = AppLocalizations.of(context)!;
     await CacheService.confirmAndClearAllCache(context, l10n: l10n);
     // Refresh info after dialog closes
-    await _loadCacheInfo();
     await _loadSettings();
   }
 
@@ -205,23 +168,23 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
       SectionItem(
         id: 'user_interface',
         title: loc.userInterface,
-        subtitle: 'Theme and language settings',
+        subtitle: loc.userInterfaceDesc,
         icon: Icons.palette,
         iconColor: Colors.blue,
         content: _buildUserInterfaceSection(loc),
       ),
       SectionItem(
         id: 'random_tools',
-        title: 'Random Tools',
-        subtitle: 'Generation history settings',
+        title: loc.randomTools,
+        subtitle: loc.randomToolsDesc,
         icon: Icons.casino,
         iconColor: Colors.purple,
         content: _buildRandomToolsSection(loc),
       ),
       SectionItem(
         id: 'data_management',
-        title: 'Data Management',
-        subtitle: 'Cache, logs, and storage',
+        title: loc.dataManager,
+        subtitle: loc.dataManagerDesc,
         icon: Icons.storage,
         iconColor: Colors.red,
         content: _buildDataSection(loc),
@@ -267,8 +230,6 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
         _buildSaveRandomToolsStateSettings(loc),
         VerticalSpacingDivider.both(6),
         _buildToolOrderingSettings(loc),
-        VerticalSpacingDivider.both(6),
-        SecuritySettingsWidget(loc: loc),
       ],
     );
   }
@@ -277,6 +238,8 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SecuritySettingsWidget(loc: loc),
+        const SizedBox(height: 24),
         _buildCacheManagement(loc),
         // const SizedBox(height: 24),
         // _buildExpandableLogSection(loc),
@@ -413,16 +376,18 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
     final hadCustomOrderBefore = await ToolOrderService.isCustomOrder();
 
     // Show the tool ordering screen
-    GenericSettingsHelper.showSettings(
-      context,
-      GenericSettingsConfig(
-        title: loc.arrangeTools,
-        settingsLayout: const ToolOrderingScreen(isEmbedded: true),
-        onSettingsChanged: (newSettings) {
-          // Empty lambda as requested
-        },
-      ),
-    );
+    if (mounted) {
+      GenericSettingsHelper.showSettings(
+        context,
+        GenericSettingsConfig(
+          title: loc.arrangeTools,
+          settingsLayout: const ToolOrderingScreen(isEmbedded: true),
+          onSettingsChanged: (newSettings) {
+            // Empty lambda as requested
+          },
+        ),
+      );
+    }
 
     // Check if order changed after the screen closes
     // Note: This is a simplified approach - in a real app you might want
@@ -437,35 +402,49 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
   }
 
   Widget _buildCacheManagement(AppLocalizations loc) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          loc.dataAndStorage,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          _cacheInfo,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-        const SizedBox(height: 16),
-        Row(
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: _clearCache,
-                icon: const Icon(Icons.delete_forever),
-                label: Text(loc.clearCache),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.error,
-                  foregroundColor: Theme.of(context).colorScheme.onError,
+            Row(
+              children: [
+                Icon(
+                  Icons.storage,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-              ),
+                const SizedBox(width: 12),
+                Text(
+                  loc.dataAndStorage,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
             ),
+            const SizedBox(height: 8),
+            Text(
+              loc.historyManager,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _clearCache,
+                    icon: const Icon(Icons.delete_forever),
+                    label: Text(loc.clearCache),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                      foregroundColor: Theme.of(context).colorScheme.onError,
+                    ),
+                  ),
+                ),
+              ],
+            )
           ],
-        )
-      ],
+        ),
+      ),
     );
   }
 

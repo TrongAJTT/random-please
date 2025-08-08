@@ -29,6 +29,11 @@
   "theme": "Chủ đề",
   "language": "Ngôn ngữ",
   "userInterface": "Giao diện người dùng",
+  "userInterfaceDesc": "Cài đặt chủ đề và ngôn ngữ và phong cách hiển thị",
+  "randomTools": "Công cụ ngẫu nhiên",
+  "randomToolsDesc": "Lịch sử, trạng thái, vị trí sắp xếp công vụ và bảo vệ dữ liệu",
+  "dataManager": "Quản lý dữ liệu",
+  "dataManagerDesc": "Xóa toàn bộ dữ liệu",
   "system": "Theo hệ thống",
   "light": "Sáng",
   "dark": "Tối",
@@ -66,9 +71,6 @@
   "holdToDeleteInstruction": "Nhấn giữ nút xóa trong 5 giây để xác nhận",
   "holdToDelete": "Nhấn giữ để xóa...",
   "deleting": "Đang xóa...",
-  "batchDelete": "Xóa đã chọn",
-  "confirmBatchDelete": "Xác nhận xóa hàng loạt",
-  "typeConfirmToDelete": "Gõ \"confirm\" để xóa {count} mẫu đã chọn:",
   "passwordGenerator": "Tạo mật khẩu",
   "passwordGeneratorDesc": "Tạo mật khẩu ngẫu nhiên an toàn",
   "numCharacters": "Số ký tự",
@@ -121,15 +123,6 @@
   "from": "Từ",
   "actions": "Hành động",
   "delete": "Xóa",
-  "fetchTimeoutSeconds": "{seconds}s",
-  "fetchRetryTimes": "{times} lần thử",
-  "@fetchRetryTimes": {
-    "placeholders": {
-      "times": {
-        "type": "int"
-      }
-    }
-  },
   "dateGenerator": "Tạo ngày ngẫu nhiên",
   "dateGeneratorDesc": "Tạo ngày tháng ngẫu nhiên trong khoảng",
   "startDate": "Ngày bắt đầu",
@@ -150,8 +143,9 @@
   "randomResult": "Kết quả",
   "skipAnimation": "Bỏ qua hoạt ảnh",
   "skipAnimationDesc": "Tắt hoạt ảnh để có kết quả nhanh hơn",
+  "historyManager": "Quản lý lịch sử",
   "latinLetterGenerationError": "Không thể tạo {count} chữ cái duy nhất từ bộ có sẵn. Vui lòng giảm số lượng hoặc cho phép trùng lặp.",
-  "confirmClearAllCache": "Bạn có chắc chắn muốn xóa TẤT CẢ dữ liệu trong bộ nhớ đệm không? Thao tác này sẽ xóa tất cả các mẫu đã lưu nhưng vẫn giữ lại cài đặt của bạn.",
+  "confirmClearAllCache": "Bạn có chắc chắn muốn xóa TẤT CẢ dữ liệu trong bộ nhớ đệm không? Thao tác này sẽ xóa tất cả bản lịch sử đã lưu trong toàn bộ công cụ nhưng vẫn giữ lại cài đặt của bạn.",
   "cannotClearFollowingCaches": "Không thể xóa các bộ nhớ đệm sau vì chúng đang được sử dụng:",
   "allCacheCleared": "Đã xóa tất cả bộ nhớ đệm thành công",
   "saveGenerationHistory": "Ghi nhớ lịch sử tạo",
@@ -243,29 +237,6 @@
   "aspectRatio": "Tỉ lệ khung hình",
   "reset": "Đặt lại",
   "info": "Thông tin",
-  "cacheWithLogSize": "Bộ nhớ đệm: {cacheSize} (+{logSize} nhật ký)",
-  "@cacheWithLogSize": {
-    "description": "Thông tin bộ nhớ đệm với kích thước log",
-    "placeholders": {
-      "cacheSize": {
-        "type": "String",
-        "example": "180.5KB"
-      },
-      "logSize": {
-        "type": "String",
-        "example": "3.05MB"
-      }
-    }
-  },
-  "@cacheSize": {
-    "description": "Thông tin kích thước bộ nhớ đệm",
-    "placeholders": {
-      "size": {
-        "type": "String",
-        "example": "180.5KB"
-      }
-    }
-  },
   "deletingOldLogs": "Đang xóa log cũ...",
   "deletedOldLogFiles": "Đã xóa {count} file log cũ",
   "@deletedOldLogFiles": {

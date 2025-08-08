@@ -143,6 +143,28 @@ class _AboutLayoutState extends State<AboutLayout> {
                 VersionCheckService.showVersionDialog(context);
               },
             ),
+          ] else ...[
+            ListTile(
+              leading: const Icon(
+                Icons.download_for_offline,
+                color: Colors.greenAccent,
+              ),
+              title: Text(l10n.downloadApp),
+              subtitle: Text(l10n.downloadAppDesc),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                GenericSettingsHelper.showSettings(
+                  context,
+                  GenericSettingsConfig(
+                    title: l10n.downloadApp,
+                    settingsLayout: VersionCheckService.buildDownloadAppLayout(
+                      context: context,
+                    ),
+                    onSettingsChanged: (newSettings) {},
+                  ),
+                );
+              },
+            ),
           ],
 
           // View author's products section

@@ -34,7 +34,7 @@ Widget _buildSectionCard(
           children: [
             CircleAvatar(
               backgroundColor: (section.iconColor ?? theme.colorScheme.primary)
-                  .withOpacity(0.2),
+                  .withValues(alpha: .2),
               radius: 24,
               child: Icon(
                 section.icon,

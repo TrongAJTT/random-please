@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:random_please/l10n/app_localizations.dart';
+import 'package:random_please/services/app_logger.dart';
 import 'package:random_please/services/security_service.dart';
 import 'package:random_please/services/data_migration_service.dart';
 import 'package:random_please/widgets/security/security_dialogs.dart';
@@ -53,17 +54,13 @@ class SecurityManager extends ChangeNotifier {
     await initialize();
 
     if (!_isSecurityEnabled) {
-      // Check if we need to show setup dialog
+      // No automatic security setup dialog - users must manually enable in settings
+      // Mark that we've shown the setup dialog to prevent future auto-prompts
       if (await needsSecuritySetup()) {
-        final setupResult =
-            await SecurityDialogs.handleSecuritySetup(context, loc);
-        if (setupResult) {
-          await initialize(); // Re-initialize after setup
-          notifyListeners(); // Notify UI about state change
-        }
+        await SecurityService.markSecuritySetupShown();
       }
 
-      // If still no security, user can proceed
+      // User can proceed without security
       _isAuthenticated = true;
       notifyListeners();
       return true;
@@ -108,16 +105,16 @@ class SecurityManager extends ChangeNotifier {
   Future<bool> enableSecurity(
       BuildContext context, String masterPassword) async {
     try {
-      print('SecurityManager.enableSecurity: Starting...');
+      logDebug('SecurityManager.enableSecurity: Starting...');
       final success = await SecurityService.enableSecurity(masterPassword);
-      print(
+      logDebug(
           'SecurityManager.enableSecurity: SecurityService.enableSecurity result: $success');
 
       if (success) {
-        print('SecurityManager.enableSecurity: Starting data migration...');
+        logDebug('SecurityManager.enableSecurity: Starting data migration...');
         // Migrate existing data
         await DataMigrationService.migrateToEncrypted(masterPassword);
-        print('SecurityManager.enableSecurity: Data migration completed');
+        logDebug('SecurityManager.enableSecurity: Data migration completed');
 
         // Update state
         _isSecurityEnabled = true;
@@ -126,14 +123,14 @@ class SecurityManager extends ChangeNotifier {
         _currentEncryptionKey =
             await SecurityService.getEncryptionKey(masterPassword);
         notifyListeners();
-        print('SecurityManager.enableSecurity: State updated and notified');
+        logDebug('SecurityManager.enableSecurity: State updated and notified');
         return true;
       }
-      print(
+      logDebug(
           'SecurityManager.enableSecurity: SecurityService.enableSecurity failed');
       return false;
     } catch (e) {
-      print('SecurityManager.enableSecurity: Exception caught: $e');
+      logDebug('SecurityManager.enableSecurity: Exception caught: $e');
       // If anything fails, make sure security is disabled
       try {
         await SecurityService.disableSecurity();

@@ -101,6 +101,23 @@ class AppLocalizationsVi extends AppLocalizations {
   String get userInterface => 'Giao diện người dùng';
 
   @override
+  String get userInterfaceDesc =>
+      'Cài đặt chủ đề và ngôn ngữ và phong cách hiển thị';
+
+  @override
+  String get randomTools => 'Công cụ ngẫu nhiên';
+
+  @override
+  String get randomToolsDesc =>
+      'Lịch sử, trạng thái, vị trí sắp xếp công vụ và bảo vệ dữ liệu';
+
+  @override
+  String get dataManager => 'Quản lý dữ liệu';
+
+  @override
+  String get dataManagerDesc => 'Xóa toàn bộ dữ liệu';
+
+  @override
   String get system => 'Theo hệ thống';
 
   @override
@@ -122,9 +139,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get clearCache => 'Xóa bộ nhớ đệm';
 
   @override
-  String cacheSize(String size) {
-    return 'Kích thước bộ nhớ đệm';
-  }
+  String get cacheSize => 'Kích thước bộ nhớ đệm';
 
   @override
   String get clearAllCache => 'Xóa tất cả bộ nhớ đệm';
@@ -147,6 +162,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get logRetentionForever => 'Vĩnh viễn';
 
   @override
+  String get historyManager => 'Quản lý lịch sử';
+
+  @override
   String get logRetentionDescDetail =>
       'Nhật ký sẽ được lưu trữ trong bộ nhớ đệm và có thể được xóa tự động sau một khoảng thời gian nhất định. Bạn có thể đặt thời gian lưu giữ nhật ký từ 5 đến 30 ngày (bước nhảy 5 ngày) hoặc chọn lưu vĩnh viễn.';
 
@@ -155,7 +173,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get confirmClearAllCache =>
-      'Bạn có chắc chắn muốn xóa TẤT CẢ dữ liệu trong bộ nhớ đệm không? Thao tác này sẽ xóa tất cả các mẫu đã lưu nhưng vẫn giữ lại cài đặt của bạn.';
+      'Bạn có chắc chắn muốn xóa TẤT CẢ dữ liệu trong bộ nhớ đệm không? Thao tác này sẽ xóa tất cả bản lịch sử đã lưu trong toàn bộ công cụ nhưng vẫn giữ lại cài đặt của bạn.';
 
   @override
   String get cannotClearFollowingCaches =>
@@ -216,15 +234,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get clearingCache => 'Đang xóa cache...';
 
   @override
-  String get batchDelete => 'Xóa đã chọn';
-
-  @override
-  String get confirmBatchDelete => 'Xác nhận xóa hàng loạt';
-
-  @override
-  String typeConfirmToDelete(Object count) {
-    return 'Gõ \"confirm\" để xóa $count mẫu đã chọn:';
-  }
+  String get batchDelete => 'Delete Selected';
 
   @override
   String get passwordGenerator => 'Tạo mật khẩu';
@@ -455,16 +465,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get delete => 'Xóa';
 
   @override
-  String fetchTimeoutSeconds(Object seconds) {
-    return '${seconds}s';
-  }
-
-  @override
-  String fetchRetryTimes(int times) {
-    return '$times lần thử';
-  }
-
-  @override
   String get dateGenerator => 'Tạo ngày ngẫu nhiên';
 
   @override
@@ -519,7 +519,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get skipAnimationDesc => 'Tắt hoạt ảnh để có kết quả nhanh hơn';
 
   @override
-  String latinLetterGenerationError(Object count) {
+  String latinLetterGenerationError(int count) {
     return 'Không thể tạo $count chữ cái duy nhất từ bộ có sẵn. Vui lòng giảm số lượng hoặc cho phép trùng lặp.';
   }
 
@@ -587,11 +587,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get value => 'Giá trị';
 
   @override
-  String cacheWithLogSize(String cacheSize, String logSize) {
-    return 'Bộ nhớ đệm: $cacheSize (+$logSize nhật ký)';
-  }
-
-  @override
   String get success => 'Thành công';
 
   @override
@@ -602,14 +597,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get unknown => 'Không rõ';
-
-  @override
-  String get logsManagement => 'Quản lý log ứng dụng và cài đặt lưu trữ';
-
-  @override
-  String statusInfo(String info) {
-    return 'Trạng thái: $info';
-  }
 
   @override
   String get logsAvailable => 'Log khả dụng';

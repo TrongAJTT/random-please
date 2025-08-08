@@ -100,6 +100,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get userInterface => 'User Interface';
 
   @override
+  String get userInterfaceDesc =>
+      'Customize the theme, language, and display style';
+
+  @override
+  String get randomTools => 'Random Tools';
+
+  @override
+  String get randomToolsDesc =>
+      'History, status, tools arrangement, and data protection';
+
+  @override
+  String get dataManager => 'Data Managerment';
+
+  @override
+  String get dataManagerDesc => 'Delete all data';
+
+  @override
   String get system => 'System';
 
   @override
@@ -121,9 +138,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clearCache => 'Clear Cache';
 
   @override
-  String cacheSize(String size) {
-    return 'Cache size';
-  }
+  String get cacheSize => 'Cache size';
 
   @override
   String get clearAllCache => 'Clear All Cache';
@@ -146,6 +161,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logRetentionForever => 'Keep forever';
 
   @override
+  String get historyManager => 'History Managerment';
+
+  @override
   String get logRetentionDescDetail =>
       'Choose log retention period (5-30 days in 5-day intervals, or forever)';
 
@@ -154,7 +172,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirmClearAllCache =>
-      'Are you sure you want to clear ALL cache data? This will remove all saved templates but preserve your settings.';
+      'Are you sure you want to clear ALL cache data? This will remove all history from all tools but preserve your settings.';
 
   @override
   String get cannotClearFollowingCaches =>
@@ -216,14 +234,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get batchDelete => 'Delete Selected';
-
-  @override
-  String get confirmBatchDelete => 'Confirm Batch Delete';
-
-  @override
-  String typeConfirmToDelete(Object count) {
-    return 'Type \"confirm\" to delete $count selected templates:';
-  }
 
   @override
   String get passwordGenerator => 'Password Generator';
@@ -454,16 +464,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delete => 'Delete';
 
   @override
-  String fetchTimeoutSeconds(Object seconds) {
-    return '${seconds}s';
-  }
-
-  @override
-  String fetchRetryTimes(int times) {
-    return '$times retries';
-  }
-
-  @override
   String get dateGenerator => 'Date Generator';
 
   @override
@@ -520,7 +520,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Show result immediately without visual effects';
 
   @override
-  String latinLetterGenerationError(Object count) {
+  String latinLetterGenerationError(int count) {
     return 'Cannot generate $count unique letters from the available set. Please reduce the count or allow duplicates.';
   }
 
@@ -589,11 +589,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get value => 'Value';
 
   @override
-  String cacheWithLogSize(String cacheSize, String logSize) {
-    return 'Cache: $cacheSize (+$logSize log)';
-  }
-
-  @override
   String get success => 'Success';
 
   @override
@@ -604,14 +599,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unknown => 'Unknown';
-
-  @override
-  String get logsManagement => 'App logs management and storage settings';
-
-  @override
-  String statusInfo(String info) {
-    return 'Status: $info';
-  }
 
   @override
   String get logsAvailable => 'Logs available';

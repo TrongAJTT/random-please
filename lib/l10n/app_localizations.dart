@@ -272,6 +272,36 @@ abstract class AppLocalizations {
   /// **'User Interface'**
   String get userInterface;
 
+  /// No description provided for @userInterfaceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize the theme, language, and display style'**
+  String get userInterfaceDesc;
+
+  /// No description provided for @randomTools.
+  ///
+  /// In en, this message translates to:
+  /// **'Random Tools'**
+  String get randomTools;
+
+  /// No description provided for @randomToolsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'History, status, tools arrangement, and data protection'**
+  String get randomToolsDesc;
+
+  /// No description provided for @dataManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Managerment'**
+  String get dataManager;
+
+  /// No description provided for @dataManagerDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all data'**
+  String get dataManagerDesc;
+
   /// No description provided for @system.
   ///
   /// In en, this message translates to:
@@ -314,11 +344,11 @@ abstract class AppLocalizations {
   /// **'Clear Cache'**
   String get clearCache;
 
-  /// Cache size information
+  /// No description provided for @cacheSize.
   ///
   /// In en, this message translates to:
   /// **'Cache size'**
-  String cacheSize(String size);
+  String get cacheSize;
 
   /// No description provided for @clearAllCache.
   ///
@@ -356,6 +386,12 @@ abstract class AppLocalizations {
   /// **'Keep forever'**
   String get logRetentionForever;
 
+  /// No description provided for @historyManager.
+  ///
+  /// In en, this message translates to:
+  /// **'History Managerment'**
+  String get historyManager;
+
   /// No description provided for @logRetentionDescDetail.
   ///
   /// In en, this message translates to:
@@ -371,7 +407,7 @@ abstract class AppLocalizations {
   /// No description provided for @confirmClearAllCache.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to clear ALL cache data? This will remove all saved templates but preserve your settings.'**
+  /// **'Are you sure you want to clear ALL cache data? This will remove all history from all tools but preserve your settings.'**
   String get confirmClearAllCache;
 
   /// Warning text for caches that cannot be cleared
@@ -487,18 +523,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete Selected'**
   String get batchDelete;
-
-  /// No description provided for @confirmBatchDelete.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm Batch Delete'**
-  String get confirmBatchDelete;
-
-  /// No description provided for @typeConfirmToDelete.
-  ///
-  /// In en, this message translates to:
-  /// **'Type \"confirm\" to delete {count} selected templates:'**
-  String typeConfirmToDelete(Object count);
 
   /// No description provided for @passwordGenerator.
   ///
@@ -950,18 +974,6 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get delete;
 
-  /// No description provided for @fetchTimeoutSeconds.
-  ///
-  /// In en, this message translates to:
-  /// **'{seconds}s'**
-  String fetchTimeoutSeconds(Object seconds);
-
-  /// No description provided for @fetchRetryTimes.
-  ///
-  /// In en, this message translates to:
-  /// **'{times} retries'**
-  String fetchRetryTimes(int times);
-
   /// No description provided for @dateGenerator.
   ///
   /// In en, this message translates to:
@@ -1074,7 +1086,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Cannot generate {count} unique letters from the available set. Please reduce the count or allow duplicates.'**
-  String latinLetterGenerationError(Object count);
+  String latinLetterGenerationError(int count);
 
   /// No description provided for @saveGenerationHistory.
   ///
@@ -1190,12 +1202,6 @@ abstract class AppLocalizations {
   /// **'Value'**
   String get value;
 
-  /// Cache info with log size
-  ///
-  /// In en, this message translates to:
-  /// **'Cache: {cacheSize} (+{logSize} log)'**
-  String cacheWithLogSize(String cacheSize, String logSize);
-
   /// No description provided for @success.
   ///
   /// In en, this message translates to:
@@ -1219,18 +1225,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unknown'**
   String get unknown;
-
-  /// No description provided for @logsManagement.
-  ///
-  /// In en, this message translates to:
-  /// **'App logs management and storage settings'**
-  String get logsManagement;
-
-  /// No description provided for @statusInfo.
-  ///
-  /// In en, this message translates to:
-  /// **'Status: {info}'**
-  String statusInfo(String info);
 
   /// No description provided for @logsAvailable.
   ///

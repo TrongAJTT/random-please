@@ -295,6 +295,10 @@ class _RandomGeneratorHistoryWidgetState
   late DoubleConfirmHelper _confirmHelper;
   late AppLocalizations loc;
 
+  // Color config
+  static const Color pinnedColor = Colors.orange;
+  static const Color deleteColor = Colors.red;
+
   @override
   void initState() {
     super.initState();
@@ -349,7 +353,7 @@ class _RandomGeneratorHistoryWidgetState
     return [
       IconButtonListItem(
         icon: isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-        color: isPinned ? Colors.orange : null,
+        color: isPinned ? pinnedColor : null,
         onPressed: () => _handlePinTap(index),
         label: isPinned ? loc.unpinHistoryItem : loc.pinHistoryItem,
       ),
@@ -360,7 +364,7 @@ class _RandomGeneratorHistoryWidgetState
       ),
       IconButtonListItem(
         icon: isPendingDelete ? Icons.warning : Icons.delete,
-        color: isPendingDelete ? Colors.red : null,
+        color: isPendingDelete ? deleteColor : null,
         onPressed: () => _handleDeleteTap(index),
         label: isPendingDelete ? loc.confirmDelete : loc.deleteHistoryItem,
       ),
@@ -387,17 +391,23 @@ class _RandomGeneratorHistoryWidgetState
     );
     final visibleCount = width > 480 ? iconButtons.length : 0;
 
-    // Item builder
-    return ListTile(
+    // Item builder - wrapped in Container to prevent background overflow
+    return Container(
+      clipBehavior: Clip.hardEdge,
+      decoration: BoxDecoration(
+        color: isPendingDelete
+            ? deleteColor.withValues(alpha: 0.1)
+            : (isPinned ? pinnedColor.withValues(alpha: 0.1) : null),
+      ),
+      child: ListTile(
         dense: true,
         leading: widget.customHeader?.call(widget.history, index),
-        tileColor: isPendingDelete ? Colors.red.withValues(alpha: 0.1) : null,
         title: Text(
           item.value.toString(),
           style: TextStyle(
             fontFamily: 'monospace',
             fontSize: 14,
-            color: isPendingDelete ? Colors.red : null,
+            color: isPendingDelete ? deleteColor : null,
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -406,14 +416,16 @@ class _RandomGeneratorHistoryWidgetState
           loc.generatedAtTime(formattedTimestamp),
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color:
-                    isPendingDelete ? Colors.red.withValues(alpha: 0.7) : null,
+                    isPendingDelete ? deleteColor.withValues(alpha: 0.7) : null,
               ),
         ),
         trailing: IconButtonList(
           buttons: iconButtons,
           visibleCount: visibleCount,
           spacing: 4,
-        ));
+        ),
+      ),
+    );
   }
 
   Future<void> _showClearAllHistoryDialog(

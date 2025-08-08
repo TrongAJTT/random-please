@@ -312,7 +312,7 @@ class _DesktopContextMenuWidgetState extends State<_DesktopContextMenuWidget> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
                             color: Colors.black26,
                             blurRadius: 8,
@@ -346,7 +346,7 @@ class _DesktopContextMenuWidgetState extends State<_DesktopContextMenuWidget> {
                                             ? Theme.of(context)
                                                 .colorScheme
                                                 .primary
-                                                .withOpacity(0.18)
+                                                .withValues(alpha: .18)
                                             : Theme.of(context).cardColor,
                                         borderRadius: BorderRadius.vertical(
                                           top: Radius.circular(

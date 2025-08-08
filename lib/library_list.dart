@@ -28,9 +28,9 @@ List<Map<String, String>> libraryList = [
     'license': 'MIT',
   },
   {
-    'name': 'markdown_widget',
-    'author': 'asjqkkkk',
-    'license': 'MIT',
+    'name': 'flutter_markdown',
+    'author': 'flutter.dev',
+    'license': 'BSD-3-Clause',
   },
   {
     'name': 'cached_network_image',

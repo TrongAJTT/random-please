@@ -271,17 +271,17 @@ class _HomePageState extends State<HomePage> with WindowListener {
     if (!mounted) return;
 
     try {
-      // Handle security flow
+      // Initialize security manager (no automatic dialog)
       final securityManager = SecurityManager.instance;
-      final success = await securityManager.handleAppLaunch(context, loc);
+      await securityManager.handleAppLaunch(context, loc);
 
       if (mounted) {
         setState(() {
           _isSecurityChecked = true;
         });
 
-        // Show first time setup snackbar if needed after security
-        if (_isFirstTimeSetup && success) {
+        // Show first time setup snackbar if needed
+        if (_isFirstTimeSetup) {
           _showFirstTimeSetupSnackbar();
         }
       }
@@ -337,7 +337,8 @@ class _HomePageState extends State<HomePage> with WindowListener {
     super.dispose();
   }
 
-  Widget _buildActionAppbar(bool isDesktop, int visibleCount) {
+  Widget _buildActionAppbar(
+      {required bool isDesktop, required int visibleCount}) {
     List<IconButtonListItem> buttons = [
       IconButtonListItem(
         icon: Icons.refresh,
@@ -365,7 +366,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
       ),
       if (kIsWeb)
         IconButtonListItem(
-          icon: Icons.download,
+          icon: Icons.download_for_offline,
           label: loc.downloadApp,
           onPressed: () {
             GenericSettingsHelper.showSettings(
@@ -439,7 +440,8 @@ class _HomePageState extends State<HomePage> with WindowListener {
                   width: 40, height: 40, child: Image.asset(imageAssetPath)),
             ),
             actions: [
-              _buildActionAppbar(isDesktop, width > 400 ? 4 : 0),
+              _buildActionAppbar(
+                  isDesktop: isDesktop, visibleCount: width > 500 ? 4 : 0),
               const SizedBox(width: 8),
             ],
           ),
