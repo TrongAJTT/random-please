@@ -980,6 +980,9 @@ class ListPickerGeneratorState {
   @HiveField(5)
   bool isListSelectorCollapsed;
 
+  @HiveField(6)
+  bool isListManagerCollapsed;
+
   ListPickerGeneratorState({
     required this.quantity,
     this.currentList,
@@ -987,6 +990,7 @@ class ListPickerGeneratorState {
     required this.lastUpdated,
     this.mode = ListPickerMode.random,
     this.isListSelectorCollapsed = false,
+    this.isListManagerCollapsed = false,
   });
 
   static ListPickerGeneratorState createDefault() {
@@ -997,6 +1001,7 @@ class ListPickerGeneratorState {
       lastUpdated: DateTime.now(),
       mode: ListPickerMode.random,
       isListSelectorCollapsed: false,
+      isListManagerCollapsed: false,
     );
   }
 
@@ -1008,6 +1013,7 @@ class ListPickerGeneratorState {
       'lastUpdated': lastUpdated.toIso8601String(),
       'mode': mode.name,
       'isListSelectorCollapsed': isListSelectorCollapsed,
+      'isListManagerCollapsed': isListManagerCollapsed,
     };
   }
 
@@ -1028,6 +1034,7 @@ class ListPickerGeneratorState {
         orElse: () => ListPickerMode.random,
       ),
       isListSelectorCollapsed: json['isListSelectorCollapsed'] ?? false,
+      isListManagerCollapsed: json['isListManagerCollapsed'] ?? false,
     );
   }
 }

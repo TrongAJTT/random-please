@@ -553,6 +553,45 @@
   "listNameExists": "A list with this name already exists",
   "teams": "Teams",
   "itemsPerTeam": "Items per team",
+  "addSingleItem": "Add single item",
+  "addMultipleItems": "Add multiple items",
+  "addBatchItems": "Add Multiple Items",
+  "enterItemsOneLine": "Enter items, one per line:",
+  "batchItemsPlaceholder": "Item 1\nItem 2\nItem 3\n...",
+  "previewItems": "Preview: {count} items",
+  "@previewItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addItems": "Add Items",
+  "confirmAddItems": "Confirm Add Items",
+  "confirmAddItemsMessage": "Add {count} items to \"{listName}\"?",
+  "@confirmAddItemsMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "listName": {
+        "type": "String"
+      }
+    }
+  },
+  "addedItemsSuccessfully": "Added {count} items successfully",
+  "@addedItemsSuccessfully": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "enterAtLeastOneItem": "Please enter at least one item",
+  "maximumItemsAllowed": "Maximum 100 items allowed",
+  "itemName": "Item name",
+  "itemNameRequired": "Item name is required",
+  "itemNameTooLong": "Item name is too long (max 30 characters)",
   "deleteList": "Delete List",
   "deleteListConfirm": "Are you sure you want to delete \"{listName}\"? This action cannot be undone.",
   "@deleteListConfirm": {
@@ -564,5 +603,42 @@
   },
   "expand": "Expand",
   "collapse": "Collapse",
-  "viewDetails": "View Details"
+  "viewDetails": "View Details",
+  "renameList": "Rename List",
+  "renameItem": "Rename Item",
+  "renameListDialog": "Rename List",
+  "renameItemDialog": "Rename Item",
+  "enterNewListName": "Enter new list name (max 30 characters)",
+  "enterNewItemName": "Enter new item name (max 30 characters)",
+  "rename": "Rename",
+  "newNameRequired": "New name is required",
+  "newNameTooLong": "New name is too long (max 30 characters)",
+  "template": "Template",
+  "templates": "Templates",
+  "cloudTemplates": "Cloud Templates",
+  "noInternetConnection": "No internet connection",
+  "pleaseConnectAndTryAgain": "Please connect to the internet and try again",
+  "languageCode": "Language",
+  "itemsCount": "{count} items",
+  "@itemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import": "Import",
+  "languageNotMatch": "Language Mismatch",
+  "templateNotDesignedForLanguage": "This template is not designed for your language.\nDo you want to continue?",
+  "fetchingTemplates": "Fetching templates...",
+  "noTemplatesAvailable": "No templates available",
+  "selectTemplate": "Select a template to import",
+  "templateImported": "Template imported successfully",
+  "continueButton": "Continue",
+  "importingTemplate": "Importing template...",
+  "errorImportingTemplate": "Error importing template",
+  "enter": "Enter",
+  "increase": "Increase",
+  "decrease": "Decrease",
+  "range": "Range"
 }

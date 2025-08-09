@@ -12,6 +12,22 @@ class LocalizationUtils {
     return formatter.format(date);
   }
 
+  static String getLanguageNameFromCode(String languageCode) {
+    switch (languageCode) {
+      case 'en':
+        return 'English';
+      case 'vi':
+        return 'Tiếng Việt';
+      // case 'fr':
+      //   return 'Français';
+      // case 'es':
+      //   return 'Español';
+      // Add more cases as needed
+      default:
+        return languageCode; // Return the code if no match found
+    }
+  }
+
   static String formatDateTime(
       {required BuildContext context,
       required DateTime dateTime,

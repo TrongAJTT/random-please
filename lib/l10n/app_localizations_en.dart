@@ -1225,6 +1225,57 @@ class AppLocalizationsEn extends AppLocalizations {
   String get itemsPerTeam => 'Items per team';
 
   @override
+  String get addSingleItem => 'Add single item';
+
+  @override
+  String get addMultipleItems => 'Add multiple items';
+
+  @override
+  String get addBatchItems => 'Add Multiple Items';
+
+  @override
+  String get enterItemsOneLine => 'Enter items, one per line:';
+
+  @override
+  String get batchItemsPlaceholder => 'Item 1\nItem 2\nItem 3\n...';
+
+  @override
+  String previewItems(int count) {
+    return 'Preview: $count items';
+  }
+
+  @override
+  String get addItems => 'Add Items';
+
+  @override
+  String get confirmAddItems => 'Confirm Add Items';
+
+  @override
+  String confirmAddItemsMessage(int count, String listName) {
+    return 'Add $count items to \"$listName\"?';
+  }
+
+  @override
+  String addedItemsSuccessfully(int count) {
+    return 'Added $count items successfully';
+  }
+
+  @override
+  String get enterAtLeastOneItem => 'Please enter at least one item';
+
+  @override
+  String get maximumItemsAllowed => 'Maximum 100 items allowed';
+
+  @override
+  String get itemName => 'Item name';
+
+  @override
+  String get itemNameRequired => 'Item name is required';
+
+  @override
+  String get itemNameTooLong => 'Item name is too long (max 30 characters)';
+
+  @override
   String get deleteList => 'Delete List';
 
   @override
@@ -1240,4 +1291,98 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewDetails => 'View Details';
+
+  @override
+  String get renameList => 'Rename List';
+
+  @override
+  String get renameItem => 'Rename Item';
+
+  @override
+  String get renameListDialog => 'Rename List';
+
+  @override
+  String get renameItemDialog => 'Rename Item';
+
+  @override
+  String get enterNewListName => 'Enter new list name (max 30 characters)';
+
+  @override
+  String get enterNewItemName => 'Enter new item name (max 30 characters)';
+
+  @override
+  String get rename => 'Rename';
+
+  @override
+  String get newNameRequired => 'New name is required';
+
+  @override
+  String get newNameTooLong => 'New name is too long (max 30 characters)';
+
+  @override
+  String get template => 'Template';
+
+  @override
+  String get templates => 'Templates';
+
+  @override
+  String get cloudTemplates => 'Cloud Templates';
+
+  @override
+  String get noInternetConnection => 'No internet connection';
+
+  @override
+  String get pleaseConnectAndTryAgain =>
+      'Please connect to the internet and try again';
+
+  @override
+  String get languageCode => 'Language';
+
+  @override
+  String itemsCount(int count) {
+    return '$count items';
+  }
+
+  @override
+  String get import => 'Import';
+
+  @override
+  String get languageNotMatch => 'Language Mismatch';
+
+  @override
+  String get templateNotDesignedForLanguage =>
+      'This template is not designed for your language.\nDo you want to continue?';
+
+  @override
+  String get fetchingTemplates => 'Fetching templates...';
+
+  @override
+  String get noTemplatesAvailable => 'No templates available';
+
+  @override
+  String get selectTemplate => 'Select a template to import';
+
+  @override
+  String get templateImported => 'Template imported successfully';
+
+  @override
+  String get continueButton => 'Continue';
+
+  @override
+  String get importingTemplate => 'Importing template...';
+
+  @override
+  String get errorImportingTemplate => 'Error importing template';
+
+  @override
+  String get enter => 'Enter';
+
+  @override
+  String get increase => 'Increase';
+
+  @override
+  String get decrease => 'Decrease';
+
+  @override
+  String get range => 'Range';
 }

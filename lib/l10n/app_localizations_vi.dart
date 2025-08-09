@@ -1222,6 +1222,57 @@ class AppLocalizationsVi extends AppLocalizations {
   String get itemsPerTeam => 'Số mục mỗi đội';
 
   @override
+  String get addSingleItem => 'Thêm một mục';
+
+  @override
+  String get addMultipleItems => 'Thêm nhiều mục';
+
+  @override
+  String get addBatchItems => 'Thêm nhiều mục';
+
+  @override
+  String get enterItemsOneLine => 'Nhập các mục, mỗi dòng một mục:';
+
+  @override
+  String get batchItemsPlaceholder => 'Mục 1\nMục 2\nMục 3\n...';
+
+  @override
+  String previewItems(int count) {
+    return 'Xem trước: $count mục';
+  }
+
+  @override
+  String get addItems => 'Thêm mục';
+
+  @override
+  String get confirmAddItems => 'Xác nhận thêm mục';
+
+  @override
+  String confirmAddItemsMessage(int count, String listName) {
+    return 'Thêm $count mục vào \"$listName\"?';
+  }
+
+  @override
+  String addedItemsSuccessfully(int count) {
+    return 'Đã thêm $count mục thành công';
+  }
+
+  @override
+  String get enterAtLeastOneItem => 'Vui lòng nhập ít nhất một mục';
+
+  @override
+  String get maximumItemsAllowed => 'Tối đa 100 mục được phép';
+
+  @override
+  String get itemName => 'Item name';
+
+  @override
+  String get itemNameRequired => 'Item name is required';
+
+  @override
+  String get itemNameTooLong => 'Item name is too long (max 30 characters)';
+
+  @override
   String get deleteList => 'Xóa danh sách';
 
   @override
@@ -1237,4 +1288,97 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get viewDetails => 'Xem chi tiết';
+
+  @override
+  String get renameList => 'Đổi tên danh sách';
+
+  @override
+  String get renameItem => 'Đổi tên mục';
+
+  @override
+  String get renameListDialog => 'Đổi tên danh sách';
+
+  @override
+  String get renameItemDialog => 'Đổi tên mục';
+
+  @override
+  String get enterNewListName => 'Nhập tên danh sách mới (tối đa 30 ký tự)';
+
+  @override
+  String get enterNewItemName => 'Nhập tên mục mới (tối đa 30 ký tự)';
+
+  @override
+  String get rename => 'Đổi tên';
+
+  @override
+  String get newNameRequired => 'Tên mới là bắt buộc';
+
+  @override
+  String get newNameTooLong => 'Tên mới quá dài (tối đa 30 ký tự)';
+
+  @override
+  String get template => 'Mẫu';
+
+  @override
+  String get templates => 'Các mẫu';
+
+  @override
+  String get cloudTemplates => 'Mẫu trên đám mây';
+
+  @override
+  String get noInternetConnection => 'Không có kết nối internet';
+
+  @override
+  String get pleaseConnectAndTryAgain => 'Vui lòng kết nối internet và thử lại';
+
+  @override
+  String get languageCode => 'Ngôn ngữ';
+
+  @override
+  String itemsCount(int count) {
+    return '$count mục';
+  }
+
+  @override
+  String get import => 'Nhập';
+
+  @override
+  String get languageNotMatch => 'Không khớp ngôn ngữ';
+
+  @override
+  String get templateNotDesignedForLanguage =>
+      'Mẫu này không được thiết kế cho ngôn ngữ của bạn.\nBạn có muốn tiếp tục không?';
+
+  @override
+  String get fetchingTemplates => 'Đang lấy các mẫu...';
+
+  @override
+  String get noTemplatesAvailable => 'Không có mẫu nào';
+
+  @override
+  String get selectTemplate => 'Chọn một mẫu để nhập';
+
+  @override
+  String get templateImported => 'Nhập mẫu thành công';
+
+  @override
+  String get continueButton => 'Tiếp tục';
+
+  @override
+  String get importingTemplate => 'Đang nhập mẫu...';
+
+  @override
+  String get errorImportingTemplate => 'Lỗi khi nhập mẫu';
+
+  @override
+  String get enter => 'Nhập';
+
+  @override
+  String get increase => 'Tăng';
+
+  @override
+  String get decrease => 'Giảm';
+
+  @override
+  String get range => 'Phạm vi';
 }

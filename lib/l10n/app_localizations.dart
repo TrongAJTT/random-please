@@ -2378,6 +2378,96 @@ abstract class AppLocalizations {
   /// **'Items per team'**
   String get itemsPerTeam;
 
+  /// No description provided for @addSingleItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add single item'**
+  String get addSingleItem;
+
+  /// No description provided for @addMultipleItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Add multiple items'**
+  String get addMultipleItems;
+
+  /// No description provided for @addBatchItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Multiple Items'**
+  String get addBatchItems;
+
+  /// No description provided for @enterItemsOneLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter items, one per line:'**
+  String get enterItemsOneLine;
+
+  /// No description provided for @batchItemsPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Item 1\nItem 2\nItem 3\n...'**
+  String get batchItemsPlaceholder;
+
+  /// No description provided for @previewItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview: {count} items'**
+  String previewItems(int count);
+
+  /// No description provided for @addItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Items'**
+  String get addItems;
+
+  /// No description provided for @confirmAddItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Add Items'**
+  String get confirmAddItems;
+
+  /// No description provided for @confirmAddItemsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add {count} items to \"{listName}\"?'**
+  String confirmAddItemsMessage(int count, String listName);
+
+  /// No description provided for @addedItemsSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Added {count} items successfully'**
+  String addedItemsSuccessfully(int count);
+
+  /// No description provided for @enterAtLeastOneItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter at least one item'**
+  String get enterAtLeastOneItem;
+
+  /// No description provided for @maximumItemsAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum 100 items allowed'**
+  String get maximumItemsAllowed;
+
+  /// No description provided for @itemName.
+  ///
+  /// In en, this message translates to:
+  /// **'Item name'**
+  String get itemName;
+
+  /// No description provided for @itemNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Item name is required'**
+  String get itemNameRequired;
+
+  /// No description provided for @itemNameTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Item name is too long (max 30 characters)'**
+  String get itemNameTooLong;
+
   /// No description provided for @deleteList.
   ///
   /// In en, this message translates to:
@@ -2407,6 +2497,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View Details'**
   String get viewDetails;
+
+  /// No description provided for @renameList.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename List'**
+  String get renameList;
+
+  /// No description provided for @renameItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename Item'**
+  String get renameItem;
+
+  /// No description provided for @renameListDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename List'**
+  String get renameListDialog;
+
+  /// No description provided for @renameItemDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename Item'**
+  String get renameItemDialog;
+
+  /// No description provided for @enterNewListName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter new list name (max 30 characters)'**
+  String get enterNewListName;
+
+  /// No description provided for @enterNewItemName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter new item name (max 30 characters)'**
+  String get enterNewItemName;
+
+  /// No description provided for @rename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get rename;
+
+  /// No description provided for @newNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'New name is required'**
+  String get newNameRequired;
+
+  /// No description provided for @newNameTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'New name is too long (max 30 characters)'**
+  String get newNameTooLong;
+
+  /// No description provided for @template.
+  ///
+  /// In en, this message translates to:
+  /// **'Template'**
+  String get template;
+
+  /// No description provided for @templates.
+  ///
+  /// In en, this message translates to:
+  /// **'Templates'**
+  String get templates;
+
+  /// No description provided for @cloudTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud Templates'**
+  String get cloudTemplates;
+
+  /// No description provided for @noInternetConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get noInternetConnection;
+
+  /// No description provided for @pleaseConnectAndTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Please connect to the internet and try again'**
+  String get pleaseConnectAndTryAgain;
+
+  /// No description provided for @languageCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageCode;
+
+  /// No description provided for @itemsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items'**
+  String itemsCount(int count);
+
+  /// No description provided for @import.
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get import;
+
+  /// No description provided for @languageNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Language Mismatch'**
+  String get languageNotMatch;
+
+  /// No description provided for @templateNotDesignedForLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'This template is not designed for your language.\nDo you want to continue?'**
+  String get templateNotDesignedForLanguage;
+
+  /// No description provided for @fetchingTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetching templates...'**
+  String get fetchingTemplates;
+
+  /// No description provided for @noTemplatesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No templates available'**
+  String get noTemplatesAvailable;
+
+  /// No description provided for @selectTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a template to import'**
+  String get selectTemplate;
+
+  /// No description provided for @templateImported.
+  ///
+  /// In en, this message translates to:
+  /// **'Template imported successfully'**
+  String get templateImported;
+
+  /// No description provided for @continueButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueButton;
+
+  /// No description provided for @importingTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Importing template...'**
+  String get importingTemplate;
+
+  /// No description provided for @errorImportingTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Error importing template'**
+  String get errorImportingTemplate;
+
+  /// No description provided for @enter.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter'**
+  String get enter;
+
+  /// No description provided for @increase.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase'**
+  String get increase;
+
+  /// No description provided for @decrease.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease'**
+  String get decrease;
+
+  /// No description provided for @range.
+  ///
+  /// In en, this message translates to:
+  /// **'Range'**
+  String get range;
 }
 
 class _AppLocalizationsDelegate

@@ -520,6 +520,42 @@
   "listNameExists": "Đã tồn tại danh sách với tên này",
   "teams": "Đội",
   "itemsPerTeam": "Số mục mỗi đội",
+  "addSingleItem": "Thêm một mục",
+  "addMultipleItems": "Thêm nhiều mục",
+  "addBatchItems": "Thêm nhiều mục",
+  "enterItemsOneLine": "Nhập các mục, mỗi dòng một mục:",
+  "batchItemsPlaceholder": "Mục 1\nMục 2\nMục 3\n...",
+  "previewItems": "Xem trước: {count} mục",
+  "@previewItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addItems": "Thêm mục",
+  "confirmAddItems": "Xác nhận thêm mục",
+  "confirmAddItemsMessage": "Thêm {count} mục vào \"{listName}\"?",
+  "@confirmAddItemsMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "listName": {
+        "type": "String"
+      }
+    }
+  },
+  "addedItemsSuccessfully": "Đã thêm {count} mục thành công",
+  "@addedItemsSuccessfully": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "enterAtLeastOneItem": "Vui lòng nhập ít nhất một mục",
+  "maximumItemsAllowed": "Tối đa 100 mục được phép",
   "deleteList": "Xóa danh sách",
   "deleteListConfirm": "Bạn có chắc chắn muốn xóa \"{listName}\"? Hành động này không thể hoàn tác.",
   "@deleteListConfirm": {
@@ -531,5 +567,42 @@
   },
   "expand": "Mở rộng",
   "collapse": "Thu gọn",
-  "viewDetails": "Xem chi tiết"
+  "viewDetails": "Xem chi tiết",
+  "renameList": "Đổi tên danh sách",
+  "renameItem": "Đổi tên mục",
+  "renameListDialog": "Đổi tên danh sách",
+  "renameItemDialog": "Đổi tên mục",
+  "enterNewListName": "Nhập tên danh sách mới (tối đa 30 ký tự)",
+  "enterNewItemName": "Nhập tên mục mới (tối đa 30 ký tự)",
+  "rename": "Đổi tên",
+  "newNameRequired": "Tên mới là bắt buộc",
+  "newNameTooLong": "Tên mới quá dài (tối đa 30 ký tự)",
+  "template": "Mẫu",
+  "templates": "Các mẫu",
+  "cloudTemplates": "Mẫu trên đám mây",
+  "noInternetConnection": "Không có kết nối internet",
+  "pleaseConnectAndTryAgain": "Vui lòng kết nối internet và thử lại",
+  "languageCode": "Ngôn ngữ",
+  "itemsCount": "{count} mục",
+  "@itemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import": "Nhập",
+  "languageNotMatch": "Không khớp ngôn ngữ",
+  "templateNotDesignedForLanguage": "Mẫu này không được thiết kế cho ngôn ngữ của bạn.\nBạn có muốn tiếp tục không?",
+  "fetchingTemplates": "Đang lấy các mẫu...",
+  "noTemplatesAvailable": "Không có mẫu nào",
+  "selectTemplate": "Chọn một mẫu để nhập",
+  "templateImported": "Nhập mẫu thành công",
+  "continueButton": "Tiếp tục",
+  "importingTemplate": "Đang nhập mẫu...",
+  "errorImportingTemplate": "Lỗi khi nhập mẫu",
+  "enter": "Nhập",
+  "increase": "Tăng",
+  "decrease": "Giảm",
+  "range": "Phạm vi"
 }

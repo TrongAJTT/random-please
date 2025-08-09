@@ -204,4 +204,9 @@ List<Map<String, String>> libraryList = [
     'author': 'Zhiguang Chen',
     'license': 'MIT',
   },
+  {
+    'name': 'connectivity_plus',
+    'author': 'Flutter Community',
+    'license': 'BSD-3-Clause',
+  }
 ];

@@ -22,6 +22,9 @@ const String authorProductsEndpoint =
 const String authorAvatarEndpoint =
     'https://avatars.githubusercontent.com/u/157729907?v=4';
 
+const String authorCloudListEndpoint =
+    'https://raw.githubusercontent.com/TrongAJTT/TrongAJTT/refs/heads/main/random-please/CloudList.json';
+
 const String userAgent = "Random-Please-App";
 const String imageAssetPath = "assets/app_icon.png";
 
