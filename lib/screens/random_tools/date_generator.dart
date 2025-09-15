@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:random_please/l10n/app_localizations.dart';
-import 'package:random_please/models/random_generator.dart';
+import 'package:random_please/view_models/date_generator_view_model.dart';
 import 'package:random_please/services/generation_history_service.dart';
-import 'package:random_please/models/random_models/random_state_models.dart';
-import 'package:random_please/services/random_services/random_state_service.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/size_utils.dart';
@@ -25,127 +23,79 @@ class DateGeneratorScreen extends StatefulWidget {
 }
 
 class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
-  DateTime _startDate = DateTime.now().subtract(const Duration(days: 365));
-  DateTime _endDate = DateTime.now().add(const Duration(days: 365));
-  int _dateCount = 5;
-  bool _allowDuplicates = true;
-  List<DateTime> _generatedDates = [];
+  late DateGeneratorViewModel _viewModel;
   bool _copied = false;
-  List<GenerationHistoryItem> _history = [];
-  bool _historyEnabled = false;
-  final _dateFormat = DateFormat('yyyy-MM-dd');
 
   late AppLocalizations loc;
-
-  static const String _historyType = 'date';
 
   @override
   void initState() {
     super.initState();
-    _loadState();
-    _loadHistory();
+    _viewModel = DateGeneratorViewModel();
+    _initializeViewModel();
   }
 
-  Future<void> _loadState() async {
-    try {
-      final state = await RandomStateService.getDateGeneratorState();
-      if (mounted) {
-        setState(() {
-          _startDate = state.startDate;
-          _endDate = state.endDate;
-          _dateCount = state.dateCount;
-          _allowDuplicates = state.allowDuplicates;
-        });
-      }
-    } catch (e) {
-      // Error is already logged in service
+  Future<void> _initializeViewModel() async {
+    await _viewModel.initHive();
+    await _viewModel.loadHistory();
+
+    // Listen to state changes
+    _viewModel.addListener(_onViewModelChanged);
+
+    // Update UI after initialization
+    if (mounted) {
+      setState(() {});
     }
   }
 
-  Future<void> _saveState() async {
-    try {
-      final state = DateGeneratorState(
-        startDate: _startDate,
-        endDate: _endDate,
-        dateCount: _dateCount,
-        allowDuplicates: _allowDuplicates,
-        lastUpdated: DateTime.now(),
-      );
-      await RandomStateService.saveDateGeneratorState(state);
-    } catch (e) {
-      // Error is already logged in service
-    }
-  }
-
-  Future<void> _loadHistory() async {
-    final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory('date');
-    setState(() {
-      _historyEnabled = enabled;
-      _history = history;
-    });
-  }
-
-  void _generateDates() {
-    try {
-      if (_startDate.isAfter(_endDate)) {
-        SnackBarUtils.showTyped(
-            context, loc.dateErrStartEndConflict, SnackBarType.error);
-        return;
-      }
-
+  void _onViewModelChanged() {
+    if (mounted) {
       setState(() {
-        _generatedDates = RandomGenerator.generateRandomDates(
-          startDate: _startDate,
-          endDate: _endDate,
-          count: _dateCount,
-          allowDuplicates: _allowDuplicates,
-        );
         _copied = false;
       });
+    }
+  }
 
-      // Save state when generating
-      _saveState();
+  @override
+  void dispose() {
+    _viewModel.removeListener(_onViewModelChanged);
+    _viewModel.dispose();
+    super.dispose();
+  }
 
-      // Save to history if enabled
-      if (_historyEnabled && _generatedDates.isNotEmpty) {
-        final datesText =
-            _generatedDates.map((date) => _dateFormat.format(date)).join(', ');
-        GenerationHistoryService.addHistoryItem(
-          datesText,
-          _historyType,
-        ).then((_) => _loadHistory()); // Refresh history
-      }
+  void _generateDates() async {
+    try {
+      await _viewModel.generateDates();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        SnackBarUtils.showTyped(context, e.toString(), SnackBarType.error);
+      }
     }
   }
 
   void _copyToClipboard() {
-    final formatter = DateFormat('yyyy-MM-dd');
-    String datesText = _generatedDates.map((date) {
-      return formatter.format(date);
-    }).join('\n');
+    if (_viewModel.results.isNotEmpty) {
+      String datesText = _viewModel.results.join('\n');
 
-    Clipboard.setData(ClipboardData(text: datesText));
-    setState(() {
-      _copied = true;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-    );
+      Clipboard.setData(ClipboardData(text: datesText));
+      setState(() {
+        _copied = true;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
+        );
+      }
+    }
   }
 
   void _copyHistoryItem(String value) {
     Clipboard.setData(ClipboardData(text: value));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
+      );
+    }
   }
 
   Widget _buildDateSelector(String label, DateTime date, VoidCallback onTap) {
@@ -189,42 +139,37 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
   Widget _buildDateSelectors(AppLocalizations loc) {
     final startDateSelector = _buildDateSelector(
       loc.startDate,
-      _startDate,
+      _viewModel.state.startDate,
       () async {
         final date = await showDatePicker(
           context: context,
-          initialDate: _startDate,
+          initialDate: _viewModel.state.startDate,
           firstDate: DateTime(1900),
           lastDate: DateTime(2100),
         );
         if (date != null) {
-          setState(() {
-            _startDate = date;
-            // Ensure start date is before end date
-            if (_startDate.isAfter(_endDate)) {
-              _endDate = _startDate.add(const Duration(days: 1));
-            }
-          });
-          // Don't save state immediately, only save when generating
+          _viewModel.updateStartDate(date);
+          // Auto-adjust end date if needed
+          if (_viewModel.state.startDate.isAfter(_viewModel.state.endDate)) {
+            _viewModel.updateEndDate(
+                _viewModel.state.startDate.add(const Duration(days: 1)));
+          }
         }
       },
     );
 
     final endDateSelector = _buildDateSelector(
       loc.endDate,
-      _endDate,
+      _viewModel.state.endDate,
       () async {
         final date = await showDatePicker(
           context: context,
-          initialDate: _endDate,
-          firstDate: _startDate,
+          initialDate: _viewModel.state.endDate,
+          firstDate: _viewModel.state.startDate,
           lastDate: DateTime(2100),
         );
         if (date != null) {
-          setState(() {
-            _endDate = date;
-          });
-          // Don't save state immediately, only save when generating
+          _viewModel.updateEndDate(date);
         }
       },
     );
@@ -238,30 +183,34 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return RandomGeneratorHistoryWidget(
-      historyType: _historyType,
-      history: _history,
+      historyType: DateGeneratorViewModel.historyType,
+      history: _viewModel.historyItems,
       title: loc.generationHistory,
       onClearAllHistory: () async {
-        await GenerationHistoryService.clearHistory(_historyType);
-        await _loadHistory();
+        await GenerationHistoryService.clearHistory(
+            DateGeneratorViewModel.historyType);
+        await _viewModel.loadHistory();
       },
       onClearPinnedHistory: () async {
-        await GenerationHistoryService.clearPinnedHistory(_historyType);
-        await _loadHistory();
+        await GenerationHistoryService.clearPinnedHistory(
+            DateGeneratorViewModel.historyType);
+        await _viewModel.loadHistory();
       },
       onClearUnpinnedHistory: () async {
-        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
-        await _loadHistory();
+        await GenerationHistoryService.clearUnpinnedHistory(
+            DateGeneratorViewModel.historyType);
+        await _viewModel.loadHistory();
       },
       onCopyItem: _copyHistoryItem,
       onDeleteItem: (index) async {
-        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
-        await _loadHistory();
+        await GenerationHistoryService.deleteHistoryItem(
+            DateGeneratorViewModel.historyType, index);
+        await _viewModel.loadHistory();
       },
       onTogglePin: (index) async {
         await GenerationHistoryService.togglePinHistoryItem(
-            _historyType, index);
-        await _loadHistory();
+            DateGeneratorViewModel.historyType, index);
+        await _viewModel.loadHistory();
       },
       onTapItem: (item) {
         HistoryViewDialog.show(
@@ -275,32 +224,27 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final dateFormat = DateFormat('yyyy-MM-dd');
 
     final numberSlider = OptionSlider<int>(
       label: loc.dateCount,
-      currentValue: _dateCount,
+      currentValue: _viewModel.state.dateCount,
       options: List.generate(
         10,
         (i) => SliderOption(value: i + 1, label: '${i + 1}'),
       ),
+      fixedWidth: 60,
       onChanged: (value) {
-        setState(() {
-          _dateCount = value;
-        });
-        // Don't save state immediately, only save when generating
+        _viewModel.updateDateCount(value);
       },
       layout: OptionSliderLayout.none,
     );
 
     final duplicatesSwitch = OptionSwitch(
       title: loc.allowDuplicates,
-      value: _allowDuplicates,
+      subtitle: loc.allowDuplicatesDesc,
+      value: _viewModel.state.allowDuplicates,
       onChanged: (value) {
-        setState(() {
-          _allowDuplicates = value;
-        });
-        // Don't save state immediately, only save when generating
+        _viewModel.updateAllowDuplicates(value);
       },
       decorator: OptionSwitchDecorator.compact(context),
     );
@@ -344,7 +288,7 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
         const SizedBox(height: 24),
 
         // Results
-        if (_generatedDates.isNotEmpty) ...[
+        if (_viewModel.results.isNotEmpty) ...[
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -355,7 +299,7 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        loc.randomResult,
+                        loc.results,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       IconButton(
@@ -368,8 +312,7 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
                   const SizedBox(height: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _generatedDates.map((date) {
-                      final formattedDate = dateFormat.format(date);
+                    children: _viewModel.results.map((dateStr) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Container(
@@ -384,7 +327,7 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  formattedDate,
+                                  dateStr,
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleMedium
@@ -400,7 +343,7 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
                                 icon: const Icon(Icons.copy, size: 18),
                                 onPressed: () {
                                   Clipboard.setData(
-                                      ClipboardData(text: formattedDate));
+                                      ClipboardData(text: dateStr));
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(content: Text(loc.copied)),
                                   );
@@ -429,8 +372,8 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _historyEnabled,
-      hasHistory: _historyEnabled,
+      historyEnabled: _viewModel.historyEnabled,
+      hasHistory: _viewModel.historyEnabled,
       isEmbedded: widget.isEmbedded,
       title: loc.dateGenerator,
     );

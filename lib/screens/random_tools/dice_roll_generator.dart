@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:random_please/l10n/app_localizations.dart';
-import 'package:random_please/models/random_generator.dart';
-import 'package:random_please/services/generation_history_service.dart';
-import 'package:random_please/models/random_models/random_state_models.dart';
-import 'package:random_please/services/random_services/random_state_service.dart';
+import 'package:random_please/view_models/dice_roll_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
@@ -23,16 +20,10 @@ class DiceRollGeneratorScreen extends StatefulWidget {
 
 class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
     with TickerProviderStateMixin {
-  int _diceCount = 2;
-  int _diceSides = 6;
-  List<int> _results = [];
+  late DiceRollGeneratorViewModel _viewModel;
   late AnimationController _rollController;
   late Animation<double> _rollAnimation;
   late AppLocalizations loc;
-  List<GenerationHistoryItem> _history = [];
-  bool _historyEnabled = false;
-
-  static const String _historyType = 'dice_roll';
 
   final List<int> _availableSides = [
     3,
@@ -56,6 +47,7 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
   @override
   void initState() {
     super.initState();
+    _viewModel = DiceRollGeneratorViewModel();
     _rollController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
@@ -64,8 +56,18 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
       parent: _rollController,
       curve: Curves.easeOutBack,
     );
-    _loadState();
-    _loadHistory();
+    _viewModel.addListener(_onViewModelChanged);
+    _initData();
+  }
+
+  void _onViewModelChanged() {
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _initData() async {
+    await _viewModel.initHive();
+    await _viewModel.loadHistory();
+    setState(() {});
   }
 
   @override
@@ -74,45 +76,11 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
     loc = AppLocalizations.of(context)!;
   }
 
-  Future<void> _loadState() async {
-    try {
-      final state = await RandomStateService.getDiceRollGeneratorState();
-      if (mounted) {
-        setState(() {
-          _diceCount = state.diceCount;
-          _diceSides = state.diceSides;
-        });
-      }
-    } catch (e) {
-      // Error is already logged in service
-    }
-  }
-
-  Future<void> _saveState() async {
-    try {
-      final state = DiceRollGeneratorState(
-        diceCount: _diceCount,
-        diceSides: _diceSides,
-        lastUpdated: DateTime.now(),
-      );
-      await RandomStateService.saveDiceRollGeneratorState(state);
-    } catch (e) {
-      // Error is already logged in service
-    }
-  }
-
-  Future<void> _loadHistory() async {
-    final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory(_historyType);
-    setState(() {
-      _historyEnabled = enabled;
-      _history = history;
-    });
-  }
-
   @override
   void dispose() {
     _rollController.dispose();
+    _viewModel.removeListener(_onViewModelChanged);
+    _viewModel.dispose();
     super.dispose();
   }
 
@@ -120,26 +88,8 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
     _rollController.reset();
     _rollController.forward();
 
-    setState(() {
-      _results = RandomGenerator.generateDiceRolls(
-        count: _diceCount,
-        sides: _diceSides,
-      );
-    });
-
-    // Save state when generating
-    _saveState();
-
-    // Save to history if enabled
-    if (_historyEnabled && _results.isNotEmpty) {
-      String resultText = _results.length == 1
-          ? 'd$_diceSides: ${_results[0]}'
-          : '${_results.length}d$_diceSides: ${_results.join(", ")} (${loc.totalANumber(_getTotal())})';
-      GenerationHistoryService.addHistoryItem(
-        resultText,
-        _historyType,
-      ).then((_) => _loadHistory());
-    }
+    _viewModel.rollDice();
+    setState(() {});
   }
 
   void _copyHistoryItem(String value) {
@@ -151,30 +101,24 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return RandomGeneratorHistoryWidget(
-      historyType: _historyType,
-      history: _history,
+      historyType: DiceRollGeneratorViewModel.historyType,
+      history: _viewModel.historyItems,
       title: loc.generationHistory,
       onClearAllHistory: () async {
-        await GenerationHistoryService.clearHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearAllHistory();
       },
       onClearPinnedHistory: () async {
-        await GenerationHistoryService.clearPinnedHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearPinnedHistory();
       },
       onClearUnpinnedHistory: () async {
-        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearUnpinnedHistory();
       },
       onCopyItem: _copyHistoryItem,
       onDeleteItem: (index) async {
-        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
-        await _loadHistory();
+        await _viewModel.deleteHistoryItem(index);
       },
       onTogglePin: (index) async {
-        await GenerationHistoryService.togglePinHistoryItem(
-            _historyType, index);
-        await _loadHistory();
+        await _viewModel.togglePinHistoryItem(index);
       },
       onTapItem: (item) {
         HistoryViewDialog.show(
@@ -186,7 +130,7 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
   }
 
   int _getTotal() {
-    return _results.fold(0, (sum, value) => sum + value);
+    return _viewModel.results.fold(0, (sum, value) => sum + value);
   }
 
   @override
@@ -205,16 +149,16 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
                 // Dice count selector
                 OptionSlider<int>(
                   label: loc.diceCount,
-                  currentValue: _diceCount,
+                  currentValue: _viewModel.state.diceCount,
                   options: List.generate(
                     20,
                     (i) => SliderOption(value: i + 1, label: '${i + 1}'),
                   ),
                   onChanged: (value) {
-                    setState(() {
-                      _diceCount = value;
-                    });
+                    _viewModel.updateDiceCount(value);
+                    setState(() {});
                   },
+                  fixedWidth: 60,
                   layout: OptionSliderLayout.none,
                 ),
                 // Dice sides selector
@@ -230,12 +174,11 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
                   children: _availableSides.map((sides) {
                     return ChoiceChip(
                       label: Text('d$sides'),
-                      selected: _diceSides == sides,
+                      selected: _viewModel.state.diceSides == sides,
                       onSelected: (selected) {
                         if (selected) {
-                          setState(() {
-                            _diceSides = sides;
-                          });
+                          _viewModel.updateDiceSides(sides);
+                          setState(() {});
                         }
                       },
                     );
@@ -260,7 +203,7 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
             ),
           ),
         ),
-        if (_results.isNotEmpty) ...[
+        if (_viewModel.results.isNotEmpty) ...[
           const SizedBox(height: 24),
           Card(
             child: AnimatedBuilder(
@@ -287,7 +230,7 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
                       spacing: 12,
                       runSpacing: 12,
                       alignment: WrapAlignment.center,
-                      children: _results.map((result) {
+                      children: _viewModel.results.map((result) {
                         return _buildDie(result);
                       }).toList(),
                     ),
@@ -325,8 +268,8 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _historyEnabled,
-      hasHistory: _historyEnabled,
+      historyEnabled: _viewModel.historyEnabled,
+      hasHistory: _viewModel.historyEnabled,
       isEmbedded: widget.isEmbedded,
       title: loc.rollDice,
     );
@@ -334,7 +277,7 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
 
   Widget _buildDie(int value) {
     // For d6, show actual dice face
-    if (_diceSides == 6) {
+    if (_viewModel.state.diceSides == 6) {
       return Container(
         width: 60,
         height: 60,
@@ -444,7 +387,7 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
 
   Widget _buildDieShape() {
     // Different polygons for different die types
-    switch (_diceSides) {
+    switch (_viewModel.state.diceSides) {
       case 3: // d3 - triangle
         return _buildPolygon(3, Colors.green);
       case 4: // d4 - tetrahedron (triangle)

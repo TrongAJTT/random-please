@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:random_please/l10n/app_localizations.dart';
-import 'package:random_please/models/random_generator.dart';
-import 'package:random_please/services/generation_history_service.dart';
-import 'package:random_please/models/random_models/random_state_models.dart';
-import 'package:random_please/services/random_services/random_state_service.dart';
+import 'package:random_please/view_models/yes_no_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
@@ -20,132 +17,84 @@ class YesNoGeneratorScreen extends StatefulWidget {
 
 class _YesNoGeneratorScreenState extends State<YesNoGeneratorScreen>
     with SingleTickerProviderStateMixin {
-  String _result = '';
-  bool _skipAnimation = false;
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  List<GenerationHistoryItem> _history = [];
-  bool _historyEnabled = false;
-
-  static const String _historyType = 'yes_no';
+  late YesNoGeneratorViewModel _viewModel;
+  late AnimationController _bounceController;
+  late Animation<double> _bounceAnimation;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    _viewModel = YesNoGeneratorViewModel();
+    _bounceController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 1.2),
-        weight: 1,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.2, end: 1.0),
-        weight: 1,
-      ),
-    ]).animate(_controller);
-    _loadState();
-    _loadHistory();
+    _bounceAnimation = CurvedAnimation(
+      parent: _bounceController,
+      curve: Curves.elasticOut,
+    );
+    _initData();
   }
 
-  Future<void> _loadState() async {
-    try {
-      final state = await RandomStateService.getYesNoGeneratorState();
-      if (mounted) {
-        setState(() {
-          _skipAnimation = state.skipAnimation;
-        });
-      }
-    } catch (e) {
-      // Error is already logged in service
-    }
-  }
-
-  Future<void> _saveState() async {
-    try {
-      final state = SimpleGeneratorState(
-        skipAnimation: _skipAnimation,
-        lastUpdated: DateTime.now(),
-      );
-      await RandomStateService.saveYesNoGeneratorState(state);
-    } catch (e) {
-      // Error is already logged in service
-    }
-  }
-
-  Future<void> _loadHistory() async {
-    final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory(_historyType);
-    setState(() {
-      _historyEnabled = enabled;
-      _history = history;
-    });
+  Future<void> _initData() async {
+    await _viewModel.initHive();
+    await _viewModel.loadHistory();
+    setState(() {});
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _bounceController.dispose();
+    _viewModel.dispose();
     super.dispose();
   }
 
-  void _generateResult() async {
-    setState(() {
-      _result = RandomGenerator.generateYesNo() ? 'YES' : 'NO';
-    });
-
-    if (!_skipAnimation) {
-      _controller.reset();
-      _controller.forward();
+  Future<void> _generateAnswer() async {
+    if (!_viewModel.state.skipAnimation) {
+      _bounceController.reset();
+      _bounceController.forward();
     }
 
-    // Save state when generating
-    await _saveState();
-
-    // Save to history if enabled
-    if (_historyEnabled && _result.isNotEmpty) {
-      await GenerationHistoryService.addHistoryItem(
-        _result,
-        _historyType,
-      );
-      await _loadHistory(); // Refresh history
-    }
+    await _viewModel.generateAnswer();
+    setState(() {});
   }
 
-  void _copyHistoryItem(String value) {
-    Clipboard.setData(ClipboardData(text: value));
+  void _copyToClipboard() {
+    if (_viewModel.result == null) return;
+
+    final loc = AppLocalizations.of(context)!;
+    final text = _viewModel.result! ? loc.yes : loc.no;
+    Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
+      SnackBar(content: Text(loc.copied)),
     );
   }
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return RandomGeneratorHistoryWidget(
-      historyType: _historyType,
-      history: _history,
+      historyType: 'yes_no',
+      history: _viewModel.historyItems,
       title: loc.generationHistory,
       onClearAllHistory: () async {
-        await GenerationHistoryService.clearHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearAllHistory();
       },
       onClearPinnedHistory: () async {
-        await GenerationHistoryService.clearPinnedHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearPinnedHistory();
       },
       onClearUnpinnedHistory: () async {
-        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearUnpinnedHistory();
       },
-      onCopyItem: _copyHistoryItem,
+      onCopyItem: (value) {
+        Clipboard.setData(ClipboardData(text: value));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(loc.copied)),
+        );
+      },
       onDeleteItem: (index) async {
-        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
-        await _loadHistory();
+        await _viewModel.deleteHistoryItem(index);
       },
       onTogglePin: (index) async {
-        await GenerationHistoryService.togglePinHistoryItem(
-            _historyType, index);
-        await _loadHistory();
+        await _viewModel.togglePinHistoryItem(index);
       },
       onTapItem: (item) {
         HistoryViewDialog.show(
@@ -161,92 +110,36 @@ class _YesNoGeneratorScreenState extends State<YesNoGeneratorScreen>
     final loc = AppLocalizations.of(context)!;
 
     final generatorContent = Column(
-      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Skip animation option
+        // Settings card
         Card(
-          child: OptionSwitch(
-            title: loc.skipAnimation,
-            subtitle: loc.skipAnimationDesc,
-            value: _skipAnimation,
-            onChanged: (value) {
-              setState(() {
-                _skipAnimation = value;
-              });
-            },
-            decorator: OptionSwitchDecorator.compact(context).copyWith(
-              padding: const EdgeInsets.all(16),
-            ),
-          ),
-        ),
-
-        const SizedBox(height: 24),
-
-        // Result display
-        Flexible(
-          child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (_result.isNotEmpty)
-                  AnimatedBuilder(
-                    animation: _skipAnimation
-                        ? const AlwaysStoppedAnimation(1.0)
-                        : _scaleAnimation,
-                    builder: (context, child) {
-                      return Transform.scale(
-                        scale: _skipAnimation ? 1.0 : _scaleAnimation.value,
-                        child: Container(
-                          width: 200,
-                          height: 200,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _result == 'YES'
-                                ? Colors.green.withValues(alpha: 0.8)
-                                : Colors.red.withValues(alpha: 0.8),
-                          ),
-                          child: Center(
-                            child: Text(
-                              _result,
-                              style: const TextStyle(
-                                fontSize: 36,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  )
-                else
-                  Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.grey.withValues(alpha: 0.3),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '?',
-                        style: TextStyle(
-                          fontSize: 80,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ),
-                  ),
-                const SizedBox(height: 48),
+                // Skip animation switch
+                OptionSwitch(
+                  title: loc.skipAnimation,
+                  subtitle: loc.skipAnimationDesc,
+                  value: _viewModel.state.skipAnimation,
+                  onChanged: (value) {
+                    _viewModel.updateSkipAnimation(value);
+                    setState(() {});
+                  },
+                  decorator: OptionSwitchDecorator.compact(context),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Generate button
                 SizedBox(
-                  width: 200,
-                  height: 50,
+                  width: double.infinity,
                   child: FilledButton.icon(
-                    onPressed: _generateResult,
+                    onPressed: _generateAnswer,
                     icon: const Icon(Icons.help_outline),
-                    label: Text(loc.randomResult),
+                    label: Text(loc.generate),
                     style: FilledButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -258,14 +151,137 @@ class _YesNoGeneratorScreenState extends State<YesNoGeneratorScreen>
             ),
           ),
         ),
+
+        // Results card
+        if (_viewModel.result != null) ...[
+          const SizedBox(height: 24),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Header
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.help_outline,
+                          color: Colors.blue.shade700,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              loc.randomResult,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              loc.yesNoDesc,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.green.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.copy,
+                            color: Colors.green,
+                          ),
+                          onPressed: _copyToClipboard,
+                          tooltip: loc.copyToClipboard,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Answer display
+                  Center(
+                    child: ScaleTransition(
+                      scale: _viewModel.state.skipAnimation
+                          ? const AlwaysStoppedAnimation(1.0)
+                          : _bounceAnimation,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 20,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: _viewModel.result!
+                                ? [Colors.green.shade400, Colors.green.shade600]
+                                : [Colors.red.shade400, Colors.red.shade600],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: (_viewModel.result!
+                                      ? Colors.green
+                                      : Colors.red)
+                                  .withValues(alpha: 0.3),
+                              blurRadius: 12,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          _viewModel.result! ? loc.yes : loc.no,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ],
     );
 
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _historyEnabled,
-      hasHistory: _historyEnabled,
+      historyEnabled: _viewModel.historyEnabled,
+      hasHistory: _viewModel.historyEnabled,
       isEmbedded: widget.isEmbedded,
       title: loc.yesNo,
     );

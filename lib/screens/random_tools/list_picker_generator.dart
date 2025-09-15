@@ -12,6 +12,7 @@ import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/view_models/list_picker_view_model.dart';
 import 'package:random_please/services/cloud_template_service.dart';
+import 'package:random_please/widgets/holdable_button.dart';
 
 class ListPickerGeneratorScreen extends StatefulWidget {
   final bool isEmbedded;
@@ -182,6 +183,7 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
 
   Future<void> _showAddBatchDialog() async {
     final loc = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     bool dialogShouldContinue = true;
 
     while (dialogShouldContinue) {
@@ -243,7 +245,7 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
                         .where((line) => line.trim().isNotEmpty)
                         .length),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: colorScheme.onSurfaceVariant,
                         ),
                   ),
                 ],
@@ -566,6 +568,7 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
 
   Widget _buildListSelector() {
     final loc = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
       child: Padding(
@@ -640,7 +643,7 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
                 Text(
                   AppLocalizations.of(context)!.noListsAvailable,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                 )
               else
@@ -1227,6 +1230,7 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
   Widget _buildGeneratorOptions() {
     final loc = AppLocalizations.of(context)!;
     final maxItems = _viewModel.state.currentList?.items.length ?? 0;
+    final colorScheme = Theme.of(context).colorScheme;
 
     // Handle edge case when no items
     if (maxItems == 0) {
@@ -1246,7 +1250,7 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
                 Text(
                   loc.selectOrCreateList,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                 ),
               ],
@@ -1306,7 +1310,8 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
             const SizedBox(height: 8),
             SizedBox(
               width: double.infinity,
-              child: Row(
+              child: Wrap(
+                spacing: 8,
                 children: List.generate(3, (i) {
                   final mode = ListPickerMode.values[i];
                   final isSelected = _viewModel.state.mode == mode;
@@ -1324,44 +1329,21 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
                       : mode == ListPickerMode.shuffle
                           ? loc.modeShuffleDesc
                           : loc.modeTeamDesc;
-                  final button = Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 2),
-                    child: Tooltip(
-                      message: tooltip,
-                      child: ElevatedButton(
-                        onPressed: enabled
-                            ? () {
+                  return Tooltip(
+                    message: tooltip,
+                    child: ChoiceChip(
+                      label: Text(label),
+                      selected: isSelected,
+                      onSelected: enabled
+                          ? (selected) {
+                              if (selected) {
                                 _viewModel.updateMode(mode);
                                 setState(() {});
                               }
-                            : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isSelected
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.surface,
-                          foregroundColor: isSelected
-                              ? Theme.of(context).colorScheme.onPrimary
-                              : Theme.of(context).colorScheme.onSurface,
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(8)),
-                            side: !isSelected
-                                ? BorderSide(
-                                    width: 1,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  )
-                                : BorderSide.none,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
-                          elevation: 0,
-                        ),
-                        child: Text(label),
-                      ),
+                            }
+                          : null,
                     ),
                   );
-                  return isSelected ? Expanded(child: button) : button;
                 }),
               ),
             ),
@@ -1397,7 +1379,7 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
                 child: Text(
                   loc.selectOrCreateList,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                   textAlign: TextAlign.center,
                 ),
@@ -1578,6 +1560,8 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
 
   Widget _buildQuantityTextInput(AppLocalizations loc, int minQuantity,
       int maxQuantity, int currentQuantity) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     // Initialize controller with current value if not already set
     if (_quantityController.text.isEmpty ||
         int.tryParse(_quantityController.text) != currentQuantity) {
@@ -1590,9 +1574,13 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 8),
         Text(
           label,
-          style: Theme.of(context).textTheme.labelMedium,
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium
+              ?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
         Row(
@@ -1633,33 +1621,48 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
               ),
             ),
             const SizedBox(width: 8),
-            Column(
-              children: [
-                IconButton(
-                  onPressed: currentQuantity < maxQuantity
-                      ? () {
-                          final newValue = currentQuantity + 1;
-                          _quantityController.text = newValue.toString();
-                          _viewModel.updateQuantity(newValue);
-                          setState(() {});
-                        }
-                      : null,
-                  icon: const Icon(Icons.add),
-                  tooltip: loc.increase,
+            HoldableButton(
+              tooltip: loc.increase,
+              enabled: currentQuantity < maxQuantity,
+              onTap: () {
+                final newValue = currentQuantity + 1;
+                _quantityController.text = newValue.toString();
+                _viewModel.updateQuantity(newValue);
+                setState(() {});
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colorScheme.primary,
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                IconButton(
-                  onPressed: currentQuantity > minQuantity
-                      ? () {
-                          final newValue = currentQuantity - 1;
-                          _quantityController.text = newValue.toString();
-                          _viewModel.updateQuantity(newValue);
-                          setState(() {});
-                        }
-                      : null,
-                  icon: const Icon(Icons.remove),
-                  tooltip: loc.decrease,
+                child: Icon(
+                  Icons.add,
+                  color: colorScheme.onPrimary,
+                  size: 40,
                 ),
-              ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            HoldableButton(
+              tooltip: loc.decrease,
+              enabled: currentQuantity > minQuantity,
+              onTap: () {
+                final newValue = currentQuantity - 1;
+                _quantityController.text = newValue.toString();
+                _viewModel.updateQuantity(newValue);
+                setState(() {});
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colorScheme.primary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.remove,
+                  color: colorScheme.onPrimary,
+                  size: 40,
+                ),
+              ),
             ),
           ],
         ),
@@ -1667,9 +1670,10 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
         Text(
           '${loc.range}: $minQuantity-$maxQuantity',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                color: colorScheme.onSurfaceVariant,
               ),
         ),
+        const SizedBox(height: 8),
       ],
     );
   }
@@ -1699,6 +1703,7 @@ class _TemplateDialogState extends State<_TemplateDialog> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return AlertDialog(
       title: Text(loc.cloudTemplates),
@@ -1757,9 +1762,8 @@ class _TemplateDialogState extends State<_TemplateDialog> {
                         final isSelected = _selectedTemplate == template;
 
                         return Card(
-                          color: isSelected
-                              ? Theme.of(context).colorScheme.primaryContainer
-                              : null,
+                          color:
+                              isSelected ? colorScheme.primaryContainer : null,
                           child: ListTile(
                             title: Text(template.name,
                                 style: Theme.of(context)

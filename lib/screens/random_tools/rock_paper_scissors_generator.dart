@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:random_please/l10n/app_localizations.dart';
-import 'package:random_please/models/random_generator.dart';
-import 'package:random_please/services/generation_history_service.dart';
-import 'package:random_please/models/random_models/random_state_models.dart';
-import 'package:random_please/services/random_services/random_state_service.dart';
+import 'package:random_please/view_models/rock_paper_scissors_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
@@ -22,149 +19,70 @@ class RockPaperScissorsGeneratorScreen extends StatefulWidget {
 class _RockPaperScissorsGeneratorScreenState
     extends State<RockPaperScissorsGeneratorScreen>
     with SingleTickerProviderStateMixin {
-  int? _result;
-  bool _skipAnimation = false;
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  List<GenerationHistoryItem> _history = [];
-  bool _historyEnabled = false;
-
-  static const String _historyType = 'rock_paper_scissors';
+  late RockPaperScissorsGeneratorViewModel _viewModel;
+  late AnimationController _bounceController;
+  late Animation<double> _bounceAnimation;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 800),
+    _viewModel = RockPaperScissorsGeneratorViewModel();
+    _bounceController = AnimationController(
+      duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 1.2),
-        weight: 1,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.2, end: 1.0),
-        weight: 1,
-      ),
-    ]).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
-    _loadState();
-    _loadHistory();
+    _bounceAnimation = CurvedAnimation(
+      parent: _bounceController,
+      curve: Curves.elasticOut,
+    );
+    _initData();
   }
 
-  Future<void> _loadState() async {
-    try {
-      final state =
-          await RandomStateService.getRockPaperScissorsGeneratorState();
-      if (mounted) {
-        setState(() {
-          _skipAnimation = state.skipAnimation;
-        });
-      }
-    } catch (e) {
-      // Error is already logged in service
-    }
-  }
-
-  Future<void> _saveState() async {
-    try {
-      final state = SimpleGeneratorState(
-        skipAnimation: _skipAnimation,
-        lastUpdated: DateTime.now(),
-      );
-      await RandomStateService.saveRockPaperScissorsGeneratorState(state);
-    } catch (e) {
-      // Error is already logged in service
-    }
-  }
-
-  Future<void> _loadHistory() async {
-    final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory(_historyType);
-    setState(() {
-      _historyEnabled = enabled;
-      _history = history;
-    });
+  Future<void> _initData() async {
+    await _viewModel.initHive();
+    await _viewModel.loadHistory();
+    setState(() {});
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _bounceController.dispose();
+    _viewModel.dispose();
     super.dispose();
   }
 
-  Future<void> _generateResult() async {
-    // Generate result first for better UX
-    final newResult = RandomGenerator.generateRockPaperScissors();
-
-    setState(() {
-      _result = newResult;
-    });
-
-    // Then run animation if not skipped
-    if (!_skipAnimation) {
-      _controller.reset();
-      await _controller.forward();
+  Future<void> _generateChoice() async {
+    if (!_viewModel.state.skipAnimation) {
+      _bounceController.reset();
+      _bounceController.forward();
     }
 
-    // Save state when generating
-    await _saveState();
-
-    // Save to history if enabled
-    if (_historyEnabled && _result != null) {
-      if (!mounted) return;
-      final loc = AppLocalizations.of(context)!;
-      String resultText = _getResultText(_result!, loc);
-      GenerationHistoryService.addHistoryItem(
-        resultText,
-        _historyType,
-      ).then((_) => _loadHistory());
-    }
+    await _viewModel.generateChoice();
+    setState(() {});
   }
 
-  void _copyHistoryItem(String value) {
-    Clipboard.setData(ClipboardData(text: value));
+  void _copyToClipboard() {
+    if (_viewModel.result == null) return;
+
+    final loc = AppLocalizations.of(context)!;
+    String text;
+    switch (_viewModel.result!) {
+      case 0:
+        text = loc.rock;
+        break;
+      case 1:
+        text = loc.paper;
+        break;
+      case 2:
+        text = loc.scissors;
+        break;
+      default:
+        text = '';
+    }
+
+    Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-    );
-  }
-
-  Widget _buildHistoryWidget(AppLocalizations loc) {
-    return RandomGeneratorHistoryWidget(
-      historyType: _historyType,
-      history: _history,
-      title: loc.generationHistory,
-      onClearAllHistory: () async {
-        await GenerationHistoryService.clearHistory(_historyType);
-        await _loadHistory();
-      },
-      onClearPinnedHistory: () async {
-        await GenerationHistoryService.clearPinnedHistory(_historyType);
-        await _loadHistory();
-      },
-      onClearUnpinnedHistory: () async {
-        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
-        await _loadHistory();
-      },
-      onCopyItem: _copyHistoryItem,
-      onDeleteItem: (index) async {
-        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
-        await _loadHistory();
-      },
-      onTogglePin: (index) async {
-        await GenerationHistoryService.togglePinHistoryItem(
-            _historyType, index);
-        await _loadHistory();
-      },
-      onTapItem: (item) {
-        HistoryViewDialog.show(
-          context: context,
-          item: item,
-        );
-      },
+      SnackBar(content: Text(loc.copied)),
     );
   }
 
@@ -207,6 +125,41 @@ class _RockPaperScissorsGeneratorScreenState
     }
   }
 
+  Widget _buildHistoryWidget(AppLocalizations loc) {
+    return RandomGeneratorHistoryWidget(
+      historyType: 'rock_paper_scissors',
+      history: _viewModel.historyItems,
+      title: loc.generationHistory,
+      onClearAllHistory: () async {
+        await _viewModel.clearAllHistory();
+      },
+      onClearPinnedHistory: () async {
+        await _viewModel.clearPinnedHistory();
+      },
+      onClearUnpinnedHistory: () async {
+        await _viewModel.clearUnpinnedHistory();
+      },
+      onCopyItem: (value) {
+        Clipboard.setData(ClipboardData(text: value));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(loc.copied)),
+        );
+      },
+      onDeleteItem: (index) async {
+        await _viewModel.deleteHistoryItem(index);
+      },
+      onTogglePin: (index) async {
+        await _viewModel.togglePinHistoryItem(index);
+      },
+      onTapItem: (item) {
+        HistoryViewDialog.show(
+          context: context,
+          item: item,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -214,103 +167,177 @@ class _RockPaperScissorsGeneratorScreenState
     final generatorContent = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Skip animation option
+        // Settings card
         Card(
-          child: OptionSwitch(
-            title: loc.skipAnimation,
-            subtitle: loc.skipAnimationDesc,
-            value: _skipAnimation,
-            onChanged: (value) {
-              setState(() {
-                _skipAnimation = value;
-              });
-            },
-            decorator: OptionSwitchDecorator.compact(context).copyWith(
-              padding: const EdgeInsets.all(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Skip animation switch
+                OptionSwitch(
+                  title: loc.skipAnimation,
+                  subtitle: loc.skipAnimationDesc,
+                  value: _viewModel.state.skipAnimation,
+                  onChanged: (value) {
+                    _viewModel.updateSkipAnimation(value);
+                    setState(() {});
+                  },
+                  decorator: OptionSwitchDecorator.compact(context),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Generate button
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: _generateChoice,
+                    icon: const Icon(Icons.sports_mma),
+                    label: Text(loc.generate),
+                    style: FilledButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
 
-        const SizedBox(height: 24),
-
-        // Result display
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AnimatedBuilder(
-                animation: _scaleAnimation,
-                builder: (context, child) {
-                  return Transform.scale(
-                    scale: _skipAnimation ? 1.0 : _scaleAnimation.value,
-                    child: Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _result == null
-                            ? Colors.grey.withValues(alpha: 0.3)
-                            : _getResultColor(_result!).withValues(alpha: 0.8),
+        // Results card
+        if (_viewModel.result != null) ...[
+          const SizedBox(height: 24),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Header
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.sports_mma,
+                          color: Colors.blue.shade700,
+                          size: 20,
+                        ),
                       ),
-                      child: Center(
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              loc.randomResult,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              loc.rockPaperScissorsDesc,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.green.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.copy,
+                            color: Colors.green,
+                          ),
+                          onPressed: _copyToClipboard,
+                          tooltip: loc.copyToClipboard,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Choice display
+                  Center(
+                    child: ScaleTransition(
+                      scale: _viewModel.state.skipAnimation
+                          ? const AlwaysStoppedAnimation(1.0)
+                          : _bounceAnimation,
+                      child: Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _getResultColor(_viewModel.result!),
+                          boxShadow: [
+                            BoxShadow(
+                              color: _getResultColor(_viewModel.result!)
+                                  .withValues(alpha: 0.3),
+                              blurRadius: 12,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              _result == null
-                                  ? Icons.help_outline
-                                  : _getResultIcon(_result!),
-                              size: 80,
-                              color: _result == null
-                                  ? Colors.grey[600]
-                                  : Colors.white,
+                              _getResultIcon(_viewModel.result!),
+                              size: 48,
+                              color: Colors.white,
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              _result == null
-                                  ? '?'
-                                  : _getResultText(_result!, loc),
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: _result == null
-                                    ? Colors.grey[600]
-                                    : Colors.white,
-                              ),
+                              _getResultText(_viewModel.result!, loc),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                              textAlign: TextAlign.center,
                             ),
                           ],
                         ),
                       ),
                     ),
-                  );
-                },
-              ),
-              const SizedBox(height: 48),
-              SizedBox(
-                width: 200,
-                height: 50,
-                child: FilledButton.icon(
-                  onPressed: _generateResult,
-                  icon: const Icon(Icons.sports_mma),
-                  label: Text(loc.generate),
-                  style: FilledButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ],
     );
 
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _historyEnabled,
-      hasHistory: _historyEnabled,
+      historyEnabled: _viewModel.historyEnabled,
+      hasHistory: _viewModel.historyEnabled,
       isEmbedded: widget.isEmbedded,
       title: loc.rockPaperScissors,
     );

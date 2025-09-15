@@ -249,13 +249,28 @@ class AppLocalizationsVi extends AppLocalizations {
   String get includeLowercase => 'Bao gồm chữ thường';
 
   @override
+  String get includeLowercaseDesc =>
+      'Kết quả bao gồm ít nhất một chữ cái thường (a-z)';
+
+  @override
   String get includeUppercase => 'Bao gồm chữ hoa';
+
+  @override
+  String get includeUppercaseDesc =>
+      'Kết quả bao gồm ít nhất một chữ cái hoa (A-Z)';
 
   @override
   String get includeNumbers => 'Bao gồm số';
 
   @override
+  String get includeNumbersDesc => 'Kết quả bao gồm ít nhất một chữ số (0-9)';
+
+  @override
   String get includeSpecial => 'Bao gồm ký tự đặc biệt';
+
+  @override
+  String get includeSpecialDesc =>
+      'Kết quả bao gồm ít nhất một ký tự đặc biệt (ví dụ: !@#\$%^&*)';
 
   @override
   String get generate => 'Tạo';
@@ -390,6 +405,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get allowDuplicates => 'Cho phép trùng lặp';
 
   @override
+  String get allowDuplicatesDesc => 'Cho phép chọn cùng một mục nhiều lần';
+
+  @override
   String get includeSeconds => 'Hiển thị số giây';
 
   @override
@@ -450,7 +468,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get playingCardsDesc => 'Rút thẻ bài ngẫu nhiên';
 
   @override
-  String get includeJokers => 'Bao gồm lá Joker';
+  String get includeJokers => 'Có lá Joker';
+
+  @override
+  String get includeJokersDesc => 'Bao gồm lá bài Joker trong bộ bài';
 
   @override
   String get cardCount => 'Số lượng lá bài';
@@ -1162,10 +1183,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get generatorOptions => 'Tùy chọn trình tạo';
-
-  @override
-  String get allowDuplicatesDescription =>
-      'Cho phép chọn cùng một mục nhiều lần';
 
   @override
   String get results => 'Kết quả';

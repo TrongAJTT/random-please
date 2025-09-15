@@ -248,13 +248,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get includeLowercase => 'Include lowercase letters';
 
   @override
+  String get includeLowercaseDesc =>
+      'Result includes at least one lowercase letter (a-z)';
+
+  @override
   String get includeUppercase => 'Include uppercase letters';
+
+  @override
+  String get includeUppercaseDesc =>
+      'Result includes at least one uppercase letter (A-Z)';
 
   @override
   String get includeNumbers => 'Include numbers';
 
   @override
+  String get includeNumbersDesc => 'Result includes at least one number (0-9)';
+
+  @override
   String get includeSpecial => 'Include special characters';
+
+  @override
+  String get includeSpecialDesc =>
+      'Result includes at least one special character (e.g. !@#\$%^&*)';
 
   @override
   String get generate => 'Generate';
@@ -389,6 +404,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get allowDuplicates => 'Allow Duplicates';
 
   @override
+  String get allowDuplicatesDesc =>
+      'Allow picking the same item multiple times';
+
+  @override
   String get includeSeconds => 'Include Seconds';
 
   @override
@@ -450,6 +469,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get includeJokers => 'Include Jokers';
+
+  @override
+  String get includeJokersDesc => 'Include jokers in the deck';
 
   @override
   String get cardCount => 'Number of cards';
@@ -1165,10 +1187,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get generatorOptions => 'Generator Options';
-
-  @override
-  String get allowDuplicatesDescription =>
-      'Allow picking the same item multiple times';
 
   @override
   String get results => 'Results';

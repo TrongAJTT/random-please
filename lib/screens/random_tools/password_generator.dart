@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:random_please/l10n/app_localizations.dart';
-import 'package:random_please/models/random_generator.dart';
-import 'package:random_please/services/generation_history_service.dart';
-import 'package:random_please/models/random_models/random_state_models.dart';
-import 'package:random_please/services/random_services/random_state_service.dart';
+import 'package:random_please/utils/snackbar_utils.dart';
+import 'package:random_please/view_models/password_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
@@ -23,145 +21,97 @@ class PasswordGeneratorScreen extends StatefulWidget {
 }
 
 class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
-  int _passwordLength = 12;
-  bool _includeLowercase = true;
-  bool _includeUppercase = true;
-  bool _includeNumbers = true;
-  bool _includeSpecial = true;
-  String _generatedPassword = '';
+  late PasswordGeneratorViewModel _viewModel;
   bool _copied = false;
-  List<GenerationHistoryItem> _history = [];
-  bool _historyEnabled = false;
-
-  static const String _historyType = 'password';
 
   @override
   void initState() {
     super.initState();
-    _loadState();
-    _loadHistory();
+    _viewModel = PasswordGeneratorViewModel();
+    _initializeViewModel();
   }
 
-  Future<void> _loadState() async {
-    try {
-      final state = await RandomStateService.getPasswordGeneratorState();
-      if (mounted) {
-        setState(() {
-          _passwordLength = state.passwordLength;
-          _includeLowercase = state.includeLowercase;
-          _includeUppercase = state.includeUppercase;
-          _includeNumbers = state.includeNumbers;
-          _includeSpecial = state.includeSpecial;
-        });
-      }
-    } catch (e) {
-      // Error is already logged in service
+  Future<void> _initializeViewModel() async {
+    await _viewModel.initHive();
+    await _viewModel.loadHistory();
+
+    // Listen to state changes
+    _viewModel.addListener(_onViewModelChanged);
+
+    // Update UI after initialization
+    if (mounted) {
+      setState(() {});
     }
   }
 
-  Future<void> _saveState() async {
-    try {
-      final state = PasswordGeneratorState(
-        passwordLength: _passwordLength,
-        includeLowercase: _includeLowercase,
-        includeUppercase: _includeUppercase,
-        includeNumbers: _includeNumbers,
-        includeSpecial: _includeSpecial,
-        lastUpdated: DateTime.now(),
-      );
-      await RandomStateService.savePasswordGeneratorState(state);
-    } catch (e) {
-      // Error is already logged in service
+  void _onViewModelChanged() {
+    if (mounted) {
+      setState(() {
+        _copied = false;
+      });
     }
   }
 
-  Future<void> _loadHistory() async {
-    final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory(_historyType);
-    setState(() {
-      _historyEnabled = enabled;
-      _history = history;
-    });
+  @override
+  void dispose() {
+    _viewModel.removeListener(_onViewModelChanged);
+    _viewModel.dispose();
+    super.dispose();
   }
 
   void _generatePassword() async {
-    setState(() {
-      try {
-        _generatedPassword = RandomGenerator.generatePassword(
-          length: _passwordLength,
-          includeLowercase: _includeLowercase,
-          includeUppercase: _includeUppercase,
-          includeNumbers: _includeNumbers,
-          includeSpecial: _includeSpecial,
-        );
-        _copied = false;
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
+    try {
+      await _viewModel.generatePassword();
+    } catch (e) {
+      if (mounted) {
+        SnackBarUtils.showTyped(context, e.toString(), SnackBarType.error);
       }
-    });
-
-    // Save state when generating
-    await _saveState();
-
-    // Save to history if enabled
-    if (_historyEnabled && _generatedPassword.isNotEmpty) {
-      await GenerationHistoryService.addHistoryItem(
-        _generatedPassword,
-        _historyType,
-      );
-      await _loadHistory(); // Refresh history
     }
   }
 
   void _copyToClipboard() {
-    Clipboard.setData(ClipboardData(text: _generatedPassword));
-    setState(() {
-      _copied = true;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-    );
+    if (_viewModel.result.isNotEmpty) {
+      Clipboard.setData(ClipboardData(text: _viewModel.result));
+      setState(() {
+        _copied = true;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
+        );
+      }
+    }
   }
 
   void _copyHistoryItem(String value) {
     Clipboard.setData(ClipboardData(text: value));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
+      );
+    }
   }
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return RandomGeneratorHistoryWidget(
-      historyType: _historyType,
-      history: _history,
+      historyType: PasswordGeneratorViewModel.historyType,
+      history: _viewModel.historyItems,
       title: loc.generationHistory,
       onClearAllHistory: () async {
-        await GenerationHistoryService.clearHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearAllHistory();
       },
       onClearPinnedHistory: () async {
-        await GenerationHistoryService.clearPinnedHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearPinnedHistory();
       },
       onClearUnpinnedHistory: () async {
-        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearUnpinnedHistory();
       },
       onCopyItem: _copyHistoryItem,
       onDeleteItem: (index) async {
-        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
-        await _loadHistory();
+        await _viewModel.deleteHistoryItem(index);
       },
       onTogglePin: (index) async {
-        await GenerationHistoryService.togglePinHistoryItem(
-            _historyType, index);
-        await _loadHistory();
+        await _viewModel.togglePinHistoryItem(index);
       },
       onTapItem: (item) {
         HistoryViewDialog.show(
@@ -176,42 +126,34 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
     final switchOptions = [
       {
         'title': loc.includeLowercase,
-        'value': _includeLowercase,
+        'subtitle': loc.includeLowercaseDesc,
+        'value': _viewModel.state.includeLowercase,
         'onChanged': (bool value) {
-          setState(() {
-            _includeLowercase = value;
-          });
-          // Don't save state immediately, only save when generating
+          _viewModel.updateIncludeLowercase(value);
         },
       },
       {
         'title': loc.includeUppercase,
-        'value': _includeUppercase,
+        'subtitle': loc.includeUppercaseDesc,
+        'value': _viewModel.state.includeUppercase,
         'onChanged': (bool value) {
-          setState(() {
-            _includeUppercase = value;
-          });
-          // Don't save state immediately, only save when generating
+          _viewModel.updateIncludeUppercase(value);
         },
       },
       {
         'title': loc.includeNumbers,
-        'value': _includeNumbers,
+        'subtitle': loc.includeNumbersDesc,
+        'value': _viewModel.state.includeNumbers,
         'onChanged': (bool value) {
-          setState(() {
-            _includeNumbers = value;
-          });
-          // Don't save state immediately, only save when generating
+          _viewModel.updateIncludeNumbers(value);
         },
       },
       {
         'title': loc.includeSpecial,
-        'value': _includeSpecial,
+        'subtitle': loc.includeSpecialDesc,
+        'value': _viewModel.state.includeSpecial,
         'onChanged': (bool value) {
-          setState(() {
-            _includeSpecial = value;
-          });
-          // Don't save state immediately, only save when generating
+          _viewModel.updateIncludeSpecial(value);
         },
       },
     ];
@@ -221,6 +163,7 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
         final option = switchOptions[index];
         return OptionSwitch(
           title: option['title'] as String,
+          subtitle: option['subtitle'] as String?,
           value: option['value'] as bool,
           onChanged: option['onChanged'] as void Function(bool),
           decorator: OptionSwitchDecorator.compact(context),
@@ -234,7 +177,7 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
         physics: NeverScrollableScrollPhysics(),
         mainAxisSpacing: 8,
         crossAxisSpacing: 16,
-        maxChildHeight: 60, // Control the height of each switch row
+        maxChildHeight: 70, // Control the height of each switch row
       ),
     );
   }
@@ -256,7 +199,7 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
                 // Password length slider
                 OptionSlider<int>(
                   label: loc.numCharacters,
-                  currentValue: _passwordLength,
+                  currentValue: _viewModel.state.passwordLength,
                   options: List.generate(
                     29, // 4 to 32 characters
                     (i) => SliderOption(
@@ -265,11 +208,9 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
                     ),
                   ),
                   onChanged: (int value) {
-                    setState(() {
-                      _passwordLength = value;
-                    });
-                    // Don't save state immediately, only save when generating
+                    _viewModel.updatePasswordLength(value);
                   },
+                  fixedWidth: 60,
                   layout: OptionSliderLayout.none,
                 ),
                 VerticalSpacingDivider.specific(top: 0, bottom: 6),
@@ -296,7 +237,7 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
         ),
 
         // Result card
-        if (_generatedPassword.isNotEmpty) ...[
+        if (_viewModel.result.isNotEmpty) ...[
           const SizedBox(height: 24),
           Card(
             child: Padding(
@@ -320,7 +261,7 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
                   ),
                   const SizedBox(height: 16),
                   SelectableText(
-                    _generatedPassword,
+                    _viewModel.result,
                     style: const TextStyle(
                       fontFamily: 'monospace',
                       fontSize: 20,
@@ -339,8 +280,8 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _historyEnabled,
-      hasHistory: _historyEnabled,
+      historyEnabled: _viewModel.historyEnabled,
+      hasHistory: _viewModel.historyEnabled,
       isEmbedded: widget.isEmbedded,
       title: loc.passwordGenerator,
     );

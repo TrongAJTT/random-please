@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:faker/faker.dart';
 import 'package:random_please/l10n/app_localizations.dart';
+import 'package:random_please/view_models/lorem_ipsum_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
-import 'package:random_please/models/random_models/random_state_models.dart';
-import 'package:random_please/services/generation_history_service.dart';
-import 'package:random_please/services/random_services/random_state_service.dart';
 import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
+import 'package:random_please/models/random_models/random_state_models.dart';
 
 class LoremIpsumGeneratorScreen extends StatefulWidget {
   final bool isEmbedded;
@@ -25,17 +23,12 @@ class LoremIpsumGeneratorScreen extends StatefulWidget {
 }
 
 class _LoremIpsumGeneratorScreenState extends State<LoremIpsumGeneratorScreen> {
-  final faker = Faker();
-  LoremIpsumGeneratorState _state = LoremIpsumGeneratorState.createDefault();
+  late LoremIpsumGeneratorViewModel _viewModel;
   late OptionSwitchDecorator switchDecorator;
   bool _isDecoratorInitialized = false;
 
   String _generatedText = '';
   bool _copied = false;
-  List<GenerationHistoryItem> _history = [];
-  bool _historyEnabled = false;
-
-  static const String _historyType = 'lorem_ipsum';
 
   // Range definitions for different types
   final List<Map<String, dynamic>> _wordRanges = [
@@ -48,16 +41,18 @@ class _LoremIpsumGeneratorScreenState extends State<LoremIpsumGeneratorScreen> {
   ];
 
   final List<Map<String, dynamic>> _sentenceRanges = [
-    {'min': 1, 'max': 20, 'label': '1-20'},
-    {'min': 21, 'max': 40, 'label': '21-40'},
-    {'min': 41, 'max': 60, 'label': '41-60'},
-    {'min': 61, 'max': 80, 'label': '61-80'},
-    {'min': 81, 'max': 100, 'label': '81-100'},
+    {'min': 1, 'max': 10, 'label': '1-10'},
+    {'min': 11, 'max': 20, 'label': '11-20'},
+    {'min': 21, 'max': 30, 'label': '21-30'},
+    {'min': 31, 'max': 40, 'label': '31-40'},
+    {'min': 41, 'max': 50, 'label': '41-50'},
   ];
 
   final List<Map<String, dynamic>> _paragraphRanges = [
-    {'min': 1, 'max': 20, 'label': '1-20'},
-    {'min': 21, 'max': 40, 'label': '21-40'},
+    {'min': 1, 'max': 5, 'label': '1-5'},
+    {'min': 6, 'max': 10, 'label': '6-10'},
+    {'min': 11, 'max': 15, 'label': '11-15'},
+    {'min': 16, 'max': 20, 'label': '16-20'},
   ];
 
   int _selectedWordRangeIndex = 0;
@@ -67,19 +62,26 @@ class _LoremIpsumGeneratorScreenState extends State<LoremIpsumGeneratorScreen> {
   @override
   void initState() {
     super.initState();
-    _loadState();
-    _loadHistory();
-    _initializeRangeIndexes();
+    _viewModel = LoremIpsumGeneratorViewModel();
+    _initData();
   }
 
-  void _initializeRangeIndexes() {
-    // Initialize range indexes based on current values
+  Future<void> _initData() async {
+    await _viewModel.initHive();
+    await _viewModel.loadHistory();
     _selectedWordRangeIndex =
-        _getRangeIndexForValue(_state.wordCount, _wordRanges);
+        _getRangeIndexForValue(_viewModel.state.wordCount, _wordRanges);
     _selectedSentenceRangeIndex =
-        _getRangeIndexForValue(_state.sentenceCount, _sentenceRanges);
-    _selectedParagraphRangeIndex =
-        _getRangeIndexForValue(_state.paragraphCount, _paragraphRanges);
+        _getRangeIndexForValue(_viewModel.state.sentenceCount, _sentenceRanges);
+    _selectedParagraphRangeIndex = _getRangeIndexForValue(
+        _viewModel.state.paragraphCount, _paragraphRanges);
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _viewModel.dispose();
+    super.dispose();
   }
 
   int _getRangeIndexForValue(int value, List<Map<String, dynamic>> ranges) {
@@ -92,71 +94,77 @@ class _LoremIpsumGeneratorScreenState extends State<LoremIpsumGeneratorScreen> {
   }
 
   void _onRangeChanged(int rangeIndex, LoremIpsumType type) {
-    setState(() {
-      List<Map<String, dynamic>> currentRanges;
-      int currentValue;
+    late List<Map<String, dynamic>> currentRanges;
+    late int currentValue;
 
+    switch (type) {
+      case LoremIpsumType.words:
+        currentRanges = _wordRanges;
+        currentValue = _viewModel.state.wordCount;
+        break;
+      case LoremIpsumType.sentences:
+        currentRanges = _sentenceRanges;
+        currentValue = _viewModel.state.sentenceCount;
+        break;
+      case LoremIpsumType.paragraphs:
+        currentRanges = _paragraphRanges;
+        currentValue = _viewModel.state.paragraphCount;
+        break;
+    }
+
+    final newRange = currentRanges[rangeIndex];
+    final minValue = newRange['min'] as int;
+    final maxValue = newRange['max'] as int;
+
+    if (currentValue < minValue || currentValue > maxValue) {
+      final newValue = minValue;
       switch (type) {
         case LoremIpsumType.words:
-          _selectedWordRangeIndex = rangeIndex;
-          currentRanges = _wordRanges;
-          currentValue = _state.wordCount;
+          _viewModel.updateWordCount(newValue);
           break;
         case LoremIpsumType.sentences:
-          _selectedSentenceRangeIndex = rangeIndex;
-          currentRanges = _sentenceRanges;
-          currentValue = _state.sentenceCount;
+          _viewModel.updateSentenceCount(newValue);
           break;
         case LoremIpsumType.paragraphs:
-          _selectedParagraphRangeIndex = rangeIndex;
-          currentRanges = _paragraphRanges;
-          currentValue = _state.paragraphCount;
+          _viewModel.updateParagraphCount(newValue);
           break;
       }
+      setState(() {});
+    }
 
-      // Ensure current value is within the new range
-      final newRange = currentRanges[rangeIndex];
-      final minValue = newRange['min'] as int;
-      final maxValue = newRange['max'] as int;
-
-      if (currentValue < minValue || currentValue > maxValue) {
-        // Set to the middle of the new range
-        final newValue = ((minValue + maxValue) / 2).round();
-        switch (type) {
-          case LoremIpsumType.words:
-            _state = _state.copyWith(wordCount: newValue);
-            break;
-          case LoremIpsumType.sentences:
-            _state = _state.copyWith(sentenceCount: newValue);
-            break;
-          case LoremIpsumType.paragraphs:
-            _state = _state.copyWith(paragraphCount: newValue);
-            break;
-        }
-      }
-    });
+    switch (type) {
+      case LoremIpsumType.words:
+        _selectedWordRangeIndex = rangeIndex;
+        break;
+      case LoremIpsumType.sentences:
+        _selectedSentenceRangeIndex = rangeIndex;
+        break;
+      case LoremIpsumType.paragraphs:
+        _selectedParagraphRangeIndex = rangeIndex;
+        break;
+    }
   }
 
   Widget _buildRangeSelector(LoremIpsumType type, AppLocalizations loc) {
-    List<Map<String, dynamic>> ranges;
-    int selectedIndex;
-    String title;
+    late List<Map<String, dynamic>> ranges;
+    late int selectedIndex;
+    late String title;
 
     switch (type) {
       case LoremIpsumType.words:
         ranges = _wordRanges;
         selectedIndex = _selectedWordRangeIndex;
-        title = loc.letterCountRange; // Reusing existing localization
+        title = 'Word Range';
         break;
       case LoremIpsumType.sentences:
         ranges = _sentenceRanges;
         selectedIndex = _selectedSentenceRangeIndex;
-        title = "Sentence Range"; // You might want to add this to localization
+        title = 'Sentence Range';
         break;
       case LoremIpsumType.paragraphs:
         ranges = _paragraphRanges;
         selectedIndex = _selectedParagraphRangeIndex;
-        title = "Paragraph Range"; // You might want to add this to localization
+        title = 'Paragraph Range';
         break;
     }
 
@@ -165,187 +173,62 @@ class _LoremIpsumGeneratorScreenState extends State<LoremIpsumGeneratorScreen> {
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w500,
               ),
         ),
         const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 4,
-          children: ranges.asMap().entries.map((entry) {
-            final index = entry.key;
-            final range = entry.value;
-            final isSelected = index == selectedIndex;
+        SizedBox(
+          height: 38,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: ranges.length,
+            itemBuilder: (context, index) {
+              final range = ranges[index];
+              final isSelected = index == selectedIndex;
 
-            return FilterChip(
-              label: Text(range['label'] as String),
-              selected: isSelected,
-              onSelected: (selected) {
-                if (selected) {
-                  _onRangeChanged(index, type);
-                }
-              },
-              selectedColor: Theme.of(context).colorScheme.primaryContainer,
-              backgroundColor: Theme.of(context)
-                  .colorScheme
-                  .surfaceContainerHighest
-                  .withValues(alpha: 0.3),
-              labelStyle: TextStyle(
-                color: isSelected
-                    ? Theme.of(context).colorScheme.onPrimaryContainer
-                    : Theme.of(context).colorScheme.onSurfaceVariant,
-                fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
-              ),
-            );
-          }).toList(),
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: FilterChip(
+                  label: Text(range['label']),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    if (selected) {
+                      _onRangeChanged(index, type);
+                      setState(() {});
+                    }
+                  },
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              );
+            },
+          ),
         ),
       ],
     );
   }
 
   List<SliderOption<int>> _buildSliderOptions(Map<String, dynamic> range) {
-    final minValue = range['min'] as int;
-    final maxValue = range['max'] as int;
+    final min = range['min'] as int;
+    final max = range['max'] as int;
+    List<SliderOption<int>> options = [];
 
-    return List.generate(
-      maxValue - minValue + 1,
-      (index) => SliderOption(
-        value: minValue + index,
-        label: '${minValue + index}',
-      ),
-    );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_isDecoratorInitialized) {
-      switchDecorator = OptionSwitchDecorator.compact(context);
-      _isDecoratorInitialized = true;
-    }
-  }
-
-  Future<void> _loadState() async {
-    try {
-      final state = await RandomStateService.getLoremIpsumGeneratorState();
-      if (mounted) {
-        setState(() {
-          _state = state;
-        });
-      }
-    } catch (e) {
-      // Error is already logged in service
-    }
-  }
-
-  Future<void> _saveState() async {
-    try {
-      await RandomStateService.saveLoremIpsumGeneratorState(_state);
-    } catch (e) {
-      // Error is already logged in service
-    }
-  }
-
-  Future<void> _loadHistory() async {
-    final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory(_historyType);
-    setState(() {
-      _historyEnabled = enabled;
-      _history = history;
-    });
-  }
-
-  String _generateLoremIpsum() {
-    String result = '';
-
-    if (_state.generationType == LoremIpsumType.words) {
-      List<String> words = [];
-
-      // Add "Lorem ipsum..." start if enabled
-      if (_state.startWithLorem) {
-        words.addAll(['Lorem', 'ipsum', 'dolor', 'sit', 'amet']);
-        // Generate remaining words
-        if (_state.wordCount > 5) {
-          for (int i = 0; i < _state.wordCount - 5; i++) {
-            words.add(faker.lorem.word());
-          }
-        }
-      } else {
-        // Generate all words randomly
-        for (int i = 0; i < _state.wordCount; i++) {
-          words.add(faker.lorem.word());
-        }
-      }
-
-      result = words.join(' ');
-    } else if (_state.generationType == LoremIpsumType.sentences) {
-      List<String> sentences = [];
-
-      if (_state.startWithLorem) {
-        sentences
-            .add('Lorem ipsum dolor sit amet, consectetur adipiscing elit.');
-        // Generate remaining sentences
-        if (_state.sentenceCount > 1) {
-          for (int i = 0; i < _state.sentenceCount - 1; i++) {
-            sentences.add(faker.lorem.sentence());
-          }
-        }
-      } else {
-        // Generate all sentences randomly
-        for (int i = 0; i < _state.sentenceCount; i++) {
-          sentences.add(faker.lorem.sentence());
-        }
-      }
-
-      result = sentences.join(' ');
-    } else {
-      // Paragraphs
-      List<String> paragraphs = [];
-
-      if (_state.startWithLorem) {
-        paragraphs.add(
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
-        // Generate remaining paragraphs
-        if (_state.paragraphCount > 1) {
-          for (int i = 0; i < _state.paragraphCount - 1; i++) {
-            paragraphs.add(faker.lorem
-                .sentences(3 + faker.randomGenerator.integer(4))
-                .join(' '));
-          }
-        }
-      } else {
-        // Generate all paragraphs randomly
-        for (int i = 0; i < _state.paragraphCount; i++) {
-          paragraphs.add(faker.lorem
-              .sentences(3 + faker.randomGenerator.integer(4))
-              .join(' '));
-        }
-      }
-
-      result = paragraphs.join('\n\n');
+    for (int i = min; i <= max; i += 1) {
+      options.add(SliderOption(value: i, label: i.toString()));
     }
 
-    return result;
+    return options;
   }
 
   void _generate() async {
     setState(() {
-      _generatedText = _generateLoremIpsum();
       _copied = false;
     });
 
-    // Save state after generating
-    await _saveState();
-
-    // Save to history if enabled
-    if (_historyEnabled && _generatedText.isNotEmpty) {
-      await GenerationHistoryService.addHistoryItem(
-        _generatedText,
-        _historyType,
-      );
-      await _loadHistory(); // Refresh history
-    }
+    await _viewModel.generateText();
+    _generatedText = _viewModel.result;
+    setState(() {});
   }
 
   void _copyToClipboard() {
@@ -369,7 +252,7 @@ class _LoremIpsumGeneratorScreenState extends State<LoremIpsumGeneratorScreen> {
     final loc = AppLocalizations.of(context)!;
     if (_generatedText.isEmpty) return '';
 
-    switch (_state.generationType) {
+    switch (_viewModel.state.generationType) {
       case LoremIpsumType.words:
         final wordCount = _generatedText.split(' ').length;
         return '$wordCount ${loc.words.toLowerCase()}';
@@ -385,30 +268,24 @@ class _LoremIpsumGeneratorScreenState extends State<LoremIpsumGeneratorScreen> {
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return RandomGeneratorHistoryWidget(
-      historyType: _historyType,
-      history: _history,
+      historyType: LoremIpsumGeneratorViewModel.historyType,
+      history: _viewModel.historyItems,
       title: loc.generationHistory,
       onClearAllHistory: () async {
-        await GenerationHistoryService.clearHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearAllHistory();
       },
       onClearPinnedHistory: () async {
-        await GenerationHistoryService.clearPinnedHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearPinnedHistory();
       },
       onClearUnpinnedHistory: () async {
-        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearUnpinnedHistory();
       },
       onCopyItem: _copyHistoryItem,
       onDeleteItem: (index) async {
-        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
-        await _loadHistory();
+        await _viewModel.deleteHistoryItem(index);
       },
       onTogglePin: (index) async {
-        await GenerationHistoryService.togglePinHistoryItem(
-            _historyType, index);
-        await _loadHistory();
+        await _viewModel.togglePinHistoryItem(index);
       },
       onTapItem: (item) {
         HistoryViewDialog.show(
@@ -423,6 +300,11 @@ class _LoremIpsumGeneratorScreenState extends State<LoremIpsumGeneratorScreen> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
 
+    if (!_isDecoratorInitialized) {
+      switchDecorator = OptionSwitchDecorator.compact(context);
+      _isDecoratorInitialized = true;
+    }
+
     final generatorContent = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -433,12 +315,9 @@ class _LoremIpsumGeneratorScreenState extends State<LoremIpsumGeneratorScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Generation type selector
                 Text(
-                  loc.generationType,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                  loc.generatorOptions,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -459,12 +338,10 @@ class _LoremIpsumGeneratorScreenState extends State<LoremIpsumGeneratorScreen> {
                             label: Text(loc.paragraphs),
                           ),
                         ],
-                        selected: {_state.generationType},
+                        selected: {_viewModel.state.generationType},
                         onSelectionChanged: (Set<LoremIpsumType> selection) {
-                          setState(() {
-                            _state = _state.copyWith(
-                                generationType: selection.first);
-                          });
+                          _viewModel.updateLoremIpsumType(selection.first);
+                          setState(() {});
                         },
                       ),
                     ),
@@ -474,74 +351,74 @@ class _LoremIpsumGeneratorScreenState extends State<LoremIpsumGeneratorScreen> {
                 const SizedBox(height: 12),
 
                 // Range selector and Count slider based on type
-                if (_state.generationType == LoremIpsumType.words) ...[
+                if (_viewModel.state.generationType ==
+                    LoremIpsumType.words) ...[
                   _buildRangeSelector(LoremIpsumType.words, loc),
                   const SizedBox(height: 12),
                   OptionSlider<int>(
                     label: loc.wordCount,
                     subtitle: loc.numberOfWordsToGenerate,
                     icon: Icons.short_text,
-                    currentValue: _state.wordCount,
+                    currentValue: _viewModel.state.wordCount,
                     options: _buildSliderOptions(
                         _wordRanges[_selectedWordRangeIndex]),
                     onChanged: (value) {
-                      setState(() {
-                        _state = _state.copyWith(wordCount: value);
-                      });
+                      _viewModel.updateWordCount(value);
+                      setState(() {});
                     },
+                    fixedWidth: 60,
                     layout: OptionSliderLayout.none,
                   ),
                 ],
 
-                if (_state.generationType == LoremIpsumType.sentences) ...[
+                if (_viewModel.state.generationType ==
+                    LoremIpsumType.sentences) ...[
                   _buildRangeSelector(LoremIpsumType.sentences, loc),
                   const SizedBox(height: 12),
                   OptionSlider<int>(
                     label: loc.sentenceCount,
                     subtitle: loc.numberOfSentencesToGenerate,
                     icon: Icons.format_list_numbered,
-                    currentValue: _state.sentenceCount,
+                    currentValue: _viewModel.state.sentenceCount,
                     options: _buildSliderOptions(
                         _sentenceRanges[_selectedSentenceRangeIndex]),
                     onChanged: (value) {
-                      setState(() {
-                        _state = _state.copyWith(sentenceCount: value);
-                      });
+                      _viewModel.updateSentenceCount(value);
+                      setState(() {});
                     },
+                    fixedWidth: 60,
                     layout: OptionSliderLayout.none,
                   ),
                 ],
 
-                if (_state.generationType == LoremIpsumType.paragraphs) ...[
+                if (_viewModel.state.generationType ==
+                    LoremIpsumType.paragraphs) ...[
                   _buildRangeSelector(LoremIpsumType.paragraphs, loc),
                   const SizedBox(height: 12),
                   OptionSlider<int>(
                     label: loc.paragraphCount,
                     subtitle: loc.numberOfParagraphsToGenerate,
                     icon: Icons.subject,
-                    currentValue: _state.paragraphCount,
+                    currentValue: _viewModel.state.paragraphCount,
                     options: _buildSliderOptions(
                         _paragraphRanges[_selectedParagraphRangeIndex]),
                     onChanged: (value) {
-                      setState(() {
-                        _state = _state.copyWith(paragraphCount: value);
-                      });
+                      _viewModel.updateParagraphCount(value);
+                      setState(() {});
                     },
+                    fixedWidth: 60,
                     layout: OptionSliderLayout.none,
                   ),
                 ],
-
-                VerticalSpacingDivider.onlyBottom(6),
 
                 // Start with Lorem option
                 OptionSwitch(
                   title: loc.startWithLorem,
                   subtitle: loc.startWithLoremDesc,
-                  value: _state.startWithLorem,
+                  value: _viewModel.state.startWithLorem,
                   onChanged: (value) {
-                    setState(() {
-                      _state = _state.copyWith(startWithLorem: value);
-                    });
+                    _viewModel.updateStartWithLorem(value);
+                    setState(() {});
                   },
                   decorator: switchDecorator,
                 ),
@@ -695,8 +572,8 @@ class _LoremIpsumGeneratorScreenState extends State<LoremIpsumGeneratorScreen> {
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _historyEnabled,
-      hasHistory: _historyEnabled,
+      historyEnabled: _viewModel.historyEnabled,
+      hasHistory: _viewModel.historyEnabled,
       isEmbedded: widget.isEmbedded,
       title: loc.loremIpsumGenerator,
     );

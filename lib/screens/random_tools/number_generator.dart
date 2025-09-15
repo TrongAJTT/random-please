@@ -1,19 +1,13 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:random_please/l10n/app_localizations.dart';
-import 'package:random_please/models/random_generator.dart';
-import 'package:random_please/services/generation_history_service.dart';
-import 'package:random_please/services/random_services/random_state_service.dart';
-import 'package:random_please/models/random_models/random_state_models.dart';
+import 'package:random_please/view_models/number_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/size_utils.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/utils/widget_layout_render_helper.dart';
 import 'package:random_please/utils/number_formatter.dart';
-import 'package:random_please/widgets/generic/option_grid_picker.dart' as grid;
-import 'package:random_please/widgets/generic/option_item.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
 
@@ -27,82 +21,55 @@ class NumberGeneratorScreen extends StatefulWidget {
 }
 
 class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
-  bool _isInteger = true;
-  double _minValue = 1.0;
-  double _maxValue = 100.0;
-  int _quantity = 5;
-  bool _allowDuplicates = true;
-  List<num> _generatedNumbers = [];
+  late NumberGeneratorViewModel _viewModel;
   bool _copied = false;
-  List<GenerationHistoryItem> _history = [];
-  bool _historyEnabled = false;
 
-  static const String _historyType = 'number';
-
-  final TextEditingController _minValueController =
-      TextEditingController(text: '1');
-  final TextEditingController _maxValueController =
-      TextEditingController(text: '100');
+  final TextEditingController _minValueController = TextEditingController();
+  final TextEditingController _maxValueController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _loadHistory();
-    _loadState(); // Load saved state
+    _viewModel = NumberGeneratorViewModel();
+    _initializeViewModel();
   }
 
-  Future<void> _loadHistory() async {
-    final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory(_historyType);
-    if (!mounted) return;
-    setState(() {
-      _historyEnabled = enabled;
-      _history = history;
-    });
-  }
+  Future<void> _initializeViewModel() async {
+    await _viewModel.initHive();
+    await _viewModel.loadHistory();
 
-  // Load saved state from storage
-  Future<void> _loadState() async {
-    try {
-      final state = await RandomStateService.getNumberGeneratorState();
-      if (!mounted) return;
-      setState(() {
-        _isInteger = state.isInteger;
-        _minValue = state.minValue;
-        _maxValue = state.maxValue;
-        _quantity = state.quantity;
-        _allowDuplicates = state.allowDuplicates;
+    // Initialize text controllers with state values
+    _minValueController.text = _viewModel.state.minValue.toString();
+    _maxValueController.text = _viewModel.state.maxValue.toString();
 
-        // Update text controllers
-        _minValueController.text = _minValue.toString();
-        _maxValueController.text = _maxValue.toString();
-      });
-    } catch (e) {
-      // Error loading state, use defaults
-      debugPrint('Error loading number generator state: $e');
+    // Listen to state changes
+    _viewModel.addListener(_onViewModelChanged);
+
+    // Update UI after initialization
+    if (mounted) {
+      setState(() {});
     }
   }
 
-  // Save current state to storage
-  Future<void> _saveState() async {
-    try {
-      final state = NumberGeneratorState(
-        isInteger: _isInteger,
-        minValue: _minValue,
-        maxValue: _maxValue,
-        quantity: _quantity,
-        allowDuplicates: _allowDuplicates,
-        lastUpdated: DateTime.now(),
-      );
-      await RandomStateService.saveNumberGeneratorState(state);
-    } catch (e) {
-      // Error saving state
-      debugPrint('Error saving number generator state: $e');
+  void _onViewModelChanged() {
+    if (mounted) {
+      setState(() {
+        _copied = false;
+        // Update text controllers if values changed
+        if (_minValueController.text != _viewModel.state.minValue.toString()) {
+          _minValueController.text = _viewModel.state.minValue.toString();
+        }
+        if (_maxValueController.text != _viewModel.state.maxValue.toString()) {
+          _maxValueController.text = _viewModel.state.maxValue.toString();
+        }
+      });
     }
   }
 
   @override
   void dispose() {
+    _viewModel.removeListener(_onViewModelChanged);
+    _viewModel.dispose();
     _minValueController.dispose();
     _maxValueController.dispose();
     super.dispose();
@@ -110,122 +77,79 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
 
   void _generateNumbers() async {
     try {
-      // Parse values from text controllers
-      double min = double.tryParse(_minValueController.text) ?? _minValue;
-      double max = double.tryParse(_maxValueController.text) ?? _maxValue;
+      // Parse values from text controllers and update view model
+      double min = double.tryParse(_minValueController.text) ??
+          _viewModel.state.minValue;
+      double max = double.tryParse(_maxValueController.text) ??
+          _viewModel.state.maxValue;
 
-      // Ensure min is less than max
-      if (min >= max) {
+      // Update view model with new values
+      if (min != _viewModel.state.minValue) {
+        _viewModel.updateMinValue(min);
+      }
+      if (max != _viewModel.state.maxValue) {
+        _viewModel.updateMaxValue(max);
+      }
+
+      // Generate numbers
+      await _viewModel.generateNumbers();
+    } catch (e) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Min must be less than max'),
+          SnackBar(
+            content: Text(e.toString()),
             backgroundColor: Colors.red,
           ),
         );
-        return;
       }
-
-      // Get locale before any async operations
-      final locale = NumberFormatter.getCurrentLocale(context);
-
-      setState(() {
-        _minValue = min;
-        _maxValue = max;
-        _generatedNumbers = RandomGenerator.generateNumbers(
-          isInteger: _isInteger,
-          min: _minValue,
-          max: _maxValue,
-          count: _quantity,
-          allowDuplicates: _allowDuplicates,
-        );
-        _copied = false;
-      });
-
-      // Save state after generating
-      await _saveState();
-
-      // Save to history if enabled
-      if (_historyEnabled && _generatedNumbers.isNotEmpty) {
-        String numbersText = _generatedNumbers.map((number) {
-          return NumberFormatter.formatNumber(number, locale,
-              isInteger: _isInteger, decimalPlaces: 2);
-        }).join(', ');
-
-        await GenerationHistoryService.addHistoryItem(
-          numbersText,
-          _historyType,
-        );
-        if (mounted) {
-          _loadHistory(); // Refresh history
-        }
-      }
-    } catch (e) {
-      if (!mounted) return; // Check mounted before using context
-      final messenger = ScaffoldMessenger.of(context);
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-          backgroundColor: Colors.red,
-        ),
-      );
     }
   }
 
   void _copyToClipboard() {
-    final locale = NumberFormatter.getCurrentLocale(context);
-    String numbersText = _generatedNumbers.map((number) {
-      return NumberFormatter.formatNumber(number, locale,
-          isInteger: _isInteger, decimalPlaces: 2);
-    }).join(', ');
+    if (_viewModel.results.isNotEmpty) {
+      String numbersText = _viewModel.results.join('\n');
 
-    Clipboard.setData(ClipboardData(text: numbersText));
-    setState(() {
-      _copied = true;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-    );
+      Clipboard.setData(ClipboardData(text: numbersText));
+      setState(() {
+        _copied = true;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
+        );
+      }
+    }
   }
 
   void _copyHistoryItem(String value) {
     Clipboard.setData(ClipboardData(text: value));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-    );
-  }
-
-  String _formatNumber(num number) {
-    final locale = NumberFormatter.getCurrentLocale(context);
-    return NumberFormatter.formatNumber(number, locale,
-        isInteger: _isInteger, decimalPlaces: 2);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
+      );
+    }
   }
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return RandomGeneratorHistoryWidget(
-      historyType: _historyType,
-      history: _history,
+      historyType: NumberGeneratorViewModel.historyType,
+      history: _viewModel.historyItems,
       title: loc.generationHistory,
       onClearAllHistory: () async {
-        await GenerationHistoryService.clearHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearAllHistory();
       },
       onClearPinnedHistory: () async {
-        await GenerationHistoryService.clearPinnedHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearPinnedHistory();
       },
       onClearUnpinnedHistory: () async {
-        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearUnpinnedHistory();
       },
       onCopyItem: _copyHistoryItem,
       onDeleteItem: (index) async {
-        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
-        await _loadHistory();
+        await _viewModel.deleteHistoryItem(index);
       },
       onTogglePin: (index) async {
-        await GenerationHistoryService.togglePinHistoryItem(
-            _historyType, index);
-        await _loadHistory();
+        await _viewModel.togglePinHistoryItem(index);
       },
       onTapItem: (item) {
         HistoryViewDialog.show(
@@ -240,10 +164,10 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
     final locale = NumberFormatter.getCurrentLocale(context);
     return Text(
       loc.numberRangeFromTo(
-        NumberFormatter.formatNumber(_minValue, locale,
-            isInteger: _isInteger, decimalPlaces: 2),
-        NumberFormatter.formatNumber(_maxValue, locale,
-            isInteger: _isInteger, decimalPlaces: 2),
+        NumberFormatter.formatNumber(_viewModel.state.minValue, locale,
+            isInteger: _viewModel.state.isInteger, decimalPlaces: 2),
+        NumberFormatter.formatNumber(_viewModel.state.maxValue, locale,
+            isInteger: _viewModel.state.isInteger, decimalPlaces: 2),
       ),
       style: Theme.of(context).textTheme.titleMedium,
     );
@@ -264,163 +188,117 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 1. Number Type Picker
-                grid.AutoScaleOptionGridPicker<bool>(
-                  title: loc.numberType,
-                  options: [
-                    OptionItem(value: true, label: loc.integers),
-                    OptionItem(value: false, label: loc.floatingPoint),
-                  ],
-                  selectedValue: _isInteger,
-                  onSelectionChanged: (value) {
-                    setState(() {
-                      _isInteger = value;
-                    });
-                  },
-                  minCellWidth: 150,
-                  maxCellWidth: 400,
-                  fixedCellHeight: 50,
-                  decorator: const grid.OptionGridDecorator(
-                    labelAlign: grid.LabelAlign.center,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        loc.numberType,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          ChoiceChip(
+                            label: Text(loc.integers),
+                            selected: _viewModel.state.isInteger,
+                            onSelected: (selected) {
+                              if (!(_viewModel.state.isInteger)) {
+                                _viewModel.updateIsInteger(true);
+                              }
+                            },
+                          ),
+                          const SizedBox(width: 12),
+                          ChoiceChip(
+                            label: Text(loc.floatingPoint),
+                            selected: !_viewModel.state.isInteger,
+                            onSelected: (selected) {
+                              if (_viewModel.state.isInteger) {
+                                _viewModel.updateIsInteger(false);
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 6),
+
                 // 2. Min/Max Inputs
                 _buildRangeDisplay(loc),
                 const SizedBox(height: 16),
                 WidgetLayoutRenderHelper.twoEqualWidthInRow(
-                  Listener(
-                    onPointerSignal: (pointerSignal) {
-                      if (pointerSignal is PointerScrollEvent &&
-                          _minValueController.selection.baseOffset >= 0) {
-                        // Only handle scroll if focused
-                        double currentValue =
-                            double.tryParse(_minValueController.text) ??
-                                _minValue;
-                        double delta = _isInteger ? 1 : 0.1;
-                        double newValue = currentValue +
-                            (pointerSignal.scrollDelta.dy < 0 ? delta : -delta);
-                        if (_isInteger) {
-                          newValue = newValue.roundToDouble();
-                        }
-                        // Clamp to not exceed max
-                        if (newValue > _maxValue) newValue = _maxValue;
-                        if (newValue < -1e12) newValue = -1e12; // Arbitrary min
-                        _minValueController.text = newValue.toString();
-                        setState(() {
-                          _minValue = newValue;
-                        });
-                      }
-                    },
-                    child: Focus(
-                      child: TextFormField(
-                        controller: _minValueController,
-                        decoration: InputDecoration(
-                          labelText: loc.minValue,
-                          border: const OutlineInputBorder(),
-                        ),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          _isInteger
-                              ? FilteringTextInputFormatter.digitsOnly
-                              : FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.-]')),
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            _minValue = double.tryParse(value) ?? _minValue;
-                          });
-                        },
-                      ),
+                  TextField(
+                    controller: _minValueController,
+                    decoration: InputDecoration(
+                      labelText: loc.minValue,
+                      border: const OutlineInputBorder(),
                     ),
-                  ),
-                  Listener(
-                    onPointerSignal: (pointerSignal) {
-                      if (pointerSignal is PointerScrollEvent &&
-                          _maxValueController.selection.baseOffset >= 0) {
-                        // Only handle scroll if focused
-                        double currentValue =
-                            double.tryParse(_maxValueController.text) ??
-                                _maxValue;
-                        double delta = _isInteger ? 1 : 0.1;
-                        double newValue = currentValue +
-                            (pointerSignal.scrollDelta.dy < 0 ? delta : -delta);
-                        if (_isInteger) {
-                          newValue = newValue.roundToDouble();
-                        }
-                        // Clamp to not go below min
-                        if (newValue < _minValue) newValue = _minValue;
-                        if (newValue > 1e12) newValue = 1e12; // Arbitrary max
-                        _maxValueController.text = newValue.toString();
-                        setState(() {
-                          _maxValue = newValue;
-                        });
-                      }
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      final newValue =
+                          double.tryParse(value) ?? _viewModel.state.minValue;
+                      _viewModel.updateMinValue(newValue);
                     },
-                    child: Focus(
-                      child: TextFormField(
-                        controller: _maxValueController,
-                        decoration: InputDecoration(
-                          labelText: loc.maxValue,
-                          border: const OutlineInputBorder(),
-                        ),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          _isInteger
-                              ? FilteringTextInputFormatter.digitsOnly
-                              : FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.-]')),
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            _maxValue = double.tryParse(value) ?? _maxValue;
-                          });
-                        },
-                      ),
-                    ),
                   ),
-                  spacing: TwoDimSpacing.specific(vertical: 8, horizontal: 16),
-                  minWidth: 300,
+                  TextField(
+                    controller: _maxValueController,
+                    decoration: InputDecoration(
+                      labelText: loc.maxValue,
+                      border: const OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      final newValue =
+                          double.tryParse(value) ?? _viewModel.state.maxValue;
+                      _viewModel.updateMaxValue(newValue);
+                    },
+                  ),
+                  minWidth: 120,
+                  spacing: TwoDimSpacing.specific(horizontal: 16, vertical: 8),
                 ),
                 const SizedBox(height: 8),
+
                 // 3. Quantity Slider
                 OptionSlider<int>(
                   label: loc.quantity,
-                  currentValue: _quantity,
+                  currentValue: _viewModel.state.quantity,
                   options: List.generate(
-                    30,
+                    10,
                     (i) => SliderOption(value: i + 1, label: '${i + 1}'),
                   ),
                   onChanged: (value) {
-                    setState(() {
-                      _quantity = value;
-                    });
+                    _viewModel.updateQuantity(value);
                   },
                   layout: OptionSliderLayout.none,
                 ),
+
                 // 4. Allow Duplicates Switch
                 OptionSwitch(
                   title: loc.allowDuplicates,
-                  value: _allowDuplicates,
+                  subtitle: loc.allowDuplicatesDesc,
+                  value: _viewModel.state.allowDuplicates,
                   onChanged: (value) {
-                    setState(() {
-                      _allowDuplicates = value;
-                    });
+                    _viewModel.updateAllowDuplicates(value);
                   },
                   decorator: OptionSwitchDecorator.compact(context),
                 ),
                 VerticalSpacingDivider.specific(top: 6, bottom: 12),
+
                 // Generate button
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton.icon(
-                    style: FilledButton.styleFrom(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                      ),
-                    ),
                     onPressed: _generateNumbers,
                     icon: const Icon(Icons.refresh),
                     label: Text(loc.generate),
+                    style: FilledButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -428,20 +306,21 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
           ),
         ),
 
-        // Result card
-        if (_generatedNumbers.isNotEmpty) ...[
-          const SizedBox(height: 24),
+        const SizedBox(height: 24),
+
+        // Results
+        if (_viewModel.results.isNotEmpty) ...[
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        loc.generatedNumbers,
+                        loc.results,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       IconButton(
@@ -452,17 +331,53 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _generatedNumbers.map((number) {
-                      return Chip(
-                        label: Text(_formatNumber(number)),
-                        backgroundColor:
-                            Theme.of(context).colorScheme.primaryContainer,
-                        labelStyle: TextStyle(
-                          color:
-                              Theme.of(context).colorScheme.onPrimaryContainer,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _viewModel.results.map((numberStr) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  numberStr,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimaryContainer,
+                                        fontFamily: 'monospace',
+                                      ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.copy, size: 18),
+                                onPressed: () {
+                                  Clipboard.setData(
+                                      ClipboardData(text: numberStr));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(loc.copied)),
+                                  );
+                                },
+                                tooltip: loc.copyToClipboard,
+                                style: IconButton.styleFrom(
+                                  foregroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     }).toList(),
@@ -478,8 +393,8 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _historyEnabled,
-      hasHistory: _historyEnabled,
+      historyEnabled: _viewModel.historyEnabled,
+      hasHistory: _viewModel.historyEnabled,
       isEmbedded: widget.isEmbedded,
       title: loc.numberGenerator,
     );

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:random_please/l10n/app_localizations.dart';
-import 'package:random_please/models/random_generator.dart';
-import 'package:random_please/services/generation_history_service.dart';
-import 'package:random_please/models/random_models/random_state_models.dart';
-import 'package:random_please/services/random_services/random_state_service.dart';
+import 'package:random_please/view_models/latin_letter_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
@@ -25,33 +22,34 @@ class LatinLetterGeneratorScreen extends StatefulWidget {
 
 class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
     with SingleTickerProviderStateMixin {
-  bool _includeUppercase = true;
-  bool _includeLowercase = true;
-  int _letterCount = 5;
-  bool _allowDuplicates = true;
-  bool _skipAnimation = false;
-  List<String> _generatedLetters = [];
+  late LatinLetterGeneratorViewModel _viewModel;
   bool _copied = false;
   late AnimationController _controller;
   late Animation<double> _animation;
-  List<GenerationHistoryItem> _history = [];
-  bool _historyEnabled = false;
 
   // New variables for range selection
   int _selectedRangeIndex = 0; // Default to 1-20 range
-  final List<Map<String, dynamic>> _ranges = [
-    {'min': 1, 'max': 20, 'label': '1-20'},
-    {'min': 21, 'max': 40, 'label': '21-40'},
-    {'min': 41, 'max': 60, 'label': '41-60'},
-    {'min': 61, 'max': 80, 'label': '61-80'},
-    {'min': 81, 'max': 100, 'label': '81-100'},
-  ];
 
-  static const String _historyType = 'latin_letter';
+  List<Map<String, dynamic>> get _ranges {
+    final bothCases =
+        _viewModel.state.includeUppercase && _viewModel.state.includeLowercase;
+    return [
+      {
+        'min': bothCases ? 2 : 1,
+        'max': 20,
+        'label': bothCases ? '2-20' : '1-20',
+      },
+      {'min': 21, 'max': 40, 'label': '21-40'},
+      {'min': 41, 'max': 60, 'label': '41-60'},
+      {'min': 61, 'max': 80, 'label': '61-80'},
+      {'min': 81, 'max': 100, 'label': '81-100'},
+    ];
+  }
 
   @override
   void initState() {
     super.initState();
+    _viewModel = LatinLetterGeneratorViewModel();
     _controller = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
@@ -60,111 +58,73 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
       parent: _controller,
       curve: Curves.elasticOut,
     );
-    _loadState();
-    _loadHistory();
+    _viewModel.addListener(_onViewModelChanged);
+    _initData();
   }
 
-  Future<void> _loadState() async {
-    try {
-      final state = await RandomStateService.getLatinLetterGeneratorState();
-      if (mounted) {
-        setState(() {
-          _includeUppercase = state.includeUppercase;
-          _includeLowercase = state.includeLowercase;
-          _letterCount = state.letterCount;
-          _allowDuplicates = state.allowDuplicates;
-          _skipAnimation = state.skipAnimation;
-
-          // Set the appropriate range index based on letterCount
-          _selectedRangeIndex = _getRangeIndexForValue(_letterCount);
-        });
+  void _onViewModelChanged() {
+    if (mounted) {
+      // Recalculate range index if toggling upper/lowercase changes the first range min
+      final newRangeIndex =
+          _getRangeIndexForValue(_viewModel.state.letterCount);
+      if (newRangeIndex != _selectedRangeIndex) {
+        _selectedRangeIndex = newRangeIndex;
       }
-    } catch (e) {
-      // Error is already logged in service
+      setState(() {});
     }
+  }
+
+  Future<void> _initData() async {
+    await _viewModel.initHive();
+    await _viewModel.loadHistory();
+
+    // Set the appropriate range index based on letterCount
+    _selectedRangeIndex = _getRangeIndexForValue(_viewModel.state.letterCount);
+    setState(() {});
   }
 
   // Helper method to get range index for a given value
   int _getRangeIndexForValue(int value) {
-    for (int i = 0; i < _ranges.length; i++) {
-      if (value >= _ranges[i]['min'] && value <= _ranges[i]['max']) {
+    final ranges = _ranges;
+    for (int i = 0; i < ranges.length; i++) {
+      if (value >= ranges[i]['min'] && value <= ranges[i]['max']) {
         return i;
       }
     }
     return 0; // Default to first range if not found
   }
 
-  Future<void> _saveState() async {
-    try {
-      final state = LatinLetterGeneratorState(
-        includeUppercase: _includeUppercase,
-        includeLowercase: _includeLowercase,
-        letterCount: _letterCount,
-        allowDuplicates: _allowDuplicates,
-        skipAnimation: _skipAnimation,
-        lastUpdated: DateTime.now(),
-      );
-      await RandomStateService.saveLatinLetterGeneratorState(state);
-    } catch (e) {
-      // Error is already logged in service
-    }
-  }
-
-  Future<void> _loadHistory() async {
-    final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory(_historyType);
-    setState(() {
-      _historyEnabled = enabled;
-      _history = history;
-    });
-  }
-
   @override
   void dispose() {
     _controller.dispose();
+    _viewModel.removeListener(_onViewModelChanged);
+    _viewModel.dispose();
     super.dispose();
   }
 
   void _generateLetters() {
-    if (!_skipAnimation) {
+    if (!_viewModel.state.skipAnimation) {
       _controller.reset();
       _controller.forward();
     }
 
     try {
-      final lettersString = RandomGenerator.generateLatinLetters(
-        _letterCount,
-        includeUppercase: _includeUppercase,
-        includeLowercase: _includeLowercase,
-        allowDuplicates: _allowDuplicates,
-      );
+      _viewModel.generateLetters();
       setState(() {
-        _generatedLetters = lettersString.split('');
         _copied = false;
       });
-
-      // Save state when generating
-      _saveState();
-
-      // Save to history if enabled
-      if (_historyEnabled && _generatedLetters.isNotEmpty) {
-        GenerationHistoryService.addHistoryItem(
-          _generatedLetters.join(''),
-          _historyType,
-        ).then((_) => _loadHistory()); // Refresh history
-      }
     } on ArgumentError {
       final loc = AppLocalizations.of(context)!;
       SnackBarUtils.showTyped(
         context,
-        loc.latinLetterGenerationError(_letterCount),
+        loc.latinLetterGenerationError(_viewModel.state.letterCount),
         SnackBarType.error,
       );
     }
   }
 
   void _copyToClipboard() {
-    Clipboard.setData(ClipboardData(text: _generatedLetters.join('')));
+    Clipboard.setData(ClipboardData(text: _viewModel.formattedResults));
     setState(() {
       _copied = true;
     });
@@ -182,30 +142,24 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return RandomGeneratorHistoryWidget(
-      historyType: _historyType,
-      history: _history,
+      historyType: LatinLetterGeneratorViewModel.historyType,
+      history: _viewModel.historyItems,
       title: loc.generationHistory,
       onClearAllHistory: () async {
-        await GenerationHistoryService.clearHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearAllHistory();
       },
       onClearPinnedHistory: () async {
-        await GenerationHistoryService.clearPinnedHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearPinnedHistory();
       },
       onClearUnpinnedHistory: () async {
-        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearUnpinnedHistory();
       },
       onCopyItem: _copyHistoryItem,
       onDeleteItem: (index) async {
-        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
-        await _loadHistory();
+        await _viewModel.deleteHistoryItem(index);
       },
       onTogglePin: (index) async {
-        await GenerationHistoryService.togglePinHistoryItem(
-            _historyType, index);
-        await _loadHistory();
+        await _viewModel.togglePinHistoryItem(index);
       },
       onTapItem: (item) {
         HistoryViewDialog.show(
@@ -220,38 +174,38 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
     final switchOptions = [
       {
         'title': loc.includeUppercase,
-        'value': _includeUppercase,
+        'subtitle': loc.includeUppercaseDesc,
+        'value': _viewModel.state.includeUppercase,
         'onChanged': (bool value) {
-          setState(() {
-            _includeUppercase = value;
-          });
+          _viewModel.updateIncludeUppercase(value);
+          setState(() {});
         },
       },
       {
         'title': loc.includeLowercase,
-        'value': _includeLowercase,
+        'subtitle': loc.includeLowercaseDesc,
+        'value': _viewModel.state.includeLowercase,
         'onChanged': (bool value) {
-          setState(() {
-            _includeLowercase = value;
-          });
+          _viewModel.updateIncludeLowercase(value);
+          setState(() {});
         },
       },
       {
         'title': loc.allowDuplicates,
-        'value': _allowDuplicates,
+        'subtitle': loc.allowDuplicatesDesc,
+        'value': _viewModel.state.allowDuplicates,
         'onChanged': (bool value) {
-          setState(() {
-            _allowDuplicates = value;
-          });
+          _viewModel.updateAllowDuplicates(value);
+          setState(() {});
         },
       },
       {
         'title': loc.skipAnimation,
-        'value': _skipAnimation,
+        'subtitle': loc.skipAnimationDesc,
+        'value': _viewModel.state.skipAnimation,
         'onChanged': (bool value) {
-          setState(() {
-            _skipAnimation = value;
-          });
+          _viewModel.updateSkipAnimation(value);
+          setState(() {});
         },
       },
     ];
@@ -261,6 +215,7 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
         final option = switchOptions[index];
         return OptionSwitch(
           title: option['title'] as String,
+          subtitle: option['subtitle'] as String?,
           value: option['value'] as bool,
           onChanged: option['onChanged'] as void Function(bool),
           decorator: OptionSwitchDecorator.compact(context),
@@ -280,6 +235,7 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
   }
 
   Widget _buildRangeChips(AppLocalizations loc) {
+    final ranges = _ranges;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -291,7 +247,7 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: _ranges.asMap().entries.map((entry) {
+          children: ranges.asMap().entries.map((entry) {
             final index = entry.key;
             final range = entry.value;
             final isSelected = index == _selectedRangeIndex;
@@ -306,8 +262,10 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
                     // Update letter count to be within the new range
                     final min = range['min'] as int;
                     final max = range['max'] as int;
-                    if (_letterCount < min || _letterCount > max) {
-                      _letterCount = min; // Set to minimum of new range
+                    if (_viewModel.state.letterCount < min ||
+                        _viewModel.state.letterCount > max) {
+                      _viewModel.updateLetterCount(
+                          min); // Set to minimum of new range
                     }
                   });
                 }
@@ -324,7 +282,8 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
   }
 
   Widget _buildLetterCountSlider(AppLocalizations loc) {
-    final selectedRange = _ranges[_selectedRangeIndex];
+    final ranges = _ranges;
+    final selectedRange = ranges[_selectedRangeIndex];
     final min = selectedRange['min'] as int;
     final max = selectedRange['max'] as int;
 
@@ -365,7 +324,7 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
     }
 
     // Ensure current letterCount is valid for this range
-    int validLetterCount = _letterCount;
+    int validLetterCount = _viewModel.state.letterCount;
     if (validLetterCount < min || validLetterCount > max) {
       validLetterCount = min;
     }
@@ -378,11 +337,10 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
             : next);
 
     // Update letterCount if it changed
-    if (validLetterCount != _letterCount) {
+    if (validLetterCount != _viewModel.state.letterCount) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-          _letterCount = validLetterCount;
-        });
+        _viewModel.updateLetterCount(validLetterCount);
+        setState(() {});
       });
     }
 
@@ -391,14 +349,14 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
       children: [
         const SizedBox(height: 16),
         OptionSlider<int>(
-          label: '${loc.letterCount}: $validLetterCount',
+          label: loc.letterCount,
           currentValue: validLetterCount,
           options: options,
           onChanged: (value) {
-            setState(() {
-              _letterCount = value;
-            });
+            _viewModel.updateLetterCount(value);
+            setState(() {});
           },
+          fixedWidth: 60,
           layout: OptionSliderLayout.none,
         ),
       ],
@@ -421,7 +379,7 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
               children: [
                 _buildRangeChips(loc),
                 _buildLetterCountSlider(loc),
-                VerticalSpacingDivider.specific(top: 12, bottom: 6),
+                VerticalSpacingDivider.onlyBottom(6),
                 _buildSwitchOptions(loc),
                 VerticalSpacingDivider.specific(top: 6, bottom: 12),
                 // Generate button
@@ -446,11 +404,11 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
         const SizedBox(height: 24),
 
         // Result card
-        if (_generatedLetters.isNotEmpty) ...[
+        if (_viewModel.results.isNotEmpty) ...[
           AnimatedBuilder(
             animation: _animation,
             builder: (context, child) {
-              if (_skipAnimation) return child!;
+              if (_viewModel.state.skipAnimation) return child!;
               return Transform.scale(
                 scale: 0.9 + (_animation.value * 0.1),
                 child: child,
@@ -481,7 +439,7 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
                       spacing: 8,
                       runSpacing: 8,
                       alignment: WrapAlignment.center,
-                      children: _generatedLetters.map((letter) {
+                      children: _viewModel.results.map((letter) {
                         return Container(
                           width: 40,
                           height: 40,
@@ -511,7 +469,7 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: SelectableText(
-                          _generatedLetters.join(''),
+                          _viewModel.formattedResults,
                           style: TextStyle(
                             fontSize: 18,
                             fontFamily: 'monospace',
@@ -535,8 +493,8 @@ class _LatinLetterGeneratorScreenState extends State<LatinLetterGeneratorScreen>
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _historyEnabled,
-      hasHistory: _historyEnabled,
+      historyEnabled: _viewModel.historyEnabled,
+      hasHistory: _viewModel.historyEnabled,
       isEmbedded: widget.isEmbedded,
       title: loc.latinLetters,
     );

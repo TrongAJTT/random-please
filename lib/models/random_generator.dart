@@ -21,6 +21,8 @@ class PlayingCard {
 
   @override
   int get hashCode => suit.hashCode ^ rank.hashCode;
+
+  bool get isRed => suit == '♥' || suit == '♦';
 }
 
 /// Utility class for all random generation functionality
@@ -181,13 +183,11 @@ class RandomGenerator {
       return '';
     }
 
+    const String lowers = 'abcdefghijklmnopqrstuvwxyz';
+    const String uppers = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     String letters = '';
-    if (includeLowercase) {
-      letters += 'abcdefghijklmnopqrstuvwxyz';
-    }
-    if (includeUppercase) {
-      letters += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    }
+    if (includeLowercase) letters += lowers;
+    if (includeUppercase) letters += uppers;
 
     if (letters.isEmpty) {
       throw ArgumentError('At least one letter case must be included');
@@ -198,17 +198,48 @@ class RandomGenerator {
           'Cannot generate $count unique letters from available set');
     }
 
+    // Guarantee at least one uppercase and one lowercase if both enabled and count >= 2
+    final bool needGuarantee =
+        includeLowercase && includeUppercase && count >= 2;
     if (allowDuplicates) {
-      StringBuffer result = StringBuffer();
-      for (int i = 0; i < count; i++) {
-        result.write(letters[_random.nextInt(letters.length)]);
+      List<String> result = [];
+      if (needGuarantee) {
+        // Preselect one lowercase and one uppercase
+        result.add(lowers[_random.nextInt(lowers.length)]);
+        result.add(uppers[_random.nextInt(uppers.length)]);
+        for (int i = 2; i < count; i++) {
+          result.add(letters[_random.nextInt(letters.length)]);
+        }
+        result.shuffle(_random);
+        return result.join();
+      } else {
+        StringBuffer buffer = StringBuffer();
+        for (int i = 0; i < count; i++) {
+          buffer.write(letters[_random.nextInt(letters.length)]);
+        }
+        return buffer.toString();
       }
-      return result.toString();
     } else {
       // Generate unique letters
       List<String> availableLetters = letters.split('');
-      availableLetters.shuffle(_random);
-      return availableLetters.take(count).join('');
+      if (needGuarantee) {
+        // Preselect one lowercase and one uppercase, then fill the rest
+        List<String> result = [];
+        String lower = lowers[_random.nextInt(lowers.length)];
+        String upper = uppers[_random.nextInt(uppers.length)];
+        result.add(lower);
+        result.add(upper);
+        // Remove chosen from available
+        availableLetters.remove(lower);
+        availableLetters.remove(upper);
+        availableLetters.shuffle(_random);
+        result.addAll(availableLetters.take(count - 2));
+        result.shuffle(_random);
+        return result.join();
+      } else {
+        availableLetters.shuffle(_random);
+        return availableLetters.take(count).join('');
+      }
     }
   }
 

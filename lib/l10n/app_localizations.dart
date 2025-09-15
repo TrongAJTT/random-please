@@ -548,11 +548,23 @@ abstract class AppLocalizations {
   /// **'Include lowercase letters'**
   String get includeLowercase;
 
+  /// No description provided for @includeLowercaseDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Result includes at least one lowercase letter (a-z)'**
+  String get includeLowercaseDesc;
+
   /// No description provided for @includeUppercase.
   ///
   /// In en, this message translates to:
   /// **'Include uppercase letters'**
   String get includeUppercase;
+
+  /// No description provided for @includeUppercaseDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Result includes at least one uppercase letter (A-Z)'**
+  String get includeUppercaseDesc;
 
   /// No description provided for @includeNumbers.
   ///
@@ -560,11 +572,23 @@ abstract class AppLocalizations {
   /// **'Include numbers'**
   String get includeNumbers;
 
+  /// No description provided for @includeNumbersDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Result includes at least one number (0-9)'**
+  String get includeNumbersDesc;
+
   /// No description provided for @includeSpecial.
   ///
   /// In en, this message translates to:
   /// **'Include special characters'**
   String get includeSpecial;
+
+  /// No description provided for @includeSpecialDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Result includes at least one special character (e.g. !@#\$%^&*)'**
+  String get includeSpecialDesc;
 
   /// No description provided for @generate.
   ///
@@ -824,6 +848,12 @@ abstract class AppLocalizations {
   /// **'Allow Duplicates'**
   String get allowDuplicates;
 
+  /// No description provided for @allowDuplicatesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow picking the same item multiple times'**
+  String get allowDuplicatesDesc;
+
   /// No description provided for @includeSeconds.
   ///
   /// In en, this message translates to:
@@ -949,6 +979,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Include Jokers'**
   String get includeJokers;
+
+  /// No description provided for @includeJokersDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Include jokers in the deck'**
+  String get includeJokersDesc;
 
   /// No description provided for @cardCount.
   ///
@@ -2263,12 +2299,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Generator Options'**
   String get generatorOptions;
-
-  /// No description provided for @allowDuplicatesDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Allow picking the same item multiple times'**
-  String get allowDuplicatesDescription;
 
   /// No description provided for @results.
   ///

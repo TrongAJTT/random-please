@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:random_please/l10n/app_localizations.dart';
-import 'package:random_please/models/random_generator.dart';
-import 'package:random_please/services/generation_history_service.dart';
-import 'package:random_please/models/random_models/random_state_models.dart';
-import 'package:random_please/services/random_services/random_state_service.dart';
+import 'package:random_please/view_models/color_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/size_utils.dart';
@@ -21,18 +18,14 @@ class ColorGeneratorScreen extends StatefulWidget {
 
 class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
     with SingleTickerProviderStateMixin {
-  Color _currentColor = Colors.blue;
-  bool _withAlpha = false;
+  late ColorGeneratorViewModel _viewModel;
   late AnimationController _controller;
   late Animation<double> _animation;
-  List<GenerationHistoryItem> _history = [];
-  bool _historyEnabled = false;
-
-  static const String _historyType = 'color';
 
   @override
   void initState() {
     super.initState();
+    _viewModel = ColorGeneratorViewModel();
     _controller = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -41,47 +34,19 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
       parent: _controller,
       curve: Curves.easeInOut,
     );
-    _loadState();
-    _loadHistory();
+    _initData();
   }
 
-  Future<void> _loadState() async {
-    try {
-      final state = await RandomStateService.getColorGeneratorState();
-      if (mounted) {
-        setState(() {
-          _withAlpha = state.withAlpha;
-        });
-      }
-    } catch (e) {
-      // Error is already logged in service
-    }
-  }
-
-  Future<void> _saveState() async {
-    try {
-      final state = ColorGeneratorState(
-        withAlpha: _withAlpha,
-        lastUpdated: DateTime.now(),
-      );
-      await RandomStateService.saveColorGeneratorState(state);
-    } catch (e) {
-      // Error is already logged in service
-    }
-  }
-
-  Future<void> _loadHistory() async {
-    final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory(_historyType);
-    setState(() {
-      _historyEnabled = enabled;
-      _history = history;
-    });
+  Future<void> _initData() async {
+    await _viewModel.initHive();
+    await _viewModel.loadHistory();
+    setState(() {});
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _viewModel.dispose();
     super.dispose();
   }
 
@@ -89,20 +54,26 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
     _controller.reset();
     _controller.forward();
 
-    setState(() {
-      _currentColor = RandomGenerator.generateColor(withAlpha: _withAlpha);
-    });
+    _viewModel.generateColor();
+    setState(() {});
+  }
 
-    // Save state when generating
-    _saveState();
+  String _getHexColor() {
+    final color = _viewModel.currentColor;
+    if (_viewModel.state.withAlpha) {
+      return '#${color.value.toRadixString(16).padLeft(8, '0').toUpperCase()}';
+    } else {
+      return '#${(color.value & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+    }
+  }
 
-    // Save to history if enabled
-    if (_historyEnabled) {
-      String colorText = _getHexColor();
-      GenerationHistoryService.addHistoryItem(
-        colorText,
-        _historyType,
-      ).then((_) => _loadHistory());
+  String _getRgbColor() {
+    final color = _viewModel.currentColor;
+    if (_viewModel.state.withAlpha) {
+      final alpha = (color.alpha / 255.0);
+      return 'rgba(${color.red}, ${color.green}, ${color.blue}, ${alpha.toStringAsFixed(2)})';
+    } else {
+      return 'rgb(${color.red}, ${color.green}, ${color.blue})';
     }
   }
 
@@ -115,8 +86,8 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return RandomGeneratorHistoryWidget(
-      historyType: _historyType,
-      history: _history,
+      historyType: ColorGeneratorViewModel.historyType,
+      history: _viewModel.historyItems,
       customHeader: (history, index) => Container(
         width: 24,
         height: 24,
@@ -128,26 +99,20 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
       ),
       title: loc.generationHistory,
       onClearAllHistory: () async {
-        await GenerationHistoryService.clearHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearAllHistory();
       },
       onClearPinnedHistory: () async {
-        await GenerationHistoryService.clearPinnedHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearPinnedHistory();
       },
       onClearUnpinnedHistory: () async {
-        await GenerationHistoryService.clearUnpinnedHistory(_historyType);
-        await _loadHistory();
+        await _viewModel.clearUnpinnedHistory();
       },
       onCopyItem: _copyHistoryItem,
       onDeleteItem: (index) async {
-        await GenerationHistoryService.deleteHistoryItem(_historyType, index);
-        await _loadHistory();
+        await _viewModel.deleteHistoryItem(index);
       },
       onTogglePin: (index) async {
-        await GenerationHistoryService.togglePinHistoryItem(
-            _historyType, index);
-        await _loadHistory();
+        await _viewModel.togglePinHistoryItem(index);
       },
       onTapItem: (item) {
         HistoryViewDialog.show(
@@ -170,22 +135,6 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
       // If parsing fails, return a default color
     }
     return Colors.grey;
-  }
-
-  String _getHexColor() {
-    if (_withAlpha) {
-      return '#${_currentColor.toARGB32().toRadixString(16).padLeft(8, '0')}';
-    } else {
-      return '#${_currentColor.toARGB32().toRadixString(16).substring(2).padLeft(6, '0')}';
-    }
-  }
-
-  String _getRgbColor() {
-    if (_withAlpha) {
-      return 'rgba(${(_currentColor.r).toStringAsFixed(2)}, ${(_currentColor.g).toStringAsFixed(2)}, ${(_currentColor.b).toStringAsFixed(2)}, ${(_currentColor.a / 255).toStringAsFixed(2)})';
-    } else {
-      return 'rgb(${(_currentColor.r).toStringAsFixed(2)}, ${(_currentColor.g).toStringAsFixed(2)}, ${(_currentColor.b).toStringAsFixed(2)})';
-    }
   }
 
   void _copyToClipboard(String value) {
@@ -215,11 +164,11 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
               builder: (context, child) {
                 return Container(
                   decoration: BoxDecoration(
-                    color: _currentColor,
+                    color: _viewModel.currentColor,
                     borderRadius: const BorderRadius.all(Radius.circular(16)),
                     boxShadow: [
                       BoxShadow(
-                        color: _currentColor.withValues(alpha: 0.4),
+                        color: _viewModel.currentColor.withValues(alpha: 0.4),
                         blurRadius: 20,
                         spreadRadius: 4,
                         offset: const Offset(0, 8),
@@ -233,7 +182,7 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: _isColorDark(_currentColor)
+                        color: _isColorDark(_viewModel.currentColor)
                             ? Colors.white.withValues(alpha: 0.9)
                             : Colors.black.withValues(alpha: 0.8),
                         borderRadius: BorderRadius.circular(20),
@@ -241,7 +190,7 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
                       child: Text(
                         _getHexColor(),
                         style: TextStyle(
-                          color: _isColorDark(_currentColor)
+                          color: _isColorDark(_viewModel.currentColor)
                               ? Colors.black
                               : Colors.white,
                           fontFamily: 'monospace',
@@ -270,24 +219,22 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
           children: [
             ChoiceChip(
               label: Text(AppLocalizations.of(context)!.solid),
-              selected: !_withAlpha,
+              selected: !_viewModel.state.withAlpha,
               onSelected: (selected) {
                 if (selected) {
-                  setState(() {
-                    _withAlpha = false;
-                  });
+                  _viewModel.updateWithAlpha(false);
+                  setState(() {});
                 }
               },
             ),
             const SizedBox(width: 12),
             ChoiceChip(
               label: Text(AppLocalizations.of(context)!.includeAlpha),
-              selected: _withAlpha,
+              selected: _viewModel.state.withAlpha,
               onSelected: (selected) {
                 if (selected) {
-                  setState(() {
-                    _withAlpha = true;
-                  });
+                  _viewModel.updateWithAlpha(true);
+                  setState(() {});
                 }
               },
             ),
@@ -336,8 +283,8 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _historyEnabled,
-      hasHistory: _historyEnabled,
+      historyEnabled: _viewModel.historyEnabled,
+      hasHistory: _viewModel.historyEnabled,
       isEmbedded: widget.isEmbedded,
       title: loc.colorGenerator,
     );
@@ -388,7 +335,7 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
   bool _isColorDark(Color color) {
     // Calculate luminance of the color
     double luminance =
-        (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) / 255;
+        (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue) / 255;
     return luminance < 0.5;
   }
 }
