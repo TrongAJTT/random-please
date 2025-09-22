@@ -25,6 +25,12 @@ class SettingsModel extends HiveObject {
   @HiveField(6)
   final bool compactTabLayout;
 
+  @HiveField(7)
+  final List<String> remoteListTemplateCustomSource;
+
+  @HiveField(8)
+  final bool remoteListTemplateDefaultState;
+
   SettingsModel({
     this.fetchTimeoutSeconds = 10,
     this.featureStateSavingEnabled = true, // Always enabled by default
@@ -33,6 +39,8 @@ class SettingsModel extends HiveObject {
     this.focusModeEnabled = false,
     this.saveRandomToolsState = true,
     this.compactTabLayout = false, // Default to false
+    this.remoteListTemplateCustomSource = const [], // Default empty list
+    this.remoteListTemplateDefaultState = true, // Default to enabled
   });
 
   SettingsModel copyWith({
@@ -43,6 +51,8 @@ class SettingsModel extends HiveObject {
     bool? focusModeEnabled,
     bool? saveRandomToolsState,
     bool? compactTabLayout,
+    List<String>? remoteListTemplateCustomSource,
+    bool? remoteListTemplateDefaultState,
   }) {
     return SettingsModel(
       fetchTimeoutSeconds: fetchTimeoutSeconds ?? this.fetchTimeoutSeconds,
@@ -53,6 +63,10 @@ class SettingsModel extends HiveObject {
       focusModeEnabled: focusModeEnabled ?? this.focusModeEnabled,
       saveRandomToolsState: saveRandomToolsState ?? this.saveRandomToolsState,
       compactTabLayout: compactTabLayout ?? this.compactTabLayout,
+      remoteListTemplateCustomSource:
+          remoteListTemplateCustomSource ?? this.remoteListTemplateCustomSource,
+      remoteListTemplateDefaultState:
+          remoteListTemplateDefaultState ?? this.remoteListTemplateDefaultState,
     );
   }
 
@@ -65,6 +79,8 @@ class SettingsModel extends HiveObject {
       'focusModeEnabled': focusModeEnabled,
       'saveRandomToolsState': saveRandomToolsState,
       'compactTabLayout': compactTabLayout,
+      'remoteListTemplateCustomSource': remoteListTemplateCustomSource,
+      'remoteListTemplateDefaultState': remoteListTemplateDefaultState,
     };
   }
 
@@ -77,6 +93,10 @@ class SettingsModel extends HiveObject {
       focusModeEnabled: json['focusModeEnabled'] ?? false,
       saveRandomToolsState: json['saveRandomToolsState'] ?? true,
       compactTabLayout: json['compactTabLayout'] ?? false,
+      remoteListTemplateCustomSource:
+          List<String>.from(json['remoteListTemplateCustomSource'] ?? []),
+      remoteListTemplateDefaultState:
+          json['remoteListTemplateDefaultState'] ?? true,
     );
   }
 }

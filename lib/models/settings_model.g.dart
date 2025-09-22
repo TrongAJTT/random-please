@@ -24,13 +24,16 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       focusModeEnabled: fields[4] as bool,
       saveRandomToolsState: fields[5] as bool,
       compactTabLayout: fields[6] as bool,
+      remoteListTemplateCustomSource:
+          (fields[7] as List?)?.cast<String>() ?? const <String>[],
+      remoteListTemplateDefaultState: (fields[8] as bool?) ?? true,
     );
   }
 
   @override
   void write(BinaryWriter writer, SettingsModel obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.fetchTimeoutSeconds)
       ..writeByte(1)
@@ -44,7 +47,11 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       ..writeByte(5)
       ..write(obj.saveRandomToolsState)
       ..writeByte(6)
-      ..write(obj.compactTabLayout);
+      ..write(obj.compactTabLayout)
+      ..writeByte(7)
+      ..write(obj.remoteListTemplateCustomSource)
+      ..writeByte(8)
+      ..write(obj.remoteListTemplateDefaultState);
   }
 
   @override

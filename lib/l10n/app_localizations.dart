@@ -176,18 +176,6 @@ abstract class AppLocalizations {
   /// **'Libraries and resources used in this app'**
   String get creditAckDesc;
 
-  /// No description provided for @donorsAck.
-  ///
-  /// In en, this message translates to:
-  /// **'Supporters Acknowledgment'**
-  String get donorsAck;
-
-  /// No description provided for @donorsAckDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'List of publicly acknowledged supporters. Thank you very much!'**
-  String get donorsAckDesc;
-
   /// No description provided for @supportDesc.
   ///
   /// In en, this message translates to:
@@ -217,36 +205,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'One-time Donation'**
   String get oneTimeDonation;
-
-  /// No description provided for @momoDonateDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Support me via Momo'**
-  String get momoDonateDesc;
-
-  /// No description provided for @donorBenefits.
-  ///
-  /// In en, this message translates to:
-  /// **'Supporter Benefits'**
-  String get donorBenefits;
-
-  /// No description provided for @donorBenefit1.
-  ///
-  /// In en, this message translates to:
-  /// **'Be listed in the acknowledgments and share your comments (if you want).'**
-  String get donorBenefit1;
-
-  /// No description provided for @donorBenefit2.
-  ///
-  /// In en, this message translates to:
-  /// **'Prioritized feedback consideration.'**
-  String get donorBenefit2;
-
-  /// No description provided for @donorBenefit3.
-  ///
-  /// In en, this message translates to:
-  /// **'Access to beta (debug) versions of my other software P2Lan Transfer, however updates are not guaranteed to be frequent.'**
-  String get donorBenefit3;
 
   /// No description provided for @settings.
   ///
@@ -545,49 +503,49 @@ abstract class AppLocalizations {
   /// No description provided for @includeLowercase.
   ///
   /// In en, this message translates to:
-  /// **'Include lowercase letters'**
+  /// **'Lowercase letters'**
   String get includeLowercase;
 
   /// No description provided for @includeLowercaseDesc.
   ///
   /// In en, this message translates to:
-  /// **'Result includes at least one lowercase letter (a-z)'**
+  /// **'a-z'**
   String get includeLowercaseDesc;
 
   /// No description provided for @includeUppercase.
   ///
   /// In en, this message translates to:
-  /// **'Include uppercase letters'**
+  /// **'Uppercase letters'**
   String get includeUppercase;
 
   /// No description provided for @includeUppercaseDesc.
   ///
   /// In en, this message translates to:
-  /// **'Result includes at least one uppercase letter (A-Z)'**
+  /// **'A-Z'**
   String get includeUppercaseDesc;
 
   /// No description provided for @includeNumbers.
   ///
   /// In en, this message translates to:
-  /// **'Include numbers'**
+  /// **'Numbers'**
   String get includeNumbers;
 
   /// No description provided for @includeNumbersDesc.
   ///
   /// In en, this message translates to:
-  /// **'Result includes at least one number (0-9)'**
+  /// **'0-9'**
   String get includeNumbersDesc;
 
   /// No description provided for @includeSpecial.
   ///
   /// In en, this message translates to:
-  /// **'Include special characters'**
+  /// **'Special characters'**
   String get includeSpecial;
 
   /// No description provided for @includeSpecialDesc.
   ///
   /// In en, this message translates to:
-  /// **'Result includes at least one special character (e.g. !@#\$%^&*)'**
+  /// **'e.g. !@#\$%^&*'**
   String get includeSpecialDesc;
 
   /// No description provided for @generate.

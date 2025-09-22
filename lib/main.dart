@@ -4,11 +4,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/screens/about_layout.dart';
 import 'package:random_please/services/version_check_service.dart';
-import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/utils/variables_utils.dart';
 import 'package:random_please/variables.dart';
 import 'package:random_please/widgets/generic/generic_settings_helper.dart';
-import 'package:random_please/services/cache_service.dart';
 import 'package:random_please/services/hive_service.dart';
 import 'package:random_please/services/settings_service.dart';
 import 'package:random_please/services/app_logger.dart';
@@ -18,7 +16,7 @@ import 'package:random_please/models/settings_model.dart';
 import 'package:random_please/widgets/generic/icon_button_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
-import 'screens/main_settings.dart';
+import 'screens/settings/main_settings.dart';
 import 'screens/random_tools_screen.dart';
 import 'screens/random_tools_desktop_layout.dart';
 import 'package:flutter/services.dart';
@@ -370,7 +368,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
           final screen = MainSettingsScreen(
             isEmbedded: isDesktop,
             onToolVisibilityChanged: _onToolOrderChanged,
-            initialSectionId: null, // Let the screen decide the initial view
+            initialSectionId: 'user_interface',
           );
           GenericSettingsHelper.showSettings(
             context,
@@ -470,234 +468,6 @@ class _HomePageState extends State<HomePage> with WindowListener {
           ),
         );
       },
-    );
-  }
-}
-
-class SettingsDialog extends StatelessWidget {
-  const SettingsDialog({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(AppLocalizations.of(context)!.settings),
-      content: const SettingsScreen(),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(AppLocalizations.of(context)!.close),
-        ),
-      ],
-    );
-  }
-}
-
-class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
-
-  @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  late ThemeMode _themeMode;
-  late String _language;
-  String _cacheInfo = 'Calculating...';
-  bool _clearing = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _themeMode = settingsController.themeMode;
-    _language = settingsController.locale.languageCode;
-    _loadCacheInfo();
-  }
-
-  Future<void> _loadCacheInfo() async {
-    try {
-      final totalSize = await CacheService.getTotalCacheSize();
-      setState(() {
-        _cacheInfo = CacheService.formatCacheSize(totalSize);
-      });
-    } catch (e) {
-      setState(() {
-        _cacheInfo = 'Unknown';
-      });
-    }
-  }
-
-  Future<void> _clearCache() async {
-    final confirmed = await _showConfirmDialog();
-    if (confirmed != true) return;
-
-    setState(() {
-      _clearing = true;
-    });
-
-    try {
-      await CacheService.clearAllCache();
-      await _loadCacheInfo(); // Refresh cache info
-      setState(() {
-        _clearing = false;
-      });
-
-      if (mounted) {
-        SnackBarUtils.showTyped(context,
-            AppLocalizations.of(context)!.clearCache, SnackBarType.success);
-      }
-    } catch (e) {
-      setState(() {
-        _clearing = false;
-      });
-
-      if (mounted) {
-        SnackBarUtils.showTyped(context, 'Error: $e', SnackBarType.error);
-      }
-    }
-  }
-
-  void _onThemeChanged(ThemeMode? mode) {
-    if (mode != null) {
-      setState(() => _themeMode = mode);
-      settingsController.setThemeMode(mode);
-    }
-  }
-
-  void _onLanguageChanged(String? lang) {
-    if (lang != null) {
-      setState(() => _language = lang);
-      settingsController.setLocale(Locale(lang));
-    }
-  }
-
-  Future<bool?> _showConfirmDialog() async {
-    final loc = AppLocalizations.of(context)!;
-    final textController = TextEditingController();
-
-    return await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Text(loc.clearAllCache),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(loc.confirmClearAllCache),
-              const SizedBox(height: 16),
-              Text(
-                loc.typeConfirmToProceed,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: textController,
-                decoration: const InputDecoration(
-                  hintText: 'confirm',
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (value) => setState(() {}),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(loc.cancel),
-            ),
-            FilledButton(
-              onPressed: textController.text.toLowerCase() == 'confirm'
-                  ? () => Navigator.of(context).pop(true)
-                  : null,
-              style: FilledButton.styleFrom(backgroundColor: Colors.red),
-              child: Text(loc.clearAllCache),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(title: Text(loc.settings)),
-      body: ListView(
-        padding: const EdgeInsets.all(24),
-        children: [
-          Text(loc.theme, style: const TextStyle(fontWeight: FontWeight.bold)),
-          ListTile(
-            title: Text(loc.system),
-            leading: Radio<ThemeMode>(
-              value: ThemeMode.system,
-              groupValue: _themeMode,
-              onChanged: _onThemeChanged,
-            ),
-          ),
-          ListTile(
-            title: Text(loc.light),
-            leading: Radio<ThemeMode>(
-              value: ThemeMode.light,
-              groupValue: _themeMode,
-              onChanged: _onThemeChanged,
-            ),
-          ),
-          ListTile(
-            title: Text(loc.dark),
-            leading: Radio<ThemeMode>(
-              value: ThemeMode.dark,
-              groupValue: _themeMode,
-              onChanged: _onThemeChanged,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            loc.language,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          ListTile(
-            title: Text(loc.english),
-            leading: Radio<String>(
-              value: 'en',
-              groupValue: _language,
-              onChanged: _onLanguageChanged,
-            ),
-          ),
-          ListTile(
-            title: Text(loc.vietnamese),
-            leading: Radio<String>(
-              value: 'vi',
-              groupValue: _language,
-              onChanged: _onLanguageChanged,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text('${loc.cache}: $_cacheInfo'),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  icon: _clearing
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.delete),
-                  label: Text(loc.clearCache),
-                  onPressed: _clearing ? null : _clearCache,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }

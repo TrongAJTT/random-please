@@ -2,8 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/library_list.dart';
-import 'package:random_please/screens/donors_acknowledgment_screen.dart';
-import 'package:random_please/services/author_products_service.dart';
 import 'package:random_please/services/version_check_service.dart';
 import 'package:random_please/utils/url_utils.dart';
 import 'package:random_please/utils/variables_utils.dart';
@@ -88,23 +86,6 @@ class _AboutLayoutState extends State<AboutLayout> {
             onTap: _showDonateDialog,
           ),
 
-          // Donors Acknowledgment section
-          ListTile(
-              leading: const Icon(
-                Icons.star,
-                color: Colors.yellow,
-              ),
-              title: Text(l10n.donorsAck),
-              subtitle: Text(l10n.donorsAckDesc),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const DonorsAcknowledgmentScreen(),
-                  ),
-                );
-              }),
-
           // Credits & Acknowledgments section
           ListTile(
             leading: const Icon(
@@ -167,18 +148,13 @@ class _AboutLayoutState extends State<AboutLayout> {
             ),
           ],
 
-          // View author's products section
+          // Terms of Use section
           ListTile(
-            leading: const Icon(
-              Icons.shopping_bag,
-              color: Colors.green,
-            ),
-            title: Text(l10n.authorProducts),
-            subtitle: Text(l10n.authorProductsDesc),
+            leading: const Icon(Icons.gavel, color: Colors.green),
+            title: Text(l10n.termsOfUse),
+            subtitle: Text(l10n.termsOfUseView),
             trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              AuthorProductsService.navigateToAuthorProductsScreen(context);
-            },
+            onTap: () => UriUtils.launchInBrowser(termsOfUseUrl, context),
           ),
         ],
       ),
@@ -283,97 +259,6 @@ class _AboutLayoutState extends State<AboutLayout> {
             trailing: const Icon(Icons.open_in_new),
             onTap: () => UriUtils.launchInBrowser(buyMeACoffeeUrl, context),
           ),
-          // Check language is Vietnamese for Momo donation
-          if (Localizations.localeOf(context).languageCode == 'vi') ...[
-            ListTile(
-              leading: const Icon(Icons.mobile_friendly),
-              title: const Text('Momo'),
-              subtitle: Text(l10n.momoDonateDesc),
-              trailing: const Icon(Icons.open_in_new),
-              onTap: () => UriUtils.launchInBrowserWithConfirm(
-                  context: context,
-                  url: momoDonateUrl,
-                  content: 'Momo không phải là nền tảng ủng hộ chuyên dụng!\n'
-                      'Vui lòng để lại email để mình có thể liên hệ bạn.'),
-            ),
-          ],
-
-          const SizedBox(height: 32),
-
-          // Donor benefits
-          Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.donorBenefits,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                  const SizedBox(height: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.check_circle,
-                              color: Colors.green, size: 18),
-                          const SizedBox(width: 8),
-                          Expanded(child: Text(l10n.donorBenefit1)),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const Icon(Icons.check_circle,
-                              color: Colors.green, size: 18),
-                          const SizedBox(width: 8),
-                          Expanded(child: Text(l10n.donorBenefit2)),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const Icon(Icons.check_circle,
-                              color: Colors.green, size: 18),
-                          const SizedBox(width: 8),
-                          Expanded(child: Text(l10n.donorBenefit3)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Check out the author's other products card
-          const SizedBox(height: 24),
-          Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            child: ListTile(
-              title: Text(l10n.alsoViewAuthorOtherProducts),
-              subtitle: Text(l10n.authorProductsDesc),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                AuthorProductsService.navigateToAuthorProductsScreen(context);
-              },
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide(
-                  width: 2,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .primary
-                      .withValues(alpha: 0.5),
-                ),
-              ),
-            ),
-          )
         ],
       ),
     );

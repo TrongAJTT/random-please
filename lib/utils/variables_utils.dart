@@ -30,7 +30,17 @@ String getScreenTitle(String? title) {
   return title ?? appName;
 }
 
+bool isMobileContext(BuildContext context) {
+  final width = MediaQuery.of(context).size.width;
+  return width < tabletScreenWidthThreshold; // Mobile threshold
+}
+
+bool isTabletContext(BuildContext context) {
+  final width = MediaQuery.of(context).size.width;
+  return width > tabletScreenWidthThreshold;
+}
+
 bool isDesktopContext(BuildContext context) {
   final width = MediaQuery.of(context).size.width;
-  return width > 600; // Desktop threshold
+  return width > desktopScreenWidthThreshold; // Desktop threshold
 }

@@ -7,15 +7,13 @@ import 'package:random_please/services/settings_service.dart';
 
 import 'package:random_please/layouts/section_sidebar_scrolling_layout.dart';
 import 'package:random_please/widgets/generic/section_item.dart';
-import 'package:random_please/widgets/generic/option_grid_picker.dart' as grid;
-import 'package:random_please/widgets/generic/option_item.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/widgets/security/security_settings_widget.dart';
 import 'package:random_please/widgets/generic/generic_settings_helper.dart';
-import 'package:random_please/screens/tool_ordering_screen.dart';
+import 'package:random_please/screens/settings/tool_ordering_screen.dart';
+import 'package:random_please/screens/settings/settings_screen.dart';
+import 'package:random_please/screens/settings/remote_list_template_screen.dart';
 import 'package:random_please/services/tool_order_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:random_please/main.dart';
 
 class MainSettingsScreen extends StatefulWidget {
   final bool isEmbedded;
@@ -34,12 +32,11 @@ class MainSettingsScreen extends StatefulWidget {
 }
 
 class _MainSettingsScreenState extends State<MainSettingsScreen> {
-  late ThemeMode _themeMode = settingsController.themeMode;
-  late String _language = settingsController.locale.languageCode;
   bool _loading = true;
   bool _historyEnabled = false;
   bool _saveRandomToolsState = true;
   bool _compactTabLayout = false;
+  String _cacheInfo = '...';
 
   // Static decorator for settings
   late final OptionSwitchDecorator switchDecorator;
@@ -61,24 +58,17 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
   }
 
   Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    final themeIndex = prefs.getInt('themeMode');
-    final lang = prefs.getString('language');
     final historyEnabled = await GenerationHistoryService.isHistoryEnabled();
     final saveRandomToolsState =
         await SettingsService.getSaveRandomToolsState();
     final compactTabLayout = await SettingsService.getCompactTabLayout();
+    final totalSize = await CacheService.getTotalCacheSize();
 
     setState(() {
-      _themeMode = themeIndex != null
-          ? ThemeMode.values[themeIndex]
-          : settingsController.themeMode;
-      _language = lang ?? settingsController.locale.languageCode;
       _historyEnabled = historyEnabled;
-      // _logRetentionDays = logRetentionDays;
       _saveRandomToolsState = saveRandomToolsState;
       _compactTabLayout = compactTabLayout;
-
+      _cacheInfo = CacheService.formatCacheSize(totalSize);
       _loading = false;
     });
   }
@@ -88,24 +78,6 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
     await CacheService.confirmAndClearAllCache(context, l10n: l10n);
     // Refresh info after dialog closes
     await _loadSettings();
-  }
-
-  void _onThemeChanged(ThemeMode? mode) async {
-    if (mode != null) {
-      setState(() => _themeMode = mode);
-      settingsController.setThemeMode(mode);
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('themeMode', mode.index);
-    }
-  }
-
-  void _onLanguageChanged(String? lang) async {
-    if (lang != null) {
-      setState(() => _language = lang);
-      settingsController.setLocale(Locale(lang));
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('language', lang);
-    }
   }
 
   void _onHistoryEnabledChanged(bool enabled) async {
@@ -193,29 +165,12 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
   }
 
   Widget _buildUserInterfaceSection(AppLocalizations loc) {
-    final width = MediaQuery.of(context).size.width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Theme & Language with responsive layout
-        (width > 1000)
-            ? Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: _buildThemeSettings(loc)),
-                  const SizedBox(width: 32),
-                  Expanded(child: _buildLanguageSettings(loc)),
-                ],
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildThemeSettings(loc),
-                  const SizedBox(height: 24),
-                  _buildLanguageSettings(loc),
-                ],
-              ),
-        const SizedBox(height: 24),
+        // Theme & Language (from MVVM SettingsScreen) without cache controls
+        const SettingsScreen(isEmbedded: true, showCacheSection: false),
+        const SizedBox(height: 16),
         _buildCompactTabLayoutSettings(loc),
       ],
     );
@@ -230,6 +185,8 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
         _buildSaveRandomToolsStateSettings(loc),
         VerticalSpacingDivider.both(6),
         _buildToolOrderingSettings(loc),
+        VerticalSpacingDivider.both(6),
+        _buildRemoteListTemplateSettings(loc),
       ],
     );
   }
@@ -244,72 +201,6 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
         // const SizedBox(height: 24),
         // _buildExpandableLogSection(loc),
       ],
-    );
-  }
-
-  Widget _buildThemeSettings(AppLocalizations loc) {
-    return grid.AutoScaleOptionGridPicker<ThemeMode>(
-      title: loc.theme,
-      options: [
-        OptionItem.withIcon(
-          value: ThemeMode.light,
-          label: loc.light,
-          iconData: Icons.light_mode_outlined,
-          iconColor: Colors.amber.shade600,
-        ),
-        OptionItem.withIcon(
-          value: ThemeMode.dark,
-          label: loc.dark,
-          iconData: Icons.dark_mode_outlined,
-          iconColor: Colors.indigo.shade600,
-        ),
-        OptionItem.withIcon(
-          value: ThemeMode.system,
-          label: loc.system,
-          iconData: Icons.brightness_auto_outlined,
-          iconColor: Theme.of(context).colorScheme.primary,
-        ),
-      ],
-      selectedValue: _themeMode,
-      onSelectionChanged: (value) => _onThemeChanged(value),
-      minCellWidth: 300,
-      maxCellWidth: 2000,
-      fixedCellHeight: 50,
-      decorator: const grid.OptionGridDecorator(
-        iconAlign: grid.IconAlign.leftOfTitle,
-        iconSpacing: 12,
-        labelAlign: grid.LabelAlign.left,
-        padding: EdgeInsets.zero,
-      ),
-    );
-  }
-
-  Widget _buildLanguageSettings(AppLocalizations loc) {
-    return grid.AutoScaleOptionGridPicker<String>(
-      title: loc.language,
-      options: [
-        OptionItem.withEmoji(
-          value: 'en',
-          label: loc.english,
-          emoji: '🇺🇸',
-        ),
-        OptionItem.withEmoji(
-          value: 'vi',
-          label: loc.vietnamese,
-          emoji: '🇻🇳',
-        ),
-      ],
-      selectedValue: _language,
-      onSelectionChanged: (value) => _onLanguageChanged(value),
-      minCellWidth: 300,
-      maxCellWidth: 2000,
-      fixedCellHeight: 50,
-      decorator: const grid.OptionGridDecorator(
-        iconAlign: grid.IconAlign.leftOfTitle,
-        iconSpacing: 12,
-        labelAlign: grid.LabelAlign.left,
-        padding: EdgeInsets.zero,
-      ),
     );
   }
 
@@ -401,6 +292,49 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
     });
   }
 
+  Widget _buildRemoteListTemplateSettings(AppLocalizations loc) {
+    return ListTile(
+      leading: Icon(
+        Icons.cloud,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      title: Text(
+        'Remote List Template Source',
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+      ),
+      subtitle: Text(
+        'Manage cloud template sources for Pick From List',
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+      ),
+      trailing: Icon(
+        Icons.arrow_forward_ios,
+        size: 16,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
+      onTap: () => _showRemoteListTemplateScreen(loc),
+      contentPadding: EdgeInsets.zero,
+    );
+  }
+
+  Future<void> _showRemoteListTemplateScreen(AppLocalizations loc) async {
+    if (mounted) {
+      GenericSettingsHelper.showSettings(
+        context,
+        GenericSettingsConfig(
+          title: 'Remote List Template Source',
+          settingsLayout: const RemoteListTemplateScreen(isEmbedded: true),
+          onSettingsChanged: (newSettings) {
+            // Empty lambda as requested
+          },
+        ),
+      );
+    }
+  }
+
   Widget _buildCacheManagement(AppLocalizations loc) {
     return Card(
       child: Padding(
@@ -422,10 +356,10 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
               ],
             ),
             const SizedBox(height: 8),
-            Text(
-              loc.historyManager,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
+            Text(loc.historyManager,
+                style: Theme.of(context).textTheme.bodySmall),
+            const SizedBox(height: 12),
+            Text('${loc.cache}: $_cacheInfo'),
             const SizedBox(height: 16),
             Row(
               children: [

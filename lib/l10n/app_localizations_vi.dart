@@ -49,13 +49,6 @@ class AppLocalizationsVi extends AppLocalizations {
       'Danh sách các thư viện, công cụ và nguồn tài nguyên đã sử dụng trong ứng dụng này.';
 
   @override
-  String get donorsAck => 'Ghi công người ủng hộ';
-
-  @override
-  String get donorsAckDesc =>
-      'Danh sách đánh giá của những người ủng hộ công khai. Cảm ơn các bạn rất nhiều!';
-
-  @override
   String get supportDesc =>
       'Random Please giúp bạn tạo dữ liệu ngẫu nhiên một cách dễ dàng, thuận tiện và miễn phí. Nếu bạn thấy ứng dụng hữu ích, hãy cân nhắc hỗ trợ mình để giúp mình duy trì và phát triển ứng dụng này. Cảm ơn bạn rất nhiều!';
 
@@ -70,23 +63,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get oneTimeDonation => 'Ủng hộ một lần';
-
-  @override
-  String get momoDonateDesc => 'Hỗ trợ tôi qua Momo';
-
-  @override
-  String get donorBenefits => 'Lợi ích của người ủng hộ';
-
-  @override
-  String get donorBenefit1 =>
-      'Được liệt kê trong phần cảm ơn và chia sẻ ý kiến của bạn (nếu bạn muốn).';
-
-  @override
-  String get donorBenefit2 => 'Xem xét phản hồi ưu tiên.';
-
-  @override
-  String get donorBenefit3 =>
-      'Truy cập vào các phiên bản beta (debug) của phần mềm khác của tôi P2Lan Transfer, tuy nhiên không đảm bảo cập nhật thường xuyên.';
 
   @override
   String get settings => 'Cài đặt';
@@ -246,31 +222,28 @@ class AppLocalizationsVi extends AppLocalizations {
   String get numCharacters => 'Số ký tự';
 
   @override
-  String get includeLowercase => 'Bao gồm chữ thường';
+  String get includeLowercase => 'Chữ thường';
 
   @override
-  String get includeLowercaseDesc =>
-      'Kết quả bao gồm ít nhất một chữ cái thường (a-z)';
+  String get includeLowercaseDesc => 'a-z';
 
   @override
-  String get includeUppercase => 'Bao gồm chữ hoa';
+  String get includeUppercase => 'Chữ hoa';
 
   @override
-  String get includeUppercaseDesc =>
-      'Kết quả bao gồm ít nhất một chữ cái hoa (A-Z)';
+  String get includeUppercaseDesc => 'A-Z';
 
   @override
-  String get includeNumbers => 'Bao gồm số';
+  String get includeNumbers => 'Số';
 
   @override
-  String get includeNumbersDesc => 'Kết quả bao gồm ít nhất một chữ số (0-9)';
+  String get includeNumbersDesc => '0-9';
 
   @override
-  String get includeSpecial => 'Bao gồm ký tự đặc biệt';
+  String get includeSpecial => 'Ký tự đặc biệt';
 
   @override
-  String get includeSpecialDesc =>
-      'Kết quả bao gồm ít nhất một ký tự đặc biệt (ví dụ: !@#\$%^&*)';
+  String get includeSpecialDesc => 'ví dụ: !@#\$%^&*';
 
   @override
   String get generate => 'Tạo';

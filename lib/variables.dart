@@ -5,20 +5,16 @@ const String appName = 'Random Please';
 const String appSlogan = "Convenient randomizer tool that can help you anytime";
 const String appAssetIcon = 'assets/app_icon.png';
 
+const String termsOfUseUrl =
+    'https://www.trongajtt.com/apps/random-please/terms/latest/';
+
 const String githubRepoUrl = 'https://github.com/TrongAJTT/random-please';
 const String githubSponsorUrl = 'https://github.com/sponsors/TrongAJTT';
 const String buyMeACoffeeUrl = 'https://www.buymeacoffee.com/trongajtt';
-const String momoDonateUrl =
-    'https://me.momo.vn/8vI1TzseFRFQF3UquBU1fz/5xe79k5vr5VAb7r';
-
-// Replace <locale> with the actual locale code
-const String supportersAcknowledgmentUrl =
-    'https://raw.githubusercontent.com/TrongAJTT/TrongAJTT/refs/heads/main/SUPPORTERS.json';
 
 const String latestReleaseEndpoint =
     'https://api.github.com/repos/TrongAJTT/random-please/releases/latest';
-const String authorProductsEndpoint =
-    'https://raw.githubusercontent.com/TrongAJTT/TrongAJTT/refs/heads/main/MY_PRODUCTS.json';
+
 const String authorAvatarEndpoint =
     'https://avatars.githubusercontent.com/u/157729907?v=4';
 

@@ -48,13 +48,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get creditAckDesc => 'Libraries and resources used in this app';
 
   @override
-  String get donorsAck => 'Supporters Acknowledgment';
-
-  @override
-  String get donorsAckDesc =>
-      'List of publicly acknowledged supporters. Thank you very much!';
-
-  @override
   String get supportDesc =>
       'Random Please helps you generate random data easily, conveniently, and at no cost. If you find it useful, consider supporting me to maintain and improve it. Thank you very much!';
 
@@ -69,23 +62,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get oneTimeDonation => 'One-time Donation';
-
-  @override
-  String get momoDonateDesc => 'Support me via Momo';
-
-  @override
-  String get donorBenefits => 'Supporter Benefits';
-
-  @override
-  String get donorBenefit1 =>
-      'Be listed in the acknowledgments and share your comments (if you want).';
-
-  @override
-  String get donorBenefit2 => 'Prioritized feedback consideration.';
-
-  @override
-  String get donorBenefit3 =>
-      'Access to beta (debug) versions of my other software P2Lan Transfer, however updates are not guaranteed to be frequent.';
 
   @override
   String get settings => 'Settings';
@@ -245,31 +221,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get numCharacters => 'Number of characters';
 
   @override
-  String get includeLowercase => 'Include lowercase letters';
+  String get includeLowercase => 'Lowercase letters';
 
   @override
-  String get includeLowercaseDesc =>
-      'Result includes at least one lowercase letter (a-z)';
+  String get includeLowercaseDesc => 'a-z';
 
   @override
-  String get includeUppercase => 'Include uppercase letters';
+  String get includeUppercase => 'Uppercase letters';
 
   @override
-  String get includeUppercaseDesc =>
-      'Result includes at least one uppercase letter (A-Z)';
+  String get includeUppercaseDesc => 'A-Z';
 
   @override
-  String get includeNumbers => 'Include numbers';
+  String get includeNumbers => 'Numbers';
 
   @override
-  String get includeNumbersDesc => 'Result includes at least one number (0-9)';
+  String get includeNumbersDesc => '0-9';
 
   @override
-  String get includeSpecial => 'Include special characters';
+  String get includeSpecial => 'Special characters';
 
   @override
-  String get includeSpecialDesc =>
-      'Result includes at least one special character (e.g. !@#\$%^&*)';
+  String get includeSpecialDesc => 'e.g. !@#\$%^&*';
 
   @override
   String get generate => 'Generate';
