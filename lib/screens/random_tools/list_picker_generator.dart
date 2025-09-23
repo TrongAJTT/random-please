@@ -1,20 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/models/cloud_template.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/utils/generic_dialog_utils.dart';
-import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/localization_utils.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
+import 'package:random_please/widgets/history_widget.dart';
 import 'package:random_please/view_models/list_picker_view_model.dart';
 import 'package:random_please/services/cloud_template_service.dart';
 import 'package:random_please/widgets/holdable_button.dart';
 
-class ListPickerGeneratorScreen extends StatefulWidget {
+class ListPickerGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
 
   const ListPickerGeneratorScreen({
@@ -23,22 +24,21 @@ class ListPickerGeneratorScreen extends StatefulWidget {
   });
 
   @override
-  State<ListPickerGeneratorScreen> createState() =>
+  ConsumerState<ListPickerGeneratorScreen> createState() =>
       _ListPickerGeneratorScreenState();
 }
 
-class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
+class _ListPickerGeneratorScreenState
+    extends ConsumerState<ListPickerGeneratorScreen> {
   late ListPickerViewModel _viewModel;
 
   final TextEditingController _itemController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
 
-  static const String _historyType = 'listpicker';
-
   @override
   void initState() {
     super.initState();
-    _viewModel = ListPickerViewModel();
+    _viewModel = ListPickerViewModel(ref: ref);
     _initData();
   }
 
@@ -46,7 +46,6 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
   void dispose() {
     _itemController.dispose();
     _quantityController.dispose();
-    _viewModel.dispose();
     super.dispose();
   }
 
@@ -1446,7 +1445,7 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
                 ),
                 IconButton(
                   onPressed: () {
-                    final resultText = _viewModel.results.join(', ');
+                    final resultText = _viewModel.results.join('; ');
                     Clipboard.setData(ClipboardData(text: resultText));
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -1485,55 +1484,14 @@ class _ListPickerGeneratorScreenState extends State<ListPickerGeneratorScreen> {
   }
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
-    return RandomGeneratorHistoryWidget(
-      historyType: _historyType,
-      history: _viewModel.historyItems,
+    return HistoryWidget(
+      type: ListPickerViewModel.historyType,
       title: loc.generationHistory,
-      onClearAllHistory: () async {
-        await _viewModel.clearAllHistory();
-        setState(() {});
-      },
-      onClearPinnedHistory: () async {
-        await _viewModel.clearPinnedHistory();
-        setState(() {});
-      },
-      onClearUnpinnedHistory: () async {
-        await _viewModel.clearUnpinnedHistory();
-        setState(() {});
-      },
-      onCopyItem: _copyHistoryItem,
-      onDeleteItem: (index) async {
-        await _viewModel.deleteHistoryItem(index);
-        setState(() {});
-      },
-      onTogglePin: (index) async {
-        await _viewModel.togglePinHistoryItem(index);
-        setState(() {});
-      },
-      onTapItem: (item) {
-        HistoryViewDialog.show(
-          context: context,
-          item: item,
-        );
-      },
-    );
-  }
-
-  void _copyHistoryItem(String value) {
-    Clipboard.setData(ClipboardData(text: value));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_viewModel.isBoxOpen) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
     final loc = AppLocalizations.of(context)!;
 
     final generatorContent = Column(
