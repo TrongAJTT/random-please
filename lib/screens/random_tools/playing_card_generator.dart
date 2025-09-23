@@ -1,35 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
-import 'package:random_please/view_models/playing_card_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
-import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/models/random_generator.dart';
+import 'package:random_please/providers/playing_cards_generator_state_provider.dart';
+import 'package:random_please/providers/history_provider.dart';
+import 'package:random_please/widgets/history_widget.dart';
 
-class PlayingCardGeneratorScreen extends StatefulWidget {
+class PlayingCardGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
 
   const PlayingCardGeneratorScreen({super.key, this.isEmbedded = false});
 
   @override
-  State<PlayingCardGeneratorScreen> createState() =>
+  ConsumerState<PlayingCardGeneratorScreen> createState() =>
       _PlayingCardGeneratorScreenState();
 }
 
-class _PlayingCardGeneratorScreenState extends State<PlayingCardGeneratorScreen>
+class _PlayingCardGeneratorScreenState
+    extends ConsumerState<PlayingCardGeneratorScreen>
     with SingleTickerProviderStateMixin {
-  late PlayingCardGeneratorViewModel _viewModel;
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _copied = false;
+  List<PlayingCard> _generatedCards = [];
+  static const String historyType = 'playing_cards';
 
   @override
   void initState() {
     super.initState();
-    _viewModel = PlayingCardGeneratorViewModel();
     _controller = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
@@ -38,72 +41,52 @@ class _PlayingCardGeneratorScreenState extends State<PlayingCardGeneratorScreen>
       parent: _controller,
       curve: Curves.easeOutBack,
     );
-    _viewModel.addListener(_onViewModelChanged);
-    _initData();
-  }
-
-  void _onViewModelChanged() {
-    if (mounted) setState(() {});
-  }
-
-  Future<void> _initData() async {
-    await _viewModel.initHive();
-    await _viewModel.loadHistory();
-    setState(() {});
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    _viewModel.removeListener(_onViewModelChanged);
-    _viewModel.dispose();
     super.dispose();
   }
 
-  void _generateCards() {
+  Future<void> _generateCards() async {
     _controller.reset();
     _controller.forward();
 
-    _viewModel.generateCards();
+    final stateManager =
+        ref.read(playingCardsGeneratorStateManagerProvider.notifier);
+    final currentState = ref.read(playingCardsGeneratorStateManagerProvider);
+
+    // Generate cards using RandomGenerator
+    _generatedCards = RandomGenerator.generatePlayingCards(
+      count: currentState.cardCount,
+      includeJokers: currentState.includeJokers,
+      allowDuplicates: currentState.allowDuplicates,
+    );
+
+    // Save state only on generate
+    await stateManager.saveStateOnGenerate();
+
+    // Add to history if enabled
+    final historyEnabled = ref.read(historyEnabledProvider);
+    if (historyEnabled && _generatedCards.isNotEmpty) {
+      final cardStrings =
+          _generatedCards.map((card) => card.toString()).toList();
+      await ref.read(historyProvider.notifier).addHistoryItem(
+            cardStrings.join(', '),
+            historyType,
+          );
+    }
+
     setState(() {
       _copied = false;
     });
   }
 
-  void _copyHistoryItem(String value) {
-    Clipboard.setData(ClipboardData(text: value));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-    );
-  }
-
   Widget _buildHistoryWidget(AppLocalizations loc) {
-    return RandomGeneratorHistoryWidget(
-      historyType: PlayingCardGeneratorViewModel.historyType,
-      history: _viewModel.historyItems,
+    return HistoryWidget(
+      type: historyType,
       title: loc.generationHistory,
-      onClearAllHistory: () async {
-        await _viewModel.clearAllHistory();
-      },
-      onClearPinnedHistory: () async {
-        await _viewModel.clearPinnedHistory();
-      },
-      onClearUnpinnedHistory: () async {
-        await _viewModel.clearUnpinnedHistory();
-      },
-      onCopyItem: _copyHistoryItem,
-      onDeleteItem: (index) async {
-        await _viewModel.deleteHistoryItem(index);
-      },
-      onTogglePin: (index) async {
-        await _viewModel.togglePinHistoryItem(index);
-      },
-      onTapItem: (item) {
-        HistoryViewDialog.show(
-          context: context,
-          item: item,
-        );
-      },
     );
   }
 
@@ -151,11 +134,10 @@ class _PlayingCardGeneratorScreenState extends State<PlayingCardGeneratorScreen>
   }
 
   void _copyToClipboard() {
-    if (_viewModel.generatedCards.isEmpty) return;
+    if (_generatedCards.isEmpty) return;
 
-    final cardTexts = _viewModel.generatedCards
-        .map((card) => '${card.rank} of ${card.suit}')
-        .toList();
+    final cardTexts =
+        _generatedCards.map((card) => '${card.rank} of ${card.suit}').toList();
     final text = cardTexts.join(', ');
 
     Clipboard.setData(ClipboardData(text: text));
@@ -170,6 +152,11 @@ class _PlayingCardGeneratorScreenState extends State<PlayingCardGeneratorScreen>
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    // Watch state changes to trigger rebuilds
+    final currentState = ref.watch(playingCardsGeneratorStateManagerProvider);
+    final stateManager =
+        ref.read(playingCardsGeneratorStateManagerProvider.notifier);
+    final historyEnabled = ref.watch(historyEnabledProvider);
 
     final generatorContent = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -185,7 +172,7 @@ class _PlayingCardGeneratorScreenState extends State<PlayingCardGeneratorScreen>
                 OptionSlider<int>(
                   label: loc.cardCount,
                   icon: Icons.style,
-                  currentValue: _viewModel.state.cardCount,
+                  currentValue: currentState.cardCount,
                   layout: OptionSliderLayout.none,
                   fixedWidth: 60,
                   options: List.generate(
@@ -195,8 +182,7 @@ class _PlayingCardGeneratorScreenState extends State<PlayingCardGeneratorScreen>
                             label: (index + 1).toString(),
                           )),
                   onChanged: (value) {
-                    _viewModel.updateCardCount(value);
-                    setState(() {});
+                    stateManager.updateCardCount(value);
                   },
                 ),
 
@@ -204,10 +190,9 @@ class _PlayingCardGeneratorScreenState extends State<PlayingCardGeneratorScreen>
                 OptionSwitch(
                   title: loc.includeJokers,
                   subtitle: loc.includeJokersDesc,
-                  value: _viewModel.state.includeJokers,
+                  value: currentState.includeJokers,
                   onChanged: (value) {
-                    _viewModel.updateIncludeJokers(value);
-                    setState(() {});
+                    stateManager.updateIncludeJokers(value);
                   },
                   decorator: OptionSwitchDecorator.compact(context),
                 ),
@@ -218,10 +203,9 @@ class _PlayingCardGeneratorScreenState extends State<PlayingCardGeneratorScreen>
                 OptionSwitch(
                   title: loc.allowDuplicates,
                   subtitle: loc.allowDuplicatesDesc,
-                  value: _viewModel.state.allowDuplicates,
+                  value: currentState.allowDuplicates,
                   onChanged: (value) {
-                    _viewModel.updateAllowDuplicates(value);
-                    setState(() {});
+                    stateManager.updateAllowDuplicates(value);
                   },
                   decorator: OptionSwitchDecorator.compact(context),
                 ),
@@ -248,7 +232,7 @@ class _PlayingCardGeneratorScreenState extends State<PlayingCardGeneratorScreen>
         ),
 
         // Results card
-        if (_viewModel.generatedCards.isNotEmpty) ...[
+        if (_generatedCards.isNotEmpty) ...[
           const SizedBox(height: 24),
           Card(
             child: Padding(
@@ -287,7 +271,7 @@ class _PlayingCardGeneratorScreenState extends State<PlayingCardGeneratorScreen>
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '${_viewModel.generatedCards.length} ${loc.playingCards.toLowerCase()}',
+                              '${_generatedCards.length} ${loc.playingCards.toLowerCase()}',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall
@@ -336,7 +320,7 @@ class _PlayingCardGeneratorScreenState extends State<PlayingCardGeneratorScreen>
                           opacity: _animation.value.clamp(0.0, 1.0),
                           child: Wrap(
                             alignment: WrapAlignment.center,
-                            children: _viewModel.generatedCards
+                            children: _generatedCards
                                 .map((card) => _buildCardWidget(card))
                                 .toList(),
                           ),
@@ -355,8 +339,8 @@ class _PlayingCardGeneratorScreenState extends State<PlayingCardGeneratorScreen>
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _viewModel.historyEnabled,
-      hasHistory: _viewModel.historyEnabled,
+      historyEnabled: historyEnabled,
+      hasHistory: historyEnabled,
       isEmbedded: widget.isEmbedded,
       title: loc.playingCards,
     );
