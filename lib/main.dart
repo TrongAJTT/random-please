@@ -8,7 +8,7 @@ import 'package:random_please/screens/about_layout.dart';
 import 'package:random_please/services/version_check_service.dart';
 import 'package:random_please/utils/variables_utils.dart';
 import 'package:random_please/variables.dart';
-import 'package:random_please/widgets/generic/generic_settings_helper.dart';
+import 'package:random_please/widgets/generic/uni_route.dart';
 import 'package:random_please/services/hive_service.dart';
 import 'package:random_please/services/settings_service.dart';
 import 'package:random_please/services/app_logger.dart';
@@ -316,12 +316,11 @@ class _HomePageState extends State<HomePage> with WindowListener {
             onToolVisibilityChanged: _onToolOrderChanged,
             initialSectionId: 'user_interface',
           );
-          GenericSettingsHelper.showSettings(
+          UniRoute.navigate(
             context,
-            GenericSettingsConfig(
+            UniRouteModel(
               title: loc.settings,
-              settingsLayout: screen,
-              onSettingsChanged: (newSettings) {},
+              content: screen,
             ),
           );
         },
@@ -331,14 +330,13 @@ class _HomePageState extends State<HomePage> with WindowListener {
           icon: Icons.download_for_offline,
           label: loc.downloadApp,
           onPressed: () {
-            GenericSettingsHelper.showSettings(
+            UniRoute.navigate(
               context,
-              GenericSettingsConfig(
+              UniRouteModel(
                 title: loc.downloadApp,
-                settingsLayout: VersionCheckService.buildDownloadAppLayout(
+                content: VersionCheckService.buildDownloadAppLayout(
                   context: context,
                 ),
-                onSettingsChanged: (newSettings) {},
               ),
             );
           },
@@ -347,12 +345,11 @@ class _HomePageState extends State<HomePage> with WindowListener {
         icon: Icons.info_outline,
         label: loc.about,
         onPressed: () {
-          GenericSettingsHelper.showSettings(
+          UniRoute.navigate(
             context,
-            GenericSettingsConfig(
+            UniRouteModel(
               title: loc.about,
-              settingsLayout: const AboutLayout(),
-              onSettingsChanged: (newSettings) {},
+              content: const AboutLayout(),
             ),
           );
         },

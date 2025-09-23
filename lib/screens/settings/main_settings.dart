@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/services/cache_service.dart';
-import 'package:random_please/services/generation_history_service.dart';
-import 'package:random_please/services/settings_service.dart';
 
 import 'package:random_please/layouts/section_sidebar_scrolling_layout.dart';
 import 'package:random_please/widgets/generic/section_item.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/widgets/security/security_settings_widget.dart';
-import 'package:random_please/widgets/generic/generic_settings_helper.dart';
+import 'package:random_please/widgets/generic/uni_route.dart';
 import 'package:random_please/screens/settings/tool_ordering_screen.dart';
 import 'package:random_please/screens/settings/settings_screen.dart';
 import 'package:random_please/screens/settings/remote_list_template_screen.dart';
 import 'package:random_please/services/tool_order_service.dart';
+import 'package:random_please/providers/settings_provider.dart';
+import 'package:random_please/providers/cache_provider.dart';
+import 'package:random_please/providers/ui_settings_provider.dart';
 
-class MainSettingsScreen extends StatefulWidget {
+class MainSettingsScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
   final VoidCallback? onToolVisibilityChanged;
   final String? initialSectionId;
@@ -28,15 +31,11 @@ class MainSettingsScreen extends StatefulWidget {
   });
 
   @override
-  State<MainSettingsScreen> createState() => _MainSettingsScreenState();
+  ConsumerState<MainSettingsScreen> createState() => _MainSettingsScreenState();
 }
 
-class _MainSettingsScreenState extends State<MainSettingsScreen> {
+class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
   bool _loading = true;
-  bool _historyEnabled = false;
-  bool _saveRandomToolsState = true;
-  bool _compactTabLayout = false;
-  String _cacheInfo = '...';
 
   // Static decorator for settings
   late final OptionSwitchDecorator switchDecorator;
@@ -58,41 +57,37 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
   }
 
   Future<void> _loadSettings() async {
-    final historyEnabled = await GenerationHistoryService.isHistoryEnabled();
-    final saveRandomToolsState =
-        await SettingsService.getSaveRandomToolsState();
-    final compactTabLayout = await SettingsService.getCompactTabLayout();
-    final totalSize = await CacheService.getTotalCacheSize();
+    // Settings are now loaded via providers, so we can just trigger loading
+    await Future.wait([
+      ref.read(historyEnabledProvider.notifier).loadState(),
+      ref.read(compactTabLayoutProvider.notifier).loadState(),
+      ref.read(cacheProvider.notifier).refreshCacheInfo(),
+    ]);
 
-    setState(() {
-      _historyEnabled = historyEnabled;
-      _saveRandomToolsState = saveRandomToolsState;
-      _compactTabLayout = compactTabLayout;
-      _cacheInfo = CacheService.formatCacheSize(totalSize);
-      _loading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
   Future<void> _clearCache() async {
     final l10n = AppLocalizations.of(context)!;
     await CacheService.confirmAndClearAllCache(context, l10n: l10n);
-    // Refresh info after dialog closes
-    await _loadSettings();
+    // Refresh cache info via provider
+    ref.read(cacheProvider.notifier).refreshCacheInfo();
   }
 
   void _onHistoryEnabledChanged(bool enabled) async {
-    setState(() => _historyEnabled = enabled);
-    await GenerationHistoryService.setHistoryEnabled(enabled);
+    ref.read(historyEnabledProvider.notifier).setEnabled(enabled);
   }
 
   void _onSaveRandomToolsStateChanged(bool enabled) async {
-    setState(() => _saveRandomToolsState = enabled);
-    await SettingsService.updateSaveRandomToolsState(enabled);
+    ref.read(settingsProvider.notifier).setSaveRandomToolsState(enabled);
   }
 
   void _onCompactTabLayoutChanged(bool enabled) async {
-    setState(() => _compactTabLayout = enabled);
-    await SettingsService.updateCompactTabLayout(enabled);
+    ref.read(compactTabLayoutProvider.notifier).setEnabled(enabled);
   }
 
   @override
@@ -124,12 +119,23 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
 
     // If not embedded, wrap with MaterialApp to ensure Material context
     return MaterialApp(
-      title: 'Settings',
+      title: loc.settings,
       theme: Theme.of(context),
       darkTheme: Theme.of(context),
       themeMode: Theme.of(context).brightness == Brightness.dark
           ? ThemeMode.dark
           : ThemeMode.light,
+      // ✅ Add localization support
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'), // English
+        Locale('vi'), // Vietnamese
+      ],
       home: content,
       debugShowCheckedModeBanner: false,
     );
@@ -205,30 +211,33 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
   }
 
   Widget _buildHistorySettings(AppLocalizations loc) {
+    final historyEnabled = ref.watch(historyEnabledProvider);
     return OptionSwitch(
       title: loc.saveGenerationHistory,
       subtitle: loc.saveGenerationHistoryDesc,
-      value: _historyEnabled,
+      value: historyEnabled,
       onChanged: _onHistoryEnabledChanged,
       decorator: switchDecorator,
     );
   }
 
   Widget _buildSaveRandomToolsStateSettings(AppLocalizations loc) {
+    final settings = ref.watch(settingsProvider);
     return OptionSwitch(
       title: loc.saveRandomToolsState,
       subtitle: loc.saveRandomToolsStateDesc,
-      value: _saveRandomToolsState,
+      value: settings.saveRandomToolsState,
       onChanged: _onSaveRandomToolsStateChanged,
       decorator: switchDecorator,
     );
   }
 
   Widget _buildCompactTabLayoutSettings(AppLocalizations loc) {
+    final compactTabLayout = ref.watch(compactTabLayoutProvider);
     return OptionSwitch(
       title: loc.compactTabLayout,
       subtitle: loc.compactTabLayoutDesc,
-      value: _compactTabLayout,
+      value: compactTabLayout,
       onChanged: _onCompactTabLayoutChanged,
       decorator: switchDecorator,
     );
@@ -268,14 +277,11 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
 
     // Show the tool ordering screen
     if (mounted) {
-      GenericSettingsHelper.showSettings(
+      UniRoute.navigate(
         context,
-        GenericSettingsConfig(
+        UniRouteModel(
           title: loc.arrangeTools,
-          settingsLayout: const ToolOrderingScreen(isEmbedded: true),
-          onSettingsChanged: (newSettings) {
-            // Empty lambda as requested
-          },
+          content: const ToolOrderingScreen(isEmbedded: true),
         ),
       );
     }
@@ -322,14 +328,11 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
 
   Future<void> _showRemoteListTemplateScreen(AppLocalizations loc) async {
     if (mounted) {
-      GenericSettingsHelper.showSettings(
+      UniRoute.navigate(
         context,
-        GenericSettingsConfig(
+        UniRouteModel(
           title: 'Remote List Template Source',
-          settingsLayout: const RemoteListTemplateScreen(isEmbedded: true),
-          onSettingsChanged: (newSettings) {
-            // Empty lambda as requested
-          },
+          content: const RemoteListTemplateScreen(isEmbedded: true),
         ),
       );
     }
@@ -359,7 +362,7 @@ class _MainSettingsScreenState extends State<MainSettingsScreen> {
             Text(loc.historyManager,
                 style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(height: 12),
-            Text('${loc.cache}: $_cacheInfo'),
+            Text('${loc.cache}: ${ref.watch(cacheProvider)}'),
             const SizedBox(height: 16),
             Row(
               children: [

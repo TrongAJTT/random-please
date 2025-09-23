@@ -5,10 +5,9 @@ import 'package:random_please/library_list.dart';
 import 'package:random_please/services/version_check_service.dart';
 import 'package:random_please/utils/url_utils.dart';
 import 'package:random_please/utils/variables_utils.dart';
-import 'package:random_please/widgets/generic/generic_settings_helper.dart';
+import 'package:random_please/widgets/generic/uni_route.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:random_please/variables.dart';
-import 'package:random_please/screens/examples/complex_generator_demo_screen.dart';
 
 /// About layout with GitHub, Sponsor, Credits, and Version information
 class AboutLayout extends StatefulWidget {
@@ -99,26 +98,6 @@ class _AboutLayoutState extends State<AboutLayout> {
             onTap: _showCreditsDialog,
           ),
 
-          // Riverpod Test Demo
-          if (kDebugMode)
-            ListTile(
-              leading: const Icon(
-                Icons.science,
-                color: Colors.purple,
-              ),
-              title: const Text('Riverpod Demo'),
-              subtitle: const Text('Test complex generators with Riverpod'),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ComplexGeneratorDemoScreen(),
-                  ),
-                );
-              },
-            ),
-
           // Version Information section
           ListTile(
             leading: const Icon(
@@ -155,14 +134,13 @@ class _AboutLayoutState extends State<AboutLayout> {
               subtitle: Text(l10n.downloadAppDesc),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
-                GenericSettingsHelper.showSettings(
+                UniRoute.navigate(
                   context,
-                  GenericSettingsConfig(
+                  UniRouteModel(
                     title: l10n.downloadApp,
-                    settingsLayout: VersionCheckService.buildDownloadAppLayout(
+                    content: VersionCheckService.buildDownloadAppLayout(
                       context: context,
                     ),
-                    onSettingsChanged: (newSettings) {},
                   ),
                 );
               },
@@ -234,13 +212,12 @@ class _AboutLayoutState extends State<AboutLayout> {
 
   void _showDonateDialog() {
     final l10n = AppLocalizations.of(context)!;
-    final config = GenericSettingsConfig<dynamic>(
+    final config = UniRouteModel<dynamic>(
       title: l10n.donate,
-      settingsLayout: _buildDonateContent(),
-      onSettingsChanged: (_) {},
+      content: _buildDonateContent(),
     );
 
-    GenericSettingsHelper.showSettings(context, config);
+    UniRoute.navigate(context, config);
   }
 
   Widget _buildDonateContent() {
@@ -287,18 +264,14 @@ class _AboutLayoutState extends State<AboutLayout> {
 
   void _showCreditsDialog() {
     final l10n = AppLocalizations.of(context)!;
-    final config = GenericSettingsConfig<dynamic>(
+    final config = UniRouteModel<dynamic>(
       title: l10n.creditAck,
-      settingsLayout: _buildCreditsContent(),
-      currentSettings: null,
-      onSettingsChanged: (_) {},
-      showActions: false,
-      isCompact: false,
+      content: _buildCreditsContent(),
       barrierDismissible: true,
       padding: const EdgeInsets.all(16),
     );
 
-    GenericSettingsHelper.showSettings(context, config);
+    UniRoute.navigate(context, config);
   }
 
   Widget _buildCreditsContent() {
@@ -374,18 +347,14 @@ class _AboutLayoutState extends State<AboutLayout> {
 
   void _showVersionDialog() {
     final l10n = AppLocalizations.of(context)!;
-    final config = GenericSettingsConfig<dynamic>(
+    final config = UniRouteModel<dynamic>(
       title: l10n.versionInfo,
-      settingsLayout: _buildVersionContent(),
-      currentSettings: null,
-      onSettingsChanged: (_) {},
-      showActions: false,
-      isCompact: false,
+      content: _buildVersionContent(),
       barrierDismissible: true,
       padding: const EdgeInsets.all(16),
     );
 
-    GenericSettingsHelper.showSettings(context, config);
+    UniRoute.navigate(context, config);
   }
 
   Widget _buildVersionContent() {

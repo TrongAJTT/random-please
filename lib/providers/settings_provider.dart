@@ -36,7 +36,10 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
           themeMode: ThemeMode.system,
           locale: Locale('en'),
           saveRandomToolsState: false,
-        ));
+        )) {
+    // Auto-load settings on initialization
+    loadSettings();
+  }
 
   // Load settings from SharedPreferences
   Future<void> loadSettings() async {
