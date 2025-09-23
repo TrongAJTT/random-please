@@ -105,7 +105,7 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
 
       // Save to history
       if (_results.isNotEmpty) {
-        ref.read(historyProvider.notifier).addHistoryItem(
+        await ref.read(historyProvider.notifier).addHistoryItem(
               _results.join(', '),
               'time_generator',
             );

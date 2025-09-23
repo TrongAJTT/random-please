@@ -117,7 +117,7 @@ class _DateGeneratorScreenState extends ConsumerState<DateGeneratorScreen> {
 
       // Save to history
       if (_results.isNotEmpty) {
-        ref.read(historyProvider.notifier).addHistoryItem(
+        await ref.read(historyProvider.notifier).addHistoryItem(
               _results.join(', '),
               'date_generator',
             );

@@ -1,70 +1,162 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:random_please/l10n/app_localizations.dart';
-import 'package:random_please/utils/snackbar_utils.dart';
-import 'package:random_please/view_models/date_time_generator_view_model.dart';
-import 'package:random_please/services/generation_history_service.dart';
+import 'package:random_please/providers/date_time_generator_state_provider.dart';
+import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
-import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/size_utils.dart';
+import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
+import 'package:random_please/utils/widget_layout_render_helper.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
-import 'package:random_please/utils/widget_layout_render_helper.dart';
+import 'package:random_please/widgets/history_widget.dart';
+import 'dart:math';
 
-class DateTimeGeneratorScreen extends StatefulWidget {
+class DateTimeGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
 
   const DateTimeGeneratorScreen({super.key, this.isEmbedded = false});
 
   @override
-  State<DateTimeGeneratorScreen> createState() =>
+  ConsumerState<DateTimeGeneratorScreen> createState() =>
       _DateTimeGeneratorScreenState();
 }
 
-class _DateTimeGeneratorScreenState extends State<DateTimeGeneratorScreen> {
-  late DateTimeGeneratorViewModel _viewModel;
+class _DateTimeGeneratorScreenState
+    extends ConsumerState<DateTimeGeneratorScreen> {
+  static const String historyType = 'datetime';
   bool _copied = false;
+  List<String> _results = [];
+
+  late AppLocalizations loc;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = DateTimeGeneratorViewModel();
-    _initializeViewModel();
   }
 
-  Future<void> _initializeViewModel() async {
-    await _viewModel.initHive();
-    await _viewModel.loadHistory();
-
-    // Listen to state changes
-    _viewModel.addListener(_onViewModelChanged);
-
-    // Update UI after initialization
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void _onViewModelChanged() {
-    if (mounted) {
-      setState(() {
-        _copied = false;
-      });
-    }
+  @override
+  void didChangeDependencies() {
+    loc = AppLocalizations.of(context)!;
+    super.didChangeDependencies();
   }
 
   @override
   void dispose() {
-    _viewModel.removeListener(_onViewModelChanged);
-    _viewModel.dispose();
     super.dispose();
   }
 
-  void _generateDateTimes() async {
+  Future<void> _generateDateTimes() async {
     try {
-      await _viewModel.generateDateTimes();
+      final state = ref.read(dateTimeGeneratorProvider);
+      final stateManager =
+          ref.read(dateTimeGeneratorStateManagerProvider.notifier);
+      final historyManager = ref.read(historyProvider.notifier);
+      final random = Random();
+      final Set<String> generatedSet = {};
+      final List<String> resultList = [];
+
+      // Normalize datetime range to ensure proper from/to relationship
+      final dateTime1 = state.startDateTime;
+      final dateTime2 = state.endDateTime;
+
+      // Determine which datetime is earlier (from) and which is later (to)
+      final DateTime fromDateTime;
+      final DateTime toDateTime;
+
+      if (dateTime1.isBefore(dateTime2)) {
+        fromDateTime = dateTime1;
+        toDateTime = dateTime2;
+      } else {
+        fromDateTime = dateTime2;
+        toDateTime = dateTime1;
+      }
+
+      final totalDays = toDateTime.difference(fromDateTime).inDays;
+      if (totalDays < 0) {
+        setState(() {
+          _results = [];
+          _copied = false;
+        });
+        return;
+      }
+
+      final dateTimeFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
+
+      for (int i = 0; i < state.dateTimeCount; i++) {
+        DateTime randomDateTime;
+        String formattedDateTime;
+
+        do {
+          // Random day offset
+          final randomDay = totalDays == 0 ? 0 : random.nextInt(totalDays + 1);
+          final day = fromDateTime.add(Duration(days: randomDay));
+          // Random ms in day
+          final msInDay = 24 * 60 * 60 * 1000;
+          int randomMs = 0;
+          if (randomDay == 0 && totalDays == 0) {
+            // Only one day, restrict ms to between from and to
+            final startMs = fromDateTime.millisecond +
+                fromDateTime.second * 1000 +
+                fromDateTime.minute * 60000 +
+                fromDateTime.hour * 3600000;
+            final endMs = toDateTime.millisecond +
+                toDateTime.second * 1000 +
+                toDateTime.minute * 60000 +
+                toDateTime.hour * 3600000;
+            final msRange = endMs - startMs;
+            randomMs =
+                msRange > 0 ? random.nextInt(msRange + 1) + startMs : startMs;
+          } else if (randomDay == 0) {
+            // First day, restrict ms >= fromDateTime
+            final startMs = fromDateTime.millisecond +
+                fromDateTime.second * 1000 +
+                fromDateTime.minute * 60000 +
+                fromDateTime.hour * 3600000;
+            randomMs = startMs + random.nextInt(msInDay - startMs);
+          } else if (randomDay == totalDays) {
+            // Last day, restrict ms <= toDateTime
+            final endMs = toDateTime.millisecond +
+                toDateTime.second * 1000 +
+                toDateTime.minute * 60000 +
+                toDateTime.hour * 3600000;
+            randomMs = random.nextInt(endMs + 1);
+          } else {
+            // Any full day
+            randomMs = random.nextInt(msInDay);
+          }
+          final hours = randomMs ~/ 3600000;
+          final minutes = (randomMs % 3600000) ~/ 60000;
+          final seconds = (randomMs % 60000) ~/ 1000;
+          final milliseconds = randomMs % 1000;
+          randomDateTime = DateTime(day.year, day.month, day.day, hours,
+              minutes, seconds, milliseconds);
+          formattedDateTime = dateTimeFormat.format(randomDateTime);
+        } while (
+            !state.allowDuplicates && generatedSet.contains(formattedDateTime));
+
+        if (!state.allowDuplicates) {
+          generatedSet.add(formattedDateTime);
+        }
+        resultList.add(formattedDateTime);
+      }
+
+      // Save state only after generation
+      await stateManager.saveCurrentState();
+
+      // Add to history
+      await historyManager.addHistoryItem(
+        resultList.join(', '),
+        historyType,
+      );
+
+      setState(() {
+        _results = resultList;
+        _copied = false;
+      });
     } catch (e) {
       if (mounted) {
         SnackBarUtils.showTyped(context, e.toString(), SnackBarType.error);
@@ -73,8 +165,8 @@ class _DateTimeGeneratorScreenState extends State<DateTimeGeneratorScreen> {
   }
 
   void _copyToClipboard() {
-    if (_viewModel.results.isNotEmpty) {
-      String dateTimesText = _viewModel.results.join('\n');
+    if (_results.isNotEmpty) {
+      String dateTimesText = _results.join('\n');
 
       Clipboard.setData(ClipboardData(text: dateTimesText));
       setState(() {
@@ -88,12 +180,69 @@ class _DateTimeGeneratorScreenState extends State<DateTimeGeneratorScreen> {
     }
   }
 
-  void _copyHistoryItem(String value) {
-    Clipboard.setData(ClipboardData(text: value));
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
+  Future<void> _selectStartDateTime() async {
+    final state = ref.read(dateTimeGeneratorProvider);
+    final stateManager =
+        ref.read(dateTimeGeneratorStateManagerProvider.notifier);
+
+    final date = await showDatePicker(
+      context: context,
+      initialDate: state.startDateTime,
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
+
+    if (date != null && mounted) {
+      final time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(state.startDateTime),
       );
+      if (time != null) {
+        final newDateTime = DateTime(
+          date.year,
+          date.month,
+          date.day,
+          time.hour,
+          time.minute,
+        );
+        stateManager.updateStartDateTime(newDateTime);
+        // Auto-adjust end datetime if needed
+        final updatedState = ref.read(dateTimeGeneratorProvider);
+        if (updatedState.startDateTime.isAfter(updatedState.endDateTime)) {
+          stateManager.updateEndDateTime(
+              updatedState.startDateTime.add(const Duration(hours: 1)));
+        }
+      }
+    }
+  }
+
+  Future<void> _selectEndDateTime() async {
+    final state = ref.read(dateTimeGeneratorProvider);
+    final stateManager =
+        ref.read(dateTimeGeneratorStateManagerProvider.notifier);
+
+    final date = await showDatePicker(
+      context: context,
+      initialDate: state.endDateTime,
+      firstDate: state.startDateTime,
+      lastDate: DateTime(2100),
+    );
+
+    if (date != null && mounted) {
+      final time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(state.endDateTime),
+      );
+      if (time != null) {
+        final newDateTime = DateTime(
+          date.year,
+          date.month,
+          date.day,
+          time.hour,
+          time.minute,
+        );
+        stateManager.updateEndDateTime(newDateTime);
+      }
     }
   }
 
@@ -137,68 +286,18 @@ class _DateTimeGeneratorScreenState extends State<DateTimeGeneratorScreen> {
   }
 
   Widget _buildDateTimeSelectors(AppLocalizations loc) {
+    final state = ref.watch(dateTimeGeneratorProvider);
+
     final startDateTimeSelector = _buildDateTimeSelector(
-      loc.startDate,
-      _viewModel.state.startDateTime,
-      () async {
-        final date = await showDatePicker(
-          context: context,
-          initialDate: _viewModel.state.startDateTime,
-          firstDate: DateTime(1900),
-          lastDate: DateTime(2100),
-        );
-        if (date != null && mounted) {
-          final time = await showTimePicker(
-            context: context,
-            initialTime: TimeOfDay.fromDateTime(_viewModel.state.startDateTime),
-          );
-          if (time != null) {
-            final newDateTime = DateTime(
-              date.year,
-              date.month,
-              date.day,
-              time.hour,
-              time.minute,
-            );
-            _viewModel.updateStartDateTime(newDateTime);
-            // Auto-adjust end datetime if needed
-            if (_viewModel.state.startDateTime
-                .isAfter(_viewModel.state.endDateTime)) {
-              _viewModel.updateEndDateTime(
-                  _viewModel.state.startDateTime.add(const Duration(hours: 1)));
-            }
-          }
-        }
-      },
+      loc.between,
+      state.startDateTime,
+      _selectStartDateTime,
     );
 
     final endDateTimeSelector = _buildDateTimeSelector(
-      loc.endDate,
-      _viewModel.state.endDateTime,
-      () async {
-        final date = await showDatePicker(
-          context: context,
-          initialDate: _viewModel.state.endDateTime,
-          firstDate: _viewModel.state.startDateTime,
-          lastDate: DateTime(2100),
-        );
-        if (date != null && mounted) {
-          final time = await showTimePicker(
-            context: context,
-            initialTime: TimeOfDay.fromDateTime(_viewModel.state.endDateTime),
-          );
-          if (time != null) {
-            final newDateTime = DateTime(
-              date.year,
-              date.month,
-              date.day,
-              time.hour,
-              time.minute,
-            );
-            _viewModel.updateEndDateTime(newDateTime);
-          }
-        }
-      },
+      loc.and,
+      state.endDateTime,
+      _selectEndDateTime,
     );
 
     return WidgetLayoutRenderHelper.twoEqualWidthInRow(
@@ -209,49 +308,12 @@ class _DateTimeGeneratorScreenState extends State<DateTimeGeneratorScreen> {
     );
   }
 
-  Widget _buildHistoryWidget(AppLocalizations loc) {
-    return RandomGeneratorHistoryWidget(
-      historyType: DateTimeGeneratorViewModel.historyType,
-      history: _viewModel.historyItems,
-      title: loc.generationHistory,
-      onClearAllHistory: () async {
-        await GenerationHistoryService.clearHistory(
-            DateTimeGeneratorViewModel.historyType);
-        await _viewModel.loadHistory();
-      },
-      onClearPinnedHistory: () async {
-        await GenerationHistoryService.clearPinnedHistory(
-            DateTimeGeneratorViewModel.historyType);
-        await _viewModel.loadHistory();
-      },
-      onClearUnpinnedHistory: () async {
-        await GenerationHistoryService.clearUnpinnedHistory(
-            DateTimeGeneratorViewModel.historyType);
-        await _viewModel.loadHistory();
-      },
-      onCopyItem: _copyHistoryItem,
-      onDeleteItem: (index) async {
-        await GenerationHistoryService.deleteHistoryItem(
-            DateTimeGeneratorViewModel.historyType, index);
-        await _viewModel.loadHistory();
-      },
-      onTogglePin: (index) async {
-        await GenerationHistoryService.togglePinHistoryItem(
-            DateTimeGeneratorViewModel.historyType, index);
-        await _viewModel.loadHistory();
-      },
-      onTapItem: (item) {
-        HistoryViewDialog.show(
-          context: context,
-          item: item,
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final state = ref.watch(dateTimeGeneratorProvider);
+    final stateManager =
+        ref.read(dateTimeGeneratorStateManagerProvider.notifier);
 
     final generatorContent = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -270,13 +332,13 @@ class _DateTimeGeneratorScreenState extends State<DateTimeGeneratorScreen> {
                 // DateTime count slider
                 OptionSlider<int>(
                   label: loc.dateCount,
-                  currentValue: _viewModel.state.dateTimeCount,
+                  currentValue: state.dateTimeCount,
                   options: List.generate(
                     10,
                     (i) => SliderOption(value: i + 1, label: '${i + 1}'),
                   ),
                   onChanged: (value) {
-                    _viewModel.updateDateTimeCount(value);
+                    stateManager.updateDateTimeCount(value);
                   },
                   fixedWidth: 60,
                   layout: OptionSliderLayout.none,
@@ -286,9 +348,9 @@ class _DateTimeGeneratorScreenState extends State<DateTimeGeneratorScreen> {
                 OptionSwitch(
                   title: loc.allowDuplicates,
                   subtitle: loc.allowDuplicatesDesc,
-                  value: _viewModel.state.allowDuplicates,
+                  value: state.allowDuplicates,
                   onChanged: (value) {
-                    _viewModel.updateAllowDuplicates(value);
+                    stateManager.updateAllowDuplicates(value);
                   },
                   decorator: OptionSwitchDecorator.compact(context),
                 ),
@@ -317,7 +379,7 @@ class _DateTimeGeneratorScreenState extends State<DateTimeGeneratorScreen> {
         const SizedBox(height: 24),
 
         // Results
-        if (_viewModel.results.isNotEmpty) ...[
+        if (_results.isNotEmpty) ...[
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -341,7 +403,7 @@ class _DateTimeGeneratorScreenState extends State<DateTimeGeneratorScreen> {
                   const SizedBox(height: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _viewModel.results.map((dateTimeStr) {
+                    children: _results.map((dateTimeStr) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Container(
@@ -400,9 +462,14 @@ class _DateTimeGeneratorScreenState extends State<DateTimeGeneratorScreen> {
 
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
-      historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _viewModel.historyEnabled,
-      hasHistory: _viewModel.historyEnabled,
+      historyWidget: HistoryWidget(
+        type: historyType,
+        title: loc.generationHistory,
+      ),
+      historyEnabled:
+          ref.watch(historyProvider.select((state) => state.isHistoryEnabled)),
+      hasHistory:
+          ref.watch(historyProvider.select((state) => state.isHistoryEnabled)),
       isEmbedded: widget.isEmbedded,
       title: loc.dateTimeGenerator,
     );
