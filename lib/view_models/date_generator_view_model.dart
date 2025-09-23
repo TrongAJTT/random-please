@@ -6,7 +6,7 @@ import 'package:random_please/providers/history_provider.dart';
 import 'dart:math';
 
 class DateGeneratorViewModel extends ChangeNotifier {
-  static const String historyType = 'date';
+  static const String historyType = 'date_generator';
 
   WidgetRef? _ref;
   List<String> _results = [];

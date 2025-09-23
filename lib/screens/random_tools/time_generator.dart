@@ -1,67 +1,115 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
-import 'package:random_please/view_models/time_generator_view_model.dart';
-import 'package:random_please/services/generation_history_service.dart';
+import 'package:random_please/providers/time_generator_state_provider.dart';
+import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
-import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/size_utils.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/utils/widget_layout_render_helper.dart';
+import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/providers/settings_provider.dart';
+import 'dart:math';
 
-class TimeGeneratorScreen extends StatefulWidget {
+class TimeGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
 
   const TimeGeneratorScreen({super.key, this.isEmbedded = false});
 
   @override
-  State<TimeGeneratorScreen> createState() => _TimeGeneratorScreenState();
+  ConsumerState<TimeGeneratorScreen> createState() =>
+      _TimeGeneratorScreenState();
 }
 
-class _TimeGeneratorScreenState extends State<TimeGeneratorScreen> {
-  late TimeGeneratorViewModel _viewModel;
+class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
   bool _copied = false;
+  List<String> _results = [];
 
   @override
   void initState() {
     super.initState();
-    _viewModel = TimeGeneratorViewModel();
-    _initializeViewModel();
-  }
-
-  Future<void> _initializeViewModel() async {
-    await _viewModel.initHive();
-    await _viewModel.loadHistory();
-
-    // Listen to state changes
-    _viewModel.addListener(_onViewModelChanged);
-
-    // Update UI after initialization
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void _onViewModelChanged() {
-    if (mounted) {
-      setState(() {
-        _copied = false;
-      });
-    }
   }
 
   @override
   void dispose() {
-    _viewModel.removeListener(_onViewModelChanged);
-    _viewModel.dispose();
     super.dispose();
   }
 
-  void _generateTimes() async {
+  Future<void> _generateTimes() async {
     try {
-      await _viewModel.generateTimes();
+      final state = ref.read(timeGeneratorProvider);
+      final stateManager = ref.read(timeGeneratorStateProvider.notifier);
+      final random = Random();
+      final Set<String> generatedSet = {};
+      final List<String> resultList = [];
+
+      // Convert time range to minutes since midnight
+      final time1Minutes = state.startHour * 60 + state.startMinute;
+      final time2Minutes = state.endHour * 60 + state.endMinute;
+
+      // Determine which time is earlier (from) and which is later (to)
+      final int fromMinutes;
+      final int toMinutes;
+
+      if (time1Minutes <= time2Minutes) {
+        fromMinutes = time1Minutes;
+        toMinutes = time2Minutes;
+      } else {
+        fromMinutes = time2Minutes;
+        toMinutes = time1Minutes;
+      }
+
+      final range = toMinutes - fromMinutes;
+
+      if (range < 0) {
+        setState(() {
+          _results = [];
+        });
+        return;
+      }
+
+      for (int i = 0; i < state.timeCount; i++) {
+        String timeStr;
+        int attempts = 0;
+        const maxAttempts = 1000;
+
+        do {
+          final randomMinutes = fromMinutes + random.nextInt(range + 1);
+
+          final hour = randomMinutes ~/ 60;
+          final minute = randomMinutes % 60;
+
+          timeStr = "${hour.toString().padLeft(2, '0')}:"
+              "${minute.toString().padLeft(2, '0')}";
+          attempts++;
+        } while (!state.allowDuplicates &&
+            generatedSet.contains(timeStr) &&
+            attempts < maxAttempts);
+
+        if (!state.allowDuplicates) {
+          generatedSet.add(timeStr);
+        }
+
+        resultList.add(timeStr);
+      }
+
+      setState(() {
+        _results = resultList;
+      });
+
+      // Save state after generation
+      await stateManager.saveCurrentState();
+
+      // Save to history
+      if (_results.isNotEmpty) {
+        ref.read(historyProvider.notifier).addHistoryItem(
+              _results.join(', '),
+              'time_generator',
+            );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -75,8 +123,8 @@ class _TimeGeneratorScreenState extends State<TimeGeneratorScreen> {
   }
 
   void _copyToClipboard() {
-    if (_viewModel.results.isNotEmpty) {
-      String timesText = _viewModel.results.join('\n');
+    if (_results.isNotEmpty) {
+      String timesText = _results.join('\n');
 
       Clipboard.setData(ClipboardData(text: timesText));
       setState(() {
@@ -90,18 +138,11 @@ class _TimeGeneratorScreenState extends State<TimeGeneratorScreen> {
     }
   }
 
-  void _copyHistoryItem(String value) {
-    Clipboard.setData(ClipboardData(text: value));
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-      );
-    }
-  }
-
   Future<void> _selectStartTime() async {
-    final startHour = _viewModel.state.startHour;
-    final startMinute = _viewModel.state.startMinute;
+    final state = ref.read(timeGeneratorProvider);
+    final stateManager = ref.read(timeGeneratorStateProvider.notifier);
+    final startHour = state.startHour;
+    final startMinute = state.startMinute;
 
     final time = await showTimePicker(
       context: context,
@@ -109,27 +150,16 @@ class _TimeGeneratorScreenState extends State<TimeGeneratorScreen> {
     );
 
     if (time != null) {
-      _viewModel.updateStartHour(time.hour);
-      _viewModel.updateStartMinute(time.minute);
-
-      // Auto-adjust end time if needed
-      final endTimeInMinutes =
-          _viewModel.state.endHour * 60 + _viewModel.state.endMinute;
-      final startTimeInMinutes = time.hour * 60 + time.minute;
-
-      if (startTimeInMinutes >= endTimeInMinutes) {
-        final newEndHour = (time.hour + 1) % 24;
-        _viewModel.updateEndHour(newEndHour);
-        if (newEndHour == 0) {
-          _viewModel.updateEndMinute(0);
-        }
-      }
+      stateManager.updateStartHour(time.hour);
+      stateManager.updateStartMinute(time.minute);
     }
   }
 
   Future<void> _selectEndTime() async {
-    final endHour = _viewModel.state.endHour;
-    final endMinute = _viewModel.state.endMinute;
+    final state = ref.read(timeGeneratorProvider);
+    final stateManager = ref.read(timeGeneratorStateProvider.notifier);
+    final endHour = state.endHour;
+    final endMinute = state.endMinute;
 
     final time = await showTimePicker(
       context: context,
@@ -137,8 +167,8 @@ class _TimeGeneratorScreenState extends State<TimeGeneratorScreen> {
     );
 
     if (time != null) {
-      _viewModel.updateEndHour(time.hour);
-      _viewModel.updateEndMinute(time.minute);
+      stateManager.updateEndHour(time.hour);
+      stateManager.updateEndMinute(time.minute);
     }
   }
 
@@ -179,24 +209,26 @@ class _TimeGeneratorScreenState extends State<TimeGeneratorScreen> {
   }
 
   Widget _buildTimeSelectors(AppLocalizations loc) {
+    final state = ref.watch(timeGeneratorProvider);
+
     final startTime = TimeOfDay(
-      hour: _viewModel.state.startHour,
-      minute: _viewModel.state.startMinute,
+      hour: state.startHour,
+      minute: state.startMinute,
     );
 
     final endTime = TimeOfDay(
-      hour: _viewModel.state.endHour,
-      minute: _viewModel.state.endMinute,
+      hour: state.endHour,
+      minute: state.endMinute,
     );
 
     final startTimeSelector = _buildTimeSelector(
-      loc.startTime,
+      loc.between,
       startTime,
       _selectStartTime,
     );
 
     final endTimeSelector = _buildTimeSelector(
-      loc.endTime,
+      loc.and,
       endTime,
       _selectEndTime,
     );
@@ -210,48 +242,17 @@ class _TimeGeneratorScreenState extends State<TimeGeneratorScreen> {
   }
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
-    return RandomGeneratorHistoryWidget(
-      historyType: TimeGeneratorViewModel.historyType,
-      history: _viewModel.historyItems,
+    return HistoryWidget(
+      type: 'time_generator',
       title: loc.generationHistory,
-      onClearAllHistory: () async {
-        await GenerationHistoryService.clearHistory(
-            TimeGeneratorViewModel.historyType);
-        await _viewModel.loadHistory();
-      },
-      onClearPinnedHistory: () async {
-        await GenerationHistoryService.clearPinnedHistory(
-            TimeGeneratorViewModel.historyType);
-        await _viewModel.loadHistory();
-      },
-      onClearUnpinnedHistory: () async {
-        await GenerationHistoryService.clearUnpinnedHistory(
-            TimeGeneratorViewModel.historyType);
-        await _viewModel.loadHistory();
-      },
-      onCopyItem: _copyHistoryItem,
-      onDeleteItem: (index) async {
-        await GenerationHistoryService.deleteHistoryItem(
-            TimeGeneratorViewModel.historyType, index);
-        await _viewModel.loadHistory();
-      },
-      onTogglePin: (index) async {
-        await GenerationHistoryService.togglePinHistoryItem(
-            TimeGeneratorViewModel.historyType, index);
-        await _viewModel.loadHistory();
-      },
-      onTapItem: (item) {
-        HistoryViewDialog.show(
-          context: context,
-          item: item,
-        );
-      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final state = ref.watch(timeGeneratorProvider);
+    final stateManager = ref.read(timeGeneratorStateProvider.notifier);
 
     final generatorContent = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -270,13 +271,13 @@ class _TimeGeneratorScreenState extends State<TimeGeneratorScreen> {
                 // Time count slider
                 OptionSlider<int>(
                   label: loc.timeCount,
-                  currentValue: _viewModel.state.timeCount,
+                  currentValue: state.timeCount,
                   options: List.generate(
                     10,
                     (i) => SliderOption(value: i + 1, label: '${i + 1}'),
                   ),
                   onChanged: (value) {
-                    _viewModel.updateTimeCount(value);
+                    stateManager.updateTimeCount(value);
                   },
                   fixedWidth: 60,
                   layout: OptionSliderLayout.none,
@@ -286,9 +287,9 @@ class _TimeGeneratorScreenState extends State<TimeGeneratorScreen> {
                 OptionSwitch(
                   title: loc.allowDuplicates,
                   subtitle: loc.allowDuplicatesDesc,
-                  value: _viewModel.state.allowDuplicates,
+                  value: state.allowDuplicates,
                   onChanged: (value) {
-                    _viewModel.updateAllowDuplicates(value);
+                    stateManager.updateAllowDuplicates(value);
                   },
                   decorator: OptionSwitchDecorator.compact(context),
                 ),
@@ -317,7 +318,7 @@ class _TimeGeneratorScreenState extends State<TimeGeneratorScreen> {
         const SizedBox(height: 24),
 
         // Results
-        if (_viewModel.results.isNotEmpty) ...[
+        if (_results.isNotEmpty) ...[
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -341,7 +342,7 @@ class _TimeGeneratorScreenState extends State<TimeGeneratorScreen> {
                   const SizedBox(height: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _viewModel.results.map((timeStr) {
+                    children: _results.map((timeStr) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Container(
@@ -401,8 +402,8 @@ class _TimeGeneratorScreenState extends State<TimeGeneratorScreen> {
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _viewModel.historyEnabled,
-      hasHistory: _viewModel.historyEnabled,
+      historyEnabled: ref.watch(settingsProvider).saveRandomToolsState,
+      hasHistory: ref.watch(settingsProvider).saveRandomToolsState,
       isEmbedded: widget.isEmbedded,
       title: loc.timeGenerator,
     );

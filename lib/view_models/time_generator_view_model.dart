@@ -1,92 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
-import 'package:random_please/services/generation_history_service.dart';
+import 'package:random_please/providers/time_generator_state_provider.dart';
+import 'package:random_please/providers/history_provider.dart';
 import 'dart:math';
 
 class TimeGeneratorViewModel extends ChangeNotifier {
-  static const String boxName = 'timeGeneratorBox';
-  static const String historyType = 'time';
+  static const String historyType = 'time_generator';
 
-  late Box<TimeGeneratorState> _box;
-  TimeGeneratorState _state = TimeGeneratorState.createDefault();
-  bool _isBoxOpen = false;
-  bool _historyEnabled = false;
-  List<GenerationHistoryItem> _historyItems = [];
+  final WidgetRef _ref;
   List<String> _results = [];
 
+  TimeGeneratorViewModel(this._ref);
+
   // Getters
-  TimeGeneratorState get state => _state;
-  bool get isBoxOpen => _isBoxOpen;
-  bool get historyEnabled => _historyEnabled;
-  List<GenerationHistoryItem> get historyItems => _historyItems;
+  TimeGeneratorState get state => _ref.read(timeGeneratorStateProvider);
   List<String> get results => _results;
 
-  Future<void> initHive() async {
-    _box = await Hive.openBox<TimeGeneratorState>(boxName);
-    _state = _box.get('state') ?? TimeGeneratorState.createDefault();
-    _isBoxOpen = true;
-    notifyListeners();
-  }
-
-  Future<void> loadHistory() async {
-    final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory(historyType);
-    _historyEnabled = enabled;
-    _historyItems = history;
-    notifyListeners();
-  }
-
-  void saveState() {
-    if (_isBoxOpen) {
-      _box.put('state', _state);
-    }
-  }
-
   void updateStartHour(int value) {
-    _state = _state.copyWith(startHour: value);
-    saveState();
-    notifyListeners();
+    _ref.read(timeGeneratorStateProvider.notifier).updateStartHour(value);
   }
 
   void updateStartMinute(int value) {
-    _state = _state.copyWith(startMinute: value);
-    saveState();
-    notifyListeners();
+    _ref.read(timeGeneratorStateProvider.notifier).updateStartMinute(value);
   }
 
   void updateEndHour(int value) {
-    _state = _state.copyWith(endHour: value);
-    saveState();
-    notifyListeners();
+    _ref.read(timeGeneratorStateProvider.notifier).updateEndHour(value);
   }
 
   void updateEndMinute(int value) {
-    _state = _state.copyWith(endMinute: value);
-    saveState();
-    notifyListeners();
+    _ref.read(timeGeneratorStateProvider.notifier).updateEndMinute(value);
   }
 
   void updateTimeCount(int value) {
-    _state = _state.copyWith(timeCount: value);
-    saveState();
-    notifyListeners();
+    _ref.read(timeGeneratorStateProvider.notifier).updateTimeCount(value);
   }
 
   void updateAllowDuplicates(bool value) {
-    _state = _state.copyWith(allowDuplicates: value);
-    saveState();
-    notifyListeners();
+    _ref.read(timeGeneratorStateProvider.notifier).updateAllowDuplicates(value);
   }
 
   Future<void> generateTimes() async {
+    final currentState = state;
     final random = Random();
     final Set<String> generatedSet = {};
     final List<String> resultList = [];
 
     // Convert time range to minutes since midnight
-    final startMinutes = _state.startHour * 60 + _state.startMinute;
-    final endMinutes = _state.endHour * 60 + _state.endMinute;
+    final startMinutes = currentState.startHour * 60 + currentState.startMinute;
+    final endMinutes = currentState.endHour * 60 + currentState.endMinute;
 
     int range;
     if (endMinutes >= startMinutes) {
@@ -102,7 +65,7 @@ class TimeGeneratorViewModel extends ChangeNotifier {
       return;
     }
 
-    for (int i = 0; i < _state.timeCount; i++) {
+    for (int i = 0; i < currentState.timeCount; i++) {
       String timeStr;
       int attempts = 0;
       const maxAttempts = 1000;
@@ -121,11 +84,11 @@ class TimeGeneratorViewModel extends ChangeNotifier {
         timeStr = "${hour.toString().padLeft(2, '0')}:"
             "${minute.toString().padLeft(2, '0')}";
         attempts++;
-      } while (!_state.allowDuplicates &&
+      } while (!currentState.allowDuplicates &&
           generatedSet.contains(timeStr) &&
           attempts < maxAttempts);
 
-      if (!_state.allowDuplicates) {
+      if (!currentState.allowDuplicates) {
         generatedSet.add(timeStr);
       }
 
@@ -135,14 +98,13 @@ class TimeGeneratorViewModel extends ChangeNotifier {
     _results = resultList;
 
     // Save to history if enabled
-    if (_historyEnabled && _results.isNotEmpty) {
-      await GenerationHistoryService.addHistoryItem(
-        _results.join(', '),
-        historyType,
-      );
+    if (_results.isNotEmpty) {
+      _ref.read(historyProvider.notifier).addHistoryItem(
+            _results.join(', '),
+            historyType,
+          );
     }
 
-    await loadHistory();
     notifyListeners();
   }
 
@@ -152,26 +114,26 @@ class TimeGeneratorViewModel extends ChangeNotifier {
   }
 
   bool get hasValidTimeRange {
-    final startMinutes = _state.startHour * 60 + _state.startMinute;
-    final endMinutes = _state.endHour * 60 + _state.endMinute;
+    final currentState = state;
+    final startMinutes = currentState.startHour * 60 + currentState.startMinute;
+    final endMinutes = currentState.endHour * 60 + currentState.endMinute;
     return startMinutes != endMinutes;
   }
 
   String get formattedStartTime {
-    return "${_state.startHour.toString().padLeft(2, '0')}:"
-        "${_state.startMinute.toString().padLeft(2, '0')}";
+    final currentState = state;
+    return "${currentState.startHour.toString().padLeft(2, '0')}:"
+        "${currentState.startMinute.toString().padLeft(2, '0')}";
   }
 
   String get formattedEndTime {
-    return "${_state.endHour.toString().padLeft(2, '0')}:"
-        "${_state.endMinute.toString().padLeft(2, '0')}";
+    final currentState = state;
+    return "${currentState.endHour.toString().padLeft(2, '0')}:"
+        "${currentState.endMinute.toString().padLeft(2, '0')}";
   }
 
   @override
   void dispose() {
-    if (_isBoxOpen) {
-      _box.close();
-    }
     super.dispose();
   }
 }
