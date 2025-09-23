@@ -1371,4 +1371,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get range => 'Phạm vi';
+
+  @override
+  String get between => 'Giữa';
+
+  @override
+  String get and => 'và';
 }

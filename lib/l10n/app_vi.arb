@@ -602,5 +602,7 @@
   "enter": "Nhập",
   "increase": "Tăng",
   "decrease": "Giảm",
-  "range": "Phạm vi"
+  "range": "Phạm vi",
+  "between": "Giữa",
+  "and": "và"
 }

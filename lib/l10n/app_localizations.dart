@@ -2665,6 +2665,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Range'**
   String get range;
+
+  /// No description provided for @between.
+  ///
+  /// In en, this message translates to:
+  /// **'Between'**
+  String get between;
+
+  /// No description provided for @and.
+  ///
+  /// In en, this message translates to:
+  /// **'and'**
+  String get and;
 }
 
 class _AppLocalizationsDelegate

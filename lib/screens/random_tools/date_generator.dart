@@ -1,71 +1,127 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:random_please/l10n/app_localizations.dart';
-import 'package:random_please/view_models/date_generator_view_model.dart';
-import 'package:random_please/services/generation_history_service.dart';
+import 'package:random_please/providers/date_generator_state_provider.dart';
+import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
-import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/size_utils.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/utils/widget_layout_render_helper.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
+import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/providers/settings_provider.dart';
+import 'dart:math';
 
-class DateGeneratorScreen extends StatefulWidget {
+class DateGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
 
   const DateGeneratorScreen({super.key, this.isEmbedded = false});
 
   @override
-  State<DateGeneratorScreen> createState() => _DateGeneratorScreenState();
+  ConsumerState<DateGeneratorScreen> createState() =>
+      _DateGeneratorScreenState();
 }
 
-class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
-  late DateGeneratorViewModel _viewModel;
+class _DateGeneratorScreenState extends ConsumerState<DateGeneratorScreen> {
   bool _copied = false;
+  List<String> _results = [];
 
   late AppLocalizations loc;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = DateGeneratorViewModel();
-    _initializeViewModel();
   }
 
-  Future<void> _initializeViewModel() async {
-    await _viewModel.initHive();
-    await _viewModel.loadHistory();
-
-    // Listen to state changes
-    _viewModel.addListener(_onViewModelChanged);
-
-    // Update UI after initialization
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void _onViewModelChanged() {
-    if (mounted) {
-      setState(() {
-        _copied = false;
-      });
-    }
+  @override
+  void didChangeDependencies() {
+    loc = AppLocalizations.of(context)!;
+    super.didChangeDependencies();
   }
 
   @override
   void dispose() {
-    _viewModel.removeListener(_onViewModelChanged);
-    _viewModel.dispose();
     super.dispose();
   }
 
-  void _generateDates() async {
+  Future<void> _generateDates() async {
     try {
-      await _viewModel.generateDates();
+      final state = ref.read(dateGeneratorStateManagerProvider);
+      final random = Random();
+      final Set<DateTime> generatedSet = {};
+      final List<String> resultList = [];
+
+      // Normalize dates to ensure proper from/to relationship
+      final date1 = DateTime(
+          state.startDate.year, state.startDate.month, state.startDate.day);
+      final date2 =
+          DateTime(state.endDate.year, state.endDate.month, state.endDate.day);
+
+      // Determine which date is earlier (from) and which is later (to)
+      final DateTime fromDate;
+      final DateTime toDate;
+
+      if (date1.isBefore(date2) || date1.isAtSameMomentAs(date2)) {
+        fromDate = date1;
+        toDate = date2;
+      } else {
+        fromDate = date2;
+        toDate = date1;
+      }
+
+      final totalDays = toDate.difference(fromDate).inDays;
+
+      if (totalDays < 0) {
+        setState(() {
+          _results = [];
+        });
+        return;
+      }
+
+      for (int i = 0; i < state.dateCount; i++) {
+        DateTime date;
+        int attempts = 0;
+        const maxAttempts = 1000;
+
+        do {
+          final randomDay = random.nextInt(totalDays + 1);
+          date = fromDate.add(Duration(days: randomDay));
+          attempts++;
+        } while (!state.allowDuplicates &&
+            generatedSet.contains(date) &&
+            attempts < maxAttempts);
+
+        if (!state.allowDuplicates) {
+          generatedSet.add(date);
+        }
+
+        // Format date as YYYY-MM-DD
+        final dateStr = "${date.year.toString().padLeft(4, '0')}-"
+            "${date.month.toString().padLeft(2, '0')}-"
+            "${date.day.toString().padLeft(2, '0')}";
+        resultList.add(dateStr);
+      }
+
+      setState(() {
+        _results = resultList;
+      });
+
+      // Save state after generation
+      await ref
+          .read(dateGeneratorStateManagerProvider.notifier)
+          .saveCurrentState();
+
+      // Save to history
+      if (_results.isNotEmpty) {
+        ref.read(historyProvider.notifier).addHistoryItem(
+              _results.join(', '),
+              'date_generator',
+            );
+      }
     } catch (e) {
       if (mounted) {
         SnackBarUtils.showTyped(context, e.toString(), SnackBarType.error);
@@ -74,27 +130,16 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
   }
 
   void _copyToClipboard() {
-    if (_viewModel.results.isNotEmpty) {
-      String datesText = _viewModel.results.join('\n');
+    if (_results.isNotEmpty) {
+      String datesText = _results.join('\n');
 
       Clipboard.setData(ClipboardData(text: datesText));
       setState(() {
         _copied = true;
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-        );
+        SnackBarUtils.showTyped(context, loc.copied, SnackBarType.info);
       }
-    }
-  }
-
-  void _copyHistoryItem(String value) {
-    Clipboard.setData(ClipboardData(text: value));
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-      );
     }
   }
 
@@ -136,40 +181,57 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
     );
   }
 
-  Widget _buildDateSelectors(AppLocalizations loc) {
+  Widget _buildDateSelectors() {
+    final state = ref.watch(dateGeneratorStateManagerProvider);
+
     final startDateSelector = _buildDateSelector(
-      loc.startDate,
-      _viewModel.state.startDate,
+      loc.between,
+      state.startDate,
       () async {
         final date = await showDatePicker(
           context: context,
-          initialDate: _viewModel.state.startDate,
+          initialDate: state.startDate,
           firstDate: DateTime(1900),
           lastDate: DateTime(2100),
         );
         if (date != null) {
-          _viewModel.updateStartDate(date);
-          // Auto-adjust end date if needed
-          if (_viewModel.state.startDate.isAfter(_viewModel.state.endDate)) {
-            _viewModel.updateEndDate(
-                _viewModel.state.startDate.add(const Duration(days: 1)));
+          ref
+              .read(dateGeneratorStateManagerProvider.notifier)
+              .updateStartDate(date);
+          // Auto-adjust end date if needed to maintain between-and relationship
+          final newState = ref.read(dateGeneratorStateManagerProvider);
+          if (newState.startDate.isAfter(newState.endDate) ||
+              newState.startDate.isAtSameMomentAs(newState.endDate)) {
+            ref
+                .read(dateGeneratorStateManagerProvider.notifier)
+                .updateEndDate(newState.startDate.add(const Duration(days: 1)));
           }
         }
       },
     );
 
     final endDateSelector = _buildDateSelector(
-      loc.endDate,
-      _viewModel.state.endDate,
+      loc.and,
+      state.endDate,
       () async {
         final date = await showDatePicker(
           context: context,
-          initialDate: _viewModel.state.endDate,
-          firstDate: _viewModel.state.startDate,
+          initialDate: state.endDate,
+          firstDate: state.startDate,
           lastDate: DateTime(2100),
         );
         if (date != null) {
-          _viewModel.updateEndDate(date);
+          // Ensure end date is not before start date
+          final currentState = ref.read(dateGeneratorStateManagerProvider);
+          if (date.isBefore(currentState.startDate)) {
+            // If selected end date is before start date, adjust start date
+            ref
+                .read(dateGeneratorStateManagerProvider.notifier)
+                .updateStartDate(date.subtract(const Duration(days: 1)));
+          }
+          ref
+              .read(dateGeneratorStateManagerProvider.notifier)
+              .updateEndDate(date);
         }
       },
     );
@@ -181,60 +243,29 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
     );
   }
 
-  Widget _buildHistoryWidget(AppLocalizations loc) {
-    return RandomGeneratorHistoryWidget(
-      historyType: DateGeneratorViewModel.historyType,
-      history: _viewModel.historyItems,
+  Widget _buildHistoryWidget() {
+    return HistoryWidget(
+      type: 'date_generator',
       title: loc.generationHistory,
-      onClearAllHistory: () async {
-        await GenerationHistoryService.clearHistory(
-            DateGeneratorViewModel.historyType);
-        await _viewModel.loadHistory();
-      },
-      onClearPinnedHistory: () async {
-        await GenerationHistoryService.clearPinnedHistory(
-            DateGeneratorViewModel.historyType);
-        await _viewModel.loadHistory();
-      },
-      onClearUnpinnedHistory: () async {
-        await GenerationHistoryService.clearUnpinnedHistory(
-            DateGeneratorViewModel.historyType);
-        await _viewModel.loadHistory();
-      },
-      onCopyItem: _copyHistoryItem,
-      onDeleteItem: (index) async {
-        await GenerationHistoryService.deleteHistoryItem(
-            DateGeneratorViewModel.historyType, index);
-        await _viewModel.loadHistory();
-      },
-      onTogglePin: (index) async {
-        await GenerationHistoryService.togglePinHistoryItem(
-            DateGeneratorViewModel.historyType, index);
-        await _viewModel.loadHistory();
-      },
-      onTapItem: (item) {
-        HistoryViewDialog.show(
-          context: context,
-          item: item,
-        );
-      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
+    final state = ref.watch(dateGeneratorStateManagerProvider);
 
     final numberSlider = OptionSlider<int>(
       label: loc.dateCount,
-      currentValue: _viewModel.state.dateCount,
+      currentValue: state.dateCount,
       options: List.generate(
         10,
         (i) => SliderOption(value: i + 1, label: '${i + 1}'),
       ),
       fixedWidth: 60,
       onChanged: (value) {
-        _viewModel.updateDateCount(value);
+        ref
+            .read(dateGeneratorStateManagerProvider.notifier)
+            .updateDateCount(value);
       },
       layout: OptionSliderLayout.none,
     );
@@ -242,9 +273,11 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
     final duplicatesSwitch = OptionSwitch(
       title: loc.allowDuplicates,
       subtitle: loc.allowDuplicatesDesc,
-      value: _viewModel.state.allowDuplicates,
+      value: state.allowDuplicates,
       onChanged: (value) {
-        _viewModel.updateAllowDuplicates(value);
+        ref
+            .read(dateGeneratorStateManagerProvider.notifier)
+            .updateAllowDuplicates(value);
       },
       decorator: OptionSwitchDecorator.compact(context),
     );
@@ -261,7 +294,7 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Date selectors (responsive layout)
-                _buildDateSelectors(loc),
+                _buildDateSelectors(),
                 VerticalSpacingDivider.onlyTop(12),
                 numberSlider,
                 duplicatesSwitch,
@@ -288,7 +321,7 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
         const SizedBox(height: 24),
 
         // Results
-        if (_viewModel.results.isNotEmpty) ...[
+        if (_results.isNotEmpty) ...[
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -312,7 +345,7 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
                   const SizedBox(height: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _viewModel.results.map((dateStr) {
+                    children: _results.map((dateStr) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Container(
@@ -371,9 +404,9 @@ class _DateGeneratorScreenState extends State<DateGeneratorScreen> {
 
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
-      historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _viewModel.historyEnabled,
-      hasHistory: _viewModel.historyEnabled,
+      historyWidget: _buildHistoryWidget(),
+      historyEnabled: ref.watch(settingsProvider).saveRandomToolsState,
+      hasHistory: ref.watch(settingsProvider).saveRandomToolsState,
       isEmbedded: widget.isEmbedded,
       title: loc.dateGenerator,
     );

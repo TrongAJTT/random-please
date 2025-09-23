@@ -638,5 +638,7 @@
   "enter": "Enter",
   "increase": "Increase",
   "decrease": "Decrease",
-  "range": "Range"
+  "range": "Range",
+  "between": "Between",
+  "and": "and"
 }

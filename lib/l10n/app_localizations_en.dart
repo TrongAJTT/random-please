@@ -1376,4 +1376,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get range => 'Range';
+
+  @override
+  String get between => 'Between';
+
+  @override
+  String get and => 'and';
 }

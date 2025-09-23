@@ -1,81 +1,76 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
-import 'package:random_please/services/generation_history_service.dart';
+import 'package:random_please/providers/date_generator_state_provider.dart';
+import 'package:random_please/providers/history_provider.dart';
 import 'dart:math';
 
 class DateGeneratorViewModel extends ChangeNotifier {
-  static const String boxName = 'dateGeneratorBox';
   static const String historyType = 'date';
 
-  late Box<DateGeneratorState> _box;
-  DateGeneratorState _state = DateGeneratorState.createDefault();
-  bool _isBoxOpen = false;
-  bool _historyEnabled = false;
-  List<GenerationHistoryItem> _historyItems = [];
+  WidgetRef? _ref;
   List<String> _results = [];
 
   // Getters
-  DateGeneratorState get state => _state;
-  bool get isBoxOpen => _isBoxOpen;
-  bool get historyEnabled => _historyEnabled;
-  List<GenerationHistoryItem> get historyItems => _historyItems;
+  DateGeneratorState get state {
+    if (_ref != null) {
+      return _ref!.watch(dateGeneratorStateManagerProvider);
+    }
+    return DateGeneratorState.createDefault();
+  }
+
   List<String> get results => _results;
 
-  Future<void> initHive() async {
-    _box = await Hive.openBox<DateGeneratorState>(boxName);
-    _state = _box.get('state') ?? DateGeneratorState.createDefault();
-    _isBoxOpen = true;
-    notifyListeners();
-  }
-
-  Future<void> loadHistory() async {
-    final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory(historyType);
-    _historyEnabled = enabled;
-    _historyItems = history;
-    notifyListeners();
-  }
-
-  void saveState() {
-    if (_isBoxOpen) {
-      _box.put('state', _state);
-    }
+  void setRef(WidgetRef ref) {
+    _ref = ref;
   }
 
   void updateStartDate(DateTime value) {
-    _state = _state.copyWith(startDate: value);
-    saveState();
+    if (_ref != null) {
+      _ref!
+          .read(dateGeneratorStateManagerProvider.notifier)
+          .updateStartDate(value);
+    }
     notifyListeners();
   }
 
   void updateEndDate(DateTime value) {
-    _state = _state.copyWith(endDate: value);
-    saveState();
+    if (_ref != null) {
+      _ref!
+          .read(dateGeneratorStateManagerProvider.notifier)
+          .updateEndDate(value);
+    }
     notifyListeners();
   }
 
   void updateDateCount(int value) {
-    _state = _state.copyWith(dateCount: value);
-    saveState();
+    if (_ref != null) {
+      _ref!
+          .read(dateGeneratorStateManagerProvider.notifier)
+          .updateDateCount(value);
+    }
     notifyListeners();
   }
 
   void updateAllowDuplicates(bool value) {
-    _state = _state.copyWith(allowDuplicates: value);
-    saveState();
+    if (_ref != null) {
+      _ref!
+          .read(dateGeneratorStateManagerProvider.notifier)
+          .updateAllowDuplicates(value);
+    }
     notifyListeners();
   }
 
   Future<void> generateDates() async {
+    final currentState = state;
     final random = Random();
     final Set<DateTime> generatedSet = {};
     final List<String> resultList = [];
 
-    final startDate = DateTime(
-        _state.startDate.year, _state.startDate.month, _state.startDate.day);
-    final endDate =
-        DateTime(_state.endDate.year, _state.endDate.month, _state.endDate.day);
+    final startDate = DateTime(currentState.startDate.year,
+        currentState.startDate.month, currentState.startDate.day);
+    final endDate = DateTime(currentState.endDate.year,
+        currentState.endDate.month, currentState.endDate.day);
     final totalDays = endDate.difference(startDate).inDays;
 
     if (totalDays < 0) {
@@ -84,7 +79,7 @@ class DateGeneratorViewModel extends ChangeNotifier {
       return;
     }
 
-    for (int i = 0; i < _state.dateCount; i++) {
+    for (int i = 0; i < currentState.dateCount; i++) {
       DateTime date;
       int attempts = 0;
       const maxAttempts = 1000;
@@ -93,11 +88,11 @@ class DateGeneratorViewModel extends ChangeNotifier {
         final randomDay = random.nextInt(totalDays + 1);
         date = startDate.add(Duration(days: randomDay));
         attempts++;
-      } while (!_state.allowDuplicates &&
+      } while (!currentState.allowDuplicates &&
           generatedSet.contains(date) &&
           attempts < maxAttempts);
 
-      if (!_state.allowDuplicates) {
+      if (!currentState.allowDuplicates) {
         generatedSet.add(date);
       }
 
@@ -110,15 +105,14 @@ class DateGeneratorViewModel extends ChangeNotifier {
 
     _results = resultList;
 
-    // Save to history if enabled
-    if (_historyEnabled && _results.isNotEmpty) {
-      await GenerationHistoryService.addHistoryItem(
-        _results.join(', '),
-        historyType,
-      );
+    // Save to history via HistoryProvider
+    if (_ref != null && _results.isNotEmpty) {
+      _ref!.read(historyProvider.notifier).addHistoryItem(
+            _results.join(', '),
+            historyType,
+          );
     }
 
-    await loadHistory();
     notifyListeners();
   }
 
@@ -128,14 +122,48 @@ class DateGeneratorViewModel extends ChangeNotifier {
   }
 
   bool get hasValidDateRange {
-    return _state.endDate.isAfter(_state.startDate);
+    final currentState = state;
+    return currentState.endDate.isAfter(currentState.startDate);
+  }
+
+  // History management methods
+  Future<void> clearAllHistory() async {
+    if (_ref != null) {
+      _ref!.read(historyProvider.notifier).clearHistory(historyType);
+    }
+  }
+
+  Future<void> clearPinnedHistory() async {
+    if (_ref != null) {
+      _ref!.read(historyProvider.notifier).clearPinnedHistory(historyType);
+    }
+  }
+
+  Future<void> clearUnpinnedHistory() async {
+    if (_ref != null) {
+      _ref!.read(historyProvider.notifier).clearUnpinnedHistory(historyType);
+    }
+  }
+
+  Future<void> deleteHistoryItem(int index) async {
+    if (_ref != null) {
+      _ref!
+          .read(historyProvider.notifier)
+          .deleteHistoryItem(historyType, index);
+    }
+  }
+
+  Future<void> togglePinHistoryItem(int index) async {
+    if (_ref != null) {
+      _ref!
+          .read(historyProvider.notifier)
+          .togglePinHistoryItem(historyType, index);
+    }
   }
 
   @override
   void dispose() {
-    if (_isBoxOpen) {
-      _box.close();
-    }
+    // No longer need to close Hive box
     super.dispose();
   }
 }
