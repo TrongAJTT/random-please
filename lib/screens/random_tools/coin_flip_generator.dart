@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/view_models/coin_flip_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
-import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
+import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/providers/coin_flip_generator_state_provider.dart';
 
-class CoinFlipGeneratorScreen extends StatefulWidget {
+class CoinFlipGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
 
   const CoinFlipGeneratorScreen({super.key, this.isEmbedded = false});
 
   @override
-  State<CoinFlipGeneratorScreen> createState() =>
+  ConsumerState<CoinFlipGeneratorScreen> createState() =>
       _CoinFlipGeneratorScreenState();
 }
 
-class _CoinFlipGeneratorScreenState extends State<CoinFlipGeneratorScreen>
+class _CoinFlipGeneratorScreenState
+    extends ConsumerState<CoinFlipGeneratorScreen>
     with TickerProviderStateMixin {
   late CoinFlipGeneratorViewModel _viewModel;
   bool _currentSide = true; // true = heads, false = tails
@@ -65,10 +68,8 @@ class _CoinFlipGeneratorScreenState extends State<CoinFlipGeneratorScreen>
     _initData();
   }
 
-  Future<void> _initData() async {
-    await _viewModel.initHive();
-    await _viewModel.loadHistory();
-    setState(() {});
+  void _initData() {
+    _viewModel.setRef(ref);
   }
 
   @override
@@ -126,43 +127,17 @@ class _CoinFlipGeneratorScreenState extends State<CoinFlipGeneratorScreen>
   }
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
-    return RandomGeneratorHistoryWidget(
-      historyType: 'coin_flip',
-      history: _viewModel.historyItems,
+    return HistoryWidget(
+      type: CoinFlipGeneratorViewModel.historyType,
       title: loc.generationHistory,
-      onClearAllHistory: () async {
-        await _viewModel.clearAllHistory();
-      },
-      onClearPinnedHistory: () async {
-        await _viewModel.clearPinnedHistory();
-      },
-      onClearUnpinnedHistory: () async {
-        await _viewModel.clearUnpinnedHistory();
-      },
-      onCopyItem: (value) {
-        Clipboard.setData(ClipboardData(text: value));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(loc.copied)),
-        );
-      },
-      onDeleteItem: (index) async {
-        await _viewModel.deleteHistoryItem(index);
-      },
-      onTogglePin: (index) async {
-        await _viewModel.togglePinHistoryItem(index);
-      },
-      onTapItem: (item) {
-        HistoryViewDialog.show(
-          context: context,
-          item: item,
-        );
-      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    // Watch state changes to trigger rebuilds
+    ref.watch(coinFlipGeneratorStateManagerProvider);
 
     final generatorContent = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -359,8 +334,8 @@ class _CoinFlipGeneratorScreenState extends State<CoinFlipGeneratorScreen>
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _viewModel.historyEnabled,
-      hasHistory: _viewModel.historyEnabled,
+      historyEnabled: true,
+      hasHistory: true,
       isEmbedded: widget.isEmbedded,
       title: loc.flipCoin,
     );
