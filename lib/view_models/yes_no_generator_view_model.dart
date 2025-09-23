@@ -1,51 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/models/random_generator.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
-import 'package:random_please/services/generation_history_service.dart';
+import 'package:random_please/providers/yes_no_generator_state_provider.dart';
+import 'package:random_please/providers/history_provider.dart';
 
 class YesNoGeneratorViewModel extends ChangeNotifier {
-  static const String boxName = 'yesNoGeneratorBox';
   static const String historyType = 'yes_no';
 
-  late Box<SimpleGeneratorState> _box;
-  SimpleGeneratorState _state = SimpleGeneratorState.createDefault();
-  bool _isBoxOpen = false;
-  bool _historyEnabled = false;
-  List<GenerationHistoryItem> _historyItems = [];
+  WidgetRef? _ref;
   bool? _result; // true = yes, false = no
 
   // Getters
-  SimpleGeneratorState get state => _state;
-  bool get isBoxOpen => _isBoxOpen;
-  bool get historyEnabled => _historyEnabled;
-  List<GenerationHistoryItem> get historyItems => _historyItems;
+  SimpleGeneratorState get state {
+    if (_ref != null) {
+      return _ref!.watch(yesNoGeneratorStateManagerProvider);
+    }
+    return SimpleGeneratorState.createDefault();
+  }
+
   bool? get result => _result;
 
-  Future<void> initHive() async {
-    _box = await Hive.openBox<SimpleGeneratorState>(boxName);
-    _state = _box.get('state') ?? SimpleGeneratorState.createDefault();
-    _isBoxOpen = true;
-    notifyListeners();
-  }
-
-  Future<void> loadHistory() async {
-    final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory(historyType);
-    _historyEnabled = enabled;
-    _historyItems = history;
-    notifyListeners();
-  }
-
-  void saveState() {
-    if (_isBoxOpen) {
-      _box.put('state', _state);
-    }
+  void setRef(WidgetRef ref) {
+    _ref = ref;
   }
 
   void updateSkipAnimation(bool value) {
-    _state = _state.copyWith(skipAnimation: value);
-    saveState();
+    if (_ref != null) {
+      _ref!
+          .read(yesNoGeneratorStateManagerProvider.notifier)
+          .updateSkipAnimation(value);
+    }
     notifyListeners();
   }
 
@@ -53,14 +38,13 @@ class YesNoGeneratorViewModel extends ChangeNotifier {
     final result = RandomGenerator.generateYesNo();
     _result = result;
 
-    // Save to history if enabled
-    if (_historyEnabled) {
-      String resultText = result ? 'YES' : 'NO';
-      await GenerationHistoryService.addHistoryItem(
-        resultText,
-        historyType,
-      );
-      await loadHistory(); // Refresh history
+    // Save to history via HistoryProvider
+    if (_ref != null) {
+      final resultText = result ? 'YES' : 'NO';
+      _ref!.read(historyProvider.notifier).addHistoryItem(
+            resultText,
+            historyType,
+          );
     }
 
     notifyListeners();
@@ -78,35 +62,42 @@ class YesNoGeneratorViewModel extends ChangeNotifier {
 
   // History management methods
   Future<void> clearAllHistory() async {
-    await GenerationHistoryService.clearHistory(historyType);
-    await loadHistory();
+    if (_ref != null) {
+      _ref!.read(historyProvider.notifier).clearHistory(historyType);
+    }
   }
 
   Future<void> clearPinnedHistory() async {
-    await GenerationHistoryService.clearPinnedHistory(historyType);
-    await loadHistory();
+    if (_ref != null) {
+      _ref!.read(historyProvider.notifier).clearPinnedHistory(historyType);
+    }
   }
 
   Future<void> clearUnpinnedHistory() async {
-    await GenerationHistoryService.clearUnpinnedHistory(historyType);
-    await loadHistory();
+    if (_ref != null) {
+      _ref!.read(historyProvider.notifier).clearUnpinnedHistory(historyType);
+    }
   }
 
   Future<void> deleteHistoryItem(int index) async {
-    await GenerationHistoryService.deleteHistoryItem(historyType, index);
-    await loadHistory();
+    if (_ref != null) {
+      _ref!
+          .read(historyProvider.notifier)
+          .deleteHistoryItem(historyType, index);
+    }
   }
 
   Future<void> togglePinHistoryItem(int index) async {
-    await GenerationHistoryService.togglePinHistoryItem(historyType, index);
-    await loadHistory();
+    if (_ref != null) {
+      _ref!
+          .read(historyProvider.notifier)
+          .togglePinHistoryItem(historyType, index);
+    }
   }
 
   @override
   void dispose() {
-    if (_isBoxOpen) {
-      _box.close();
-    }
+    // No longer need to close Hive box
     super.dispose();
   }
 }

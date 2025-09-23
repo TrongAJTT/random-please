@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/view_models/rock_paper_scissors_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
-import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
+import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/providers/rock_paper_scissors_generator_state_provider.dart';
 
-class RockPaperScissorsGeneratorScreen extends StatefulWidget {
+class RockPaperScissorsGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
 
   const RockPaperScissorsGeneratorScreen({super.key, this.isEmbedded = false});
 
   @override
-  State<RockPaperScissorsGeneratorScreen> createState() =>
+  ConsumerState<RockPaperScissorsGeneratorScreen> createState() =>
       _RockPaperScissorsGeneratorScreenState();
 }
 
 class _RockPaperScissorsGeneratorScreenState
-    extends State<RockPaperScissorsGeneratorScreen>
+    extends ConsumerState<RockPaperScissorsGeneratorScreen>
     with SingleTickerProviderStateMixin {
   late RockPaperScissorsGeneratorViewModel _viewModel;
   late AnimationController _bounceController;
@@ -38,10 +40,8 @@ class _RockPaperScissorsGeneratorScreenState
     _initData();
   }
 
-  Future<void> _initData() async {
-    await _viewModel.initHive();
-    await _viewModel.loadHistory();
-    setState(() {});
+  void _initData() {
+    _viewModel.setRef(ref);
   }
 
   @override
@@ -126,43 +126,17 @@ class _RockPaperScissorsGeneratorScreenState
   }
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
-    return RandomGeneratorHistoryWidget(
-      historyType: 'rock_paper_scissors',
-      history: _viewModel.historyItems,
+    return HistoryWidget(
+      type: RockPaperScissorsGeneratorViewModel.historyType,
       title: loc.generationHistory,
-      onClearAllHistory: () async {
-        await _viewModel.clearAllHistory();
-      },
-      onClearPinnedHistory: () async {
-        await _viewModel.clearPinnedHistory();
-      },
-      onClearUnpinnedHistory: () async {
-        await _viewModel.clearUnpinnedHistory();
-      },
-      onCopyItem: (value) {
-        Clipboard.setData(ClipboardData(text: value));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(loc.copied)),
-        );
-      },
-      onDeleteItem: (index) async {
-        await _viewModel.deleteHistoryItem(index);
-      },
-      onTogglePin: (index) async {
-        await _viewModel.togglePinHistoryItem(index);
-      },
-      onTapItem: (item) {
-        HistoryViewDialog.show(
-          context: context,
-          item: item,
-        );
-      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    // Watch state changes to trigger rebuilds
+    ref.watch(rockPaperScissorsGeneratorStateManagerProvider);
 
     final generatorContent = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -336,8 +310,8 @@ class _RockPaperScissorsGeneratorScreenState
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _viewModel.historyEnabled,
-      hasHistory: _viewModel.historyEnabled,
+      historyEnabled: true,
+      hasHistory: true,
       isEmbedded: widget.isEmbedded,
       title: loc.rockPaperScissors,
     );

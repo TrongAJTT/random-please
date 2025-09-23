@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/view_models/yes_no_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
-import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
+import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/providers/yes_no_generator_state_provider.dart';
 
-class YesNoGeneratorScreen extends StatefulWidget {
+class YesNoGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
 
   const YesNoGeneratorScreen({super.key, this.isEmbedded = false});
 
   @override
-  State<YesNoGeneratorScreen> createState() => _YesNoGeneratorScreenState();
+  ConsumerState<YesNoGeneratorScreen> createState() =>
+      _YesNoGeneratorScreenState();
 }
 
-class _YesNoGeneratorScreenState extends State<YesNoGeneratorScreen>
+class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
     with SingleTickerProviderStateMixin {
   late YesNoGeneratorViewModel _viewModel;
   late AnimationController _bounceController;
@@ -36,10 +39,8 @@ class _YesNoGeneratorScreenState extends State<YesNoGeneratorScreen>
     _initData();
   }
 
-  Future<void> _initData() async {
-    await _viewModel.initHive();
-    await _viewModel.loadHistory();
-    setState(() {});
+  void _initData() {
+    _viewModel.setRef(ref);
   }
 
   @override
@@ -71,43 +72,18 @@ class _YesNoGeneratorScreenState extends State<YesNoGeneratorScreen>
   }
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
-    return RandomGeneratorHistoryWidget(
-      historyType: 'yes_no',
-      history: _viewModel.historyItems,
+    return HistoryWidget(
+      type: YesNoGeneratorViewModel.historyType,
       title: loc.generationHistory,
-      onClearAllHistory: () async {
-        await _viewModel.clearAllHistory();
-      },
-      onClearPinnedHistory: () async {
-        await _viewModel.clearPinnedHistory();
-      },
-      onClearUnpinnedHistory: () async {
-        await _viewModel.clearUnpinnedHistory();
-      },
-      onCopyItem: (value) {
-        Clipboard.setData(ClipboardData(text: value));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(loc.copied)),
-        );
-      },
-      onDeleteItem: (index) async {
-        await _viewModel.deleteHistoryItem(index);
-      },
-      onTogglePin: (index) async {
-        await _viewModel.togglePinHistoryItem(index);
-      },
-      onTapItem: (item) {
-        HistoryViewDialog.show(
-          context: context,
-          item: item,
-        );
-      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    // Watch state changes to trigger rebuilds
+    ref.watch(yesNoGeneratorStateManagerProvider);
+    ;
 
     final generatorContent = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -280,8 +256,8 @@ class _YesNoGeneratorScreenState extends State<YesNoGeneratorScreen>
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _viewModel.historyEnabled,
-      hasHistory: _viewModel.historyEnabled,
+      historyEnabled: true,
+      hasHistory: true,
       isEmbedded: widget.isEmbedded,
       title: loc.yesNo,
     );
