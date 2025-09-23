@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
+import 'package:random_please/utils/color_util.dart';
 import 'package:random_please/view_models/color_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
-import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/size_utils.dart';
 import 'package:random_please/utils/widget_layout_render_helper.dart';
+import 'package:random_please/widgets/history_widget.dart';
 
-class ColorGeneratorScreen extends StatefulWidget {
+class ColorGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
 
   const ColorGeneratorScreen({super.key, this.isEmbedded = false});
 
   @override
-  State<ColorGeneratorScreen> createState() => _ColorGeneratorScreenState();
+  ConsumerState<ColorGeneratorScreen> createState() =>
+      _ColorGeneratorScreenState();
 }
 
-class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
+class _ColorGeneratorScreenState extends ConsumerState<ColorGeneratorScreen>
     with SingleTickerProviderStateMixin {
   late ColorGeneratorViewModel _viewModel;
   late AnimationController _controller;
@@ -25,7 +27,7 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
   @override
   void initState() {
     super.initState();
-    _viewModel = ColorGeneratorViewModel();
+    _viewModel = ColorGeneratorViewModel(ref: ref);
     _controller = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -69,80 +71,24 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
 
   String _getRgbColor() {
     final color = _viewModel.currentColor;
+    String baseRpg =
+        '${color.getRed255String()}, ${color.getGreen255String()}, ${color.getBlue255String()}';
     if (_viewModel.state.withAlpha) {
-      final alpha = (color.alpha / 255.0);
-      return 'rgba(${color.red}, ${color.green}, ${color.blue}, ${alpha.toStringAsFixed(2)})';
+      return 'rgba($baseRpg, ${color.getAlphaStringFixed(2)})';
     } else {
-      return 'rgb(${color.red}, ${color.green}, ${color.blue})';
+      return 'rpg($baseRpg)';
     }
-  }
-
-  void _copyHistoryItem(String value) {
-    Clipboard.setData(ClipboardData(text: value));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-    );
   }
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
-    return RandomGeneratorHistoryWidget(
-      historyType: ColorGeneratorViewModel.historyType,
-      history: _viewModel.historyItems,
-      customHeader: (history, index) => Container(
-        width: 24,
-        height: 24,
-        decoration: BoxDecoration(
-          color: _parseColorFromHex(history[index].value),
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
+    return HistoryWidget(
+      type: ColorGeneratorViewModel.historyType,
       title: loc.generationHistory,
-      onClearAllHistory: () async {
-        await _viewModel.clearAllHistory();
-      },
-      onClearPinnedHistory: () async {
-        await _viewModel.clearPinnedHistory();
-      },
-      onClearUnpinnedHistory: () async {
-        await _viewModel.clearUnpinnedHistory();
-      },
-      onCopyItem: _copyHistoryItem,
-      onDeleteItem: (index) async {
-        await _viewModel.deleteHistoryItem(index);
-      },
-      onTogglePin: (index) async {
-        await _viewModel.togglePinHistoryItem(index);
-      },
-      onTapItem: (item) {
-        HistoryViewDialog.show(
-          context: context,
-          item: item,
-        );
-      },
     );
-  }
-
-  Color _parseColorFromHex(String hexColor) {
-    try {
-      final hex = hexColor.replaceAll('#', '');
-      if (hex.length == 6) {
-        return Color(int.parse('FF$hex', radix: 16));
-      } else if (hex.length == 8) {
-        return Color(int.parse(hex, radix: 16));
-      }
-    } catch (e) {
-      // If parsing fails, return a default color
-    }
-    return Colors.grey;
   }
 
   void _copyToClipboard(String value) {
-    Clipboard.setData(ClipboardData(text: value));
-    setState(() {});
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-    );
+    _viewModel.copyColor(value);
   }
 
   @override
@@ -241,11 +187,25 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
           ],
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: 32),
+
+        // Generate button
+        FilledButton.icon(
+          onPressed: _generateColor,
+          icon: const Icon(Icons.refresh),
+          label: Text(loc.generate),
+          style: FilledButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 24),
 
         // Color info
         Text(
-          loc.generatedColor,
+          loc.randomResult,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 8),
@@ -262,20 +222,6 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
           ),
           minWidth: 300,
           spacing: TwoDimSpacing.specific(vertical: 8, horizontal: 16),
-        ),
-
-        const SizedBox(height: 16),
-
-        // Generate button
-        FilledButton.icon(
-          onPressed: _generateColor,
-          icon: const Icon(Icons.refresh),
-          label: Text(loc.generate),
-          style: FilledButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
         ),
       ],
     );
@@ -335,7 +281,7 @@ class _ColorGeneratorScreenState extends State<ColorGeneratorScreen>
   bool _isColorDark(Color color) {
     // Calculate luminance of the color
     double luminance =
-        (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue) / 255;
+        (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) / 255;
     return luminance < 0.5;
   }
 }

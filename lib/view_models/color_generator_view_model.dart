@@ -1,31 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/models/random_generator.dart';
+import 'package:random_please/providers/history_provider.dart';
+import 'package:random_please/providers/color_generator_state_provider.dart';
 import 'package:random_please/services/generation_history_service.dart';
 
+// Temporary wrapper to maintain compatibility
 class ColorGeneratorViewModel extends ChangeNotifier {
-  static const String boxName = 'colorGeneratorBox';
   static const String historyType = 'color';
+  final WidgetRef? _ref;
 
-  late Box<ColorGeneratorState> _box;
-  ColorGeneratorState _state = ColorGeneratorState.createDefault();
-  bool _isBoxOpen = false;
-  bool _historyEnabled = false;
+  ColorGeneratorViewModel({WidgetRef? ref}) : _ref = ref;
+
   List<GenerationHistoryItem> _historyItems = [];
+  bool _historyEnabled = false;
   Color _currentColor = Colors.blue; // Match screen gốc
 
-  // Getters
-  ColorGeneratorState get state => _state;
-  bool get isBoxOpen => _isBoxOpen;
+  // Getters - now delegate to state manager
+  ColorGeneratorState get state {
+    if (_ref != null) {
+      return _ref!.read(colorGeneratorStateManagerProvider);
+    }
+    return ColorGeneratorState.createDefault();
+  }
+
   bool get historyEnabled => _historyEnabled;
   List<GenerationHistoryItem> get historyItems => _historyItems;
   Color get currentColor => _currentColor;
 
   Future<void> initHive() async {
-    _box = await Hive.openBox<ColorGeneratorState>(boxName);
-    _state = _box.get('state') ?? ColorGeneratorState.createDefault();
-    _isBoxOpen = true;
+    _historyEnabled = await GenerationHistoryService.isHistoryEnabled();
     notifyListeners();
   }
 
@@ -37,30 +43,40 @@ class ColorGeneratorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void saveState() {
-    if (_isBoxOpen) {
-      _box.put('state', _state);
-    }
-  }
-
   void updateWithAlpha(bool value) {
-    _state = _state.copyWith(withAlpha: value);
-    saveState();
+    if (_ref != null) {
+      _ref!
+          .read(colorGeneratorStateManagerProvider.notifier)
+          .updateWithAlpha(value);
+    }
     notifyListeners();
   }
 
   Future<void> generateColor() async {
+    final currentState = state;
+
     // Use RandomGenerator like original screen
-    _currentColor = RandomGenerator.generateColor(withAlpha: _state.withAlpha);
+    _currentColor =
+        RandomGenerator.generateColor(withAlpha: currentState.withAlpha);
+
+    // Save state on generate
+    if (_ref != null) {
+      await _ref!
+          .read(colorGeneratorStateManagerProvider.notifier)
+          .saveStateOnGenerate();
+    }
 
     // Save to history if enabled (match original screen logic)
     if (_historyEnabled) {
       String colorText = getHexColor();
-      await GenerationHistoryService.addHistoryItem(
-        colorText,
-        historyType,
-      );
-      await loadHistory();
+      if (_ref != null) {
+        await _ref!
+            .read(historyProvider.notifier)
+            .addHistoryItem(colorText, historyType);
+      } else {
+        await GenerationHistoryService.addHistoryItem(colorText, historyType);
+        await loadHistory();
+      }
     }
 
     notifyListeners();
@@ -68,7 +84,8 @@ class ColorGeneratorViewModel extends ChangeNotifier {
 
   // Helper methods from original screen
   String getHexColor() {
-    if (_state.withAlpha) {
+    final currentState = state;
+    if (currentState.withAlpha) {
       return '#${_currentColor.value.toRadixString(16).padLeft(8, '0').toUpperCase()}';
     } else {
       return '#${(_currentColor.value & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
@@ -76,7 +93,8 @@ class ColorGeneratorViewModel extends ChangeNotifier {
   }
 
   String getRgbColor() {
-    if (_state.withAlpha) {
+    final currentState = state;
+    if (currentState.withAlpha) {
       final alpha = (_currentColor.alpha / 255.0);
       return 'rgba(${_currentColor.red}, ${_currentColor.green}, ${_currentColor.blue}, ${alpha.toStringAsFixed(2)})';
     } else {
@@ -85,8 +103,10 @@ class ColorGeneratorViewModel extends ChangeNotifier {
   }
 
   String getHslColor() {
-    final hsl = _rgbToHsl(_currentColor.red, _currentColor.green, _currentColor.blue);
-    if (_state.withAlpha) {
+    final currentState = state;
+    final hsl =
+        _rgbToHsl(_currentColor.red, _currentColor.green, _currentColor.blue);
+    if (currentState.withAlpha) {
       final alpha = (_currentColor.alpha / 255.0);
       return 'hsla(${hsl[0].round()}, ${(hsl[1] * 100).round()}%, ${(hsl[2] * 100).round()}%, ${alpha.toStringAsFixed(2)})';
     } else {
@@ -128,6 +148,10 @@ class ColorGeneratorViewModel extends ChangeNotifier {
     return [h * 360, s, l];
   }
 
+  void copyColor(String value) {
+    Clipboard.setData(ClipboardData(text: value));
+  }
+
   void clearColor() {
     _currentColor = Colors.blue;
     notifyListeners();
@@ -157,13 +181,5 @@ class ColorGeneratorViewModel extends ChangeNotifier {
   Future<void> togglePinHistoryItem(int index) async {
     await GenerationHistoryService.togglePinHistoryItem(historyType, index);
     await loadHistory();
-  }
-
-  @override
-  void dispose() {
-    if (_isBoxOpen) {
-      _box.close();
-    }
-    super.dispose();
   }
 }
