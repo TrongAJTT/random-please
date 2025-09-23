@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/view_models/dice_roll_generator_view_model.dart';
+import 'package:random_please/providers/dice_roll_generator_state_provider.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
-import 'package:random_please/utils/history_view_dialog.dart';
+import 'package:random_please/widgets/history_widget.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'dart:math' as math;
 import 'package:random_please/widgets/generic/option_slider.dart';
 
-class DiceRollGeneratorScreen extends StatefulWidget {
+class DiceRollGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
 
   const DiceRollGeneratorScreen({super.key, this.isEmbedded = false});
 
   @override
-  State<DiceRollGeneratorScreen> createState() =>
+  ConsumerState<DiceRollGeneratorScreen> createState() =>
       _DiceRollGeneratorScreenState();
 }
 
-class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
+class _DiceRollGeneratorScreenState
+    extends ConsumerState<DiceRollGeneratorScreen>
     with TickerProviderStateMixin {
   late DiceRollGeneratorViewModel _viewModel;
   late AnimationController _rollController;
@@ -47,7 +50,7 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
   @override
   void initState() {
     super.initState();
-    _viewModel = DiceRollGeneratorViewModel();
+    _viewModel = DiceRollGeneratorViewModel(ref);
     _rollController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
@@ -57,17 +60,10 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
       curve: Curves.easeOutBack,
     );
     _viewModel.addListener(_onViewModelChanged);
-    _initData();
   }
 
   void _onViewModelChanged() {
     if (mounted) setState(() {});
-  }
-
-  Future<void> _initData() async {
-    await _viewModel.initHive();
-    await _viewModel.loadHistory();
-    setState(() {});
   }
 
   @override
@@ -92,40 +88,10 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
     setState(() {});
   }
 
-  void _copyHistoryItem(String value) {
-    Clipboard.setData(ClipboardData(text: value));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-    );
-  }
-
   Widget _buildHistoryWidget(AppLocalizations loc) {
-    return RandomGeneratorHistoryWidget(
-      historyType: DiceRollGeneratorViewModel.historyType,
-      history: _viewModel.historyItems,
+    return HistoryWidget(
+      type: DiceRollGeneratorViewModel.historyType,
       title: loc.generationHistory,
-      onClearAllHistory: () async {
-        await _viewModel.clearAllHistory();
-      },
-      onClearPinnedHistory: () async {
-        await _viewModel.clearPinnedHistory();
-      },
-      onClearUnpinnedHistory: () async {
-        await _viewModel.clearUnpinnedHistory();
-      },
-      onCopyItem: _copyHistoryItem,
-      onDeleteItem: (index) async {
-        await _viewModel.deleteHistoryItem(index);
-      },
-      onTogglePin: (index) async {
-        await _viewModel.togglePinHistoryItem(index);
-      },
-      onTapItem: (item) {
-        HistoryViewDialog.show(
-          context: context,
-          item: item,
-        );
-      },
     );
   }
 
@@ -136,6 +102,8 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    // Watch state changes to trigger rebuilds
+    ref.watch(diceRollGeneratorStateManagerProvider);
 
     final generatorContent = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -154,8 +122,8 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
                     20,
                     (i) => SliderOption(value: i + 1, label: '${i + 1}'),
                   ),
-                  onChanged: (value) {
-                    _viewModel.updateDiceCount(value);
+                  onChanged: (value) async {
+                    await _viewModel.updateDiceCount(value);
                     setState(() {});
                   },
                   fixedWidth: 60,
@@ -175,9 +143,9 @@ class _DiceRollGeneratorScreenState extends State<DiceRollGeneratorScreen>
                     return ChoiceChip(
                       label: Text('d$sides'),
                       selected: _viewModel.state.diceSides == sides,
-                      onSelected: (selected) {
+                      onSelected: (selected) async {
                         if (selected) {
-                          _viewModel.updateDiceSides(sides);
+                          await _viewModel.updateDiceSides(sides);
                           setState(() {});
                         }
                       },

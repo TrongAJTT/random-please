@@ -1,89 +1,93 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/models/random_generator.dart';
-import 'package:random_please/services/generation_history_service.dart';
+import 'package:random_please/providers/history_provider.dart';
+import 'package:random_please/providers/dice_roll_generator_state_provider.dart';
 
+/// ViewModel wrapper for DiceRollGenerator using Riverpod StateManager
 class DiceRollGeneratorViewModel extends ChangeNotifier {
-  static const String boxName = 'diceRollGeneratorBox';
-  static const String historyType = 'dice_roll'; // Match screen gốc
+  final WidgetRef _ref;
+  static const String historyType = 'dice_roll';
 
-  late Box<DiceRollGeneratorState> _box;
-  DiceRollGeneratorState _state = DiceRollGeneratorState.createDefault();
-  bool _isBoxOpen = false;
-  bool _historyEnabled = false;
-  List<GenerationHistoryItem> _historyItems = [];
-  List<int> _results = []; // Use List<int> like original screen
-  
+  bool _historyEnabled = true;
+  List<int> _results = [];
+
   // Available dice sides from original screen
   final List<int> availableSides = [
-    3, 4, 5, 6, 7, 8, 10, 12, 14, 16, 20, 24, 30, 48, 50, 100
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14,
+    16,
+    20,
+    24,
+    30,
+    48,
+    50,
+    100
   ];
 
-  // Getters
-  DiceRollGeneratorState get state => _state;
-  bool get isBoxOpen => _isBoxOpen;
+  DiceRollGeneratorViewModel(this._ref) {
+    _loadSettings();
+  }
+
+  // Getters - delegate to StateManager
+  DiceRollGeneratorState get state =>
+      _ref.watch(diceRollGeneratorStateManagerProvider);
   bool get historyEnabled => _historyEnabled;
-  List<GenerationHistoryItem> get historyItems => _historyItems;
   List<int> get results => _results;
-  
+
   int get total => _results.fold(0, (sum, value) => sum + value);
 
-  Future<void> initHive() async {
-    _box = await Hive.openBox<DiceRollGeneratorState>(boxName);
-    _state = _box.get('state') ?? DiceRollGeneratorState.createDefault();
-    _isBoxOpen = true;
+  // Load settings
+  Future<void> _loadSettings() async {
+    _historyEnabled = _ref.read(historyEnabledProvider);
     notifyListeners();
   }
 
-  Future<void> loadHistory() async {
-    final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory(historyType);
-    _historyEnabled = enabled;
-    _historyItems = history;
+  // State update methods that delegate to StateManager
+  Future<void> updateDiceCount(int value) async {
+    await _ref
+        .read(diceRollGeneratorStateManagerProvider.notifier)
+        .updateDiceCount(value);
     notifyListeners();
   }
 
-  void saveState() {
-    if (_isBoxOpen) {
-      _box.put('state', _state);
-    }
-  }
-
-  void updateDiceCount(int value) {
-    _state = _state.copyWith(diceCount: value);
-    saveState();
-    notifyListeners();
-  }
-
-  void updateDiceSides(int value) {
-    _state = _state.copyWith(diceSides: value);
-    saveState();
+  Future<void> updateDiceSides(int value) async {
+    await _ref
+        .read(diceRollGeneratorStateManagerProvider.notifier)
+        .updateDiceSides(value);
     notifyListeners();
   }
 
   Future<void> rollDice() async {
+    final currentState = state;
     // Use RandomGenerator from original screen
     _results = RandomGenerator.generateDiceRolls(
-      count: _state.diceCount,
-      sides: _state.diceSides,
+      count: currentState.diceCount,
+      sides: currentState.diceSides,
     );
 
-    // Save to history if enabled (match original screen logic)
+    // Save to history if enabled using HistoryProvider
     if (_historyEnabled && _results.isNotEmpty) {
       String historyText;
       if (_results.length == 1) {
-        historyText = 'd${_state.diceSides}: ${_results[0]}';
+        historyText = 'd${currentState.diceSides}: ${_results[0]}';
       } else {
         final rollsStr = _results.join(', ');
-        historyText = '${_results.length}d${_state.diceSides}: $rollsStr (Total: $total)';
+        historyText =
+            '${_results.length}d${currentState.diceSides}: $rollsStr (Total: $total)';
       }
 
-      await GenerationHistoryService.addHistoryItem(
-        historyText,
-        historyType,
-      );
-      await loadHistory();
+      await _ref
+          .read(historyProvider.notifier)
+          .addHistoryItem(historyText, historyType);
     }
 
     notifyListeners();
@@ -96,46 +100,12 @@ class DiceRollGeneratorViewModel extends ChangeNotifier {
 
   String getResultsDisplay() {
     if (_results.isEmpty) return '';
-    
+
     if (_results.length == 1) {
       return '${_results.first}';
     }
-    
+
     final rolls = _results.join(', ');
     return 'Rolls: [$rolls]\nTotal: $total';
-  }
-
-  // History management methods
-  Future<void> clearAllHistory() async {
-    await GenerationHistoryService.clearHistory(historyType);
-    await loadHistory();
-  }
-
-  Future<void> clearPinnedHistory() async {
-    await GenerationHistoryService.clearPinnedHistory(historyType);
-    await loadHistory();
-  }
-
-  Future<void> clearUnpinnedHistory() async {
-    await GenerationHistoryService.clearUnpinnedHistory(historyType);
-    await loadHistory();
-  }
-
-  Future<void> deleteHistoryItem(int index) async {
-    await GenerationHistoryService.deleteHistoryItem(historyType, index);
-    await loadHistory();
-  }
-
-  Future<void> togglePinHistoryItem(int index) async {
-    await GenerationHistoryService.togglePinHistoryItem(historyType, index);
-    await loadHistory();
-  }
-
-  @override
-  void dispose() {
-    if (_isBoxOpen) {
-      _box.close();
-    }
-    super.dispose();
   }
 }
