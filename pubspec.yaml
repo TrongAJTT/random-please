@@ -32,7 +32,7 @@ dependencies:
   uuid: ^4.4.0
   nsd: ^4.0.3
   cupertino_icons: ^1.0.8
-  provider: ^6.1.2
+  flutter_riverpod: ^2.5.1
   path: ^1.8.3
   flutter_markdown: ^0.7.7+1
   url_launcher: ^6.2.4

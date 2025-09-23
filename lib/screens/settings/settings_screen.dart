@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/utils/variables_utils.dart';
 import 'package:random_please/view_models/settings_view_model.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
+import 'package:random_please/providers/settings_provider.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
   final bool showCacheSection;
 
@@ -12,16 +14,16 @@ class SettingsScreen extends StatefulWidget {
       {super.key, this.isEmbedded = false, this.showCacheSection = true});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   late SettingsViewModel _viewModel;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = SettingsViewModel();
+    _viewModel = SettingsViewModel(ref);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _viewModel.initialize();
@@ -124,6 +126,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildContent(AppLocalizations loc) {
+    final settings = ref.watch(settingsProvider);
+
     return AnimatedBuilder(
       animation: _viewModel,
       builder: (context, child) {
@@ -162,17 +166,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: 12),
                 _OptionTile(
                   label: loc.system,
-                  selected: _viewModel.themeMode == ThemeMode.system,
+                  selected: settings.themeMode == ThemeMode.system,
                   onTap: () => _onThemeChanged(ThemeMode.system),
                 ),
                 _OptionTile(
                   label: loc.light,
-                  selected: _viewModel.themeMode == ThemeMode.light,
+                  selected: settings.themeMode == ThemeMode.light,
                   onTap: () => _onThemeChanged(ThemeMode.light),
                 ),
                 _OptionTile(
                   label: loc.dark,
-                  selected: _viewModel.themeMode == ThemeMode.dark,
+                  selected: settings.themeMode == ThemeMode.dark,
                   onTap: () => _onThemeChanged(ThemeMode.dark),
                 ),
               ],
@@ -205,12 +209,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: 12),
                 _OptionTile(
                   label: '🇬🇧 ${loc.english}',
-                  selected: _viewModel.locale.languageCode == 'en',
+                  selected: settings.locale.languageCode == 'en',
                   onTap: () => _onLanguageChanged('en'),
                 ),
                 _OptionTile(
                   label: '🇻🇳 ${loc.vietnamese}',
-                  selected: _viewModel.locale.languageCode == 'vi',
+                  selected: settings.locale.languageCode == 'vi',
                   onTap: () => _onLanguageChanged('vi'),
                 ),
               ],

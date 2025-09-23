@@ -1037,6 +1037,28 @@ class ListPickerGeneratorState {
       isListManagerCollapsed: json['isListManagerCollapsed'] ?? false,
     );
   }
+
+  ListPickerGeneratorState copyWith({
+    int? quantity,
+    CustomList? currentList,
+    List<CustomList>? savedLists,
+    DateTime? lastUpdated,
+    ListPickerMode? mode,
+    bool? isListSelectorCollapsed,
+    bool? isListManagerCollapsed,
+  }) {
+    return ListPickerGeneratorState(
+      quantity: quantity ?? this.quantity,
+      currentList: currentList ?? this.currentList,
+      savedLists: savedLists ?? this.savedLists,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
+      mode: mode ?? this.mode,
+      isListSelectorCollapsed:
+          isListSelectorCollapsed ?? this.isListSelectorCollapsed,
+      isListManagerCollapsed:
+          isListManagerCollapsed ?? this.isListManagerCollapsed,
+    );
+  }
 }
 
 @HiveType(typeId: 72)

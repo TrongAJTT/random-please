@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
+import 'package:random_please/providers/settings_provider.dart';
 import 'package:random_please/screens/about_layout.dart';
 import 'package:random_please/services/version_check_service.dart';
 import 'package:random_please/utils/variables_utils.dart';
@@ -14,7 +16,6 @@ import 'package:random_please/services/security_manager.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/models/settings_model.dart';
 import 'package:random_please/widgets/generic/icon_button_list.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 import 'screens/settings/main_settings.dart';
 import 'screens/random_tools_screen.dart';
@@ -82,9 +83,13 @@ Future<void> main() async {
   // await AppLogger.instance.initialize();
 
   // Initialize settings controller and load saved settings
-  await settingsController.loadSettings();
+  final container = ProviderContainer();
+  await container.read(settingsProvider.notifier).loadSettings();
 
-  runApp(const MainApp());
+  runApp(UncontrolledProviderScope(
+    container: container,
+    child: const MainApp(),
+  ));
 }
 
 void _registerRandomStateAdapters() {
@@ -143,104 +148,45 @@ void _registerRandomStateAdapters() {
   }
 }
 
-class SettingsController extends ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.system;
-  Locale _locale = const Locale('en');
-
-  ThemeMode get themeMode => _themeMode;
-  Locale get locale => _locale;
-
-  // Load settings from SharedPreferences
-  Future<void> loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    // Load theme mode
-    final themeIndex = prefs.getInt('themeMode') ?? 0;
-    _themeMode = ThemeMode.values[themeIndex];
-
-    // Load language
-    final languageCode = prefs.getString('language') ?? 'en';
-    _locale = Locale(languageCode);
-
-    notifyListeners();
-  }
-
-  Future<void> setThemeMode(ThemeMode mode) async {
-    _themeMode = mode;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('themeMode', mode.index);
-    notifyListeners();
-  }
-
-  Future<void> setLocale(Locale locale) async {
-    _locale = locale;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('language', locale.languageCode);
-    notifyListeners();
-  }
-}
-
-final SettingsController settingsController = SettingsController();
-
-class MainApp extends StatefulWidget {
+class MainApp extends ConsumerWidget {
   const MainApp({super.key});
 
   @override
-  State<MainApp> createState() => _MainAppState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
 
-class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: settingsController,
-      builder: (context, _) {
-        return MaterialApp(
-          title: 'Random Please',
-          debugShowCheckedModeBanner: false,
-          navigatorKey: navigatorKey,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.blueAccent,
-              brightness: Brightness.light,
-            ),
-            useMaterial3: true,
-            appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
-          ),
-          darkTheme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.blueAccent,
-              brightness: Brightness.dark,
-            ),
-            useMaterial3: true,
-          ),
-          themeMode: settingsController.themeMode,
-          locale: settingsController.locale,
-          supportedLocales: AppLocalizations.supportedLocales,
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          home: const HomePage(),
-          navigatorObservers: [
-            NavigatorObserver(),
-          ],
-        );
-      },
+    return MaterialApp(
+      title: 'Random Please',
+      debugShowCheckedModeBanner: false,
+      navigatorKey: navigatorKey,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blueAccent,
+          brightness: Brightness.light,
+        ),
+        useMaterial3: true,
+        appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blueAccent,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+      ),
+      themeMode: settings.themeMode,
+      locale: settings.locale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      home: const HomePage(),
+      navigatorObservers: [
+        NavigatorObserver(),
+      ],
     );
   }
 }

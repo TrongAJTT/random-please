@@ -1,0 +1,22 @@
+{
+	"servers": {
+		"context7": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"-y",
+				"@upstash/context7-mcp@1.0.17",
+				"--api-key",
+				"${input:context7_api_key}"
+			],
+			"env": {}
+		}
+	},
+	"inputs": [
+		{
+			"id": "context7_api_key",
+			"type": "promptString",
+			"description": "Enter your Context7 API Key (optional, for higher rate limits)"
+		}
+	]
+}

@@ -1,134 +1,149 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:random_please/models/random_models/random_state_models.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:random_please/models/random_models/random_state_models.dart'
+    as models;
+import 'package:random_please/providers/history_provider.dart';
+import 'package:random_please/providers/number_generator_state_provider.dart';
 import 'package:random_please/services/generation_history_service.dart';
 import 'dart:math';
 
+// Temporary wrapper to maintain compatibility
 class NumberGeneratorViewModel extends ChangeNotifier {
-  static const String boxName = 'numberGeneratorBox';
   static const String historyType = 'number';
+  final WidgetRef? _ref;
 
-  late Box<NumberGeneratorState> _box;
-  NumberGeneratorState _state = NumberGeneratorState.createDefault();
-  bool _isBoxOpen = false;
-  bool _historyEnabled = false;
-  List<GenerationHistoryItem> _historyItems = [];
+  NumberGeneratorViewModel({WidgetRef? ref}) : _ref = ref;
+
   List<String> _results = [];
+  List<GenerationHistoryItem> _historyItems = [];
+  bool _historyEnabled = false;
 
-  // Getters
-  NumberGeneratorState get state => _state;
-  bool get isBoxOpen => _isBoxOpen;
-  bool get historyEnabled => _historyEnabled;
-  List<GenerationHistoryItem> get historyItems => _historyItems;
+  // Getters - now delegate to state manager
+  models.NumberGeneratorState get state {
+    if (_ref != null) {
+      return _ref!.read(numberGeneratorStateManagerProvider);
+    }
+    return models.NumberGeneratorState.createDefault();
+  }
+
   List<String> get results => _results;
+  List<GenerationHistoryItem> get historyItems => _historyItems;
+  bool get historyEnabled => _historyEnabled;
 
   Future<void> initHive() async {
-    _box = await Hive.openBox<NumberGeneratorState>(boxName);
-    _state = _box.get('state') ?? NumberGeneratorState.createDefault();
-    _isBoxOpen = true;
+    _historyEnabled = await GenerationHistoryService.isHistoryEnabled();
     notifyListeners();
   }
 
   Future<void> loadHistory() async {
-    final enabled = await GenerationHistoryService.isHistoryEnabled();
-    final history = await GenerationHistoryService.getHistory(historyType);
-    _historyEnabled = enabled;
-    _historyItems = history;
-    notifyListeners();
-  }
-
-  void saveState() {
-    if (_isBoxOpen) {
-      _box.put('state', _state);
-    }
-  }
-
-  void updateIsInteger(bool value) {
-    _state = _state.copyWith(isInteger: value);
-    saveState();
+    _historyItems = await GenerationHistoryService.getHistory(historyType);
     notifyListeners();
   }
 
   void updateMinValue(double value) {
-    _state = _state.copyWith(minValue: value);
-    saveState();
+    if (_ref != null) {
+      _ref!
+          .read(numberGeneratorStateManagerProvider.notifier)
+          .updateMinValue(value);
+    }
     notifyListeners();
   }
 
   void updateMaxValue(double value) {
-    _state = _state.copyWith(maxValue: value);
-    saveState();
+    if (_ref != null) {
+      _ref!
+          .read(numberGeneratorStateManagerProvider.notifier)
+          .updateMaxValue(value);
+    }
     notifyListeners();
   }
 
   void updateQuantity(int value) {
-    _state = _state.copyWith(quantity: value);
-    saveState();
+    if (_ref != null) {
+      _ref!
+          .read(numberGeneratorStateManagerProvider.notifier)
+          .updateQuantity(value);
+    }
+    notifyListeners();
+  }
+
+  void updateIsInteger(bool value) {
+    if (_ref != null) {
+      _ref!
+          .read(numberGeneratorStateManagerProvider.notifier)
+          .updateIsInteger(value);
+    }
     notifyListeners();
   }
 
   void updateAllowDuplicates(bool value) {
-    _state = _state.copyWith(allowDuplicates: value);
-    saveState();
+    if (_ref != null) {
+      _ref!
+          .read(numberGeneratorStateManagerProvider.notifier)
+          .updateAllowDuplicates(value);
+    }
     notifyListeners();
   }
 
   Future<void> generateNumbers() async {
-    final random = Random();
-    final Set<double> generatedSet = {};
-    final List<String> resultList = [];
+    notifyListeners();
 
-    for (int i = 0; i < _state.quantity; i++) {
-      double value;
-      int attempts = 0;
-      const maxAttempts = 1000;
+    try {
+      final currentState = state; // Get current state
+      final random = Random();
+      final results = <String>[];
 
-      do {
-        if (_state.isInteger) {
-          value = (random.nextInt(
-                      _state.maxValue.toInt() - _state.minValue.toInt() + 1) +
-                  _state.minValue.toInt())
-              .toDouble();
+      for (int i = 0; i < currentState.quantity; i++) {
+        if (currentState.isInteger) {
+          int result = currentState.minValue.toInt() +
+              random.nextInt(currentState.maxValue.toInt() -
+                  currentState.minValue.toInt() +
+                  1);
+          results.add(result.toString());
         } else {
-          value = random.nextDouble() * (_state.maxValue - _state.minValue) +
-              _state.minValue;
+          double result = currentState.minValue +
+              random.nextDouble() *
+                  (currentState.maxValue - currentState.minValue);
+          results.add(result.toStringAsFixed(2));
         }
-        attempts++;
-      } while (!_state.allowDuplicates &&
-          generatedSet.contains(value) &&
-          attempts < maxAttempts);
 
-      if (!_state.allowDuplicates) {
-        generatedSet.add(value);
+        // Handle duplicates if not allowed
+        if (!currentState.allowDuplicates &&
+            results.length != results.toSet().length) {
+          results.removeLast();
+          i--;
+        }
       }
 
-      if (_state.isInteger) {
-        resultList.add(value.toInt().toString());
-      } else {
-        resultList.add(value.toStringAsFixed(2));
+      _results = results;
+
+      // Save state khi generate (chỉ khi setting được bật)
+      if (_ref != null) {
+        await _ref!
+            .read(numberGeneratorStateManagerProvider.notifier)
+            .saveStateOnGenerate();
       }
+
+      // Save to history as a single string
+      if (_historyEnabled) {
+        final resultString = results.join(', ');
+        if (_ref != null) {
+          await _ref!
+              .read(historyProvider.notifier)
+              .addHistoryItem(resultString, historyType);
+        } else {
+          await GenerationHistoryService.addHistoryItem(
+              resultString, historyType);
+          await loadHistory();
+        }
+      }
+
+      notifyListeners();
+    } catch (e) {
+      notifyListeners();
     }
-
-    _results = resultList;
-
-    // Save to history if enabled
-    if (_historyEnabled && _results.isNotEmpty) {
-      await GenerationHistoryService.addHistoryItem(
-        _results.join(', '),
-        historyType,
-      );
-      await loadHistory();
-    }
-
-    notifyListeners();
   }
 
-  void clearResults() {
-    _results = [];
-    notifyListeners();
-  }
-
-  // History management methods
   Future<void> clearAllHistory() async {
     await GenerationHistoryService.clearHistory(historyType);
     await loadHistory();
@@ -156,9 +171,6 @@ class NumberGeneratorViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    if (_isBoxOpen) {
-      _box.close();
-    }
     super.dispose();
   }
 }

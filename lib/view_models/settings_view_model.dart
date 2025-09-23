@@ -1,48 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/services/cache_service.dart';
-import 'package:random_please/main.dart';
+import 'package:random_please/providers/settings_provider.dart';
 
 class SettingsViewModel extends ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.system;
-  Locale _locale = const Locale('en');
+  final WidgetRef ref;
+
   String _cacheInfo = 'Calculating...';
   bool _clearing = false;
   bool _isLoading = true;
 
+  SettingsViewModel(this.ref);
+
   // Getters
-  ThemeMode get themeMode => _themeMode;
-  Locale get locale => _locale;
   String get cacheInfo => _cacheInfo;
   bool get clearing => _clearing;
   bool get isLoading => _isLoading;
 
   /// Initialize the view model and load settings
   Future<void> initialize() async {
-    await loadSettings();
     await loadCacheInfo();
     _isLoading = false;
     notifyListeners();
   }
 
-  /// Load settings from global settings controller
-  Future<void> loadSettings() async {
-    _themeMode = settingsController.themeMode;
-    _locale = settingsController.locale;
-    notifyListeners();
-  }
-
-  /// Set theme mode using global settings controller
+  /// Set theme mode using settings provider
   Future<void> setThemeMode(ThemeMode mode) async {
-    _themeMode = mode;
-    await settingsController.setThemeMode(mode);
-    notifyListeners();
+    await ref.read(settingsProvider.notifier).setThemeMode(mode);
   }
 
-  /// Set locale using global settings controller
+  /// Set locale using settings provider
   Future<void> setLocale(Locale locale) async {
-    _locale = locale;
-    await settingsController.setLocale(locale);
-    notifyListeners();
+    await ref.read(settingsProvider.notifier).setLocale(locale);
   }
 
   /// Load cache information

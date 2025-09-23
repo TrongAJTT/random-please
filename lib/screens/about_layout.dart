@@ -8,6 +8,7 @@ import 'package:random_please/utils/variables_utils.dart';
 import 'package:random_please/widgets/generic/generic_settings_helper.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:random_please/variables.dart';
+import 'package:random_please/screens/examples/complex_generator_demo_screen.dart';
 
 /// About layout with GitHub, Sponsor, Credits, and Version information
 class AboutLayout extends StatefulWidget {
@@ -97,6 +98,26 @@ class _AboutLayoutState extends State<AboutLayout> {
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: _showCreditsDialog,
           ),
+
+          // Riverpod Test Demo
+          if (kDebugMode)
+            ListTile(
+              leading: const Icon(
+                Icons.science,
+                color: Colors.purple,
+              ),
+              title: const Text('Riverpod Demo'),
+              subtitle: const Text('Test complex generators with Riverpod'),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ComplexGeneratorDemoScreen(),
+                  ),
+                );
+              },
+            ),
 
           // Version Information section
           ListTile(

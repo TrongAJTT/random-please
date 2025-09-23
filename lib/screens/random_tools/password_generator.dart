@@ -1,33 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/view_models/password_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
-import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/utils/widget_layout_render_helper.dart';
+import 'package:random_please/widgets/history_widget.dart';
 
-class PasswordGeneratorScreen extends StatefulWidget {
+class PasswordGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
 
   const PasswordGeneratorScreen({super.key, this.isEmbedded = false});
 
   @override
-  State<PasswordGeneratorScreen> createState() =>
+  ConsumerState<PasswordGeneratorScreen> createState() =>
       _PasswordGeneratorScreenState();
 }
 
-class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
+class _PasswordGeneratorScreenState
+    extends ConsumerState<PasswordGeneratorScreen> {
   late PasswordGeneratorViewModel _viewModel;
   bool _copied = false;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = PasswordGeneratorViewModel();
+    _viewModel = PasswordGeneratorViewModel(ref: ref);
     _initializeViewModel();
   }
 
@@ -83,42 +85,10 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
     }
   }
 
-  void _copyHistoryItem(String value) {
-    Clipboard.setData(ClipboardData(text: value));
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-      );
-    }
-  }
-
   Widget _buildHistoryWidget(AppLocalizations loc) {
-    return RandomGeneratorHistoryWidget(
-      historyType: PasswordGeneratorViewModel.historyType,
-      history: _viewModel.historyItems,
+    return HistoryWidget(
+      type: PasswordGeneratorViewModel.historyType,
       title: loc.generationHistory,
-      onClearAllHistory: () async {
-        await _viewModel.clearAllHistory();
-      },
-      onClearPinnedHistory: () async {
-        await _viewModel.clearPinnedHistory();
-      },
-      onClearUnpinnedHistory: () async {
-        await _viewModel.clearUnpinnedHistory();
-      },
-      onCopyItem: _copyHistoryItem,
-      onDeleteItem: (index) async {
-        await _viewModel.deleteHistoryItem(index);
-      },
-      onTogglePin: (index) async {
-        await _viewModel.togglePinHistoryItem(index);
-      },
-      onTapItem: (item) {
-        HistoryViewDialog.show(
-          context: context,
-          item: item,
-        );
-      },
     );
   }
 

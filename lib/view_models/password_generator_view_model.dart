@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
+import 'package:random_please/providers/history_provider.dart';
+import 'package:random_please/providers/password_generator_state_provider.dart';
 import 'package:random_please/services/generation_history_service.dart';
 import 'dart:math';
 
+// Temporary wrapper to maintain compatibility
 class PasswordGeneratorViewModel extends ChangeNotifier {
-  static const String boxName = 'passwordGeneratorBox';
   static const String historyType = 'password';
+  final WidgetRef? _ref;
 
-  late Box<PasswordGeneratorState> _box;
-  PasswordGeneratorState _state = PasswordGeneratorState.createDefault();
-  bool _isBoxOpen = false;
-  bool _historyEnabled = false;
+  PasswordGeneratorViewModel({WidgetRef? ref}) : _ref = ref;
+
   List<GenerationHistoryItem> _historyItems = [];
+  bool _historyEnabled = false;
   String _result = '';
 
   // Character sets
@@ -21,17 +23,20 @@ class PasswordGeneratorViewModel extends ChangeNotifier {
   static const String _numbers = '0123456789';
   static const String _special = '!@#\$%^&*()_+-=[]{}|;:,.<>?';
 
-  // Getters
-  PasswordGeneratorState get state => _state;
-  bool get isBoxOpen => _isBoxOpen;
+  // Getters - now delegate to state manager
+  PasswordGeneratorState get state {
+    if (_ref != null) {
+      return _ref!.read(passwordGeneratorStateManagerProvider);
+    }
+    return PasswordGeneratorState.createDefault();
+  }
+
   bool get historyEnabled => _historyEnabled;
   List<GenerationHistoryItem> get historyItems => _historyItems;
   String get result => _result;
 
   Future<void> initHive() async {
-    _box = await Hive.openBox<PasswordGeneratorState>(boxName);
-    _state = _box.get('state') ?? PasswordGeneratorState.createDefault();
-    _isBoxOpen = true;
+    _historyEnabled = await GenerationHistoryService.isHistoryEnabled();
     notifyListeners();
   }
 
@@ -43,58 +48,69 @@ class PasswordGeneratorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void saveState() {
-    if (_isBoxOpen) {
-      _box.put('state', _state);
-    }
-  }
-
   void updatePasswordLength(int value) {
-    _state = _state.copyWith(passwordLength: value);
-    saveState();
+    if (_ref != null) {
+      _ref!
+          .read(passwordGeneratorStateManagerProvider.notifier)
+          .updatePasswordLength(value);
+    }
     notifyListeners();
   }
 
   void updateIncludeLowercase(bool value) {
-    _state = _state.copyWith(includeLowercase: value);
-    saveState();
+    if (_ref != null) {
+      _ref!
+          .read(passwordGeneratorStateManagerProvider.notifier)
+          .updateIncludeLowercase(value);
+    }
     notifyListeners();
   }
 
   void updateIncludeUppercase(bool value) {
-    _state = _state.copyWith(includeUppercase: value);
-    saveState();
+    if (_ref != null) {
+      _ref!
+          .read(passwordGeneratorStateManagerProvider.notifier)
+          .updateIncludeUppercase(value);
+    }
     notifyListeners();
   }
 
   void updateIncludeNumbers(bool value) {
-    _state = _state.copyWith(includeNumbers: value);
-    saveState();
+    if (_ref != null) {
+      _ref!
+          .read(passwordGeneratorStateManagerProvider.notifier)
+          .updateIncludeNumbers(value);
+    }
     notifyListeners();
   }
 
   void updateIncludeSpecial(bool value) {
-    _state = _state.copyWith(includeSpecial: value);
-    saveState();
+    if (_ref != null) {
+      _ref!
+          .read(passwordGeneratorStateManagerProvider.notifier)
+          .updateIncludeSpecial(value);
+    }
     notifyListeners();
   }
 
   Future<void> generatePassword() async {
+    final currentState = state;
     String availableChars = '';
     final List<String> requiredSets = [];
-    if (_state.includeLowercase) {
+
+    if (currentState.includeLowercase) {
       availableChars += _lowercase;
       requiredSets.add(_lowercase);
     }
-    if (_state.includeUppercase) {
+    if (currentState.includeUppercase) {
       availableChars += _uppercase;
       requiredSets.add(_uppercase);
     }
-    if (_state.includeNumbers) {
+    if (currentState.includeNumbers) {
       availableChars += _numbers;
       requiredSets.add(_numbers);
     }
-    if (_state.includeSpecial) {
+    if (currentState.includeSpecial) {
       availableChars += _special;
       requiredSets.add(_special);
     }
@@ -109,6 +125,7 @@ class PasswordGeneratorViewModel extends ChangeNotifier {
     String password = '';
     const int maxAttempts = 1000;
     int attempt = 0;
+
     bool isValid(String pwd) {
       for (final set in requiredSets) {
         if (!pwd.split('').any((c) => set.contains(c))) {
@@ -120,7 +137,7 @@ class PasswordGeneratorViewModel extends ChangeNotifier {
 
     do {
       final buffer = StringBuffer();
-      for (int i = 0; i < _state.passwordLength; i++) {
+      for (int i = 0; i < currentState.passwordLength; i++) {
         buffer.write(availableChars[random.nextInt(availableChars.length)]);
       }
       password = buffer.toString();
@@ -129,13 +146,23 @@ class PasswordGeneratorViewModel extends ChangeNotifier {
 
     _result = password;
 
+    // Save state on generate
+    if (_ref != null) {
+      await _ref!
+          .read(passwordGeneratorStateManagerProvider.notifier)
+          .saveStateOnGenerate();
+    }
+
     // Save to history if enabled
     if (_historyEnabled && _result.isNotEmpty) {
-      await GenerationHistoryService.addHistoryItem(
-        _result,
-        historyType,
-      );
-      await loadHistory();
+      if (_ref != null) {
+        await _ref!
+            .read(historyProvider.notifier)
+            .addHistoryItem(_result, historyType);
+      } else {
+        await GenerationHistoryService.addHistoryItem(_result, historyType);
+        await loadHistory();
+      }
     }
 
     notifyListeners();
@@ -147,10 +174,11 @@ class PasswordGeneratorViewModel extends ChangeNotifier {
   }
 
   bool get hasValidSettings {
-    return _state.includeLowercase ||
-        _state.includeUppercase ||
-        _state.includeNumbers ||
-        _state.includeSpecial;
+    final currentState = state;
+    return currentState.includeLowercase ||
+        currentState.includeUppercase ||
+        currentState.includeNumbers ||
+        currentState.includeSpecial;
   }
 
   // History management methods
@@ -181,9 +209,6 @@ class PasswordGeneratorViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    if (_isBoxOpen) {
-      _box.close();
-    }
     super.dispose();
   }
 }

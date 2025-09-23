@@ -147,7 +147,7 @@ class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
             Expanded(
               flex: 3,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                // padding: const EdgeInsets.all(16),
                 child: widget.generatorContent,
               ),
             ),
@@ -156,7 +156,8 @@ class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
             Expanded(
               flex: 2,
               child: Padding(
-                padding: const EdgeInsets.only(top: 16, right: 16, bottom: 16),
+                // padding: const EdgeInsets.only(top: 16, right: 16, bottom: 16),
+                padding: const EdgeInsets.all(0),
                 child: widget.historyWidget!,
               ),
             ),
@@ -210,12 +211,12 @@ class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
                 children: [
                   // Random tab
                   SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(0),
                     child: widget.generatorContent,
                   ),
                   // History tab
                   Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(0),
                     child: widget.historyWidget!,
                   ),
                 ],
@@ -226,7 +227,7 @@ class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
       } else {
         // Mobile without history: Single scroll view
         content = SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(0),
           child: widget.generatorContent,
         );
       }

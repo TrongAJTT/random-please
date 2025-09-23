@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/view_models/number_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
-import 'package:random_please/utils/history_view_dialog.dart';
+import 'package:random_please/widgets/history_widget.dart';
 import 'package:random_please/utils/size_utils.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/utils/widget_layout_render_helper.dart';
@@ -11,16 +12,17 @@ import 'package:random_please/utils/number_formatter.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
 
-class NumberGeneratorScreen extends StatefulWidget {
+class NumberGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
 
   const NumberGeneratorScreen({super.key, this.isEmbedded = false});
 
   @override
-  State<NumberGeneratorScreen> createState() => _NumberGeneratorScreenState();
+  ConsumerState<NumberGeneratorScreen> createState() =>
+      _NumberGeneratorScreenState();
 }
 
-class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
+class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
   late NumberGeneratorViewModel _viewModel;
   bool _copied = false;
 
@@ -30,7 +32,7 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel = NumberGeneratorViewModel();
+    _viewModel = NumberGeneratorViewModel(ref: ref);
     _initializeViewModel();
   }
 
@@ -121,42 +123,10 @@ class _NumberGeneratorScreenState extends State<NumberGeneratorScreen> {
     }
   }
 
-  void _copyHistoryItem(String value) {
-    Clipboard.setData(ClipboardData(text: value));
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-      );
-    }
-  }
-
   Widget _buildHistoryWidget(AppLocalizations loc) {
-    return RandomGeneratorHistoryWidget(
-      historyType: NumberGeneratorViewModel.historyType,
-      history: _viewModel.historyItems,
+    return HistoryWidget(
+      type: NumberGeneratorViewModel.historyType,
       title: loc.generationHistory,
-      onClearAllHistory: () async {
-        await _viewModel.clearAllHistory();
-      },
-      onClearPinnedHistory: () async {
-        await _viewModel.clearPinnedHistory();
-      },
-      onClearUnpinnedHistory: () async {
-        await _viewModel.clearUnpinnedHistory();
-      },
-      onCopyItem: _copyHistoryItem,
-      onDeleteItem: (index) async {
-        await _viewModel.deleteHistoryItem(index);
-      },
-      onTogglePin: (index) async {
-        await _viewModel.togglePinHistoryItem(index);
-      },
-      onTapItem: (item) {
-        HistoryViewDialog.show(
-          context: context,
-          item: item,
-        );
-      },
     );
   }
 
