@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/providers/settings_provider.dart';
 
@@ -23,27 +24,32 @@ class ListPickerGeneratorStateManager
 
       if (stateJson != null) {
         try {
-          // Parse basic fields from JSON string if needed
-          // For simplicity, we'll load individual fields
-          final quantity = prefs.getInt('${_stateKey}_quantity') ?? 1;
-          final mode = prefs.getString('${_stateKey}_mode') ?? 'random';
-          final isListSelectorCollapsed =
-              prefs.getBool('${_stateKey}_isListSelectorCollapsed') ?? false;
-          final isListManagerCollapsed =
-              prefs.getBool('${_stateKey}_isListManagerCollapsed') ?? false;
-
-          state = state.copyWith(
-            quantity: quantity,
-            mode: ListPickerMode.values.firstWhere(
-              (m) => m.name == mode,
-              orElse: () => ListPickerMode.random,
-            ),
-            isListSelectorCollapsed: isListSelectorCollapsed,
-            isListManagerCollapsed: isListManagerCollapsed,
-          );
+          // Parse full state from JSON
+          final Map<String, dynamic> stateMap = jsonDecode(stateJson);
+          state = ListPickerGeneratorState.fromJson(stateMap);
         } catch (e) {
-          // If loading fails, use default state
-          state = ListPickerGeneratorState.createDefault();
+          // If loading fails, try to load individual fields for backward compatibility
+          try {
+            final quantity = prefs.getInt('${_stateKey}_quantity') ?? 1;
+            final mode = prefs.getString('${_stateKey}_mode') ?? 'random';
+            final isListSelectorCollapsed =
+                prefs.getBool('${_stateKey}_isListSelectorCollapsed') ?? false;
+            final isListManagerCollapsed =
+                prefs.getBool('${_stateKey}_isListManagerCollapsed') ?? false;
+
+            state = state.copyWith(
+              quantity: quantity,
+              mode: ListPickerMode.values.firstWhere(
+                (m) => m.name == mode,
+                orElse: () => ListPickerMode.random,
+              ),
+              isListSelectorCollapsed: isListSelectorCollapsed,
+              isListManagerCollapsed: isListManagerCollapsed,
+            );
+          } catch (e2) {
+            // If both fail, use default state
+            state = ListPickerGeneratorState.createDefault();
+          }
         }
       }
     }
@@ -55,7 +61,11 @@ class ListPickerGeneratorStateManager
     if (saveState) {
       final prefs = await SharedPreferences.getInstance();
 
-      // Save individual fields
+      // Save full state as JSON to preserve all data including customLists
+      final stateJson = jsonEncode(state.toJson());
+      await prefs.setString(_stateKey, stateJson);
+
+      // Also save individual fields for backward compatibility
       await prefs.setInt('${_stateKey}_quantity', state.quantity);
       await prefs.setString('${_stateKey}_mode', state.mode.name);
       await prefs.setBool('${_stateKey}_isListSelectorCollapsed',
@@ -190,6 +200,54 @@ class ListPickerGeneratorStateManager
         lastUpdated: DateTime.now(),
       );
       _saveState();
+    }
+  }
+
+  // Efficient batch add - only save once at the end
+  Future<void> addBatchItemsToCurrentList(List<String> itemValues) async {
+    if (itemValues.isEmpty || state.currentList == null) return;
+
+    final currentList = state.currentList!;
+    final newItems = <ListItem>[];
+
+    for (final itemValue in itemValues) {
+      final trimmedValue = itemValue.trim();
+      if (trimmedValue.isNotEmpty) {
+        newItems.add(ListItem(
+          id: DateTime.now().millisecondsSinceEpoch.toString() +
+              '_${newItems.length}',
+          value: trimmedValue,
+          createdAt: DateTime.now(),
+        ));
+      }
+    }
+
+    if (newItems.isNotEmpty) {
+      final updatedItems = List<ListItem>.from(currentList.items)
+        ..addAll(newItems);
+
+      final updatedList = CustomList(
+        id: currentList.id,
+        name: currentList.name,
+        items: updatedItems,
+        createdAt: currentList.createdAt,
+      );
+
+      final updatedSavedLists = List<CustomList>.from(state.savedLists);
+      final index = updatedSavedLists.indexWhere((l) => l.id == currentList.id);
+
+      if (index != -1) {
+        updatedSavedLists[index] = updatedList;
+      }
+
+      state = state.copyWith(
+        savedLists: updatedSavedLists,
+        currentList: updatedList,
+        lastUpdated: DateTime.now(),
+      );
+
+      // Only save once at the end
+      await _saveState();
     }
   }
 

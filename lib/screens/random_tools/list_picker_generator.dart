@@ -6,8 +6,10 @@ import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/models/cloud_template.dart';
 import 'package:random_please/l10n/app_localizations.dart';
+import 'package:random_please/providers/list_picker_generator_state_provider.dart';
 import 'package:random_please/utils/generic_dialog_utils.dart';
 import 'package:random_please/utils/localization_utils.dart';
+import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/history_widget.dart';
@@ -31,6 +33,7 @@ class ListPickerGeneratorScreen extends ConsumerStatefulWidget {
 class _ListPickerGeneratorScreenState
     extends ConsumerState<ListPickerGeneratorScreen> {
   late ListPickerViewModel _viewModel;
+  late AppLocalizations loc;
 
   final TextEditingController _itemController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
@@ -40,6 +43,12 @@ class _ListPickerGeneratorScreenState
     super.initState();
     _viewModel = ListPickerViewModel(ref: ref);
     _initData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    loc = AppLocalizations.of(context)!;
+    super.didChangeDependencies();
   }
 
   @override
@@ -55,7 +64,7 @@ class _ListPickerGeneratorScreenState
     setState(() {});
   }
 
-  Future<void> _showCreateListDialog(AppLocalizations loc) async {
+  Future<void> _showCreateListDialog() async {
     final TextEditingController nameController = TextEditingController();
     String? errorMessage;
 
@@ -119,7 +128,6 @@ class _ListPickerGeneratorScreenState
   }
 
   Future<void> _showRenameItemDialog(ListItem item) async {
-    final loc = AppLocalizations.of(context)!;
     final TextEditingController valueController =
         TextEditingController(text: item.value);
     String? errorMessage;
@@ -181,7 +189,6 @@ class _ListPickerGeneratorScreenState
   }
 
   Future<void> _showAddBatchDialog() async {
-    final loc = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     bool dialogShouldContinue = true;
 
@@ -308,12 +315,8 @@ class _ListPickerGeneratorScreenState
 
           // Show success message
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(loc.addedItemsSuccessfully(lines.length)),
-                duration: const Duration(seconds: 2),
-              ),
-            );
+            SnackBarUtils.showTyped(context,
+                loc.addedItemsSuccessfully(lines.length), SnackBarType.success);
           }
           dialogShouldContinue = false; // End the loop successfully
         } else {
@@ -327,8 +330,6 @@ class _ListPickerGeneratorScreenState
   }
 
   Future<void> _showTemplateDialog() async {
-    final loc = AppLocalizations.of(context)!;
-
     // Check internet connection first if Android or Windows
     if (!kIsWeb) {
       final hasInternet = await CloudTemplateService.hasInternetConnection();
@@ -374,7 +375,6 @@ class _ListPickerGeneratorScreenState
   }
 
   Future<void> _importTemplate(CloudTemplate template) async {
-    final loc = AppLocalizations.of(context)!;
     final currentLocale = Localizations.localeOf(context).languageCode;
 
     // Check if language matches
@@ -424,11 +424,26 @@ class _ListPickerGeneratorScreenState
     );
 
     try {
-      // Import the template with a small delay to show loading
-      await Future.delayed(const Duration(milliseconds: 300));
+      // Import the template in background to avoid blocking UI
+      await Future.delayed(const Duration(milliseconds: 100));
 
+      // Create new list immediately
       _viewModel.createNewList(template.name);
-      _viewModel.addBatchItems(template.values);
+
+      // Add items in batches of 50 to avoid blocking UI
+      const batchSize = 50;
+      final items = template.values;
+
+      for (int i = 0; i < items.length; i += batchSize) {
+        final endIndex =
+            (i + batchSize < items.length) ? i + batchSize : items.length;
+        final batch = items.sublist(i, endIndex);
+
+        // Add batch and yield to UI thread
+        await _viewModel.addBatchItems(batch);
+        await Future.delayed(const Duration(
+            milliseconds: 10)); // Small delay to allow UI updates
+      }
 
       // Close loading dialog
       if (!mounted) return;
@@ -436,14 +451,9 @@ class _ListPickerGeneratorScreenState
 
       // Show success message
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(loc.templateImported),
-          duration: const Duration(seconds: 2),
-        ),
-      );
+      SnackBarUtils.showTyped(context, loc.templateImported, SnackBarType.info);
 
-      setState(() {});
+      // UI will automatically update via Riverpod provider
     } catch (e) {
       // Close loading dialog
       if (!mounted) return;
@@ -451,12 +461,8 @@ class _ListPickerGeneratorScreenState
 
       // Show error message
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(loc.errorImportingTemplate),
-          duration: const Duration(seconds: 2),
-        ),
-      );
+      SnackBarUtils.showTyped(
+          context, loc.errorImportingTemplate, SnackBarType.error);
     }
   }
 
@@ -480,7 +486,6 @@ class _ListPickerGeneratorScreenState
   }
 
   void _deleteList(CustomList list) async {
-    final loc = AppLocalizations.of(context)!;
     final confirmed = await GenericDialogUtils.showSimpleGenericClearDialog(
       context: context,
       title: loc.deleteList,
@@ -495,7 +500,6 @@ class _ListPickerGeneratorScreenState
   }
 
   Future<void> _showRenameListDialog(CustomList list) async {
-    final loc = AppLocalizations.of(context)!;
     final TextEditingController nameController =
         TextEditingController(text: list.name);
     String? errorMessage;
@@ -566,7 +570,6 @@ class _ListPickerGeneratorScreenState
   }
 
   Widget _buildListSelector() {
-    final loc = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
@@ -629,7 +632,7 @@ class _ListPickerGeneratorScreenState
                     tooltip: loc.template,
                   ),
                   IconButton(
-                    onPressed: () => _showCreateListDialog(loc),
+                    onPressed: () => _showCreateListDialog(),
                     icon: const Icon(Icons.add),
                     tooltip: loc.createNewList,
                   ),
@@ -640,7 +643,7 @@ class _ListPickerGeneratorScreenState
               const SizedBox(height: 8),
               if (_viewModel.state.savedLists.isEmpty)
                 Text(
-                  AppLocalizations.of(context)!.noListsAvailable,
+                  loc.noListsAvailable,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                       ),
@@ -681,7 +684,7 @@ class _ListPickerGeneratorScreenState
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              AppLocalizations.of(context)!.selectOrCreateList,
+              loc.selectOrCreateList,
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
@@ -752,7 +755,7 @@ class _ListPickerGeneratorScreenState
                     child: TextField(
                       controller: _itemController,
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.addItem,
+                        labelText: loc.addItem,
                         border: const OutlineInputBorder(),
                       ),
                       onSubmitted: (_) => _addItemToCurrentList(),
@@ -774,7 +777,7 @@ class _ListPickerGeneratorScreenState
               const SizedBox(height: 16),
               if (_viewModel.state.currentList!.items.isNotEmpty) ...[
                 Text(
-                  '${AppLocalizations.of(context)!.items} (${_viewModel.state.currentList!.items.length}):',
+                  '${loc.items} (${_viewModel.state.currentList!.items.length}):',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
                 const SizedBox(height: 8),
@@ -987,7 +990,7 @@ class _ListPickerGeneratorScreenState
                     child: TextField(
                       controller: _itemController,
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.addItem,
+                        labelText: loc.addItem,
                         border: const OutlineInputBorder(),
                       ),
                       onSubmitted: (_) => _addItemToCurrentList(),
@@ -1008,7 +1011,7 @@ class _ListPickerGeneratorScreenState
               ),
               const SizedBox(height: 16),
               Text(
-                '${AppLocalizations.of(context)!.items} (${_viewModel.state.currentList!.items.length}):',
+                '${loc.items} (${_viewModel.state.currentList!.items.length}):',
                 style: Theme.of(context).textTheme.titleSmall,
               ),
               const SizedBox(height: 8),
@@ -1227,7 +1230,6 @@ class _ListPickerGeneratorScreenState
   }
 
   Widget _buildGeneratorOptions() {
-    final loc = AppLocalizations.of(context)!;
     final maxItems = _viewModel.state.currentList?.items.length ?? 0;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -1429,6 +1431,9 @@ class _ListPickerGeneratorScreenState
   Widget _buildResults() {
     if (_viewModel.results.isEmpty) return const SizedBox.shrink();
 
+    final currentState = _viewModel.state;
+    final isTeamMode = currentState.mode == ListPickerMode.team;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -1439,7 +1444,7 @@ class _ListPickerGeneratorScreenState
               children: [
                 Expanded(
                   child: Text(
-                    AppLocalizations.of(context)!.results,
+                    loc.results,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
@@ -1447,15 +1452,11 @@ class _ListPickerGeneratorScreenState
                   onPressed: () {
                     final resultText = _viewModel.results.join('; ');
                     Clipboard.setData(ClipboardData(text: resultText));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(AppLocalizations.of(context)!.copied),
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
+                    SnackBarUtils.showTyped(
+                        context, loc.copied, SnackBarType.info);
                   },
                   icon: const Icon(Icons.copy),
-                  tooltip: AppLocalizations.of(context)!.copy,
+                  tooltip: loc.copy,
                 ),
               ],
             ),
@@ -1467,18 +1468,121 @@ class _ListPickerGeneratorScreenState
                 border: Border.all(color: Theme.of(context).dividerColor),
                 borderRadius: BorderRadius.circular(8.0),
               ),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: _viewModel.results.map((result) {
-                  return Chip(
-                    label: Text(result),
-                  );
-                }).toList(),
-              ),
+              child: isTeamMode ? _buildTeamResults() : _buildNormalResults(),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildNormalResults() {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: _viewModel.results.map((result) {
+        return Chip(
+          label: Text(result),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildTeamResults() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: _viewModel.results.asMap().entries.map((entry) {
+          final teamIndex = entry.key;
+          final result = entry.value;
+
+          // Parse team result: "Team 1: item1, item2, item3"
+          final teamParts = result.split(': ');
+          final teamName =
+              teamParts.length > 1 ? teamParts[0] : 'Team ${teamIndex + 1}';
+          final teamMembers =
+              teamParts.length > 1 ? teamParts[1].split(', ') : [result];
+
+          return Container(
+            margin: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color:
+                  Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Team header
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    teamName,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Team members in column with numbering
+                ...teamMembers.asMap().entries.map((memberEntry) {
+                  final memberIndex = memberEntry.key;
+                  final member = memberEntry.value.trim();
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${memberIndex + 1}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSecondary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            member,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ],
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -1493,6 +1597,8 @@ class _ListPickerGeneratorScreenState
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    // Watch state changes to trigger rebuilds
+    ref.watch(listPickerGeneratorStateManagerProvider);
 
     final generatorContent = Column(
       children: [
@@ -1548,8 +1654,7 @@ class _ListPickerGeneratorScreenState
                 controller: _quantityController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  hintText:
-                      '${loc.enter} $label (${minQuantity}-${maxQuantity})',
+                  hintText: '${loc.enter} $label ($minQuantity-$maxQuantity)',
                   border: const OutlineInputBorder(),
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

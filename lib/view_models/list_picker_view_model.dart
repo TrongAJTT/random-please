@@ -19,7 +19,7 @@ class ListPickerViewModel extends ChangeNotifier {
   // Getters - now delegate to state manager
   ListPickerGeneratorState get state {
     if (_ref != null) {
-      return _ref!.read(listPickerGeneratorStateManagerProvider);
+      return _ref!.watch(listPickerGeneratorStateManagerProvider);
     }
     return ListPickerGeneratorState.createDefault();
   }
@@ -118,16 +118,11 @@ class ListPickerViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addBatchItems(List<String> items) {
+  Future<void> addBatchItems(List<String> items) async {
     if (_ref != null) {
-      final stateManager =
-          _ref!.read(listPickerGeneratorStateManagerProvider.notifier);
-      for (final item in items) {
-        final trimmedItem = item.trim();
-        if (trimmedItem.isNotEmpty) {
-          stateManager.addItemToCurrentList(trimmedItem);
-        }
-      }
+      await _ref!
+          .read(listPickerGeneratorStateManagerProvider.notifier)
+          .addBatchItemsToCurrentList(items);
     }
     notifyListeners();
   }
