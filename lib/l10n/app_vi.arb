@@ -655,5 +655,18 @@
   "goForward": "Tiến về phía trước",
   "urlOptions": "Tùy chọn URL",
   "currentUrl": "URL hiện tại:",
-  "urlCopied": "Đã sao chép URL vào clipboard"
+  "urlCopied": "Đã sao chép URL vào clipboard",
+  "importTemplate": "Import Template",
+  "customizeData": "Tùy chỉnh dữ liệu",
+  "fetchTemplatesFirst": "Tải template từ nguồn trước",
+  "templateItems": "Các phần tử Template",
+  "back": "Quay lại",
+  "importedList": "Danh sách đã import",
+  "imported": "Đã import",
+  "error": "Lỗi",
+  "continueText": "Tiếp tục",
+  "setListName": "Đặt tên danh sách",
+  "preview": "Xem trước",
+  "importing": "Đang import",
+  "pleaseWait": "Vui lòng chờ"
 }

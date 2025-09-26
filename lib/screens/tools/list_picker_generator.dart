@@ -12,10 +12,12 @@ import 'package:random_please/utils/localization_utils.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
+import 'package:random_please/widgets/generic/uni_route.dart';
 import 'package:random_please/widgets/history_widget.dart';
 import 'package:random_please/view_models/list_picker_view_model.dart';
 import 'package:random_please/services/cloud_template_service.dart';
 import 'package:random_please/widgets/holdable_button.dart';
+import 'package:random_please/widgets/tools/import_template_widget.dart';
 
 class ListPickerGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -38,6 +40,8 @@ class _ListPickerGeneratorScreenState
   final TextEditingController _itemController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
 
+  bool _isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -59,9 +63,24 @@ class _ListPickerGeneratorScreenState
   }
 
   Future<void> _initData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    // Use Future.wait to ensure minimum display time for loading
+    await Future.wait([
+      Future.delayed(const Duration(milliseconds: 300)), // Minimum loading time
+      _initDataActual(),
+    ]);
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _initDataActual() async {
     await _viewModel.initHive();
     await _viewModel.loadHistory();
-    setState(() {});
   }
 
   Future<void> _showCreateListDialog() async {
@@ -325,6 +344,50 @@ class _ListPickerGeneratorScreenState
         }
       } else {
         dialogShouldContinue = false;
+      }
+    }
+  }
+
+  Future<void> _showImportTemplateDialog() async {
+    UniRoute.navigate(
+      context,
+      UniRouteModel(
+        title: loc.importTemplate,
+        content: ImportTemplateWidget(
+          isEmbedded: true,
+          onImport: (items, listName) {
+            _importItemsFromTemplate(items, listName);
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<void> _importItemsFromTemplate(
+      List<String> items, String listName) async {
+    try {
+      // Create a new list with specified name
+      _viewModel.createNewList(listName);
+
+      // Add all items to the new list in background to avoid blocking UI
+      await Future.microtask(() {
+        for (final item in items) {
+          _viewModel.addItemToCurrentList(item);
+        }
+      });
+
+      setState(() {});
+
+      if (mounted) {
+        SnackBarUtils.showTyped(
+            context,
+            '${loc.imported} ${items.length} ${loc.items}',
+            SnackBarType.success);
+      }
+    } catch (e) {
+      if (mounted) {
+        SnackBarUtils.showTyped(
+            context, '${loc.error}: $e', SnackBarType.error);
       }
     }
   }
@@ -627,9 +690,9 @@ class _ListPickerGeneratorScreenState
                 ),
                 if (!_viewModel.state.isListSelectorCollapsed) ...[
                   IconButton(
-                    onPressed: () => _showTemplateDialog(),
-                    icon: const Icon(Icons.cloud_download),
-                    tooltip: loc.template,
+                    onPressed: () => _showImportTemplateDialog(),
+                    icon: const Icon(Icons.file_download),
+                    tooltip: loc.importTemplate,
                   ),
                   IconButton(
                     onPressed: () => _showCreateListDialog(),
@@ -1596,6 +1659,7 @@ class _ListPickerGeneratorScreenState
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final loc = AppLocalizations.of(context)!;
     // Watch state changes to trigger rebuilds
     ref.watch(listPickerGeneratorStateManagerProvider);
@@ -1612,13 +1676,52 @@ class _ListPickerGeneratorScreenState
       ],
     );
 
-    return RandomGeneratorLayout(
+    final mainWidget = RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
       historyEnabled: _viewModel.historyEnabled,
       hasHistory: _viewModel.historyEnabled,
       isEmbedded: widget.isEmbedded,
       title: loc.listPicker,
+    );
+
+    return Stack(
+      children: [
+        mainWidget,
+
+        // Loading overlay when initializing
+        if (_isLoading)
+          Container(
+            color: Colors.black.withValues(alpha: 0.5),
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 16),
+                    Text(
+                      loc.loading,
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${loc.pleaseWait}...',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 

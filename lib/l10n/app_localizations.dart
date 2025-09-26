@@ -2977,6 +2977,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'URL copied to clipboard'**
   String get urlCopied;
+
+  /// No description provided for @importTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Template'**
+  String get importTemplate;
+
+  /// No description provided for @customizeData.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize Data'**
+  String get customizeData;
+
+  /// No description provided for @fetchTemplatesFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch templates from sources first'**
+  String get fetchTemplatesFirst;
+
+  /// No description provided for @templateItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Template Items'**
+  String get templateItems;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @importedList.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported List'**
+  String get importedList;
+
+  /// No description provided for @imported.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported'**
+  String get imported;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// No description provided for @continueText.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueText;
+
+  /// No description provided for @setListName.
+  ///
+  /// In en, this message translates to:
+  /// **'Set List Name'**
+  String get setListName;
+
+  /// No description provided for @preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get preview;
+
+  /// No description provided for @importing.
+  ///
+  /// In en, this message translates to:
+  /// **'Importing'**
+  String get importing;
+
+  /// No description provided for @pleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait'**
+  String get pleaseWait;
 }
 
 class _AppLocalizationsDelegate

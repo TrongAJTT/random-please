@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/screens/browser/in_app_browser_screen.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
+import 'package:random_please/utils/variables_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum FileType { all, image, video, audio, document, archive, other }
@@ -136,10 +139,7 @@ class UriUtils {
     BuildContext context,
     String url,
   ) async {
-    final screenSize = MediaQuery.of(context).size;
-    final isMobile = screenSize.width <= 800;
-
-    if (isMobile) {
+    if (isMobileContext(context) && (Platform.isAndroid || Platform.isIOS)) {
       // Mobile: Navigate to in-app browser screen
       Navigator.of(context).push(
         MaterialPageRoute(

@@ -1536,4 +1536,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get urlCopied => 'URL copied to clipboard';
+
+  @override
+  String get importTemplate => 'Import Template';
+
+  @override
+  String get customizeData => 'Customize Data';
+
+  @override
+  String get fetchTemplatesFirst => 'Fetch templates from sources first';
+
+  @override
+  String get templateItems => 'Template Items';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get importedList => 'Imported List';
+
+  @override
+  String get imported => 'Imported';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get continueText => 'Continue';
+
+  @override
+  String get setListName => 'Set List Name';
+
+  @override
+  String get preview => 'Preview';
+
+  @override
+  String get importing => 'Importing';
+
+  @override
+  String get pleaseWait => 'Please wait';
 }

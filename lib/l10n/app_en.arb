@@ -705,5 +705,18 @@
   "failedToLoadWebpage": "Failed to load webpage",
   "urlOptions": "URL Options",
   "currentUrl": "Current URL:",
-  "urlCopied": "URL copied to clipboard"
+  "urlCopied": "URL copied to clipboard",
+  "importTemplate": "Import Template",
+  "customizeData": "Customize Data",
+  "fetchTemplatesFirst": "Fetch templates from sources first",
+  "templateItems": "Template Items",
+  "back": "Back",
+  "importedList": "Imported List",
+  "imported": "Imported",
+  "error": "Error",
+  "continueText": "Continue",
+  "setListName": "Set List Name",
+  "preview": "Preview",
+  "importing": "Importing",
+  "pleaseWait": "Please wait"
 }

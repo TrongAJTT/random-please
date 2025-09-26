@@ -1531,4 +1531,43 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get urlCopied => 'Đã sao chép URL vào clipboard';
+
+  @override
+  String get importTemplate => 'Import Template';
+
+  @override
+  String get customizeData => 'Tùy chỉnh dữ liệu';
+
+  @override
+  String get fetchTemplatesFirst => 'Tải template từ nguồn trước';
+
+  @override
+  String get templateItems => 'Các phần tử Template';
+
+  @override
+  String get back => 'Quay lại';
+
+  @override
+  String get importedList => 'Danh sách đã import';
+
+  @override
+  String get imported => 'Đã import';
+
+  @override
+  String get error => 'Lỗi';
+
+  @override
+  String get continueText => 'Tiếp tục';
+
+  @override
+  String get setListName => 'Đặt tên danh sách';
+
+  @override
+  String get preview => 'Xem trước';
+
+  @override
+  String get importing => 'Đang import';
+
+  @override
+  String get pleaseWait => 'Vui lòng chờ';
 }

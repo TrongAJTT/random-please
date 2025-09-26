@@ -463,30 +463,13 @@ class _RemoteListTemplateScreenState
                     source.isDefault ? FontWeight.bold : FontWeight.normal,
               ),
             ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  source.url,
-                  style: TextStyle(
-                    color: source.isEnabled
-                        ? theme.colorScheme.onSurfaceVariant
-                        : theme.colorScheme.onSurfaceVariant
-                            .withValues(alpha: .6),
-                  ),
-                ),
-                if (source.hasData || source.hasError) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    source.statusDescription,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: source.hasError
-                          ? theme.colorScheme.error
-                          : theme.colorScheme.primary,
-                    ),
-                  ),
-                ],
-              ],
+            subtitle: Text(
+              source.url,
+              style: TextStyle(
+                color: source.isEnabled
+                    ? theme.colorScheme.onSurfaceVariant
+                    : theme.colorScheme.onSurfaceVariant.withValues(alpha: .6),
+              ),
             ),
             trailing: IconButtonList(
               buttons: trailingActions,
