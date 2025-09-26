@@ -635,10 +635,75 @@
   "continueButton": "Continue",
   "importingTemplate": "Importing template...",
   "errorImportingTemplate": "Error importing template",
+  "remoteListTemplateTitle": "Remote List Template Sources",
+  "fetchAll": "Fetch All",
+  "fetchLatestDefaults": "Fetch Latest Defaults",
+  "defaultSourcesUpdated": "Default sources updated successfully",
+  "addCustomSource": "Add Custom Source",
+  "whatIsThis": "What is this?",
+  "defaultSources": "Default Sources",
+  "customSources": "Custom Sources",
+  "allSources": "All Sources",
+  "noSourcesToDisplay": "No sources to display",
+  "errorSavingData": "Error saving data",
+  "cannotOpenUrl": "Cannot open URL",
+  "viewSourceUrl": "View source URL",
+  "disable": "Disable",
+  "enable": "Enable",
+  "edit": "Edit",
+  "fetch": "Fetch",
+  "lastFetch": "Last fetch",
+  "fetchTemplate": "Fetch Template",
+  "cannotOpenHelpPage": "Cannot open help page",
+  "errorLoadingSources": "Error loading sources",
+  "name": "Name",
+  "myCustomSource": "My Custom Source",
+  "pleaseEnterName": "Please enter a name",
+  "url": "URL",
+  "pleaseEnterUrl": "Please enter a URL",
+  "pleaseEnterValidUrl": "Please enter a valid URL",
+  "editSource": "Edit Source",
+  "errorUpdatingDefaults": "Error updating defaults",
+  "urlHintText": "https://example.com/list.json",
+  "fetchListTemplates": "Fetch List Templates",
+  "fetchingData": "Fetching data...",
+  "preparing": "Preparing...",
+
+  "inAppBrowser": "In-App Browser",
+  "loadUrlError": "Error loading URL",
+  "copyUrl": "Copy URL",
+  "goBack": "Go Back",
+  "goForward": "Go Forward",
+  "noSourceSelected": "No source selected",
+  "failedToFetchData": "Failed to fetch data",
+  "unknownError": "Unknown error",
+  "templatesCount": "Templates ({count})",
+  "@templatesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "andMoreItems": "... and {count} more items",
+  "@andMoreItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "enter": "Enter",
   "increase": "Increase",
   "decrease": "Decrease",
   "range": "Range",
   "between": "Between",
-  "and": "and"
+  "and": "and",
+  "browseLink": "Browse link",
+  "copyLink": "Copy link",
+  "openInBrowser": "Open in browser",
+  "failedToLoadWebpage": "Failed to load webpage",
+  "urlOptions": "URL Options",
+  "currentUrl": "Current URL:",
+  "urlCopied": "URL copied to clipboard"
 }

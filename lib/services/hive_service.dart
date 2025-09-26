@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:random_please/services/app_logger.dart';
 import 'package:random_please/models/settings_model.dart';
+import 'package:random_please/models/list_template_source.dart';
 import 'package:uuid/uuid.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
@@ -71,6 +72,10 @@ class HiveService {
 
       if (!Hive.isAdapterRegistered(12)) {
         Hive.registerAdapter(SettingsModelAdapter());
+      }
+
+      if (!Hive.isAdapterRegistered(13)) {
+        Hive.registerAdapter(ListTemplateSourceAdapter());
       }
 
       // Open encryption keys box first (encrypted with fixed key)

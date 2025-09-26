@@ -22,6 +22,9 @@ const String authorCloudListRoute =
     "https://www.trongajtt.com/apps/random-please/list-template";
 const String authorCloudListEndpoint = "$authorCloudListRoute/all.json";
 
+const String listPickerTemplateHelpUrl =
+    'https://www.trongajtt.com/apps/random-please/list-template/';
+
 const String userAgent = "Random-Please-App";
 const String imageAssetPath = "assets/app_icon.png";
 

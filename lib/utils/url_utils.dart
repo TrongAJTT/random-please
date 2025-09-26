@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:random_please/l10n/app_localizations.dart';
+import 'package:random_please/screens/browser/in_app_browser_screen.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -108,7 +109,7 @@ class UriUtils {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text('Đóng'),
+                child: Text(loc.close),
               ),
               TextButton(
                 onPressed: () async {
@@ -121,12 +122,33 @@ class UriUtils {
                     );
                   }
                 },
-                child: const Text('Copy link'),
+                child: Text(loc.copyLink),
               ),
             ],
           );
         },
       );
+    }
+  }
+
+  /// Universal URL viewer - opens in browser on desktop, in-app browser on mobile
+  static Future<void> viewUniUrl(
+    BuildContext context,
+    String url,
+  ) async {
+    final screenSize = MediaQuery.of(context).size;
+    final isMobile = screenSize.width <= 800;
+
+    if (isMobile) {
+      // Mobile: Navigate to in-app browser screen
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => InAppBrowserScreen(url: url),
+        ),
+      );
+    } else {
+      // Desktop: Open in external browser
+      await launchInBrowser(url, context);
     }
   }
 }

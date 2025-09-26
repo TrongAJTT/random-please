@@ -17,6 +17,7 @@ class CloudTemplateService {
   static Future<List<CloudTemplate>> fetchCloudTemplates() async {
     try {
       final response = await http.get(
+        // @NOTICE: Refactoring needed if multiple endpoints are used
         Uri.parse(authorCloudListEndpoint),
         headers: {
           'User-Agent': userAgent,

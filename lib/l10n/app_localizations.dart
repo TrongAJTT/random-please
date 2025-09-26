@@ -2642,6 +2642,264 @@ abstract class AppLocalizations {
   /// **'Error importing template'**
   String get errorImportingTemplate;
 
+  /// No description provided for @remoteListTemplateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote List Template Sources'**
+  String get remoteListTemplateTitle;
+
+  /// No description provided for @fetchAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch All'**
+  String get fetchAll;
+
+  /// No description provided for @fetchLatestDefaults.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch Latest Defaults'**
+  String get fetchLatestDefaults;
+
+  /// No description provided for @defaultSourcesUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Default sources updated successfully'**
+  String get defaultSourcesUpdated;
+
+  /// No description provided for @addCustomSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Custom Source'**
+  String get addCustomSource;
+
+  /// No description provided for @whatIsThis.
+  ///
+  /// In en, this message translates to:
+  /// **'What is this?'**
+  String get whatIsThis;
+
+  /// No description provided for @defaultSources.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Sources'**
+  String get defaultSources;
+
+  /// No description provided for @customSources.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Sources'**
+  String get customSources;
+
+  /// No description provided for @allSources.
+  ///
+  /// In en, this message translates to:
+  /// **'All Sources'**
+  String get allSources;
+
+  /// No description provided for @noSourcesToDisplay.
+  ///
+  /// In en, this message translates to:
+  /// **'No sources to display'**
+  String get noSourcesToDisplay;
+
+  /// No description provided for @errorSavingData.
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving data'**
+  String get errorSavingData;
+
+  /// No description provided for @cannotOpenUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot open URL'**
+  String get cannotOpenUrl;
+
+  /// No description provided for @viewSourceUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'View source URL'**
+  String get viewSourceUrl;
+
+  /// No description provided for @disable.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable'**
+  String get disable;
+
+  /// No description provided for @enable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable'**
+  String get enable;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @fetch.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch'**
+  String get fetch;
+
+  /// No description provided for @lastFetch.
+  ///
+  /// In en, this message translates to:
+  /// **'Last fetch'**
+  String get lastFetch;
+
+  /// No description provided for @fetchTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch Template'**
+  String get fetchTemplate;
+
+  /// No description provided for @cannotOpenHelpPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot open help page'**
+  String get cannotOpenHelpPage;
+
+  /// No description provided for @errorLoadingSources.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading sources'**
+  String get errorLoadingSources;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// No description provided for @myCustomSource.
+  ///
+  /// In en, this message translates to:
+  /// **'My Custom Source'**
+  String get myCustomSource;
+
+  /// No description provided for @pleaseEnterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a name'**
+  String get pleaseEnterName;
+
+  /// No description provided for @url.
+  ///
+  /// In en, this message translates to:
+  /// **'URL'**
+  String get url;
+
+  /// No description provided for @pleaseEnterUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a URL'**
+  String get pleaseEnterUrl;
+
+  /// No description provided for @pleaseEnterValidUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid URL'**
+  String get pleaseEnterValidUrl;
+
+  /// No description provided for @editSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Source'**
+  String get editSource;
+
+  /// No description provided for @errorUpdatingDefaults.
+  ///
+  /// In en, this message translates to:
+  /// **'Error updating defaults'**
+  String get errorUpdatingDefaults;
+
+  /// No description provided for @urlHintText.
+  ///
+  /// In en, this message translates to:
+  /// **'https://example.com/list.json'**
+  String get urlHintText;
+
+  /// No description provided for @fetchListTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch List Templates'**
+  String get fetchListTemplates;
+
+  /// No description provided for @fetchingData.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetching data...'**
+  String get fetchingData;
+
+  /// No description provided for @preparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing...'**
+  String get preparing;
+
+  /// No description provided for @inAppBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'In-App Browser'**
+  String get inAppBrowser;
+
+  /// No description provided for @loadUrlError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading URL'**
+  String get loadUrlError;
+
+  /// No description provided for @copyUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy URL'**
+  String get copyUrl;
+
+  /// No description provided for @goBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Back'**
+  String get goBack;
+
+  /// No description provided for @goForward.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Forward'**
+  String get goForward;
+
+  /// No description provided for @noSourceSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No source selected'**
+  String get noSourceSelected;
+
+  /// No description provided for @failedToFetchData.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to fetch data'**
+  String get failedToFetchData;
+
+  /// No description provided for @unknownError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown error'**
+  String get unknownError;
+
+  /// No description provided for @templatesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Templates ({count})'**
+  String templatesCount(int count);
+
+  /// No description provided for @andMoreItems.
+  ///
+  /// In en, this message translates to:
+  /// **'... and {count} more items'**
+  String andMoreItems(int count);
+
   /// No description provided for @enter.
   ///
   /// In en, this message translates to:
@@ -2677,6 +2935,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'and'**
   String get and;
+
+  /// No description provided for @browseLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse link'**
+  String get browseLink;
+
+  /// No description provided for @copyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy link'**
+  String get copyLink;
+
+  /// No description provided for @openInBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in browser'**
+  String get openInBrowser;
+
+  /// No description provided for @failedToLoadWebpage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load webpage'**
+  String get failedToLoadWebpage;
+
+  /// No description provided for @urlOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'URL Options'**
+  String get urlOptions;
+
+  /// No description provided for @currentUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Current URL:'**
+  String get currentUrl;
+
+  /// No description provided for @urlCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'URL copied to clipboard'**
+  String get urlCopied;
 }
 
 class _AppLocalizationsDelegate

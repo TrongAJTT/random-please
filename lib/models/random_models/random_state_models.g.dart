@@ -656,13 +656,14 @@ class ListPickerGeneratorStateAdapter
       lastUpdated: fields[3] as DateTime,
       mode: fields[4] as ListPickerMode,
       isListSelectorCollapsed: fields[5] as bool,
+      isListManagerCollapsed: fields[6] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, ListPickerGeneratorState obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.quantity)
       ..writeByte(1)
@@ -674,7 +675,9 @@ class ListPickerGeneratorStateAdapter
       ..writeByte(4)
       ..write(obj.mode)
       ..writeByte(5)
-      ..write(obj.isListSelectorCollapsed);
+      ..write(obj.isListSelectorCollapsed)
+      ..writeByte(6)
+      ..write(obj.isListManagerCollapsed);
   }
 
   @override

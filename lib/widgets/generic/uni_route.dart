@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 
 /// Generic settings configuration
@@ -184,41 +183,17 @@ class UniScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get the current locale and theme from the parent context
-    final currentLocale = Localizations.localeOf(context);
-    final currentTheme = Theme.of(context);
-
-    // For full-screen settings on mobile, we need to provide proper localization context
-    return MaterialApp(
-      title: title,
-      theme: currentTheme,
-      locale: currentLocale,
-      supportedLocales: AppLocalizations.supportedLocales,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text(title),
-          leading: Navigator.canPop(context)
-              ? IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.of(context).pop(),
-                )
-              : null,
-          centerTitle: false,
-          actions: actions,
-          bottom: bottom,
-          elevation: 0,
-          backgroundColor: currentTheme.colorScheme.surface,
-          foregroundColor: currentTheme.colorScheme.onSurface,
-        ),
-        body: content,
+    // Simply return a Scaffold without wrapping in MaterialApp
+    // This avoids navigation context issues
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+        centerTitle: false,
+        actions: actions,
+        bottom: bottom,
+        elevation: 0,
       ),
-      debugShowCheckedModeBanner: false,
+      body: content,
     );
   }
 

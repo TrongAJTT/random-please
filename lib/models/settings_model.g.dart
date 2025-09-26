@@ -24,9 +24,8 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       focusModeEnabled: fields[4] as bool,
       saveRandomToolsState: fields[5] as bool,
       compactTabLayout: fields[6] as bool,
-      remoteListTemplateCustomSource:
-          (fields[7] as List?)?.cast<String>() ?? const <String>[],
-      remoteListTemplateDefaultState: (fields[8] as bool?) ?? true,
+      remoteListTemplateCustomSource: (fields[7] as List).cast<String>(),
+      remoteListTemplateDefaultState: fields[8] as bool,
     );
   }
 

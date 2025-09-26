@@ -1,6 +1,16 @@
-class CloudTemplate {
+import 'package:hive/hive.dart';
+
+part 'cloud_template.g.dart';
+
+@HiveType(typeId: 14)
+class CloudTemplate extends HiveObject {
+  @HiveField(0)
   final String name;
+
+  @HiveField(1)
   final String lang;
+
+  @HiveField(2)
   final List<String> values;
 
   CloudTemplate({

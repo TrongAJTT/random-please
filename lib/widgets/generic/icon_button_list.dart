@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:random_please/utils/variables_utils.dart';
 
 class IconButtonListItem {
   final IconData icon;
@@ -41,6 +42,13 @@ class IconButtonList extends StatelessWidget {
     required this.visibleCount,
     this.spacing = 0,
   });
+
+  static int getVisibleContext(BuildContext context) {
+    if (isMobileContext(context)) {
+      return 0;
+    }
+    return 999;
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1361,6 +1361,139 @@ class AppLocalizationsVi extends AppLocalizations {
   String get errorImportingTemplate => 'Lỗi khi nhập mẫu';
 
   @override
+  String get remoteListTemplateTitle => 'Nguồn mẫu danh sách từ xa';
+
+  @override
+  String get fetchAll => 'Lấy tất cả';
+
+  @override
+  String get fetchLatestDefaults => 'Lấy mặc định mới nhất';
+
+  @override
+  String get defaultSourcesUpdated => 'Đã cập nhật nguồn mặc định thành công';
+
+  @override
+  String get addCustomSource => 'Thêm nguồn tùy chỉnh';
+
+  @override
+  String get whatIsThis => 'Đây là gì?';
+
+  @override
+  String get defaultSources => 'Nguồn mặc định';
+
+  @override
+  String get customSources => 'Nguồn tùy chỉnh';
+
+  @override
+  String get allSources => 'Tất cả nguồn';
+
+  @override
+  String get noSourcesToDisplay => 'Không có nguồn nào để hiển thị';
+
+  @override
+  String get errorSavingData => 'Lỗi lưu dữ liệu';
+
+  @override
+  String get cannotOpenUrl => 'Không thể mở URL';
+
+  @override
+  String get viewSourceUrl => 'Xem URL nguồn';
+
+  @override
+  String get disable => 'Tắt';
+
+  @override
+  String get enable => 'Bật';
+
+  @override
+  String get edit => 'Chỉnh sửa';
+
+  @override
+  String get fetch => 'Lấy';
+
+  @override
+  String get lastFetch => 'Lần lấy cuối';
+
+  @override
+  String get fetchTemplate => 'Lấy mẫu dữ liệu';
+
+  @override
+  String get cannotOpenHelpPage => 'Không thể mở trang trợ giúp';
+
+  @override
+  String get errorLoadingSources => 'Lỗi tải nguồn';
+
+  @override
+  String get name => 'Tên';
+
+  @override
+  String get myCustomSource => 'Nguồn tùy chỉnh của tôi';
+
+  @override
+  String get pleaseEnterName => 'Vui lòng nhập tên';
+
+  @override
+  String get url => 'URL';
+
+  @override
+  String get pleaseEnterUrl => 'Vui lòng nhập URL';
+
+  @override
+  String get pleaseEnterValidUrl => 'Vui lòng nhập URL hợp lệ';
+
+  @override
+  String get editSource => 'Chỉnh sửa nguồn';
+
+  @override
+  String get errorUpdatingDefaults => 'Lỗi cập nhật nguồn mặc định';
+
+  @override
+  String get urlHintText => 'https://example.com/list.json';
+
+  @override
+  String get fetchListTemplates => 'Lấy mẫu danh sách';
+
+  @override
+  String get fetchingData => 'Đang lấy dữ liệu...';
+
+  @override
+  String get preparing => 'Đang chuẩn bị...';
+
+  @override
+  String get inAppBrowser => 'Trình duyệt tích hợp';
+
+  @override
+  String get loadUrlError => 'Lỗi tải URL';
+
+  @override
+  String get copyUrl => 'Sao chép URL';
+
+  @override
+  String get goBack => 'Quay lại';
+
+  @override
+  String get goForward => 'Tiến về phía trước';
+
+  @override
+  String get noSourceSelected => 'Chưa chọn nguồn nào';
+
+  @override
+  String get failedToFetchData => 'Lỗi lấy dữ liệu';
+
+  @override
+  String get unknownError => 'Lỗi không xác định';
+
+  @override
+  String templatesCount(int count) {
+    return 'Mẫu ($count)';
+  }
+
+  @override
+  String andMoreItems(int count) {
+    return '... và $count mục khác';
+  }
+
+  @override
   String get enter => 'Nhập';
 
   @override
@@ -1377,4 +1510,25 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get and => 'và';
+
+  @override
+  String get browseLink => 'Duyệt liên kết';
+
+  @override
+  String get copyLink => 'Sao chép liên kết';
+
+  @override
+  String get openInBrowser => 'Mở trong trình duyệt';
+
+  @override
+  String get failedToLoadWebpage => 'Lỗi tải trang web';
+
+  @override
+  String get urlOptions => 'Tùy chọn URL';
+
+  @override
+  String get currentUrl => 'URL hiện tại:';
+
+  @override
+  String get urlCopied => 'Đã sao chép URL vào clipboard';
 }

@@ -1366,6 +1366,139 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorImportingTemplate => 'Error importing template';
 
   @override
+  String get remoteListTemplateTitle => 'Remote List Template Sources';
+
+  @override
+  String get fetchAll => 'Fetch All';
+
+  @override
+  String get fetchLatestDefaults => 'Fetch Latest Defaults';
+
+  @override
+  String get defaultSourcesUpdated => 'Default sources updated successfully';
+
+  @override
+  String get addCustomSource => 'Add Custom Source';
+
+  @override
+  String get whatIsThis => 'What is this?';
+
+  @override
+  String get defaultSources => 'Default Sources';
+
+  @override
+  String get customSources => 'Custom Sources';
+
+  @override
+  String get allSources => 'All Sources';
+
+  @override
+  String get noSourcesToDisplay => 'No sources to display';
+
+  @override
+  String get errorSavingData => 'Error saving data';
+
+  @override
+  String get cannotOpenUrl => 'Cannot open URL';
+
+  @override
+  String get viewSourceUrl => 'View source URL';
+
+  @override
+  String get disable => 'Disable';
+
+  @override
+  String get enable => 'Enable';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get fetch => 'Fetch';
+
+  @override
+  String get lastFetch => 'Last fetch';
+
+  @override
+  String get fetchTemplate => 'Fetch Template';
+
+  @override
+  String get cannotOpenHelpPage => 'Cannot open help page';
+
+  @override
+  String get errorLoadingSources => 'Error loading sources';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get myCustomSource => 'My Custom Source';
+
+  @override
+  String get pleaseEnterName => 'Please enter a name';
+
+  @override
+  String get url => 'URL';
+
+  @override
+  String get pleaseEnterUrl => 'Please enter a URL';
+
+  @override
+  String get pleaseEnterValidUrl => 'Please enter a valid URL';
+
+  @override
+  String get editSource => 'Edit Source';
+
+  @override
+  String get errorUpdatingDefaults => 'Error updating defaults';
+
+  @override
+  String get urlHintText => 'https://example.com/list.json';
+
+  @override
+  String get fetchListTemplates => 'Fetch List Templates';
+
+  @override
+  String get fetchingData => 'Fetching data...';
+
+  @override
+  String get preparing => 'Preparing...';
+
+  @override
+  String get inAppBrowser => 'In-App Browser';
+
+  @override
+  String get loadUrlError => 'Error loading URL';
+
+  @override
+  String get copyUrl => 'Copy URL';
+
+  @override
+  String get goBack => 'Go Back';
+
+  @override
+  String get goForward => 'Go Forward';
+
+  @override
+  String get noSourceSelected => 'No source selected';
+
+  @override
+  String get failedToFetchData => 'Failed to fetch data';
+
+  @override
+  String get unknownError => 'Unknown error';
+
+  @override
+  String templatesCount(int count) {
+    return 'Templates ($count)';
+  }
+
+  @override
+  String andMoreItems(int count) {
+    return '... and $count more items';
+  }
+
+  @override
   String get enter => 'Enter';
 
   @override
@@ -1382,4 +1515,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get and => 'and';
+
+  @override
+  String get browseLink => 'Browse link';
+
+  @override
+  String get copyLink => 'Copy link';
+
+  @override
+  String get openInBrowser => 'Open in browser';
+
+  @override
+  String get failedToLoadWebpage => 'Failed to load webpage';
+
+  @override
+  String get urlOptions => 'URL Options';
+
+  @override
+  String get currentUrl => 'Current URL:';
+
+  @override
+  String get urlCopied => 'URL copied to clipboard';
 }
