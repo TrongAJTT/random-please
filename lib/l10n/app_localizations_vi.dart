@@ -1570,4 +1570,88 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get pleaseWait => 'Vui lòng chờ';
+
+  @override
+  String get importFromFile => 'Import từ File';
+
+  @override
+  String get selectFileToImport => 'Chọn file để import';
+
+  @override
+  String get supportedFormat =>
+      'Định dạng hỗ trợ: file .txt với mỗi dòng là một mục';
+
+  @override
+  String get selectFile => 'Chọn File';
+
+  @override
+  String get previewData => 'Xem Trước Dữ Liệu';
+
+  @override
+  String get readyToImport => 'Sẵn Sàng Import';
+
+  @override
+  String get importConfirmation =>
+      'Nhấn Import để thêm dữ liệu này vào danh sách của bạn';
+
+  @override
+  String get importData => 'Import Dữ Liệu';
+
+  @override
+  String get next => 'Tiếp Theo';
+
+  @override
+  String get itemCount => 'Số Lượng Mục';
+
+  @override
+  String get importEmptyFileError =>
+      'File được chọn trống hoặc không chứa mục nào hợp lệ';
+
+  @override
+  String get importFileError => 'Không thể đọc file';
+
+  @override
+  String get importError => 'Import thất bại';
+
+  @override
+  String get importSuccess => 'Import dữ liệu thành công';
+
+  @override
+  String get dragDropHint => 'Hoặc kéo thả file vào đây';
+
+  @override
+  String get enterManually => 'Nhập thủ công';
+
+  @override
+  String get useElementAsName => 'Dùng một phần tử làm tên';
+
+  @override
+  String get elementNumber => 'Số thứ tự phần tử';
+
+  @override
+  String get removeElementFromList => 'Xóa phần tử này khỏi danh sách';
+
+  @override
+  String get removeElementDescription =>
+      'Phần tử được chọn sẽ không có trong danh sách cuối cùng';
+
+  @override
+  String get listPreview => 'Xem Trước Danh Sách';
+
+  @override
+  String get noNameSet => 'Chưa đặt tên';
+
+  @override
+  String get listNamingOptions => 'Tùy Chọn Đặt Tên Danh Sách';
+
+  @override
+  String get processingFile => 'Đang xử lý file...';
+
+  @override
+  String get largeFileWarning => 'Cảnh Báo File Lớn';
+
+  @override
+  String largeFileWarningMessage(int count) {
+    return 'File này chứa $count dòng. Xử lý lượng dữ liệu lớn có thể gây chậm hoặc crash trên các máy cấu hình thấp. Bạn có muốn tiếp tục?';
+  }
 }

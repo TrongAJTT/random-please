@@ -5,6 +5,7 @@ import 'package:random_please/models/cloud_template.dart';
 import 'package:random_please/models/list_template_source.dart';
 import 'package:random_please/providers/list_template_source_provider.dart';
 import 'package:random_please/screens/settings/remote_list_template_screen.dart';
+import 'package:random_please/widgets/common/step_indicator.dart';
 import 'package:random_please/widgets/generic/uni_route.dart';
 
 class ImportTemplateWidget extends ConsumerStatefulWidget {
@@ -138,108 +139,16 @@ class _ImportTemplateWidgetState extends ConsumerState<ImportTemplateWidget>
   }
 
   Widget _buildStepIndicator() {
-    final theme = Theme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: .3),
-        border: Border(
-          bottom: BorderSide(color: theme.dividerColor, width: 1),
-        ),
-      ),
-      child: Row(
-        children: [
-          // Step 1
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: _currentStep >= 0
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.surfaceContainerHighest,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                '1',
-                style: TextStyle(
-                  color: _currentStep >= 0
-                      ? theme.colorScheme.onPrimary
-                      : theme.colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-
-          // Line 1-2
-          Expanded(
-            child: Container(
-              height: 2,
-              color: _currentStep >= 1
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.surfaceContainerHighest,
-            ),
-          ),
-
-          // Step 2
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: _currentStep >= 1
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.surfaceContainerHighest,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                '2',
-                style: TextStyle(
-                  color: _currentStep >= 1
-                      ? theme.colorScheme.onPrimary
-                      : theme.colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-
-          // Line 2-3
-          Expanded(
-            child: Container(
-              height: 2,
-              color: _currentStep >= 2
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.surfaceContainerHighest,
-            ),
-          ),
-
-          // Step 3
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: _currentStep >= 2
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.surfaceContainerHighest,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                '3',
-                style: TextStyle(
-                  color: _currentStep >= 2
-                      ? theme.colorScheme.onPrimary
-                      : theme.colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+    final l10n = AppLocalizations.of(context)!;
+    return StepIndicator(
+      currentStep: _currentStep,
+      stepLabels: [
+        l10n.selectTemplate,
+        l10n.selectList,
+        l10n.confirm,
+      ],
+      showCheckIcon: true,
+      useContainer: true,
     );
   }
 

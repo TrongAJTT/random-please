@@ -1575,4 +1575,88 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pleaseWait => 'Please wait';
+
+  @override
+  String get importFromFile => 'Import from File';
+
+  @override
+  String get selectFileToImport => 'Select a file to import';
+
+  @override
+  String get supportedFormat =>
+      'Supported format: .txt files with one item per line';
+
+  @override
+  String get selectFile => 'Select File';
+
+  @override
+  String get previewData => 'Preview Data';
+
+  @override
+  String get readyToImport => 'Ready to Import';
+
+  @override
+  String get importConfirmation =>
+      'Click Import to add this data to your lists';
+
+  @override
+  String get importData => 'Import Data';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get itemCount => 'Item Count';
+
+  @override
+  String get importEmptyFileError =>
+      'The selected file is empty or contains no valid items';
+
+  @override
+  String get importFileError => 'Failed to read file';
+
+  @override
+  String get importError => 'Import failed';
+
+  @override
+  String get importSuccess => 'Data imported successfully';
+
+  @override
+  String get dragDropHint => 'Or drag and drop a file here';
+
+  @override
+  String get enterManually => 'Enter manually';
+
+  @override
+  String get useElementAsName => 'Use an element as name';
+
+  @override
+  String get elementNumber => 'Element number';
+
+  @override
+  String get removeElementFromList => 'Remove this element from the list';
+
+  @override
+  String get removeElementDescription =>
+      'The selected element will not be included in the final list';
+
+  @override
+  String get listPreview => 'List Preview';
+
+  @override
+  String get noNameSet => 'No name set';
+
+  @override
+  String get listNamingOptions => 'List Naming Options';
+
+  @override
+  String get processingFile => 'Processing file...';
+
+  @override
+  String get largeFileWarning => 'Large File Warning';
+
+  @override
+  String largeFileWarningMessage(int count) {
+    return 'This file contains $count lines. Processing large amounts of data may cause slowdowns or crashes on low-end devices. Do you want to continue?';
+  }
 }

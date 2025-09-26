@@ -3055,6 +3055,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please wait'**
   String get pleaseWait;
+
+  /// No description provided for @importFromFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from File'**
+  String get importFromFile;
+
+  /// No description provided for @selectFileToImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a file to import'**
+  String get selectFileToImport;
+
+  /// No description provided for @supportedFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Supported format: .txt files with one item per line'**
+  String get supportedFormat;
+
+  /// No description provided for @selectFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Select File'**
+  String get selectFile;
+
+  /// No description provided for @previewData.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview Data'**
+  String get previewData;
+
+  /// No description provided for @readyToImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to Import'**
+  String get readyToImport;
+
+  /// No description provided for @importConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Click Import to add this data to your lists'**
+  String get importConfirmation;
+
+  /// No description provided for @importData.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Data'**
+  String get importData;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @itemCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Item Count'**
+  String get itemCount;
+
+  /// No description provided for @importEmptyFileError.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected file is empty or contains no valid items'**
+  String get importEmptyFileError;
+
+  /// No description provided for @importFileError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to read file'**
+  String get importFileError;
+
+  /// No description provided for @importError.
+  ///
+  /// In en, this message translates to:
+  /// **'Import failed'**
+  String get importError;
+
+  /// No description provided for @importSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Data imported successfully'**
+  String get importSuccess;
+
+  /// No description provided for @dragDropHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Or drag and drop a file here'**
+  String get dragDropHint;
+
+  /// No description provided for @enterManually.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter manually'**
+  String get enterManually;
+
+  /// No description provided for @useElementAsName.
+  ///
+  /// In en, this message translates to:
+  /// **'Use an element as name'**
+  String get useElementAsName;
+
+  /// No description provided for @elementNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Element number'**
+  String get elementNumber;
+
+  /// No description provided for @removeElementFromList.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this element from the list'**
+  String get removeElementFromList;
+
+  /// No description provided for @removeElementDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected element will not be included in the final list'**
+  String get removeElementDescription;
+
+  /// No description provided for @listPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'List Preview'**
+  String get listPreview;
+
+  /// No description provided for @noNameSet.
+  ///
+  /// In en, this message translates to:
+  /// **'No name set'**
+  String get noNameSet;
+
+  /// No description provided for @listNamingOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'List Naming Options'**
+  String get listNamingOptions;
+
+  /// No description provided for @processingFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing file...'**
+  String get processingFile;
+
+  /// No description provided for @largeFileWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Large File Warning'**
+  String get largeFileWarning;
+
+  /// No description provided for @largeFileWarningMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This file contains {count} lines. Processing large amounts of data may cause slowdowns or crashes on low-end devices. Do you want to continue?'**
+  String largeFileWarningMessage(int count);
 }
 
 class _AppLocalizationsDelegate

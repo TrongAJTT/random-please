@@ -718,5 +718,38 @@
   "setListName": "Set List Name",
   "preview": "Preview",
   "importing": "Importing",
-  "pleaseWait": "Please wait"
+  "pleaseWait": "Please wait",
+  "importFromFile": "Import from File",
+  "selectFileToImport": "Select a file to import",
+  "supportedFormat": "Supported format: .txt files with one item per line",
+  "selectFile": "Select File",
+  "previewData": "Preview Data",
+  "readyToImport": "Ready to Import",
+  "importConfirmation": "Click Import to add this data to your lists",
+  "importData": "Import Data",
+  "next": "Next",
+  "itemCount": "Item Count",
+  "importEmptyFileError": "The selected file is empty or contains no valid items",
+  "importFileError": "Failed to read file",
+  "importError": "Import failed",
+  "importSuccess": "Data imported successfully",
+  "dragDropHint": "Or drag and drop a file here",
+  "enterManually": "Enter manually",
+  "useElementAsName": "Use an element as name",
+  "elementNumber": "Element number",
+  "removeElementFromList": "Remove this element from the list",
+  "removeElementDescription": "The selected element will not be included in the final list",
+  "listPreview": "List Preview",
+  "noNameSet": "No name set",
+  "listNamingOptions": "List Naming Options",
+  "processingFile": "Processing file...",
+  "largeFileWarning": "Large File Warning",
+  "largeFileWarningMessage": "This file contains {count} lines. Processing large amounts of data may cause slowdowns or crashes on low-end devices. Do you want to continue?",
+  "@largeFileWarningMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

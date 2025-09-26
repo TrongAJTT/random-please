@@ -18,6 +18,7 @@ import 'package:random_please/view_models/list_picker_view_model.dart';
 import 'package:random_please/services/cloud_template_service.dart';
 import 'package:random_please/widgets/holdable_button.dart';
 import 'package:random_please/widgets/tools/import_template_widget.dart';
+import 'package:random_please/widgets/tools/import_file_widget.dart';
 
 class ListPickerGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -312,7 +313,7 @@ class _ListPickerGeneratorScreenState
           builder: (context) => AlertDialog(
             title: Text(loc.confirmAddItems),
             content: Text(loc.confirmAddItemsMessage(
-                lines.length, _viewModel.state.currentList!.name)),
+                lines.length, _viewModel.state.currentList?.name ?? '')),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
@@ -357,6 +358,24 @@ class _ListPickerGeneratorScreenState
           isEmbedded: true,
           onImport: (items, listName) {
             _importItemsFromTemplate(items, listName);
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showImportFileDialog() async {
+    UniRoute.navigate(
+      context,
+      UniRouteModel(
+        title: loc.importFromFile,
+        content: ImportFileWidget(
+          viewModel: _viewModel,
+          isEmbedded: true,
+          onSuccess: () {
+            setState(() {
+              // Refresh the UI to show the new list
+            });
           },
         ),
       ),
@@ -559,6 +578,7 @@ class _ListPickerGeneratorScreenState
     if (confirmed == true) {
       _viewModel.deleteList(list);
       setState(() {});
+      // Note: The provider already handles clearing currentList when no lists remain
     }
   }
 
@@ -695,6 +715,11 @@ class _ListPickerGeneratorScreenState
                     tooltip: loc.importTemplate,
                   ),
                   IconButton(
+                    onPressed: () => _showImportFileDialog(),
+                    icon: const Icon(Icons.upload_file),
+                    tooltip: loc.importFromFile,
+                  ),
+                  IconButton(
                     onPressed: () => _showCreateListDialog(),
                     icon: const Icon(Icons.add),
                     tooltip: loc.createNewList,
@@ -774,13 +799,16 @@ class _ListPickerGeneratorScreenState
                       children: [
                         Expanded(
                           child: Text(
-                            '${loc.manageList}: ${_viewModel.state.currentList!.name}',
+                            _viewModel.state.currentList != null
+                                ? '${loc.manageList}: ${_viewModel.state.currentList!.name}'
+                                : loc.manageList,
                             style: Theme.of(context).textTheme.titleMedium,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         const SizedBox(width: 8),
-                        if (_viewModel.state.isListManagerCollapsed)
+                        if (_viewModel.state.isListManagerCollapsed &&
+                            _viewModel.state.currentList != null)
                           Text(
                             '(${_viewModel.state.currentList!.items.length})',
                             style: Theme.of(context)
@@ -822,23 +850,29 @@ class _ListPickerGeneratorScreenState
                         border: const OutlineInputBorder(),
                       ),
                       onSubmitted: (_) => _addItemToCurrentList(),
+                      enabled: _viewModel.state.currentList != null,
                     ),
                   ),
                   const SizedBox(width: 8),
                   IconButton(
-                    onPressed: _addItemToCurrentList,
+                    onPressed: _viewModel.state.currentList != null
+                        ? _addItemToCurrentList
+                        : null,
                     icon: const Icon(Icons.add),
                     tooltip: loc.addSingleItem,
                   ),
                   IconButton(
-                    onPressed: _showAddBatchDialog,
+                    onPressed: _viewModel.state.currentList != null
+                        ? _showAddBatchDialog
+                        : null,
                     icon: const Icon(Icons.add_box),
                     tooltip: loc.addMultipleItems,
                   ),
                 ],
               ),
               const SizedBox(height: 16),
-              if (_viewModel.state.currentList!.items.isNotEmpty) ...[
+              if (_viewModel.state.currentList != null &&
+                  _viewModel.state.currentList!.items.isNotEmpty) ...[
                 Text(
                   '${loc.items} (${_viewModel.state.currentList!.items.length}):',
                   style: Theme.of(context).textTheme.titleSmall,
@@ -850,7 +884,7 @@ class _ListPickerGeneratorScreenState
 
                     if (isWideScreen) {
                       // Two column layout for wide screens
-                      final items = _viewModel.state.currentList!.items;
+                      final items = _viewModel.state.currentList?.items ?? [];
                       final halfLength = (items.length / 2).ceil();
                       final leftItems = items.take(halfLength).toList();
                       final rightItems = items.skip(halfLength).toList();
@@ -984,7 +1018,7 @@ class _ListPickerGeneratorScreenState
                     } else {
                       // Single column layout for narrow screens
                       return Column(
-                        children: _viewModel.state.currentList!.items
+                        children: (_viewModel.state.currentList?.items ?? [])
                             .asMap()
                             .entries
                             .map((entry) {
@@ -1044,7 +1078,8 @@ class _ListPickerGeneratorScreenState
                   },
                 ),
               ],
-            ] else if (_viewModel.state.currentList!.items.isNotEmpty) ...[
+            ] else if (_viewModel.state.currentList != null &&
+                _viewModel.state.currentList!.items.isNotEmpty) ...[
               // Collapsed state with SingleChildScrollView and max height only for items list
               const SizedBox(height: 16),
               Row(
@@ -1057,16 +1092,21 @@ class _ListPickerGeneratorScreenState
                         border: const OutlineInputBorder(),
                       ),
                       onSubmitted: (_) => _addItemToCurrentList(),
+                      enabled: _viewModel.state.currentList != null,
                     ),
                   ),
                   const SizedBox(width: 8),
                   IconButton(
-                    onPressed: _addItemToCurrentList,
+                    onPressed: _viewModel.state.currentList != null
+                        ? _addItemToCurrentList
+                        : null,
                     icon: const Icon(Icons.add),
                     tooltip: loc.addSingleItem,
                   ),
                   IconButton(
-                    onPressed: _showAddBatchDialog,
+                    onPressed: _viewModel.state.currentList != null
+                        ? _showAddBatchDialog
+                        : null,
                     icon: const Icon(Icons.add_box),
                     tooltip: loc.addMultipleItems,
                   ),
@@ -1074,7 +1114,7 @@ class _ListPickerGeneratorScreenState
               ),
               const SizedBox(height: 16),
               Text(
-                '${loc.items} (${_viewModel.state.currentList!.items.length}):',
+                '${loc.items} (${_viewModel.state.currentList?.items.length ?? 0}):',
                 style: Theme.of(context).textTheme.titleSmall,
               ),
               const SizedBox(height: 8),
@@ -1087,7 +1127,7 @@ class _ListPickerGeneratorScreenState
 
                       if (isWideScreen) {
                         // Two column layout for wide screens
-                        final items = _viewModel.state.currentList!.items;
+                        final items = _viewModel.state.currentList?.items ?? [];
                         final halfLength = (items.length / 2).ceil();
                         final leftItems = items.take(halfLength).toList();
                         final rightItems = items.skip(halfLength).toList();
@@ -1223,7 +1263,7 @@ class _ListPickerGeneratorScreenState
                       } else {
                         // Single column layout for narrow screens
                         return Column(
-                          children: _viewModel.state.currentList!.items
+                          children: (_viewModel.state.currentList?.items ?? [])
                               .asMap()
                               .entries
                               .map((entry) {
