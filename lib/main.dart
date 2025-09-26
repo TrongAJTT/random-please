@@ -4,22 +4,25 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/providers/settings_provider.dart';
-import 'package:random_please/screens/about_layout.dart';
+import 'package:random_please/screens/other/about_layout.dart';
 import 'package:random_please/services/version_check_service.dart';
 import 'package:random_please/utils/variables_utils.dart';
 import 'package:random_please/variables.dart';
 import 'package:random_please/widgets/generic/uni_route.dart';
 import 'package:random_please/services/hive_service.dart';
 import 'package:random_please/services/settings_service.dart';
+import 'package:random_please/services/list_template_source_service.dart';
 import 'package:random_please/services/app_logger.dart';
 import 'package:random_please/services/security_manager.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/models/settings_model.dart';
+import 'package:random_please/models/list_template_source.dart';
+import 'package:random_please/models/cloud_template.dart';
 import 'package:random_please/widgets/generic/icon_button_list.dart';
 import 'package:window_manager/window_manager.dart';
 import 'screens/settings/main_settings.dart';
-import 'screens/random_tools_screen.dart';
-import 'screens/random_tools_desktop_layout.dart';
+import 'screens/landing_screen.dart';
+import 'screens/landing_desktop_layout.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 
@@ -78,6 +81,9 @@ Future<void> main() async {
 
   // Initialize settings service
   await SettingsService.initialize();
+
+  // Initialize ListTemplateSourceService
+  await ListTemplateSourceService.init();
 
   // Initialize AppLogger service (depends on settings)
   // await AppLogger.instance.initialize();
@@ -145,6 +151,12 @@ void _registerRandomStateAdapters() {
   }
   if (!Hive.isAdapterRegistered(77)) {
     Hive.registerAdapter(ListPickerModeAdapter());
+  }
+  if (!Hive.isAdapterRegistered(13)) {
+    Hive.registerAdapter(ListTemplateSourceAdapter());
+  }
+  if (!Hive.isAdapterRegistered(14)) {
+    Hive.registerAdapter(CloudTemplateAdapter());
   }
 }
 

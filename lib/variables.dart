@@ -18,8 +18,9 @@ const String latestReleaseEndpoint =
 const String authorAvatarEndpoint =
     'https://avatars.githubusercontent.com/u/157729907?v=4';
 
-const String authorCloudListEndpoint =
-    'https://raw.githubusercontent.com/TrongAJTT/TrongAJTT/refs/heads/main/random-please/CloudList.json';
+const String authorCloudListRoute =
+    "https://www.trongajtt.com/apps/random-please/list-template";
+const String authorCloudListEndpoint = "$authorCloudListRoute/all.json";
 
 const String userAgent = "Random-Please-App";
 const String imageAssetPath = "assets/app_icon.png";

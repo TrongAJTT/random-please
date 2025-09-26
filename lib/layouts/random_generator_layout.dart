@@ -3,7 +3,6 @@ import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/services/generation_history_service.dart';
 import 'package:random_please/services/settings_service.dart';
 import 'package:random_please/utils/generic_dialog_utils.dart';
-import 'package:random_please/utils/history_view_dialog.dart';
 import 'package:random_please/utils/localization_utils.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/widgets/generic/generic_context_menu.dart';

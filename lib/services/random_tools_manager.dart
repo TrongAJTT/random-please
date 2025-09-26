@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/services/tool_order_service.dart';
 import 'package:random_please/widgets/generic/section_item.dart' as generic;
-import 'package:random_please/screens/random_tools/password_generator.dart';
-import 'package:random_please/screens/random_tools/number_generator.dart';
-import 'package:random_please/screens/random_tools/yes_no_generator.dart';
-import 'package:random_please/screens/random_tools/coin_flip_generator.dart';
-import 'package:random_please/screens/random_tools/rock_paper_scissors_generator.dart';
-import 'package:random_please/screens/random_tools/dice_roll_generator.dart';
-import 'package:random_please/screens/random_tools/color_generator.dart';
-import 'package:random_please/screens/random_tools/latin_letter_generator.dart';
-import 'package:random_please/screens/random_tools/playing_card_generator.dart';
-import 'package:random_please/screens/random_tools/date_generator.dart';
-import 'package:random_please/screens/random_tools/time_generator.dart';
-import 'package:random_please/screens/random_tools/date_time_generator.dart';
-import 'package:random_please/screens/random_tools/lorem_ipsum_generator.dart';
-import 'package:random_please/screens/random_tools/list_picker_generator.dart';
+import 'package:random_please/screens/tools/password_generator.dart';
+import 'package:random_please/screens/tools/number_generator.dart';
+import 'package:random_please/screens/tools/yes_no_generator.dart';
+import 'package:random_please/screens/tools/coin_flip_generator.dart';
+import 'package:random_please/screens/tools/rock_paper_scissors_generator.dart';
+import 'package:random_please/screens/tools/dice_roll_generator.dart';
+import 'package:random_please/screens/tools/color_generator.dart';
+import 'package:random_please/screens/tools/latin_letter_generator.dart';
+import 'package:random_please/screens/tools/playing_card_generator.dart';
+import 'package:random_please/screens/tools/date_generator.dart';
+import 'package:random_please/screens/tools/time_generator.dart';
+import 'package:random_please/screens/tools/date_time_generator.dart';
+import 'package:random_please/screens/tools/lorem_ipsum_generator.dart';
+import 'package:random_please/screens/tools/list_picker_generator.dart';
 
 /// Manages the list and order of all random tools
 class RandomToolsManager {
