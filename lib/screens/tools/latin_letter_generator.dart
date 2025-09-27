@@ -238,24 +238,33 @@ class _LatinLetterGeneratorScreenState
       },
     ];
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 3.5,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 8,
-      ),
-      itemCount: switchOptions.length,
-      itemBuilder: (context, index) {
-        final option = switchOptions[index];
-        return OptionSwitch(
-          title: option['title'] as String,
-          subtitle: option['subtitle'] as String?,
-          value: option['value'] as bool,
-          onChanged: option['onChanged'] as void Function(bool),
-          decorator: OptionSwitchDecorator.compact(context),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate how many items can fit in one row
+        final availableWidth = constraints.maxWidth;
+        const itemWidth = 220.0; // Minimum width for each switch
+        const spacing = 16.0;
+        final crossAxisCount =
+            ((availableWidth + spacing) / (itemWidth + spacing))
+                .floor()
+                .clamp(1, 2);
+
+        return Wrap(
+          spacing: 16,
+          runSpacing: 8,
+          children: switchOptions.map((option) {
+            return SizedBox(
+              width: (availableWidth - (crossAxisCount - 1) * spacing) /
+                  crossAxisCount,
+              child: OptionSwitch(
+                title: option['title'] as String,
+                subtitle: option['subtitle'] as String?,
+                value: option['value'] as bool,
+                onChanged: option['onChanged'] as void Function(bool),
+                decorator: OptionSwitchDecorator.compact(context),
+              ),
+            );
+          }).toList(),
         );
       },
     );

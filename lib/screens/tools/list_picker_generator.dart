@@ -648,8 +648,8 @@ class _ListPickerGeneratorScreenState
   }
 
   void _pickRandomItems() async {
+    setState(() {}); // Update state only once when button is pressed
     await _viewModel.pickRandomItems();
-    setState(() {});
   }
 
   Widget _buildListSelector() {
@@ -1289,7 +1289,7 @@ class _ListPickerGeneratorScreenState
                           ? Icons.shuffle_outlined
                           : Icons.group,
                 ),
-                label: Text(_getGenerateButtonText(loc)),
+                label: Text(_getGenerateButtonText()),
               ),
             ),
           ],
@@ -1298,7 +1298,7 @@ class _ListPickerGeneratorScreenState
     );
   }
 
-  String _getGenerateButtonText(AppLocalizations loc) {
+  String _getGenerateButtonText() {
     switch (_viewModel.state.mode) {
       case ListPickerMode.random:
         return loc.generateRandom;
@@ -1306,6 +1306,19 @@ class _ListPickerGeneratorScreenState
         return loc.modeShuffle;
       case ListPickerMode.team:
         return '${loc.modeTeam} (${_viewModel.state.quantity} ${loc.teams.toLowerCase()})';
+    }
+  }
+
+  String _getResultSubtitle() {
+    if (_viewModel.results.isEmpty) return '';
+
+    switch (_viewModel.state.mode) {
+      case ListPickerMode.random:
+        return '${_viewModel.results.length} ${loc.items.toLowerCase()}';
+      case ListPickerMode.shuffle:
+        return '${_viewModel.results.length} ${loc.items.toLowerCase()}';
+      case ListPickerMode.team:
+        return '${_viewModel.state.quantity} ${loc.teams.toLowerCase()}';
     }
   }
 
@@ -1321,12 +1334,42 @@ class _ListPickerGeneratorScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header
             Row(
               children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.list_alt,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: Text(
-                    loc.results,
-                    style: Theme.of(context).textTheme.titleMedium,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        loc.results,
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                      ),
+                      Text(
+                        _getResultSubtitle(),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
+                      ),
+                    ],
                   ),
                 ),
                 IconButton(
@@ -1341,7 +1384,7 @@ class _ListPickerGeneratorScreenState
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16.0),

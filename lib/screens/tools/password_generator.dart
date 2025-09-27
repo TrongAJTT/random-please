@@ -8,7 +8,6 @@ import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
-import 'package:random_please/utils/widget_layout_render_helper.dart';
 import 'package:random_please/widgets/history_widget.dart';
 
 class PasswordGeneratorScreen extends ConsumerStatefulWidget {
@@ -128,27 +127,35 @@ class _PasswordGeneratorScreenState
       },
     ];
 
-    return GridBuilderHelper.responsive(
-      builder: (context, index) {
-        final option = switchOptions[index];
-        return OptionSwitch(
-          title: option['title'] as String,
-          subtitle: option['subtitle'] as String?,
-          value: option['value'] as bool,
-          onChanged: option['onChanged'] as void Function(bool),
-          decorator: OptionSwitchDecorator.compact(context),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate how many items can fit in one row
+        final availableWidth = constraints.maxWidth;
+        const itemWidth = 220.0; // Minimum width for each switch
+        const spacing = 16.0;
+        final crossAxisCount =
+            ((availableWidth + spacing) / (itemWidth + spacing))
+                .floor()
+                .clamp(1, 2);
+
+        return Wrap(
+          spacing: 16,
+          runSpacing: 8,
+          children: switchOptions.map((option) {
+            return SizedBox(
+              width: (availableWidth - (crossAxisCount - 1) * spacing) /
+                  crossAxisCount,
+              child: OptionSwitch(
+                title: option['title'] as String,
+                subtitle: option['subtitle'] as String?,
+                value: option['value'] as bool,
+                onChanged: option['onChanged'] as void Function(bool),
+                decorator: OptionSwitchDecorator.compact(context),
+              ),
+            );
+          }).toList(),
         );
       },
-      itemCount: switchOptions.length,
-      minItemWidth: 400,
-      maxColumns: 2,
-      decorator: const GridBuilderDecorator(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        mainAxisSpacing: 8,
-        crossAxisSpacing: 16,
-        maxChildHeight: 70, // Control the height of each switch row
-      ),
     );
   }
 
