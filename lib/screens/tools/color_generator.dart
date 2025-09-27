@@ -7,7 +7,8 @@ import 'package:random_please/view_models/color_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/size_utils.dart';
 import 'package:random_please/utils/widget_layout_render_helper.dart';
-import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/widgets/common/history_widget.dart';
+import 'package:random_please/providers/history_provider.dart';
 
 class ColorGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -69,11 +70,11 @@ class _ColorGeneratorScreenState extends ConsumerState<ColorGeneratorScreen>
   }
 
   String _getHexColor() {
-    final color = _viewModel.currentColor;
+    final colorValue = _viewModel.currentColor.toARGB32();
     if (_viewModel.state.withAlpha) {
-      return '#${color.value.toRadixString(16).padLeft(8, '0').toUpperCase()}';
+      return '#${colorValue.toRadixString(16).padLeft(8, '0').toUpperCase()}';
     } else {
-      return '#${(color.value & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+      return '#${(colorValue & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
     }
   }
 
@@ -243,8 +244,8 @@ class _ColorGeneratorScreenState extends ConsumerState<ColorGeneratorScreen>
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(),
-      historyEnabled: _viewModel.historyEnabled,
-      hasHistory: _viewModel.historyEnabled,
+      historyEnabled: ref.watch(historyEnabledProvider),
+      hasHistory: ref.watch(historyEnabledProvider),
       isEmbedded: widget.isEmbedded,
       title: loc.colorGenerator,
     );

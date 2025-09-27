@@ -12,8 +12,7 @@ import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/utils/widget_layout_render_helper.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
-import 'package:random_please/widgets/history_widget.dart';
-import 'package:random_please/providers/settings_provider.dart';
+import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/widgets/statistics/datetime_statistics_widget.dart';
 import 'package:random_please/utils/auto_scroll_helper.dart';
 import 'dart:math';
@@ -461,8 +460,8 @@ class _DateGeneratorScreenState extends ConsumerState<DateGeneratorScreen> {
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(),
-      historyEnabled: ref.watch(settingsProvider).saveRandomToolsState,
-      hasHistory: ref.watch(settingsProvider).saveRandomToolsState,
+      historyEnabled: ref.watch(historyEnabledProvider),
+      hasHistory: ref.watch(historyEnabledProvider),
       isEmbedded: widget.isEmbedded,
       title: loc.dateGenerator,
       scrollController: _scrollController,

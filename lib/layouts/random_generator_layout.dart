@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/services/generation_history_service.dart';
 import 'package:random_please/services/settings_service.dart';
+import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/utils/generic_dialog_utils.dart';
 import 'package:random_please/utils/localization_utils.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
@@ -78,7 +80,7 @@ class DoubleConfirmHelper {
 }
 
 /// Generic layout widget for all random generators to ensure consistency
-class RandomGeneratorLayout extends StatefulWidget {
+class RandomGeneratorLayout extends ConsumerStatefulWidget {
   final Widget generatorContent;
   final Widget? historyWidget;
   final bool historyEnabled;
@@ -99,10 +101,11 @@ class RandomGeneratorLayout extends StatefulWidget {
   });
 
   @override
-  State<RandomGeneratorLayout> createState() => _RandomGeneratorLayoutState();
+  ConsumerState<RandomGeneratorLayout> createState() =>
+      _RandomGeneratorLayoutState();
 }
 
-class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
+class _RandomGeneratorLayoutState extends ConsumerState<RandomGeneratorLayout>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _compactTabLayout = false;
@@ -110,8 +113,33 @@ class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _initializeTabController();
     _loadSettings();
+  }
+
+  void _initializeTabController() {
+    // Always create with 2 tabs, but we'll conditionally show TabBar/TabBarView
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  bool _shouldShowTabs() {
+    // Watch the actual provider to get real-time updates
+    final historyEnabled = ref.watch(historyEnabledProvider);
+    return historyEnabled && widget.hasHistory && widget.historyWidget != null;
+  }
+
+  @override
+  void didUpdateWidget(RandomGeneratorLayout oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Reset to first tab when switching between modes to avoid confusion
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted &&
+          !_tabController.indexIsChanging &&
+          _tabController.index != 0) {
+        _tabController.animateTo(0);
+      }
+    });
   }
 
   Future<void> _loadSettings() async {
@@ -137,9 +165,7 @@ class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
     Widget content;
 
     if (isLargeScreen) {
-      if (widget.historyEnabled &&
-          widget.hasHistory &&
-          widget.historyWidget != null) {
+      if (_shouldShowTabs()) {
         // Desktop with history: 3:2 ratio, history full height
         content = Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -187,9 +213,7 @@ class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
       }
     } else {
       // Mobile: Tab layout
-      if (widget.historyEnabled &&
-          widget.hasHistory &&
-          widget.historyWidget != null) {
+      if (_shouldShowTabs()) {
         final loc = AppLocalizations.of(context)!;
         content = Column(
           children: [
@@ -241,10 +265,7 @@ class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
     // Return either the content directly (if embedded) or wrapped in a Scaffold
     if (widget.isEmbedded) {
       // When embedded, wrap TabBar content in Material if needed
-      if (!isLargeScreen &&
-          widget.historyEnabled &&
-          widget.hasHistory &&
-          widget.historyWidget != null) {
+      if (!isLargeScreen && _shouldShowTabs()) {
         return Material(
           type: MaterialType.transparency,
           child: content,

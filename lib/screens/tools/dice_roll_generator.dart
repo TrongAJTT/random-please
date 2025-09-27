@@ -5,8 +5,9 @@ import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/view_models/dice_roll_generator_view_model.dart';
 import 'package:random_please/providers/dice_roll_generator_state_provider.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
-import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
+import 'package:random_please/providers/history_provider.dart';
 import 'dart:math' as math;
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/statistics/number_statistics_widget.dart';
@@ -282,8 +283,8 @@ class _DiceRollGeneratorScreenState
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _viewModel.historyEnabled,
-      hasHistory: _viewModel.historyEnabled,
+      historyEnabled: ref.watch(historyEnabledProvider),
+      hasHistory: ref.watch(historyEnabledProvider),
       isEmbedded: widget.isEmbedded,
       title: loc.rollDice,
       scrollController: _scrollController,

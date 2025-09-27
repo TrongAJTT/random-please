@@ -60,11 +60,15 @@ class UriUtils {
         } else {
           e = "There is no handler available, or that the application does not have permission to check. For example:\nOn recent versions of Android and iOS, this will always return false unless the application has been configuration to allow querying the system for launch support. See the README for details.\nOn web, this will always return false except for a few specific schemes that are always assumed to be supported (such as http(s)), as web pages are never allowed to query installed applications.";
         }
-        _handleErrorOpenUrl(e, url, context);
+        if (context.mounted) {
+          _handleErrorOpenUrl(e, url, context);
+        }
       }
     } catch (e) {
       // Handle error silently or show user-friendly message
-      _handleErrorOpenUrl(e, url, context);
+      if (context.mounted) {
+        _handleErrorOpenUrl(e, url, context);
+      }
     }
   }
 

@@ -4,12 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/providers/latin_letter_generator_state_provider.dart';
 import 'package:random_please/providers/history_provider.dart';
-import 'package:random_please/providers/settings_provider.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
-import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/utils/auto_scroll_helper.dart';
 import 'dart:math';
@@ -613,8 +612,8 @@ class _LatinLetterGeneratorScreenState
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: ref.watch(settingsProvider).saveRandomToolsState,
-      hasHistory: ref.watch(settingsProvider).saveRandomToolsState,
+      historyEnabled: ref.watch(historyEnabledProvider),
+      hasHistory: ref.watch(historyEnabledProvider),
       isEmbedded: widget.isEmbedded,
       title: loc.latinLetters,
       scrollController: _scrollController,

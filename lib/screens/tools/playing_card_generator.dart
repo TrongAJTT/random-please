@@ -9,10 +9,9 @@ import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/models/random_generator.dart';
 import 'package:random_please/providers/playing_cards_generator_state_provider.dart';
 import 'package:random_please/providers/history_provider.dart';
-import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/utils/auto_scroll_helper.dart';
-import 'package:random_please/providers/settings_provider.dart';
 import 'package:random_please/widgets/statistics/playing_card_statistics_widget.dart';
 
 class PlayingCardGeneratorScreen extends ConsumerStatefulWidget {
@@ -401,8 +400,8 @@ class _PlayingCardGeneratorScreenState
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: ref.watch(settingsProvider).saveRandomToolsState,
-      hasHistory: ref.watch(settingsProvider).saveRandomToolsState,
+      historyEnabled: ref.watch(historyEnabledProvider),
+      hasHistory: ref.watch(historyEnabledProvider),
       isEmbedded: widget.isEmbedded,
       title: loc.playingCards,
       scrollController: _scrollController,

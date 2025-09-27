@@ -9,10 +9,9 @@ import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/providers/lorem_ipsum_generator_state_provider.dart';
 import 'package:random_please/providers/history_provider.dart';
-import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/utils/auto_scroll_helper.dart';
-import 'package:random_please/providers/settings_provider.dart';
 import 'package:faker/faker.dart';
 
 class LoremIpsumGeneratorScreen extends ConsumerStatefulWidget {
@@ -659,8 +658,8 @@ class _LoremIpsumGeneratorScreenState
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: ref.watch(settingsProvider).saveRandomToolsState,
-      hasHistory: ref.watch(settingsProvider).saveRandomToolsState,
+      historyEnabled: ref.watch(historyEnabledProvider),
+      hasHistory: ref.watch(historyEnabledProvider),
       isEmbedded: widget.isEmbedded,
       title: loc.loremIpsumGenerator,
       scrollController: _scrollController,

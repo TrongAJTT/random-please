@@ -1,13 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
-import 'package:intl/intl.dart';
-import 'settings_service.dart';
 
 // Conditional imports for native platforms
-import 'dart:io' if (dart.library.html) 'dart:html' as io;
-import 'package:path_provider/path_provider.dart'
-    if (dart.library.html) 'dart:html' as path_provider;
 
 /// Unified App Logger with integrated file logging
 /// Features:
@@ -27,10 +22,10 @@ class AppLogger {
   late StreamSubscription _logSubscription;
   Timer? _dailyCleanupTimer;
 
-  bool _isInitialized = false;
+  final bool _isInitialized = false;
   final _logBuffer = StringBuffer();
   Timer? _flushTimer;
-  int _bufferSize = 0;
+  final int _bufferSize = 0;
 
   // Performance optimized constants
   static const int _maxBufferSize = 1024 * 8; // 8KB buffer

@@ -792,5 +792,7 @@
         "type": "int"
       }
     }
-  }
+  },
+  "remoteListTemplateSource": "Remote List Template Source",
+  "remoteListTemplateSourceDesc": "Manage cloud template sources for Pick From List"
 }

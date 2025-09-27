@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/providers/settings_provider.dart';
+import 'package:random_please/services/app_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -24,7 +25,7 @@ class TimeGeneratorStateManager extends StateNotifier<TimeGeneratorState> {
       }
     } catch (e) {
       // If loading fails, keep default state
-      print('Failed to load TimeGenerator state: $e');
+      logError('Failed to load TimeGenerator state: $e');
     }
   }
 
@@ -35,7 +36,7 @@ class TimeGeneratorStateManager extends StateNotifier<TimeGeneratorState> {
       final stateJson = json.encode(state.toJson());
       await prefs.setString(_stateKey, stateJson);
     } catch (e) {
-      print('Failed to save TimeGenerator state: $e');
+      logError('Failed to save TimeGenerator state: $e');
     }
   }
 

@@ -64,9 +64,11 @@ class SecurityManager extends ChangeNotifier {
       _isAuthenticated = true;
       notifyListeners();
       return true;
-    } else {
+    } else if (context.mounted) {
       // Security is enabled, need to authenticate
       return await authenticate(context, loc);
+    } else {
+      return false;
     }
   }
 

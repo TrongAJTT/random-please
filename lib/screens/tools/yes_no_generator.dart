@@ -5,8 +5,9 @@ import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/view_models/yes_no_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
-import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/providers/yes_no_generator_state_provider.dart';
+import 'package:random_please/providers/history_provider.dart';
 
 class YesNoGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -83,7 +84,6 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
     final loc = AppLocalizations.of(context)!;
     // Watch state changes to trigger rebuilds
     ref.watch(yesNoGeneratorStateManagerProvider);
-    ;
 
     final generatorContent = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -256,8 +256,8 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: true,
-      hasHistory: true,
+      historyEnabled: ref.watch(historyEnabledProvider),
+      hasHistory: ref.watch(historyEnabledProvider),
       isEmbedded: widget.isEmbedded,
       title: loc.yesNo,
     );

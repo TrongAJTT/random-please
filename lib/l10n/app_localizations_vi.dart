@@ -1763,4 +1763,11 @@ class AppLocalizationsVi extends AppLocalizations {
   String largeFileWarningMessage(int count) {
     return 'File này chứa $count dòng. Xử lý lượng dữ liệu lớn có thể gây chậm hoặc crash trên các máy cấu hình thấp. Bạn có muốn tiếp tục?';
   }
+
+  @override
+  String get remoteListTemplateSource => 'Nguồn mẫu danh sách từ xa';
+
+  @override
+  String get remoteListTemplateSourceDesc =>
+      'Quản lý các nguồn mẫu đám mây cho Chọn từ danh sách';
 }

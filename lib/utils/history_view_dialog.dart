@@ -44,7 +44,7 @@ class HistoryViewDialog {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -73,13 +73,13 @@ class HistoryViewDialog {
                       color: Theme.of(context)
                           .colorScheme
                           .outline
-                          .withOpacity(0.2),
+                          .withValues(alpha: 0.2),
                     ),
                     borderRadius: BorderRadius.circular(8),
                     color: Theme.of(context)
                         .colorScheme
-                        .surfaceVariant
-                        .withOpacity(0.3),
+                        .surfaceContainerHighest
+                        .withValues(alpha: 0.3),
                   ),
                   child: SingleChildScrollView(
                     child: _buildContentWidget(context, item),
@@ -148,10 +148,11 @@ class HistoryViewDialog {
             color: Theme.of(context)
                 .colorScheme
                 .secondaryContainer
-                .withOpacity(0.3),
+                .withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+              color:
+                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
             ),
           ),
           child: Row(
@@ -213,11 +214,14 @@ class HistoryViewDialog {
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color:
-                Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+            color: Theme.of(context)
+                .colorScheme
+                .surfaceContainerHighest
+                .withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(6),
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+              color:
+                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
             ),
           ),
           child: Row(

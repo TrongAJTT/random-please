@@ -6,8 +6,9 @@ import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/view_models/coin_flip_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
-import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/providers/coin_flip_generator_state_provider.dart';
+import 'package:random_please/providers/history_provider.dart';
 
 class CoinFlipGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -334,8 +335,8 @@ class _CoinFlipGeneratorScreenState
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: true,
-      hasHistory: true,
+      historyEnabled: ref.watch(historyEnabledProvider),
+      hasHistory: ref.watch(historyEnabledProvider),
       isEmbedded: widget.isEmbedded,
       title: loc.flipCoin,
     );

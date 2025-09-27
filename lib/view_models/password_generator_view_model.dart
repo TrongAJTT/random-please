@@ -207,8 +207,4 @@ class PasswordGeneratorViewModel extends ChangeNotifier {
     await loadHistory();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

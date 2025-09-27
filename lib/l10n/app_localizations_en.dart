@@ -1768,4 +1768,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String largeFileWarningMessage(int count) {
     return 'This file contains $count lines. Processing large amounts of data may cause slowdowns or crashes on low-end devices. Do you want to continue?';
   }
+
+  @override
+  String get remoteListTemplateSource => 'Remote List Template Source';
+
+  @override
+  String get remoteListTemplateSourceDesc =>
+      'Manage cloud template sources for Pick From List';
 }

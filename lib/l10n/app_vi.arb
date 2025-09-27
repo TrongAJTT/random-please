@@ -732,5 +732,7 @@
   "listNamingOptions": "Tùy Chọn Đặt Tên Danh Sách",
   "processingFile": "Đang xử lý file...",
   "largeFileWarning": "Cảnh Báo File Lớn",
-  "largeFileWarningMessage": "File này chứa {count} dòng. Xử lý lượng dữ liệu lớn có thể gây chậm hoặc crash trên các máy cấu hình thấp. Bạn có muốn tiếp tục?"
+  "largeFileWarningMessage": "File này chứa {count} dòng. Xử lý lượng dữ liệu lớn có thể gây chậm hoặc crash trên các máy cấu hình thấp. Bạn có muốn tiếp tục?",
+  "remoteListTemplateSource": "Nguồn mẫu danh sách từ xa",
+  "remoteListTemplateSourceDesc": "Quản lý các nguồn mẫu đám mây cho Chọn từ danh sách"
 }

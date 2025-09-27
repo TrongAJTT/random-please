@@ -8,8 +8,9 @@ import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
-import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/utils/auto_scroll_helper.dart';
+import 'package:random_please/providers/history_provider.dart';
 
 class PasswordGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -128,11 +129,13 @@ class _PasswordGeneratorScreenState
     final length = password.length;
 
     // Length scoring (NIST recommends ≥15 characters)
-    if (length >= 15)
+    if (length >= 15) {
       score += 3;
-    else if (length >= 12)
+    } else if (length >= 12) {
       score += 2;
-    else if (length >= 8) score += 1;
+    } else if (length >= 8) {
+      score += 1;
+    }
 
     // Character variety scoring
     bool hasLowercase = password.contains(RegExp(r'[a-z]'));
@@ -477,8 +480,8 @@ class _PasswordGeneratorScreenState
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _viewModel.historyEnabled,
-      hasHistory: _viewModel.historyEnabled,
+      historyEnabled: ref.watch(historyEnabledProvider),
+      hasHistory: ref.watch(historyEnabledProvider),
       isEmbedded: widget.isEmbedded,
       title: loc.passwordGenerator,
       scrollController: _scrollController,

@@ -229,8 +229,7 @@ class ListPickerGeneratorStateManager
       final trimmedValue = itemValue.trim();
       if (trimmedValue.isNotEmpty) {
         newItems.add(ListItem(
-          id: DateTime.now().millisecondsSinceEpoch.toString() +
-              '_${newItems.length}',
+          id: '${DateTime.now().millisecondsSinceEpoch}_${newItems.length}',
           value: trimmedValue,
           createdAt: DateTime.now(),
         ));

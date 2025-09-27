@@ -5,8 +5,9 @@ import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/view_models/rock_paper_scissors_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
-import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/providers/rock_paper_scissors_generator_state_provider.dart';
+import 'package:random_please/providers/history_provider.dart';
 
 class RockPaperScissorsGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -310,8 +311,8 @@ class _RockPaperScissorsGeneratorScreenState
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: true,
-      hasHistory: true,
+      historyEnabled: ref.watch(historyEnabledProvider),
+      hasHistory: ref.watch(historyEnabledProvider),
       isEmbedded: widget.isEmbedded,
       title: loc.rockPaperScissors,
     );

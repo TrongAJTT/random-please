@@ -13,13 +13,14 @@ import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/uni_route.dart';
-import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/view_models/list_picker_view_model.dart';
 import 'package:random_please/utils/auto_scroll_helper.dart';
 import 'package:random_please/services/cloud_template_service.dart';
 import 'package:random_please/widgets/holdable_button.dart';
 import 'package:random_please/widgets/tools/import_template_widget.dart';
 import 'package:random_please/widgets/tools/import_file_widget.dart';
+import 'package:random_please/providers/history_provider.dart';
 
 class ListPickerGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -1579,8 +1580,8 @@ class _ListPickerGeneratorScreenState
     final mainWidget = RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: _viewModel.historyEnabled,
-      hasHistory: _viewModel.historyEnabled,
+      historyEnabled: ref.watch(historyEnabledProvider),
+      hasHistory: ref.watch(historyEnabledProvider),
       isEmbedded: widget.isEmbedded,
       title: loc.listPicker,
       scrollController: _scrollController,

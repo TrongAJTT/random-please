@@ -55,8 +55,8 @@ class DateGeneratorNotifier extends StateNotifier<DateGeneratorViewState> {
           generatorState: DateGeneratorState.createDefault(),
           isBoxOpen: false,
           historyEnabled: false,
-          historyItems: [],
-          results: [],
+          historyItems: const [],
+          results: const [],
         )) {
     _init();
   }

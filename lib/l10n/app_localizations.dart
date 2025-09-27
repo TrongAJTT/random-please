@@ -3427,6 +3427,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This file contains {count} lines. Processing large amounts of data may cause slowdowns or crashes on low-end devices. Do you want to continue?'**
   String largeFileWarningMessage(int count);
+
+  /// No description provided for @remoteListTemplateSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote List Template Source'**
+  String get remoteListTemplateSource;
+
+  /// No description provided for @remoteListTemplateSourceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage cloud template sources for Pick From List'**
+  String get remoteListTemplateSourceDesc;
 }
 
 class _AppLocalizationsDelegate

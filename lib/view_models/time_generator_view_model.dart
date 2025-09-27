@@ -132,8 +132,4 @@ class TimeGeneratorViewModel extends ChangeNotifier {
         "${currentState.endMinute.toString().padLeft(2, '0')}";
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

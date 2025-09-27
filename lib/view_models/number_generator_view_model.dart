@@ -169,8 +169,4 @@ class NumberGeneratorViewModel extends ChangeNotifier {
     await loadHistory();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

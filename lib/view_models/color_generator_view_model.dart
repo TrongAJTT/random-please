@@ -85,29 +85,30 @@ class ColorGeneratorViewModel extends ChangeNotifier {
   // Helper methods from original screen
   String getHexColor() {
     final currentState = state;
+    final colorValue = _currentColor.toARGB32();
     if (currentState.withAlpha) {
-      return '#${_currentColor.value.toRadixString(16).padLeft(8, '0').toUpperCase()}';
+      return '#${colorValue.toRadixString(16).padLeft(8, '0').toUpperCase()}';
     } else {
-      return '#${(_currentColor.value & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+      return '#${(colorValue & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
     }
   }
 
   String getRgbColor() {
     final currentState = state;
     if (currentState.withAlpha) {
-      final alpha = (_currentColor.alpha / 255.0);
-      return 'rgba(${_currentColor.red}, ${_currentColor.green}, ${_currentColor.blue}, ${alpha.toStringAsFixed(2)})';
+      final alpha = (_currentColor.a / 255.0);
+      return 'rgba(${_currentColor.r}, ${_currentColor.g}, ${_currentColor.b}, ${alpha.toStringAsFixed(2)})';
     } else {
-      return 'rgb(${_currentColor.red}, ${_currentColor.green}, ${_currentColor.blue})';
+      return 'rgb(${_currentColor.r}, ${_currentColor.g}, ${_currentColor.b})';
     }
   }
 
   String getHslColor() {
     final currentState = state;
-    final hsl =
-        _rgbToHsl(_currentColor.red, _currentColor.green, _currentColor.blue);
+    final hsl = _rgbToHsl(
+        _currentColor.r as int, _currentColor.g as int, _currentColor.b as int);
     if (currentState.withAlpha) {
-      final alpha = (_currentColor.alpha / 255.0);
+      final alpha = (_currentColor.a / 255.0);
       return 'hsla(${hsl[0].round()}, ${(hsl[1] * 100).round()}%, ${(hsl[2] * 100).round()}%, ${alpha.toStringAsFixed(2)})';
     } else {
       return 'hsl(${hsl[0].round()}, ${(hsl[1] * 100).round()}%, ${(hsl[2] * 100).round()}%)';

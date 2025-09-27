@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:random_please/services/app_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/providers/settings_provider.dart';
@@ -52,7 +53,7 @@ class DateTimeGeneratorStateManager
           );
         }
       } catch (e) {
-        print('Error loading DateTimeGenerator state: $e');
+        logError('Error loading DateTimeGenerator state: $e');
         state = DateTimeGeneratorState.createDefault();
       }
     } else {

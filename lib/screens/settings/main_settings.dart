@@ -323,13 +323,13 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
         color: Theme.of(context).colorScheme.primary,
       ),
       title: Text(
-        'Remote List Template Source',
+        loc.remoteListTemplateSource,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w500,
             ),
       ),
       subtitle: Text(
-        'Manage cloud template sources for Pick From List',
+        loc.remoteListTemplateSourceDesc,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -349,7 +349,7 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
       UniRoute.navigate(
         context,
         UniRouteModel(
-          title: 'Remote List Template Source',
+          title: loc.remoteListTemplateSource,
           content: const RemoteListTemplateScreen(isEmbedded: true),
         ),
       );
@@ -402,218 +402,4 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
       ),
     );
   }
-
-  // Widget _buildExpandableLogSection(AppLocalizations loc) {
-  //   return ExpandableOptionCard(
-  //     initialExpanded: _logSectionExpanded,
-  //     onExpansionChanged: (isExpanded) {
-  //       setState(() => _logSectionExpanded = isExpanded);
-  //       if (isExpanded) {
-  //         _loadLogInfo();
-  //       }
-  //     },
-  //     option: OptionItem.withIcon(
-  //       value: null,
-  //       label: loc.logApplication,
-  //       subtitle: loc.logsManagement,
-  //       iconData: Icons.description_outlined,
-  //       iconSize: 20,
-  //       iconColor: Theme.of(context).colorScheme.primary,
-  //     ),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         // Log info
-  //         Row(
-  //           children: [
-  //             Icon(
-  //               Icons.info_outline,
-  //               size: 16,
-  //               color: Theme.of(context).colorScheme.onSurfaceVariant,
-  //             ),
-  //             const SizedBox(width: 8),
-  //             Text(
-  //               loc.statusInfo(_logInfo),
-  //               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-  //                     color: Theme.of(context).colorScheme.onSurfaceVariant,
-  //                   ),
-  //             ),
-  //           ],
-  //         ),
-  //         const SizedBox(height: 16),
-  //         _buildLogRetentionSettings(loc),
-  //         const SizedBox(height: 16),
-  //         _buildLogManagementButtons(loc),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildLogRetentionSettings(AppLocalizations loc) {
-  //   // Map retention days to slider index
-  //   final List<SliderOption<int>> logOptions = [
-  //     SliderOption(value: 5, label: loc.logRetentionDays(5)),
-  //     SliderOption(value: 10, label: loc.logRetentionDays(10)),
-  //     SliderOption(value: 15, label: loc.logRetentionDays(15)),
-  //     SliderOption(value: 20, label: loc.logRetentionDays(20)),
-  //     SliderOption(value: 25, label: loc.logRetentionDays(25)),
-  //     SliderOption(value: 30, label: loc.logRetentionDays(30)),
-  //     SliderOption(value: -1, label: loc.logRetentionForever),
-  //   ];
-
-  //   return OptionSlider<int>(
-  //     label: loc.logRetention,
-  //     subtitle: loc.logRetentionDescDetail,
-  //     icon: Icons.history,
-  //     currentValue: _logRetentionDays,
-  //     options: logOptions,
-  //     onChanged: (days) async {
-  //       setState(() => _logRetentionDays = days);
-  //       await _updateLogRetention(days);
-  //     },
-  //     layout: OptionSliderLayout.none,
-  //   );
-  // }
-
-  // Widget _buildLogManagementButtons(AppLocalizations loc) {
-  //   return Row(
-  //     children: [
-  //       Expanded(
-  //         child: OutlinedButton.icon(
-  //           icon: const Icon(Icons.visibility_outlined),
-  //           label: Text(loc.viewLogs),
-  //           style: OutlinedButton.styleFrom(
-  //             shape: RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(8)),
-  //             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-  //           ),
-  //           onPressed: _showLogViewer,
-  //         ),
-  //       ),
-  //       const SizedBox(width: 12),
-  //       Expanded(
-  //         child: OutlinedButton.icon(
-  //           icon: const Icon(Icons.delete_sweep_outlined),
-  //           label: Text(loc.clearLogs),
-  //           style: OutlinedButton.styleFrom(
-  //             shape: RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(8)),
-  //             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-  //           ),
-  //           onPressed: _forceCleanupLogs,
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  // void _showLogViewer() async {
-  //   final screenWidth = MediaQuery.of(context).size.width;
-
-  //   if (widget.isEmbedded && screenWidth >= 900) {
-  //     // If embedded in desktop view, show as dialog
-  //     await showDialog(
-  //       context: context,
-  //       builder: (context) => Dialog(
-  //         child: SizedBox(
-  //           width: MediaQuery.of(context).size.width * 0.8,
-  //           height: MediaQuery.of(context).size.height * 0.8,
-  //           child: const LogViewerScreen(isEmbedded: true),
-  //         ),
-  //       ),
-  //     );
-  //   } else {
-  //     // Mobile or standalone - navigate to full screen
-  //     Navigator.of(context).push(
-  //       MaterialPageRoute(
-  //         builder: (context) => const LogViewerScreen(),
-  //       ),
-  //     );
-  //   }
-  // }
-
-  // Future<void> _loadLogInfo() async {
-  //   if (!mounted) return;
-
-  //   final l10n = AppLocalizations.of(context)!;
-  //   if (mounted) {
-  //     setState(() {
-  //       _logInfo = l10n.calculating;
-  //     });
-  //   }
-
-  //   // Simulate loading time
-  //   await Future.delayed(const Duration(milliseconds: 500));
-
-  //   // This would load actual log information
-  //   // For now, just set some placeholder data
-  //   if (mounted) {
-  //     setState(() {
-  //       _logInfo = l10n.logsAvailable;
-  //     });
-  //   }
-  // }
-
-  // Future<void> _updateLogRetention(int days) async {
-  //   setState(() {
-  //     _logRetentionDays = days;
-  //   });
-  //   await SettingsService.updateLogRetentionDays(days);
-  // }
-
-  // Future<void> _forceCleanupLogs() async {
-  //   final l10n = AppLocalizations.of(context)!;
-
-  //   try {
-  //     // Show loading indicator
-  //     showDialog(
-  //       context: context,
-  //       barrierDismissible: false,
-  //       builder: (context) => AlertDialog(
-  //         content: Row(
-  //           children: [
-  //             const CircularProgressIndicator(),
-  //             const SizedBox(width: 16),
-  //             Expanded(child: Text(l10n.deletingOldLogs)),
-  //           ],
-  //         ),
-  //       ),
-  //     );
-
-  //     // Force cleanup
-  //     final deletedCount = await AppLogger.instance.forceCleanupNow();
-
-  //     // Close loading dialog
-  //     if (mounted) Navigator.of(context).pop();
-
-  //     // Pre-compute message
-  //     final message = deletedCount > 0
-  //         ? l10n.deletedOldLogFiles(deletedCount)
-  //         : l10n.noOldLogFilesToDelete;
-
-  //     // Show result
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: Text(message),
-  //           duration: const Duration(seconds: 3),
-  //         ),
-  //       );
-  //     }
-  //   } catch (e) {
-  //     // Close loading dialog
-  //     if (mounted) Navigator.of(context).pop();
-
-  //     // Show error
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: Text(l10n.errorDeletingLogs(e.toString())),
-  //           backgroundColor: Theme.of(context).colorScheme.error,
-  //           duration: const Duration(seconds: 3),
-  //         ),
-  //       );
-  //     }
-  //   }
-  // }
 }

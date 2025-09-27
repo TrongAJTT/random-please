@@ -51,7 +51,7 @@ class ColorGeneratorNotifier extends StateNotifier<ColorGeneratorViewState> {
           generatorState: ColorGeneratorState.createDefault(),
           isBoxOpen: false,
           historyEnabled: false,
-          historyItems: [],
+          historyItems: const [],
           currentColor: Colors.blue,
         )) {
     _init();
@@ -111,27 +111,29 @@ class ColorGeneratorNotifier extends StateNotifier<ColorGeneratorViewState> {
 
   // Helper methods from original screen
   String getHexColor() {
+    final colorValue = state.currentColor.toARGB32();
     if (state.generatorState.withAlpha) {
-      return '#${state.currentColor.value.toRadixString(16).padLeft(8, '0').toUpperCase()}';
+      return '#${colorValue.toRadixString(16).padLeft(8, '0').toUpperCase()}';
     } else {
-      return '#${(state.currentColor.value & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+      return '#${(colorValue & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
     }
   }
 
   String getRgbColor() {
+    final color = state.currentColor;
     if (state.generatorState.withAlpha) {
-      final alpha = (state.currentColor.alpha / 255.0);
-      return 'rgba(${state.currentColor.red}, ${state.currentColor.green}, ${state.currentColor.blue}, ${alpha.toStringAsFixed(2)})';
+      final alpha = (color.a / 255.0);
+      return 'rgba(${color.r}, ${color.g}, ${color.b}, ${alpha.toStringAsFixed(2)})';
     } else {
-      return 'rgb(${state.currentColor.red}, ${state.currentColor.green}, ${state.currentColor.blue})';
+      return 'rgb(${color.r}, ${color.g}, ${color.b})';
     }
   }
 
   String getHslColor() {
-    final hsl = _rgbToHsl(state.currentColor.red, state.currentColor.green,
-        state.currentColor.blue);
+    final color = state.currentColor;
+    final hsl = _rgbToHsl(color.r as int, color.g as int, color.b as int);
     if (state.generatorState.withAlpha) {
-      final alpha = (state.currentColor.alpha / 255.0);
+      final alpha = (color.a / 255.0);
       return 'hsla(${hsl[0].round()}, ${(hsl[1] * 100).round()}%, ${(hsl[2] * 100).round()}%, ${alpha.toStringAsFixed(2)})';
     } else {
       return 'hsl(${hsl[0].round()}, ${(hsl[1] * 100).round()}%, ${(hsl[2] * 100).round()}%)';

@@ -75,7 +75,8 @@ class ListTemplateSourceService {
           AppLogger.instance.info(
               'Successfully initialized ${data.length} default template sources');
         } else {
-          throw FormatException('Invalid response format from index endpoint');
+          throw const FormatException(
+              'Invalid response format from index endpoint');
         }
       } else {
         throw HttpException('Failed to fetch index: ${response.statusCode}');
@@ -218,7 +219,8 @@ class ListTemplateSourceService {
           AppLogger.instance
               .info('Successfully refreshed default template sources');
         } else {
-          throw FormatException('Invalid response format from index endpoint');
+          throw const FormatException(
+              'Invalid response format from index endpoint');
         }
       } else {
         throw HttpException('Failed to fetch index: ${response.statusCode}');
@@ -268,7 +270,7 @@ class ListTemplateSourceService {
         final templates = <CloudTemplate>[];
         for (final item in jsonData) {
           if (item is! Map<String, dynamic>) {
-            throw FormatException('Invalid template format');
+            throw const FormatException('Invalid template format');
           }
           templates.add(CloudTemplate.fromJson(item));
         }
@@ -329,7 +331,7 @@ class ListTemplateSourceService {
         final templates = <CloudTemplate>[];
         for (final item in jsonData) {
           if (item is! Map<String, dynamic>) {
-            throw FormatException('Invalid template format');
+            throw const FormatException('Invalid template format');
           }
           templates.add(CloudTemplate.fromJson(item));
         }

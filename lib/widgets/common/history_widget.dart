@@ -127,6 +127,28 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
                     color: isConfirmingDelete ? Colors.red.shade50 : null,
                     child: ListTile(
                       dense: true,
+                      leading: Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: item.isPinned
+                              ? Colors.yellow.shade600
+                              : colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${index + 1}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: item.isPinned
+                                  ? Colors.white
+                                  : colorScheme.onPrimaryContainer,
+                            ),
+                          ),
+                        ),
+                      ),
                       title: Text(
                         widget.maskFunction != null
                             ? widget.maskFunction!(item.value)
