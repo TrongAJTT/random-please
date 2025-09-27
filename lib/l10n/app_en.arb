@@ -29,6 +29,17 @@
   "randomToolsDesc": "History, status, tools arrangement, and data protection",
   "dataManager": "Data Managerment",
   "dataManagerDesc": "Delete all data",
+  "autoCleanupHistoryLimit": "Auto-cleanup old history records",
+  "autoCleanupHistoryLimitDesc": "Automatically delete oldest unpinned records when limit is exceeded",
+  "historyLimitRecords": "{count} records",
+  "@historyLimitRecords": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noLimit": "No limit",
   "system": "System",
   "light": "Light",
   "dark": "Dark",

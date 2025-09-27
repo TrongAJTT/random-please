@@ -272,6 +272,30 @@ abstract class AppLocalizations {
   /// **'Delete all data'**
   String get dataManagerDesc;
 
+  /// No description provided for @autoCleanupHistoryLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-cleanup old history records'**
+  String get autoCleanupHistoryLimit;
+
+  /// No description provided for @autoCleanupHistoryLimitDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically delete oldest unpinned records when limit is exceeded'**
+  String get autoCleanupHistoryLimitDesc;
+
+  /// No description provided for @historyLimitRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} records'**
+  String historyLimitRecords(int count);
+
+  /// No description provided for @noLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'No limit'**
+  String get noLimit;
+
   /// No description provided for @system.
   ///
   /// In en, this message translates to:

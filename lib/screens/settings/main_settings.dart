@@ -95,6 +95,10 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
     ref.read(autoScrollToResultsProvider.notifier).setEnabled(enabled);
   }
 
+  void _onAutoCleanupHistoryLimitChanged(int? limit) async {
+    ref.read(settingsProvider.notifier).setAutoCleanupHistoryLimit(limit);
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -208,6 +212,8 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        _buildAutoCleanupHistorySettings(loc),
+        const SizedBox(height: 24),
         SecuritySettingsWidget(loc: loc),
         const SizedBox(height: 24),
         _buildCacheManagement(loc),
@@ -258,6 +264,64 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
       value: autoScrollToResults,
       onChanged: _onAutoScrollToResultsChanged,
       decorator: switchDecorator,
+    );
+  }
+
+  Widget _buildAutoCleanupHistorySettings(AppLocalizations loc) {
+    final autoCleanupHistoryLimit = ref.watch(autoCleanupHistoryLimitProvider);
+
+    // Define the options with proper localization
+    final options = <int?>[20, 30, 40, 50, 60, 70, 80, 90, 100, null];
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(
+              loc.autoCleanupHistoryLimit,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+            subtitle: Text(
+              loc.autoCleanupHistoryLimitDesc,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Container(
+          width: 150,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color:
+                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int?>(
+              value: autoCleanupHistoryLimit,
+              isExpanded: true,
+              onChanged: _onAutoCleanupHistoryLimitChanged,
+              items: options.map<DropdownMenuItem<int?>>((int? value) {
+                return DropdownMenuItem<int?>(
+                  value: value,
+                  child: Text(
+                    value == null ? loc.noLimit : value.toString(),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

@@ -169,6 +169,20 @@ class SettingsService {
     return settings.autoScrollToResults;
   }
 
+  // Update auto cleanup history limit
+  static Future<void> updateAutoCleanupHistoryLimit(int? limit) async {
+    final currentSettings = await getSettings();
+    final updatedSettings =
+        currentSettings.copyWith(autoCleanupHistoryLimit: limit);
+    await saveSettings(updatedSettings);
+  }
+
+  // Get auto cleanup history limit
+  static Future<int?> getAutoCleanupHistoryLimit() async {
+    final settings = await getSettings();
+    return settings.autoCleanupHistoryLimit;
+  }
+
   // Clear settings (for testing or reset)
   static Future<void> clearSettings() async {
     await initialize();

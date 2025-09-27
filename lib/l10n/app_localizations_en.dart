@@ -99,6 +99,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dataManagerDesc => 'Delete all data';
 
   @override
+  String get autoCleanupHistoryLimit => 'Auto-cleanup old history records';
+
+  @override
+  String get autoCleanupHistoryLimitDesc =>
+      'Automatically delete oldest unpinned records when limit is exceeded';
+
+  @override
+  String historyLimitRecords(int count) {
+    return '$count records';
+  }
+
+  @override
+  String get noLimit => 'No limit';
+
+  @override
   String get system => 'System';
 
   @override

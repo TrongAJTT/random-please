@@ -100,6 +100,21 @@ class AppLocalizationsVi extends AppLocalizations {
   String get dataManagerDesc => 'Xóa toàn bộ dữ liệu';
 
   @override
+  String get autoCleanupHistoryLimit => 'Tự động xóa bản ghi lịch sử cũ';
+
+  @override
+  String get autoCleanupHistoryLimitDesc =>
+      'Tự động xóa bản ghi cũ nhất (không ghim) khi vượt ngưỡng';
+
+  @override
+  String historyLimitRecords(int count) {
+    return '$count bản ghi';
+  }
+
+  @override
+  String get noLimit => 'Không giới hạn';
+
+  @override
   String get system => 'Theo hệ thống';
 
   @override

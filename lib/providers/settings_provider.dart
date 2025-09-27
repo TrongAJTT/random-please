@@ -9,22 +9,27 @@ class SettingsState {
   final ThemeMode themeMode;
   final Locale locale;
   final bool saveRandomToolsState;
+  final int? autoCleanupHistoryLimit;
 
   const SettingsState({
     required this.themeMode,
     required this.locale,
     required this.saveRandomToolsState,
+    this.autoCleanupHistoryLimit,
   });
 
   SettingsState copyWith({
     ThemeMode? themeMode,
     Locale? locale,
     bool? saveRandomToolsState,
+    int? autoCleanupHistoryLimit,
   }) {
     return SettingsState(
       themeMode: themeMode ?? this.themeMode,
       locale: locale ?? this.locale,
       saveRandomToolsState: saveRandomToolsState ?? this.saveRandomToolsState,
+      autoCleanupHistoryLimit:
+          autoCleanupHistoryLimit ?? this.autoCleanupHistoryLimit,
     );
   }
 }
@@ -36,6 +41,7 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
           themeMode: ThemeMode.system,
           locale: Locale('en'),
           saveRandomToolsState: false,
+          autoCleanupHistoryLimit: null,
         )) {
     // Auto-load settings on initialization
     loadSettings();
@@ -57,10 +63,15 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     final saveRandomToolsState =
         await SettingsService.getSaveRandomToolsState();
 
+    // Load auto cleanup history limit
+    final autoCleanupHistoryLimit =
+        await SettingsService.getAutoCleanupHistoryLimit();
+
     state = state.copyWith(
       themeMode: themeMode,
       locale: locale,
       saveRandomToolsState: saveRandomToolsState,
+      autoCleanupHistoryLimit: autoCleanupHistoryLimit,
     );
   }
 
@@ -80,6 +91,11 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     await SettingsService.updateSaveRandomToolsState(enabled);
     state = state.copyWith(saveRandomToolsState: enabled);
   }
+
+  Future<void> setAutoCleanupHistoryLimit(int? limit) async {
+    await SettingsService.updateAutoCleanupHistoryLimit(limit);
+    state = state.copyWith(autoCleanupHistoryLimit: limit);
+  }
 }
 
 // Provider for settings
@@ -92,4 +108,10 @@ final settingsProvider =
 final saveRandomToolsStateProvider = Provider<bool>((ref) {
   final settingsState = ref.watch(settingsProvider);
   return settingsState.saveRandomToolsState;
+});
+
+// Provider for autoCleanupHistoryLimit
+final autoCleanupHistoryLimitProvider = Provider<int?>((ref) {
+  final settingsState = ref.watch(settingsProvider);
+  return settingsState.autoCleanupHistoryLimit;
 });

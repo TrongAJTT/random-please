@@ -27,13 +27,14 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       remoteListTemplateCustomSource: (fields[7] as List).cast<String>(),
       remoteListTemplateDefaultState: fields[8] as bool,
       autoScrollToResults: fields[9] as bool,
+      autoCleanupHistoryLimit: fields[10] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, SettingsModel obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.fetchTimeoutSeconds)
       ..writeByte(1)
@@ -53,7 +54,9 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       ..writeByte(8)
       ..write(obj.remoteListTemplateDefaultState)
       ..writeByte(9)
-      ..write(obj.autoScrollToResults);
+      ..write(obj.autoScrollToResults)
+      ..writeByte(10)
+      ..write(obj.autoCleanupHistoryLimit);
   }
 
   @override

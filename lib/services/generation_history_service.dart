@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'hive_service.dart';
+import 'settings_service.dart';
 
 class GenerationHistoryItem {
   final String value;
@@ -125,10 +126,8 @@ class GenerationHistoryService {
         return b.timestamp.compareTo(a.timestamp);
       });
 
-      // Keep only the latest items
-      if (history.length > maxHistoryItems) {
-        history.removeRange(maxHistoryItems, history.length);
-      }
+      // Auto-cleanup based on user settings
+      await _autoCleanupHistory(history);
 
       // Encrypt and save to Hive
       final jsonList = history.map((item) => item.toJson()).toList();
@@ -340,6 +339,57 @@ class GenerationHistoryService {
       return totalSize;
     } catch (e) {
       return 0;
+    }
+  }
+
+  /// Auto-cleanup history based on user settings
+  /// Removes oldest unpinned items when the limit is exceeded
+  static Future<void> _autoCleanupHistory(
+      List<GenerationHistoryItem> history) async {
+    try {
+      // Import SettingsService to get the user's auto-cleanup limit
+      final limit = await SettingsService.getAutoCleanupHistoryLimit();
+
+      // If no limit is set (null), fallback to default maxHistoryItems
+      final effectiveLimit = limit ?? maxHistoryItems;
+
+      if (history.length <= effectiveLimit) {
+        return; // No cleanup needed
+      }
+
+      // Separate pinned and unpinned items
+      final pinnedItems = history.where((item) => item.isPinned).toList();
+      final unpinnedItems = history.where((item) => !item.isPinned).toList();
+
+      // Calculate how many items need to be removed
+      final totalExcess = history.length - effectiveLimit;
+
+      // Only remove unpinned items
+      if (unpinnedItems.length > totalExcess) {
+        // Remove oldest unpinned items
+        unpinnedItems
+            .sort((a, b) => a.timestamp.compareTo(b.timestamp)); // Oldest first
+        unpinnedItems.removeRange(0, totalExcess.toInt());
+      } else {
+        // Remove all unpinned items if needed
+        unpinnedItems.clear();
+      }
+
+      // Rebuild the history with remaining items
+      history.clear();
+      history.addAll([...pinnedItems, ...unpinnedItems]);
+
+      // Re-sort: pinned items first, then by timestamp
+      history.sort((a, b) {
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        return b.timestamp.compareTo(a.timestamp);
+      });
+    } catch (e) {
+      // Silently fail and fallback to default behavior
+      if (history.length > maxHistoryItems) {
+        history.removeRange(maxHistoryItems, history.length);
+      }
     }
   }
 }
