@@ -104,6 +104,18 @@ abstract class AppLocalizations {
   /// **'Random Please'**
   String get title;
 
+  /// No description provided for @helpAndGuides.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & User Guides'**
+  String get helpAndGuides;
+
+  /// No description provided for @pressBackAgainToExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Press back again to exit'**
+  String get pressBackAgainToExit;
+
   /// No description provided for @appVersion.
   ///
   /// In en, this message translates to:
@@ -1513,12 +1525,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Thank you for your support!'**
   String get thanksForUrSupport;
-
-  /// No description provided for @pressBackAgainToExit.
-  ///
-  /// In en, this message translates to:
-  /// **'Press back again to exit the app'**
-  String get pressBackAgainToExit;
 
   /// No description provided for @checkingForUpdates.
   ///

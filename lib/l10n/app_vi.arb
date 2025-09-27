@@ -1,6 +1,8 @@
 {
   "@@locale": "vi",
   "title": "Random Please",
+  "helpAndGuides": "Trợ giúp & Hướng dẫn",
+  "pressBackAgainToExit": "Nhấn back lần nữa để thoát",
   "appVersion": "Phiên bản Ứng dụng",
   "versionType": "Loại Phiên bản",
   "versionTypeDev": "Phát triển",
@@ -285,7 +287,7 @@
   "thanksDonors": "Cảm ơn những người ủng hộ!",
   "thanksDonorsDesc": "Đặc biệt cảm ơn những người ủng hộ đã hỗ trợ phát triển ứng dụng này. Những đóng góp của bạn giúp chúng tôi tiếp tục cải thiện và duy trì dự án.",
   "thanksForUrSupport": "Cảm ơn sự hỗ trợ của bạn!",
-  "pressBackAgainToExit": "Nhấn quay lại lần nữa để thoát ứng dụng",
+  "pressBackAgainToExit": "Nhấn quay lại lần nữa để thoát",
 
   "checkingForUpdates": "Đang kiểm tra cập nhật...",
   "noNewUpdates": "Không có cập nhật mới",

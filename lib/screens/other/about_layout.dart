@@ -153,7 +153,8 @@ class _AboutLayoutState extends State<AboutLayout> {
             title: Text(l10n.termsOfUse),
             subtitle: Text(l10n.termsOfUseView),
             trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () => UriUtils.launchInBrowser(termsOfUseUrl, context),
+            onTap: () => UriUtils.viewUniUrl(
+                context: context, url: termsOfUseUrl, confirmExit: true),
           ),
         ],
       ),

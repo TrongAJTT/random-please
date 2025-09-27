@@ -1,6 +1,8 @@
 {
   "@@locale": "en",
   "title": "Random Please",
+  "helpAndGuides": "Help & User Guides",
+  "pressBackAgainToExit": "Press back again to exit",
   "appVersion": "App Version",
   "versionType": "Version Type",
   "versionTypeDev": "Development",
@@ -319,7 +321,7 @@
   "thanksDonors": "Thank You, Supporters!",
   "thanksDonorsDesc": "Special thanks to our supporters who support the development of this app. Your contributions help us keep improving and maintaining the project.",
   "thanksForUrSupport": "Thank you for your support!",
-  "pressBackAgainToExit": "Press back again to exit the app",
+  "pressBackAgainToExit": "Press back again to exit",
 
   "checkingForUpdates": "Checking for updates...",
   "noNewUpdates": "No new updates",

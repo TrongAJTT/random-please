@@ -12,6 +12,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get title => 'Random Please';
 
   @override
+  String get helpAndGuides => 'Trợ giúp & Hướng dẫn';
+
+  @override
+  String get pressBackAgainToExit => 'Nhấn quay lại lần nữa để thoát';
+
+  @override
   String get appVersion => 'Phiên bản Ứng dụng';
 
   @override
@@ -748,9 +754,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get thanksForUrSupport => 'Cảm ơn sự hỗ trợ của bạn!';
-
-  @override
-  String get pressBackAgainToExit => 'Nhấn quay lại lần nữa để thoát ứng dụng';
 
   @override
   String get checkingForUpdates => 'Đang kiểm tra cập nhật...';

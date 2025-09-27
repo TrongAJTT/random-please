@@ -135,15 +135,17 @@ class UriUtils {
   }
 
   /// Universal URL viewer - opens in browser on desktop, in-app browser on mobile
-  static Future<void> viewUniUrl(
-    BuildContext context,
-    String url,
-  ) async {
+  static Future<void> viewUniUrl({
+    required BuildContext context,
+    required String url,
+    bool confirmExit = false,
+  }) async {
     if (isMobileContext(context) && (Platform.isAndroid || Platform.isIOS)) {
       // Mobile: Navigate to in-app browser screen
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => InAppBrowserScreen(url: url),
+          builder: (context) =>
+              InAppBrowserScreen(url: url, confirmExit: confirmExit),
         ),
       );
     } else {

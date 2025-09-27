@@ -12,6 +12,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get title => 'Random Please';
 
   @override
+  String get helpAndGuides => 'Help & User Guides';
+
+  @override
+  String get pressBackAgainToExit => 'Press back again to exit';
+
+  @override
   String get appVersion => 'App Version';
 
   @override
@@ -751,9 +757,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get thanksForUrSupport => 'Thank you for your support!';
-
-  @override
-  String get pressBackAgainToExit => 'Press back again to exit the app';
 
   @override
   String get checkingForUpdates => 'Checking for updates...';

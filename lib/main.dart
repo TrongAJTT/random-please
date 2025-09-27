@@ -7,6 +7,7 @@ import 'package:random_please/providers/settings_provider.dart';
 import 'package:random_please/screens/other/about_layout.dart';
 import 'package:random_please/services/version_check_service.dart';
 import 'package:random_please/utils/variables_utils.dart';
+import 'package:random_please/utils/url_utils.dart';
 import 'package:random_please/variables.dart';
 import 'package:random_please/widgets/generic/uni_route.dart';
 import 'package:random_please/services/hive_service.dart';
@@ -353,6 +354,14 @@ class _HomePageState extends State<HomePage> with WindowListener {
             );
           },
         ),
+      IconButtonListItem(
+        icon: Icons.help_outline,
+        label: loc.helpAndGuides,
+        onPressed: () {
+          UriUtils.viewUniUrl(
+              context: context, url: appGuidesUrl, confirmExit: true);
+        },
+      ),
       IconButtonListItem(
         icon: Icons.info_outline,
         label: loc.about,

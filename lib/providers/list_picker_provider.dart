@@ -59,7 +59,10 @@ class ListPickerNotifier extends StateNotifier<ListPickerGeneratorState> {
 
   void toggleListManagerCollapse() {
     state = state.copyWith(
-      isListManagerCollapsed: !state.isListManagerCollapsed,
+      listManagerExpandState:
+          state.listManagerExpandState == ListManagerExpandState.expanded
+              ? ListManagerExpandState.collapsed
+              : ListManagerExpandState.expanded,
       lastUpdated: DateTime.now(),
     );
     saveState();

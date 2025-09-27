@@ -417,8 +417,8 @@ class _ListTemplateFetchLayoutState
                         IconButton(
                           icon: const Icon(Icons.open_in_browser),
                           onPressed: () => UriUtils.viewUniUrl(
-                            context,
-                            sourceRequest.url,
+                            context: context,
+                            url: sourceRequest.url,
                           ),
                           tooltip: loc.viewSourceUrl,
                         ),

@@ -243,8 +243,8 @@ class _RemoteListTemplateScreenState
 
   void _viewSource(ListTemplateSource source) async {
     await UriUtils.viewUniUrl(
-      context,
-      source.url,
+      context: context,
+      url: source.url,
     );
   }
 
@@ -538,8 +538,8 @@ class _RemoteListTemplateScreenState
 
   void _showHelp() async {
     await UriUtils.viewUniUrl(
-      context,
-      listPickerTemplateHelpUrl,
+      context: context,
+      url: listPickerTemplateHelpUrl,
     );
   }
 
