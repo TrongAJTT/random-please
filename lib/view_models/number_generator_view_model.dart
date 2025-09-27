@@ -124,16 +124,14 @@ class NumberGeneratorViewModel extends ChangeNotifier {
             .saveStateOnGenerate();
       }
 
-      // Save to history as a single string
+      // Save to history using new standardized encoding
       if (_historyEnabled) {
-        final resultString = results.join(', ');
         if (_ref != null) {
           await _ref!
               .read(historyProvider.notifier)
-              .addHistoryItem(resultString, historyType);
+              .addHistoryItems(results, historyType);
         } else {
-          await GenerationHistoryService.addHistoryItem(
-              resultString, historyType);
+          await GenerationHistoryService.addHistoryItems(results, historyType);
           await loadHistory();
         }
       }
@@ -168,5 +166,4 @@ class NumberGeneratorViewModel extends ChangeNotifier {
     await GenerationHistoryService.togglePinHistoryItem(historyType, index);
     await loadHistory();
   }
-
 }

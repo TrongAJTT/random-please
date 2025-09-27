@@ -112,22 +112,156 @@ class HistoryViewDialog {
 
   static Widget _buildContentWidget(
       BuildContext context, GenerationHistoryItem item) {
-    final content = item.value;
+    try {
+      // Try to decode the item first using the new system
+      final decodedItems = GenerationHistoryService.decodeHistoryItem(item);
 
-    // Check if content looks like team results (contains "Team 1:", "Team 2:", etc.)
-    if (content.contains(RegExp(r'Team \d+:'))) {
-      return _buildTeamResults(context, content);
+      if (decodedItems.length == 1) {
+        // Single item - show as plain text
+        return SelectableText(
+          decodedItems.first,
+          style: Theme.of(context).textTheme.bodyLarge,
+        );
+      } else {
+        // Multiple items - check if they look like team results
+        if (decodedItems.any((item) => item.contains(RegExp(r'Team \d+:')))) {
+          return _buildTeamResultsFromDecoded(context, decodedItems);
+        } else {
+          return _buildListResultsFromDecoded(context, decodedItems);
+        }
+      }
+    } catch (e) {
+      // Fallback to original logic if decoding fails
+      final content = item.value;
+
+      // Check if content looks like team results (contains "Team 1:", "Team 2:", etc.)
+      if (content.contains(RegExp(r'Team \d+:'))) {
+        return _buildTeamResults(context, content);
+      }
+
+      // Check if content is a list (contains commas or newlines)
+      if (content.contains(',') || content.contains('\n')) {
+        return _buildListResults(context, content);
+      }
+
+      // Default: show as plain text
+      return SelectableText(
+        content,
+        style: Theme.of(context).textTheme.bodyLarge,
+      );
     }
+  }
 
-    // Check if content is a list (contains commas or newlines)
-    if (content.contains(',') || content.contains('\n')) {
-      return _buildListResults(context, content);
-    }
+  static Widget _buildTeamResultsFromDecoded(
+      BuildContext context, List<String> teams) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: teams.asMap().entries.map((entry) {
+        final index = entry.key;
+        final team = entry.value;
 
-    // Default: show as plain text
-    return SelectableText(
-      content,
-      style: Theme.of(context).textTheme.bodyLarge,
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Theme.of(context)
+                .colorScheme
+                .secondaryContainer
+                .withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color:
+                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+            ),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    '${index + 1}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: SelectableText(
+                  team,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  static Widget _buildListResultsFromDecoded(
+      BuildContext context, List<String> items) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: items.asMap().entries.map((entry) {
+        final index = entry.key;
+        final item = entry.value;
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: Theme.of(context)
+                .colorScheme
+                .surfaceVariant
+                .withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(
+              color:
+                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    '${index + 1}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: SelectableText(
+                  item,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 

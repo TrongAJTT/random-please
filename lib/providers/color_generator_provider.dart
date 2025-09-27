@@ -98,13 +98,10 @@ class ColorGeneratorNotifier extends StateNotifier<ColorGeneratorViewState> {
         withAlpha: state.generatorState.withAlpha);
     state = state.copyWith(currentColor: newColor);
 
-    // Save to history if enabled
+    // Save to history if enabled using new standardized encoding
     if (state.historyEnabled) {
       String colorText = getHexColor();
-      await GenerationHistoryService.addHistoryItem(
-        colorText,
-        historyType,
-      );
+      await GenerationHistoryService.addHistoryItems([colorText], historyType);
       await loadHistory();
     }
   }

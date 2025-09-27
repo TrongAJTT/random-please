@@ -81,15 +81,12 @@ class LatinLetterGeneratorViewModel extends ChangeNotifier {
         includeLowercase: _state.includeLowercase,
         allowDuplicates: _state.allowDuplicates,
       );
-      
+
       _results = lettersString.split('');
 
-      // Save to history if enabled
+      // Save to history if enabled using new standardized encoding
       if (_historyEnabled && _results.isNotEmpty) {
-        await GenerationHistoryService.addHistoryItem(
-          _results.join(''),
-          historyType,
-        );
+        await GenerationHistoryService.addHistoryItems(_results, historyType);
         await loadHistory(); // Refresh history
       }
 

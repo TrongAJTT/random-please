@@ -128,17 +128,15 @@ class DiceRollGeneratorNotifier
 
     state = state.copyWith(results: results);
 
-    // Save to history if enabled
+    // Save to history if enabled using new standardized encoding
     if (state.historyEnabled) {
       final total = results.fold(0, (sum, value) => sum + value);
       final resultString = results.length == 1
           ? results.first.toString()
           : '${results.join(' + ')} = $total';
 
-      await GenerationHistoryService.addHistoryItem(
-        resultString,
-        historyType,
-      );
+      await GenerationHistoryService.addHistoryItems(
+          [resultString], historyType);
       await loadHistory(); // Refresh history
     }
   }

@@ -60,11 +60,19 @@ class HistoryNotifier extends StateNotifier<HistoryState> {
     state = state.copyWith(historyByType: newHistoryMap);
   }
 
-  // Add new history item
+  // Add new history item (legacy method for backward compatibility)
   Future<void> addHistoryItem(String value, String type) async {
     if (!state.isHistoryEnabled) return;
 
     await GenerationHistoryService.addHistoryItem(value, type);
+    await loadHistoryForType(type);
+  }
+
+  // Add list of items to history using new standardized encoding
+  Future<void> addHistoryItems(List<String> items, String type) async {
+    if (!state.isHistoryEnabled) return;
+
+    await GenerationHistoryService.addHistoryItems(items, type);
     await loadHistoryForType(type);
   }
 

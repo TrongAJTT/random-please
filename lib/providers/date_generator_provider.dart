@@ -158,12 +158,10 @@ class DateGeneratorNotifier extends StateNotifier<DateGeneratorViewState> {
 
     state = state.copyWith(results: resultList);
 
-    // Save to history if enabled
+    // Save to history if enabled using new standardized encoding
     if (state.historyEnabled && state.results.isNotEmpty) {
-      await GenerationHistoryService.addHistoryItem(
-        state.results.join(', '),
-        historyType,
-      );
+      await GenerationHistoryService.addHistoryItems(
+          state.results, historyType);
       await loadHistory();
     }
   }

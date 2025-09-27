@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'hive_service.dart';
 import 'settings_service.dart';
+import 'history_data_encoder.dart';
 
 class GenerationHistoryItem {
   final String value;
@@ -140,6 +141,49 @@ class GenerationHistoryService {
     }
   }
 
+  /// Add a list of items to history using the new standardized encoding
+  static Future<void> addHistoryItems(List<String> items, String type) async {
+    final enabled = await isHistoryEnabled();
+    if (!enabled || items.isEmpty) return;
+
+    try {
+      // Encode the list using the new encoding system
+      final encodedValue = HistoryDataEncoder.encodeList(items);
+
+      final box = HiveService.historyBox;
+      final history = await getHistory(type);
+
+      // Add new item at the beginning
+      final newItem = GenerationHistoryItem(
+        value: encodedValue,
+        timestamp: DateTime.now(),
+        type: type,
+        isPinned: false, // New items are not pinned by default
+      );
+
+      history.insert(0, newItem);
+
+      // Sort history: pinned items first, then by timestamp
+      history.sort((a, b) {
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        return b.timestamp.compareTo(a.timestamp);
+      });
+
+      // Auto-cleanup based on user settings
+      await _autoCleanupHistory(history);
+
+      // Encrypt and save to Hive
+      final jsonList = history.map((item) => item.toJson()).toList();
+      final jsonString = json.encode(jsonList);
+      final encryptedData = _encrypt(jsonString);
+
+      await box.put('${_historyKey}_$type', encryptedData);
+    } catch (e) {
+      // Silently fail to avoid breaking the app
+    }
+  }
+
   /// Get history for a specific type
   static Future<List<GenerationHistoryItem>> getHistory(String type) async {
     final enabled = await isHistoryEnabled();
@@ -171,6 +215,57 @@ class GenerationHistoryService {
     } catch (e) {
       // If parsing fails, return empty list
       return [];
+    }
+  }
+
+  /// Get decoded history items for a specific type
+  /// Returns a list of decoded items for each history entry
+  static Future<List<List<String>>> getDecodedHistory(String type) async {
+    final history = await getHistory(type);
+    return history.map((item) {
+      try {
+        // Try to decode as new format first
+        if (item.value.isValidEncodedHistory) {
+          return item.value.fromEncodedHistory();
+        } else {
+          // Fallback to legacy format - try to split by common separators
+          if (item.value.contains('; ')) {
+            return item.value.split('; ');
+          } else if (item.value.contains(', ')) {
+            return item.value.split(', ');
+          } else {
+            return [item.value]; // Single item
+          }
+        }
+      } catch (e) {
+        // If decoding fails, return the original value as single item
+        return [item.value];
+      }
+    }).toList();
+  }
+
+  /// Check if a history item uses the new encoding format
+  static bool isEncodedHistoryItem(GenerationHistoryItem item) {
+    return item.value.isValidEncodedHistory;
+  }
+
+  /// Decode a single history item
+  static List<String> decodeHistoryItem(GenerationHistoryItem item) {
+    try {
+      if (item.value.isValidEncodedHistory) {
+        return item.value.fromEncodedHistory();
+      } else {
+        // Fallback to legacy format
+        if (item.value.contains('; ')) {
+          return item.value.split('; ');
+        } else if (item.value.contains(', ')) {
+          return item.value.split(', ');
+        } else {
+          return [item.value];
+        }
+      }
+    } catch (e) {
+      return [item.value];
     }
   }
 

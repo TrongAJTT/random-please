@@ -243,10 +243,9 @@ class ListPickerNotifier extends StateNotifier<ListPickerGeneratorState> {
 
     _results = results;
 
-    // Save to history if enabled
+    // Save to history if enabled using new standardized encoding
     if (_historyEnabled && _results.isNotEmpty) {
-      await GenerationHistoryService.addHistoryItem(
-          _results.join('; '), historyType);
+      await GenerationHistoryService.addHistoryItems(_results, historyType);
       await loadHistory();
     }
   }

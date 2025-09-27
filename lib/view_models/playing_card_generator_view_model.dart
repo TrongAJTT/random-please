@@ -13,7 +13,8 @@ class PlayingCardGeneratorViewModel extends ChangeNotifier {
   bool _isBoxOpen = false;
   bool _historyEnabled = false;
   List<GenerationHistoryItem> _historyItems = [];
-  List<PlayingCard> _generatedCards = []; // Use PlayingCard from RandomGenerator
+  List<PlayingCard> _generatedCards =
+      []; // Use PlayingCard from RandomGenerator
 
   // Getters
   PlayingCardGeneratorState get state => _state;
@@ -70,13 +71,12 @@ class PlayingCardGeneratorViewModel extends ChangeNotifier {
         allowDuplicates: _state.allowDuplicates,
       );
 
-      // Save to history if enabled (match original screen logic)
+      // Save to history if enabled using new standardized encoding
       if (_historyEnabled && _generatedCards.isNotEmpty) {
-        final cardStrings = _generatedCards.map((card) => card.toString()).toList();
-        await GenerationHistoryService.addHistoryItem(
-          cardStrings.join(', '),
-          historyType,
-        );
+        final cardStrings =
+            _generatedCards.map((card) => card.toString()).toList();
+        await GenerationHistoryService.addHistoryItems(
+            cardStrings, historyType);
         await loadHistory();
       }
 

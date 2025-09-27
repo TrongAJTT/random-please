@@ -153,14 +153,14 @@ class PasswordGeneratorViewModel extends ChangeNotifier {
           .saveStateOnGenerate();
     }
 
-    // Save to history if enabled
+    // Save to history if enabled using new standardized encoding
     if (_historyEnabled && _result.isNotEmpty) {
       if (_ref != null) {
         await _ref!
             .read(historyProvider.notifier)
-            .addHistoryItem(_result, historyType);
+            .addHistoryItems([_result], historyType);
       } else {
-        await GenerationHistoryService.addHistoryItem(_result, historyType);
+        await GenerationHistoryService.addHistoryItems([_result], historyType);
         await loadHistory();
       }
     }
@@ -206,5 +206,4 @@ class PasswordGeneratorViewModel extends ChangeNotifier {
     await GenerationHistoryService.togglePinHistoryItem(historyType, index);
     await loadHistory();
   }
-
 }

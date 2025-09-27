@@ -252,11 +252,11 @@ class ListPickerViewModel extends ChangeNotifier {
     _results = results;
     notifyListeners();
 
-    // Save to history if enabled using HistoryProvider
+    // Save to history if enabled using new standardized encoding
     if (_historyEnabled && _results.isNotEmpty && _ref != null) {
       await _ref!
           .read(historyProvider.notifier)
-          .addHistoryItem(_results.join(', '), historyType);
+          .addHistoryItems(_results, historyType);
     }
   }
 

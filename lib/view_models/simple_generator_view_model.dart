@@ -89,12 +89,9 @@ class SimpleGeneratorViewModel extends ChangeNotifier {
         break;
     }
 
-    // Save to history if enabled
+    // Save to history if enabled using new standardized encoding
     if (_historyEnabled && _result.isNotEmpty) {
-      await GenerationHistoryService.addHistoryItem(
-        _result,
-        historyType,
-      );
+      await GenerationHistoryService.addHistoryItems([_result], historyType);
     }
 
     notifyListeners();

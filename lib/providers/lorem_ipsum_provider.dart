@@ -113,11 +113,15 @@ class LoremIpsumNotifier extends StateNotifier<LoremIpsumGeneratorState> {
       // Apply start with lorem if enabled
       if (state.startWithLorem && _result.isNotEmpty) {
         _result = _modifyStartWithLorem(_result);
+        // Also modify the individual items
+        generatedContent = _modifyStartWithLoremItems(generatedContent);
       }
 
-      // Save to history if enabled
-      if (_historyEnabled && _result.isNotEmpty) {
-        await GenerationHistoryService.addHistoryItem(_result, historyType);
+      // Save to history if enabled using new standardized encoding
+      // Save individual items instead of joined result
+      if (_historyEnabled && generatedContent.isNotEmpty) {
+        await GenerationHistoryService.addHistoryItems(
+            generatedContent, historyType);
         await loadHistory();
       }
     } catch (e) {
@@ -139,6 +143,31 @@ class LoremIpsumNotifier extends StateNotifier<LoremIpsumGeneratorState> {
       return text.replaceFirst(RegExp(r'^\S+'), 'Lorem');
     }
     return text;
+  }
+
+  List<String> _modifyStartWithLoremItems(List<String> items) {
+    if (items.isEmpty) return items;
+
+    final modifiedItems = List<String>.from(items);
+
+    if (state.generationType == LoremIpsumType.words) {
+      // For words, modify first two items
+      if (modifiedItems.isNotEmpty) {
+        modifiedItems[0] = 'Lorem';
+        if (modifiedItems.length > 1) {
+          modifiedItems[1] = 'ipsum';
+        }
+      }
+    } else if (state.generationType == LoremIpsumType.sentences ||
+        state.generationType == LoremIpsumType.paragraphs) {
+      // For sentences/paragraphs, modify first item
+      if (modifiedItems.isNotEmpty) {
+        modifiedItems[0] =
+            modifiedItems[0].replaceFirst(RegExp(r'^\S+'), 'Lorem');
+      }
+    }
+
+    return modifiedItems;
   }
 
   void clearResult() {

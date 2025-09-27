@@ -150,9 +150,7 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
                         ),
                       ),
                       title: Text(
-                        widget.maskFunction != null
-                            ? widget.maskFunction!(item.value)
-                            : item.value,
+                        _getDisplayText(item),
                         style: TextStyle(
                           fontSize: 14,
                           color:
@@ -164,7 +162,7 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       subtitle: Text(
-                        _formatDate(item.timestamp),
+                        _getSubtitleText(item),
                         style: TextStyle(
                           fontSize: 12,
                           color:
@@ -448,5 +446,49 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
 
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  String _getDisplayText(GenerationHistoryItem item) {
+    try {
+      // Try to decode the item first
+      final decodedItems = GenerationHistoryService.decodeHistoryItem(item);
+
+      if (decodedItems.length == 1) {
+        // Single item - apply mask function if available
+        final displayText = widget.maskFunction != null
+            ? widget.maskFunction!(decodedItems.first)
+            : decodedItems.first;
+        return displayText;
+      } else {
+        // Multiple items - show first few items without count suffix
+        final firstItems = decodedItems.take(3).toList();
+        return firstItems.join(', ');
+      }
+    } catch (e) {
+      // Fallback to original value if decoding fails
+      return widget.maskFunction != null
+          ? widget.maskFunction!(item.value)
+          : item.value;
+    }
+  }
+
+  String _getSubtitleText(GenerationHistoryItem item) {
+    try {
+      // Try to decode the item first
+      final decodedItems = GenerationHistoryService.decodeHistoryItem(item);
+
+      final timestamp = _formatDate(item.timestamp);
+
+      if (decodedItems.length > 1) {
+        // Multiple items - show count after timestamp
+        return '$timestamp • ${decodedItems.length} items';
+      } else {
+        // Single item - show only timestamp
+        return timestamp;
+      }
+    } catch (e) {
+      // Fallback to timestamp only if decoding fails
+      return _formatDate(item.timestamp);
+    }
   }
 }
