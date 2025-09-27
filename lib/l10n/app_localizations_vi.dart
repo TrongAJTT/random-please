@@ -411,7 +411,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get yesNo => 'Có hay Không?';
 
   @override
-  String get yesNoDesc => 'Nhận quyết định có/không nhanh chóng';
+  String get yesNoDesc => 'Quyết định Có hoặc Không ngẫu nhiên';
 
   @override
   String get flipCoin => 'Tung đồng xu';
@@ -498,7 +498,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get timeGeneratorDesc => 'Tạo thời gian trong ngày ngẫu nhiên';
 
   @override
-  String get startTime => 'Giờ bắt đầu';
+  String get startTime => 'Thời điểm bắt đầu';
 
   @override
   String get endTime => 'Giờ kết thúc';
@@ -1785,4 +1785,40 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get remoteListTemplateSourceDesc =>
       'Quản lý các nguồn mẫu đám mây cho Chọn từ danh sách';
+
+  @override
+  String get yesNoGenerator => 'Máy tạo Có/Không';
+
+  @override
+  String get yesNoGeneratorDesc => 'Tạo câu trả lời Có hoặc Không ngẫu nhiên';
+
+  @override
+  String get counterMode => 'Chế độ bộ đếm';
+
+  @override
+  String get counterModeDesc => 'Theo dõi thống kê kết quả Có/Không';
+
+  @override
+  String get batchCount => 'Số lượng hàng loạt';
+
+  @override
+  String get batchCountDesc => 'Số lượng kết quả tạo cùng lúc';
+
+  @override
+  String get counterStatistics => 'Thống kê bộ đếm';
+
+  @override
+  String get totalGenerations => 'Tổng số lần tạo';
+
+  @override
+  String get yesCount => 'Số lần Có';
+
+  @override
+  String get noCount => 'Số lần Không';
+
+  @override
+  String get yesPercentage => 'Tỷ lệ Có';
+
+  @override
+  String get noPercentage => 'Tỷ lệ Không';
 }

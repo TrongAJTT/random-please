@@ -70,11 +70,7 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.history,
-                size: 48,
-                color: colorScheme.outline,
-              ),
+              Icon(Icons.history, size: 48, color: colorScheme.outline),
               const SizedBox(height: 16),
               Text(
                 loc.noHistoryYet,
@@ -100,27 +96,26 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  widget.title,
-                  style: textTheme.titleMedium,
-                ),
+                Text(widget.title, style: textTheme.titleMedium),
                 _buildClearButton(),
               ],
             ),
             const SizedBox(height: 12),
-            Expanded(
+            Flexible(
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: historyItems.length,
                 itemBuilder: (context, index) {
                   final item = historyItems[index];
-                  final isConfirmingDelete =
-                      confirmDeleteIndices.contains(index);
+                  final isConfirmingDelete = confirmDeleteIndices.contains(
+                    index,
+                  );
 
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 2),
@@ -170,7 +165,10 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
                         ),
                       ),
                       trailing: _buildTrailingActions(
-                          index, item, isConfirmingDelete),
+                        index,
+                        item,
+                        isConfirmingDelete,
+                      ),
                       onTap: isConfirmingDelete
                           ? null
                           : () => _showItemDetailDialog(item),
@@ -229,7 +227,9 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
   }
 
   Future<void> _showClearAllHistoryDialog(
-      BuildContext context, bool containsPinned) async {
+    BuildContext context,
+    bool containsPinned,
+  ) async {
     final historyNotifier = ref.read(historyProvider.notifier);
     final confirmed = await GenericDialogUtils.showSimpleGenericClearDialog(
       context: context,
@@ -256,7 +256,10 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
 
     if (confirmed == true && context.mounted) {
       SnackBarUtils.showTyped(
-          context, loc.pinnedHistoryCleared, SnackBarType.info);
+        context,
+        loc.pinnedHistoryCleared,
+        SnackBarType.info,
+      );
     }
   }
 
@@ -271,7 +274,10 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
 
     if (confirmed == true && context.mounted) {
       SnackBarUtils.showTyped(
-          context, loc.unpinnedHistoryCleared, SnackBarType.info);
+        context,
+        loc.unpinnedHistoryCleared,
+        SnackBarType.info,
+      );
     }
   }
 
@@ -281,13 +287,15 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
       position: position,
       actions: [
         OptionItem(
-            label: loc.clearUnpinnedItems,
-            icon: Icons.delete,
-            onTap: () => _showClearUnpinnedHistoryDialog(context)),
+          label: loc.clearUnpinnedItems,
+          icon: Icons.delete,
+          onTap: () => _showClearUnpinnedHistoryDialog(context),
+        ),
         OptionItem(
-            label: loc.clearPinnedItems,
-            icon: Icons.push_pin,
-            onTap: () => _showClearPinnedHistoryDialog(context)),
+          label: loc.clearPinnedItems,
+          icon: Icons.push_pin,
+          onTap: () => _showClearPinnedHistoryDialog(context),
+        ),
         OptionItem(
           label: loc.clearAllItems,
           icon: Icons.delete_sweep,
@@ -299,7 +307,10 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
   }
 
   Widget _buildTrailingActions(
-      int index, dynamic item, bool isConfirmingDelete) {
+    int index,
+    dynamic item,
+    bool isConfirmingDelete,
+  ) {
     if (isConfirmingDelete) {
       // Trong trạng thái confirm delete, chỉ hiển thị nút xóa thay thế menu
       return IconButton(
@@ -343,8 +354,10 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
               children: [
                 const Icon(Icons.delete, size: 16, color: Colors.red),
                 const SizedBox(width: 8),
-                Text(loc.deleteHistoryItem,
-                    style: const TextStyle(color: Colors.red)),
+                Text(
+                  loc.deleteHistoryItem,
+                  style: const TextStyle(color: Colors.red),
+                ),
               ],
             ),
           ),
@@ -438,10 +451,7 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
   }
 
   void _showItemDetailDialog(GenerationHistoryItem item) {
-    HistoryViewDialog.show(
-      context: context,
-      item: item,
-    );
+    HistoryViewDialog.show(context: context, item: item);
   }
 
   String _formatDate(DateTime date) {
@@ -460,9 +470,8 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
             : decodedItems.first;
         return displayText;
       } else {
-        // Multiple items - show first few items without count suffix
-        final firstItems = decodedItems.take(3).toList();
-        return firstItems.join(', ');
+        // Multiple items - show all items
+        return decodedItems.join(', ');
       }
     } catch (e) {
       // Fallback to original value if decoding fails

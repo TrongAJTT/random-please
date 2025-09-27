@@ -425,6 +425,52 @@ class DiceRollGeneratorStateAdapter
           typeId == other.typeId;
 }
 
+class YesNoGeneratorStateAdapter extends TypeAdapter<YesNoGeneratorState> {
+  @override
+  final int typeId = 70;
+
+  @override
+  YesNoGeneratorState read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return YesNoGeneratorState(
+      skipAnimation: fields[0] as bool,
+      counterMode: fields[1] as bool,
+      batchCount: fields[2] as int,
+      result: fields[3] as String,
+      lastUpdated: fields[4] as DateTime,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, YesNoGeneratorState obj) {
+    writer
+      ..writeByte(5)
+      ..writeByte(0)
+      ..write(obj.skipAnimation)
+      ..writeByte(1)
+      ..write(obj.counterMode)
+      ..writeByte(2)
+      ..write(obj.batchCount)
+      ..writeByte(3)
+      ..write(obj.result)
+      ..writeByte(4)
+      ..write(obj.lastUpdated);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is YesNoGeneratorStateAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
 class SimpleGeneratorStateAdapter extends TypeAdapter<SimpleGeneratorState> {
   @override
   final int typeId = 69;
@@ -594,7 +640,7 @@ class SimpleGeneratorStateModelAdapter
 class LoremIpsumGeneratorStateAdapter
     extends TypeAdapter<LoremIpsumGeneratorState> {
   @override
-  final int typeId = 70;
+  final int typeId = 74;
 
   @override
   LoremIpsumGeneratorState read(BinaryReader reader) {

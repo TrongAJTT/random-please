@@ -805,5 +805,19 @@
     }
   },
   "remoteListTemplateSource": "Remote List Template Source",
-  "remoteListTemplateSourceDesc": "Manage cloud template sources for Pick From List"
+  "remoteListTemplateSourceDesc": "Manage cloud template sources for Pick From List",
+  "yesNoGenerator": "Yes/No Generator",
+  "yesNoGeneratorDesc": "Generate random Yes or No answers",
+  "yesNoDesc": "Random Yes or No decision",
+  "counterMode": "Counter Mode",
+  "counterModeDesc": "Track statistics of Yes/No results",
+  "batchCount": "Batch Count",
+  "batchCountDesc": "Number of results to generate at once",
+  "counterStatistics": "Counter Statistics",
+  "startTime": "Start Time",
+  "totalGenerations": "Total Generations",
+  "yesCount": "Yes Count",
+  "noCount": "No Count",
+  "yesPercentage": "Yes Percentage",
+  "noPercentage": "No Percentage"
 }

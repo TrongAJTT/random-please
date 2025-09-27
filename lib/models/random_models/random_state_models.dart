@@ -638,6 +638,115 @@ class DiceRollGeneratorState {
   }
 }
 
+// Yes/No Generator State with Counter Mode
+@HiveType(typeId: 70)
+class YesNoGeneratorState {
+  @HiveField(0)
+  final bool skipAnimation;
+  @HiveField(1)
+  final bool counterMode;
+  @HiveField(2)
+  final int batchCount;
+  @HiveField(3)
+  final String result;
+  @HiveField(4)
+  final DateTime lastUpdated;
+
+  YesNoGeneratorState({
+    this.skipAnimation = false,
+    this.counterMode = false,
+    this.batchCount = 5,
+    this.result = '',
+    required this.lastUpdated,
+  });
+
+  static YesNoGeneratorState createDefault() {
+    return YesNoGeneratorState(
+      skipAnimation: false,
+      counterMode: false,
+      batchCount: 5,
+      result: '',
+      lastUpdated: DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'skipAnimation': skipAnimation,
+      'counterMode': counterMode,
+      'batchCount': batchCount,
+      'result': result,
+      'lastUpdated': lastUpdated.toIso8601String(),
+    };
+  }
+
+  factory YesNoGeneratorState.fromJson(Map<String, dynamic> json) {
+    return YesNoGeneratorState(
+      skipAnimation: json['skipAnimation'] ?? false,
+      counterMode: json['counterMode'] ?? false,
+      batchCount: json['batchCount'] ?? 5,
+      result: json['result'] ?? '',
+      lastUpdated: json['lastUpdated'] != null
+          ? DateTime.parse(json['lastUpdated'])
+          : DateTime.now(),
+    );
+  }
+
+  YesNoGeneratorState copyWith({
+    bool? skipAnimation,
+    bool? counterMode,
+    int? batchCount,
+    String? result,
+  }) {
+    return YesNoGeneratorState(
+      skipAnimation: skipAnimation ?? this.skipAnimation,
+      counterMode: counterMode ?? this.counterMode,
+      batchCount: batchCount ?? this.batchCount,
+      result: result ?? this.result,
+      lastUpdated: DateTime.now(),
+    );
+  }
+}
+
+// Counter Statistics Model (not saved to state)
+class CounterStatistics {
+  final DateTime startTime;
+  final int totalGenerations;
+  final int yesCount;
+  final int noCount;
+
+  CounterStatistics({
+    required this.startTime,
+    this.totalGenerations = 0,
+    this.yesCount = 0,
+    this.noCount = 0,
+  });
+
+  CounterStatistics copyWith({
+    DateTime? startTime,
+    int? totalGenerations,
+    int? yesCount,
+    int? noCount,
+  }) {
+    return CounterStatistics(
+      startTime: startTime ?? this.startTime,
+      totalGenerations: totalGenerations ?? this.totalGenerations,
+      yesCount: yesCount ?? this.yesCount,
+      noCount: noCount ?? this.noCount,
+    );
+  }
+
+  double get yesPercentage {
+    if (totalGenerations == 0) return 0.0;
+    return (yesCount / totalGenerations) * 100;
+  }
+
+  double get noPercentage {
+    if (totalGenerations == 0) return 0.0;
+    return (noCount / totalGenerations) * 100;
+  }
+}
+
 // Simple state for tools with minimal options (Yes/No, Coin Flip, Rock Paper Scissors)
 @HiveType(typeId: 69)
 class SimpleGeneratorState {
@@ -880,7 +989,7 @@ enum LoremIpsumType {
   paragraphs
 }
 
-@HiveType(typeId: 70)
+@HiveType(typeId: 74)
 class LoremIpsumGeneratorState {
   @HiveField(0)
   final LoremIpsumType generationType;

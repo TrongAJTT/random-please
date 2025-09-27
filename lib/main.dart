@@ -136,6 +136,9 @@ void _registerRandomStateAdapters() {
     Hive.registerAdapter(SimpleGeneratorStateAdapter());
   }
   if (!Hive.isAdapterRegistered(70)) {
+    Hive.registerAdapter(YesNoGeneratorStateAdapter());
+  }
+  if (!Hive.isAdapterRegistered(74)) {
     Hive.registerAdapter(LoremIpsumGeneratorStateAdapter());
   }
   if (!Hive.isAdapterRegistered(76)) {

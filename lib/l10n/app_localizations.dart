@@ -869,7 +869,7 @@ abstract class AppLocalizations {
   /// No description provided for @yesNoDesc.
   ///
   /// In en, this message translates to:
-  /// **'Get quick yes or no decisions'**
+  /// **'Random Yes or No decision'**
   String get yesNoDesc;
 
   /// No description provided for @flipCoin.
@@ -3463,6 +3463,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manage cloud template sources for Pick From List'**
   String get remoteListTemplateSourceDesc;
+
+  /// No description provided for @yesNoGenerator.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes/No Generator'**
+  String get yesNoGenerator;
+
+  /// No description provided for @yesNoGeneratorDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate random Yes or No answers'**
+  String get yesNoGeneratorDesc;
+
+  /// No description provided for @counterMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Counter Mode'**
+  String get counterMode;
+
+  /// No description provided for @counterModeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Track statistics of Yes/No results'**
+  String get counterModeDesc;
+
+  /// No description provided for @batchCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch Count'**
+  String get batchCount;
+
+  /// No description provided for @batchCountDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of results to generate at once'**
+  String get batchCountDesc;
+
+  /// No description provided for @counterStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Counter Statistics'**
+  String get counterStatistics;
+
+  /// No description provided for @totalGenerations.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Generations'**
+  String get totalGenerations;
+
+  /// No description provided for @yesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes Count'**
+  String get yesCount;
+
+  /// No description provided for @noCount.
+  ///
+  /// In en, this message translates to:
+  /// **'No Count'**
+  String get noCount;
+
+  /// No description provided for @yesPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes Percentage'**
+  String get yesPercentage;
+
+  /// No description provided for @noPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'No Percentage'**
+  String get noPercentage;
 }
 
 class _AppLocalizationsDelegate

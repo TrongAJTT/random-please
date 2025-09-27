@@ -738,5 +738,19 @@
   "largeFileWarning": "Cảnh Báo File Lớn",
   "largeFileWarningMessage": "File này chứa {count} dòng. Xử lý lượng dữ liệu lớn có thể gây chậm hoặc crash trên các máy cấu hình thấp. Bạn có muốn tiếp tục?",
   "remoteListTemplateSource": "Nguồn mẫu danh sách từ xa",
-  "remoteListTemplateSourceDesc": "Quản lý các nguồn mẫu đám mây cho Chọn từ danh sách"
+  "remoteListTemplateSourceDesc": "Quản lý các nguồn mẫu đám mây cho Chọn từ danh sách",
+  "yesNoGenerator": "Máy tạo Có/Không",
+  "yesNoGeneratorDesc": "Tạo câu trả lời Có hoặc Không ngẫu nhiên",
+  "yesNoDesc": "Quyết định Có hoặc Không ngẫu nhiên",
+  "counterMode": "Chế độ bộ đếm",
+  "counterModeDesc": "Theo dõi thống kê kết quả Có/Không",
+  "batchCount": "Số lượng hàng loạt",
+  "batchCountDesc": "Số lượng kết quả tạo cùng lúc",
+  "counterStatistics": "Thống kê bộ đếm",
+  "startTime": "Thời điểm bắt đầu",
+  "totalGenerations": "Tổng số lần tạo",
+  "yesCount": "Số lần Có",
+  "noCount": "Số lần Không",
+  "yesPercentage": "Tỷ lệ Có",
+  "noPercentage": "Tỷ lệ Không"
 }

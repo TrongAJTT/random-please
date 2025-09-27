@@ -411,7 +411,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get yesNo => 'Yes or No?';
 
   @override
-  String get yesNoDesc => 'Get quick yes or no decisions';
+  String get yesNoDesc => 'Random Yes or No decision';
 
   @override
   String get flipCoin => 'Flip Coin';
@@ -1790,4 +1790,40 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get remoteListTemplateSourceDesc =>
       'Manage cloud template sources for Pick From List';
+
+  @override
+  String get yesNoGenerator => 'Yes/No Generator';
+
+  @override
+  String get yesNoGeneratorDesc => 'Generate random Yes or No answers';
+
+  @override
+  String get counterMode => 'Counter Mode';
+
+  @override
+  String get counterModeDesc => 'Track statistics of Yes/No results';
+
+  @override
+  String get batchCount => 'Batch Count';
+
+  @override
+  String get batchCountDesc => 'Number of results to generate at once';
+
+  @override
+  String get counterStatistics => 'Counter Statistics';
+
+  @override
+  String get totalGenerations => 'Total Generations';
+
+  @override
+  String get yesCount => 'Yes Count';
+
+  @override
+  String get noCount => 'No Count';
+
+  @override
+  String get yesPercentage => 'Yes Percentage';
+
+  @override
+  String get noPercentage => 'No Percentage';
 }
