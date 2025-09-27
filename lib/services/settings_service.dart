@@ -155,6 +155,20 @@ class SettingsService {
     return settings.compactTabLayout;
   }
 
+  // Update auto scroll to results
+  static Future<void> updateAutoScrollToResults(bool enabled) async {
+    final currentSettings = await getSettings();
+    final updatedSettings =
+        currentSettings.copyWith(autoScrollToResults: enabled);
+    await saveSettings(updatedSettings);
+  }
+
+  // Get auto scroll to results
+  static Future<bool> getAutoScrollToResults() async {
+    final settings = await getSettings();
+    return settings.autoScrollToResults;
+  }
+
   // Clear settings (for testing or reset)
   static Future<void> clearSettings() async {
     await initialize();

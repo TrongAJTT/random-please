@@ -85,6 +85,7 @@ class RandomGeneratorLayout extends StatefulWidget {
   final bool hasHistory;
   final bool isEmbedded;
   final String title;
+  final ScrollController? scrollController;
 
   const RandomGeneratorLayout({
     super.key,
@@ -94,6 +95,7 @@ class RandomGeneratorLayout extends StatefulWidget {
     required this.hasHistory,
     required this.isEmbedded,
     required this.title,
+    this.scrollController,
   });
 
   @override
@@ -146,6 +148,7 @@ class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
             Expanded(
               flex: 3,
               child: SingleChildScrollView(
+                controller: widget.scrollController,
                 // padding: const EdgeInsets.all(16),
                 child: widget.generatorContent,
               ),
@@ -172,6 +175,7 @@ class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
             Expanded(
               flex: 3,
               child: SingleChildScrollView(
+                controller: widget.scrollController,
                 padding: const EdgeInsets.all(16),
                 child: widget.generatorContent,
               ),
@@ -210,6 +214,7 @@ class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
                 children: [
                   // Random tab
                   SingleChildScrollView(
+                    controller: widget.scrollController,
                     padding: const EdgeInsets.all(0),
                     child: widget.generatorContent,
                   ),
@@ -226,6 +231,7 @@ class _RandomGeneratorLayoutState extends State<RandomGeneratorLayout>
       } else {
         // Mobile without history: Single scroll view
         content = SingleChildScrollView(
+          controller: widget.scrollController,
           padding: const EdgeInsets.all(0),
           child: widget.generatorContent,
         );

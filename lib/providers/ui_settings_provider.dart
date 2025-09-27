@@ -56,6 +56,33 @@ class CompactTabLayoutNotifier extends StateNotifier<bool> {
   }
 }
 
+// Provider for auto scroll to results state
+class AutoScrollToResultsNotifier extends StateNotifier<bool> {
+  AutoScrollToResultsNotifier() : super(true) {
+    _loadState();
+  }
+
+  Future<void> _loadState() async {
+    try {
+      final enabled = await SettingsService.getAutoScrollToResults();
+      if (mounted) {
+        state = enabled;
+      }
+    } catch (e) {
+      // Handle error gracefully, keep default state
+    }
+  }
+
+  Future<void> loadState() async {
+    await _loadState();
+  }
+
+  Future<void> setEnabled(bool enabled) async {
+    state = enabled;
+    await SettingsService.updateAutoScrollToResults(enabled);
+  }
+}
+
 // Provider instances
 final historyEnabledProvider =
     StateNotifierProvider<HistoryEnabledNotifier, bool>((ref) {
@@ -65,4 +92,9 @@ final historyEnabledProvider =
 final compactTabLayoutProvider =
     StateNotifierProvider<CompactTabLayoutNotifier, bool>((ref) {
   return CompactTabLayoutNotifier();
+});
+
+final autoScrollToResultsProvider =
+    StateNotifierProvider<AutoScrollToResultsNotifier, bool>((ref) {
+  return AutoScrollToResultsNotifier();
 });

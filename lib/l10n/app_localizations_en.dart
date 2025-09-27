@@ -441,6 +441,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get letterCount => 'Number of letters';
 
   @override
+  String get letters => 'letters';
+
+  @override
   String get playingCards => 'Playing Cards';
 
   @override
@@ -521,8 +524,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'Show result immediately without visual effects';
 
   @override
-  String latinLetterGenerationError(int count) {
-    return 'Cannot generate $count unique letters from the available set. Please reduce the count or allow duplicates.';
+  String latinLetterGenerationError(int count, int max) {
+    return 'Cannot generate $count unique letters. Maximum available: $max letters. Please reduce the count or allow duplicates.';
   }
 
   @override
@@ -762,6 +765,97 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkingForUpdates => 'Checking for updates...';
 
   @override
+  String get minimum => 'Min';
+
+  @override
+  String get maximum => 'Max';
+
+  @override
+  String get average => 'Avg';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get leastFrequent => 'Least';
+
+  @override
+  String get mostFrequent => 'Most';
+
+  @override
+  String get leastFrequentRank => 'Least frequent rank';
+
+  @override
+  String get mostFrequentRank => 'Most frequent rank';
+
+  @override
+  String get leastFrequentSuit => 'Least frequent suit';
+
+  @override
+  String get mostFrequentSuit => 'Most frequent suit';
+
+  @override
+  String get minGap => 'Min Gap';
+
+  @override
+  String get maxGap => 'Max Gap';
+
+  @override
+  String get statistics => 'Statistics';
+
+  @override
+  String get expandStatistics => 'Expand statistics';
+
+  @override
+  String get collapseStatistics => 'Collapse statistics';
+
+  @override
+  String get autoScrollToResults => 'Auto Scroll to Results';
+
+  @override
+  String get autoScrollToResultsDesc =>
+      'Automatically scroll down to show results after generation';
+
+  @override
+  String get earliest => 'Earliest';
+
+  @override
+  String get latest => 'Latest';
+
+  @override
+  String get shortestGap => 'Shortest Gap';
+
+  @override
+  String get longestGap => 'Longest Gap';
+
+  @override
+  String get characters => 'Characters';
+
+  @override
+  String get dice => 'Dice';
+
+  @override
+  String get passwordStrength => 'Password Strength';
+
+  @override
+  String get strengthWeak => 'Weak';
+
+  @override
+  String get strengthFair => 'Fair';
+
+  @override
+  String get strengthGood => 'Good';
+
+  @override
+  String get strengthStrong => 'Strong';
+
+  @override
+  String get strengthVeryStrong => 'Very Strong';
+
+  @override
+  String get clickToCopy => 'Click to copy';
+
+  @override
   String get noNewUpdates => 'No new updates';
 
   @override
@@ -774,9 +868,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get newVersionAvailable => 'New version available';
-
-  @override
-  String get latest => 'Latest';
 
   @override
   String currentVersion(String version) {

@@ -932,6 +932,12 @@ abstract class AppLocalizations {
   /// **'Number of letters'**
   String get letterCount;
 
+  /// No description provided for @letters.
+  ///
+  /// In en, this message translates to:
+  /// **'letters'**
+  String get letters;
+
   /// No description provided for @playingCards.
   ///
   /// In en, this message translates to:
@@ -1091,8 +1097,8 @@ abstract class AppLocalizations {
   /// No description provided for @latinLetterGenerationError.
   ///
   /// In en, this message translates to:
-  /// **'Cannot generate {count} unique letters from the available set. Please reduce the count or allow duplicates.'**
-  String latinLetterGenerationError(int count);
+  /// **'Cannot generate {count} unique letters. Maximum available: {max} letters. Please reduce the count or allow duplicates.'**
+  String latinLetterGenerationError(int count, int max);
 
   /// No description provided for @saveGenerationHistory.
   ///
@@ -1532,6 +1538,186 @@ abstract class AppLocalizations {
   /// **'Checking for updates...'**
   String get checkingForUpdates;
 
+  /// No description provided for @minimum.
+  ///
+  /// In en, this message translates to:
+  /// **'Min'**
+  String get minimum;
+
+  /// No description provided for @maximum.
+  ///
+  /// In en, this message translates to:
+  /// **'Max'**
+  String get maximum;
+
+  /// No description provided for @average.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg'**
+  String get average;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @leastFrequent.
+  ///
+  /// In en, this message translates to:
+  /// **'Least'**
+  String get leastFrequent;
+
+  /// No description provided for @mostFrequent.
+  ///
+  /// In en, this message translates to:
+  /// **'Most'**
+  String get mostFrequent;
+
+  /// No description provided for @leastFrequentRank.
+  ///
+  /// In en, this message translates to:
+  /// **'Least frequent rank'**
+  String get leastFrequentRank;
+
+  /// No description provided for @mostFrequentRank.
+  ///
+  /// In en, this message translates to:
+  /// **'Most frequent rank'**
+  String get mostFrequentRank;
+
+  /// No description provided for @leastFrequentSuit.
+  ///
+  /// In en, this message translates to:
+  /// **'Least frequent suit'**
+  String get leastFrequentSuit;
+
+  /// No description provided for @mostFrequentSuit.
+  ///
+  /// In en, this message translates to:
+  /// **'Most frequent suit'**
+  String get mostFrequentSuit;
+
+  /// No description provided for @minGap.
+  ///
+  /// In en, this message translates to:
+  /// **'Min Gap'**
+  String get minGap;
+
+  /// No description provided for @maxGap.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Gap'**
+  String get maxGap;
+
+  /// No description provided for @statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statistics;
+
+  /// No description provided for @expandStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand statistics'**
+  String get expandStatistics;
+
+  /// No description provided for @collapseStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse statistics'**
+  String get collapseStatistics;
+
+  /// No description provided for @autoScrollToResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Scroll to Results'**
+  String get autoScrollToResults;
+
+  /// No description provided for @autoScrollToResultsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically scroll down to show results after generation'**
+  String get autoScrollToResultsDesc;
+
+  /// No description provided for @earliest.
+  ///
+  /// In en, this message translates to:
+  /// **'Earliest'**
+  String get earliest;
+
+  /// No description provided for @latest.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest'**
+  String get latest;
+
+  /// No description provided for @shortestGap.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortest Gap'**
+  String get shortestGap;
+
+  /// No description provided for @longestGap.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest Gap'**
+  String get longestGap;
+
+  /// No description provided for @characters.
+  ///
+  /// In en, this message translates to:
+  /// **'Characters'**
+  String get characters;
+
+  /// No description provided for @dice.
+  ///
+  /// In en, this message translates to:
+  /// **'Dice'**
+  String get dice;
+
+  /// No description provided for @passwordStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Password Strength'**
+  String get passwordStrength;
+
+  /// No description provided for @strengthWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak'**
+  String get strengthWeak;
+
+  /// No description provided for @strengthFair.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair'**
+  String get strengthFair;
+
+  /// No description provided for @strengthGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get strengthGood;
+
+  /// No description provided for @strengthStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get strengthStrong;
+
+  /// No description provided for @strengthVeryStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Very Strong'**
+  String get strengthVeryStrong;
+
+  /// No description provided for @clickToCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Click to copy'**
+  String get clickToCopy;
+
   /// No description provided for @noNewUpdates.
   ///
   /// In en, this message translates to:
@@ -1555,12 +1741,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New version available'**
   String get newVersionAvailable;
-
-  /// No description provided for @latest.
-  ///
-  /// In en, this message translates to:
-  /// **'Latest'**
-  String get latest;
 
   /// No description provided for @currentVersion.
   ///

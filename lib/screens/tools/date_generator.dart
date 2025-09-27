@@ -14,6 +14,8 @@ import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/widgets/history_widget.dart';
 import 'package:random_please/providers/settings_provider.dart';
+import 'package:random_please/widgets/statistics/datetime_statistics_widget.dart';
+import 'package:random_please/utils/auto_scroll_helper.dart';
 import 'dart:math';
 
 class DateGeneratorScreen extends ConsumerStatefulWidget {
@@ -29,6 +31,7 @@ class DateGeneratorScreen extends ConsumerStatefulWidget {
 class _DateGeneratorScreenState extends ConsumerState<DateGeneratorScreen> {
   bool _copied = false;
   List<String> _results = [];
+  final ScrollController _scrollController = ScrollController();
 
   late AppLocalizations loc;
 
@@ -45,6 +48,7 @@ class _DateGeneratorScreenState extends ConsumerState<DateGeneratorScreen> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -110,6 +114,14 @@ class _DateGeneratorScreenState extends ConsumerState<DateGeneratorScreen> {
         _results = resultList;
       });
 
+      // Auto-scroll to results after generation
+      AutoScrollHelper.scrollToResults(
+        ref: ref,
+        scrollController: _scrollController,
+        mounted: mounted,
+        hasResults: _results.isNotEmpty,
+      );
+
       // Save state after generation
       await ref
           .read(dateGeneratorStateManagerProvider.notifier)
@@ -141,6 +153,11 @@ class _DateGeneratorScreenState extends ConsumerState<DateGeneratorScreen> {
         SnackBarUtils.showTyped(context, loc.copied, SnackBarType.info);
       }
     }
+  }
+
+  String _getResultSubtitle() {
+    if (_results.isEmpty) return '';
+    return '${_results.length} ${loc.items.toLowerCase()}';
   }
 
   Widget _buildDateSelector(String label, DateTime date, VoidCallback onTap) {
@@ -258,7 +275,7 @@ class _DateGeneratorScreenState extends ConsumerState<DateGeneratorScreen> {
       label: loc.dateCount,
       currentValue: state.dateCount,
       options: List.generate(
-        10,
+        40,
         (i) => SliderOption(value: i + 1, label: '${i + 1}'),
       ),
       fixedWidth: 60,
@@ -328,71 +345,110 @@ class _DateGeneratorScreenState extends ConsumerState<DateGeneratorScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Header with better design (similar to Number Generator)
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        loc.results,
-                        style: Theme.of(context).textTheme.titleLarge,
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.calendar_today,
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              loc.results,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                            Text(
+                              _getResultSubtitle(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
                       IconButton(
-                        icon: Icon(_copied ? Icons.check : Icons.copy),
                         onPressed: _copyToClipboard,
+                        icon: Icon(_copied ? Icons.check : Icons.copy),
                         tooltip: loc.copyToClipboard,
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+
+                  // Results as Chips (similar to Number Generator)
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
                     children: _results.map((dateStr) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color:
-                                Theme.of(context).colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  dateStr,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimaryContainer,
-                                        fontFamily: 'monospace',
-                                      ),
-                                ),
+                      return Tooltip(
+                        message: loc.clickToCopy,
+                        child: InkWell(
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: dateStr));
+                            SnackBarUtils.showTyped(
+                                context, loc.copied, SnackBarType.info);
+                          },
+                          borderRadius: BorderRadius.circular(16),
+                          child: Chip(
+                            label: Text(
+                              dateStr,
+                              style: const TextStyle(
+                                fontFamily: 'monospace',
+                                fontWeight: FontWeight.w500,
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.copy, size: 18),
-                                onPressed: () {
-                                  Clipboard.setData(
-                                      ClipboardData(text: dateStr));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(loc.copied)),
-                                  );
-                                },
-                                tooltip: loc.copyToClipboard,
-                                style: IconButton.styleFrom(
-                                  foregroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer,
-                                ),
-                              ),
-                            ],
+                            ),
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
+                            side: BorderSide(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .outline
+                                  .withValues(alpha: 0.2),
+                            ),
                           ),
                         ),
                       );
                     }).toList(),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Statistics
+                  DateTimeStatisticsWidget(
+                    values: _results.map((dateStr) {
+                      final parts = dateStr.split('-');
+                      return DateTime(
+                        int.parse(parts[0]),
+                        int.parse(parts[1]),
+                        int.parse(parts[2]),
+                      );
+                    }).toList(),
+                    type: DateTimeStatisticsType.date,
+                    locale: loc.localeName,
                   ),
                 ],
               ),
@@ -409,6 +465,7 @@ class _DateGeneratorScreenState extends ConsumerState<DateGeneratorScreen> {
       hasHistory: ref.watch(settingsProvider).saveRandomToolsState,
       isEmbedded: widget.isEmbedded,
       title: loc.dateGenerator,
+      scrollController: _scrollController,
     );
   }
 }

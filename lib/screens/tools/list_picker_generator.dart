@@ -15,6 +15,7 @@ import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/uni_route.dart';
 import 'package:random_please/widgets/history_widget.dart';
 import 'package:random_please/view_models/list_picker_view_model.dart';
+import 'package:random_please/utils/auto_scroll_helper.dart';
 import 'package:random_please/services/cloud_template_service.dart';
 import 'package:random_please/widgets/holdable_button.dart';
 import 'package:random_please/widgets/tools/import_template_widget.dart';
@@ -40,6 +41,7 @@ class _ListPickerGeneratorScreenState
 
   final TextEditingController _itemController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   bool _isLoading = false;
 
@@ -60,6 +62,7 @@ class _ListPickerGeneratorScreenState
   void dispose() {
     _itemController.dispose();
     _quantityController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -650,6 +653,14 @@ class _ListPickerGeneratorScreenState
   void _pickRandomItems() async {
     setState(() {}); // Update state only once when button is pressed
     await _viewModel.pickRandomItems();
+
+    // Auto-scroll to results after generation
+    AutoScrollHelper.scrollToResults(
+      ref: ref,
+      scrollController: _scrollController,
+      mounted: mounted,
+      hasResults: _viewModel.results.isNotEmpty,
+    );
   }
 
   Widget _buildListSelector() {
@@ -1572,6 +1583,7 @@ class _ListPickerGeneratorScreenState
       hasHistory: _viewModel.historyEnabled,
       isEmbedded: widget.isEmbedded,
       title: loc.listPicker,
+      scrollController: _scrollController,
     );
 
     return Stack(

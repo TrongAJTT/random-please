@@ -441,6 +441,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get letterCount => 'Số lượng chữ cái';
 
   @override
+  String get letters => 'chữ cái';
+
+  @override
   String get playingCards => 'Bài tây';
 
   @override
@@ -519,8 +522,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get skipAnimationDesc => 'Tắt hoạt ảnh để có kết quả nhanh hơn';
 
   @override
-  String latinLetterGenerationError(int count) {
-    return 'Không thể tạo $count chữ cái duy nhất từ bộ có sẵn. Vui lòng giảm số lượng hoặc cho phép trùng lặp.';
+  String latinLetterGenerationError(int count, int max) {
+    return 'Không thể tạo $count chữ cái. Tối đa có thể tạo là $max chữ cái. Vui lòng giảm số lượng hoặc cho phép trùng lặp.';
   }
 
   @override
@@ -759,6 +762,97 @@ class AppLocalizationsVi extends AppLocalizations {
   String get checkingForUpdates => 'Đang kiểm tra cập nhật...';
 
   @override
+  String get minimum => 'Tối thiểu';
+
+  @override
+  String get maximum => 'Tối đa';
+
+  @override
+  String get average => 'Trung bình';
+
+  @override
+  String get total => 'Tổng';
+
+  @override
+  String get leastFrequent => 'Ít nhất';
+
+  @override
+  String get mostFrequent => 'Nhiều nhất';
+
+  @override
+  String get leastFrequentRank => 'Lá số ít nhất';
+
+  @override
+  String get mostFrequentRank => 'Lá số nhiều nhất';
+
+  @override
+  String get leastFrequentSuit => 'Chất ít nhất';
+
+  @override
+  String get mostFrequentSuit => 'Chất nhiều nhất';
+
+  @override
+  String get minGap => 'Khoảng cách nhỏ';
+
+  @override
+  String get maxGap => 'Khoảng cách lớn';
+
+  @override
+  String get statistics => 'Thống kê';
+
+  @override
+  String get expandStatistics => 'Mở rộng thống kê';
+
+  @override
+  String get collapseStatistics => 'Thu gọn thống kê';
+
+  @override
+  String get autoScrollToResults => 'Tự động cuộn xuống kết quả';
+
+  @override
+  String get autoScrollToResultsDesc =>
+      'Tự động cuộn xuống để hiển thị kết quả sau khi tạo';
+
+  @override
+  String get earliest => 'Sớm nhất';
+
+  @override
+  String get latest => 'Mới nhất';
+
+  @override
+  String get shortestGap => 'Khoảng cách ngắn nhất';
+
+  @override
+  String get longestGap => 'Khoảng cách xa nhất';
+
+  @override
+  String get characters => 'Ký tự';
+
+  @override
+  String get dice => 'Xúc xắc';
+
+  @override
+  String get passwordStrength => 'Độ mạnh mật khẩu';
+
+  @override
+  String get strengthWeak => 'Yếu';
+
+  @override
+  String get strengthFair => 'Trung bình';
+
+  @override
+  String get strengthGood => 'Tốt';
+
+  @override
+  String get strengthStrong => 'Mạnh';
+
+  @override
+  String get strengthVeryStrong => 'Rất mạnh';
+
+  @override
+  String get clickToCopy => 'Nhấn để sao chép';
+
+  @override
   String get noNewUpdates => 'Không có cập nhật mới';
 
   @override
@@ -771,9 +865,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get newVersionAvailable => 'Phiên bản mới có sẵn';
-
-  @override
-  String get latest => 'Mới nhất';
 
   @override
   String currentVersion(String version) {

@@ -26,13 +26,14 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       compactTabLayout: fields[6] as bool,
       remoteListTemplateCustomSource: (fields[7] as List).cast<String>(),
       remoteListTemplateDefaultState: fields[8] as bool,
+      autoScrollToResults: fields[9] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, SettingsModel obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.fetchTimeoutSeconds)
       ..writeByte(1)
@@ -50,7 +51,9 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       ..writeByte(7)
       ..write(obj.remoteListTemplateCustomSource)
       ..writeByte(8)
-      ..write(obj.remoteListTemplateDefaultState);
+      ..write(obj.remoteListTemplateDefaultState)
+      ..writeByte(9)
+      ..write(obj.autoScrollToResults);
   }
 
   @override

@@ -156,6 +156,7 @@
   "latinLetters": "Latin Letters",
   "latinLettersDesc": "Generate random alphabet letters",
   "letterCount": "Number of letters",
+  "letters": "letters",
   "playingCards": "Playing Cards",
   "playingCardsDesc": "Draw random playing cards",
   "includeJokers": "Include Jokers",
@@ -182,10 +183,13 @@
   "randomResult": "Result",
   "skipAnimation": "Skip Animation",
   "skipAnimationDesc": "Show result immediately without visual effects",
-  "latinLetterGenerationError": "Cannot generate {count} unique letters from the available set. Please reduce the count or allow duplicates.",
+  "latinLetterGenerationError": "Cannot generate {count} unique letters. Maximum available: {max} letters. Please reduce the count or allow duplicates.",
   "@latinLetterGenerationError": {
     "placeholders": {
       "count": {
+        "type": "int"
+      },
+      "max": {
         "type": "int"
       }
     }
@@ -324,6 +328,36 @@
   "pressBackAgainToExit": "Press back again to exit",
 
   "checkingForUpdates": "Checking for updates...",
+  "minimum": "Min",
+  "maximum": "Max",
+  "average": "Avg",
+  "total": "Total",
+  "leastFrequent": "Least",
+  "mostFrequent": "Most",
+  "leastFrequentRank": "Least frequent rank",
+  "mostFrequentRank": "Most frequent rank",
+  "leastFrequentSuit": "Least frequent suit",
+  "mostFrequentSuit": "Most frequent suit",
+  "minGap": "Min Gap",
+  "maxGap": "Max Gap",
+  "statistics": "Statistics",
+  "expandStatistics": "Expand statistics",
+  "collapseStatistics": "Collapse statistics",
+  "autoScrollToResults": "Auto Scroll to Results",
+  "autoScrollToResultsDesc": "Automatically scroll down to show results after generation",
+  "earliest": "Earliest",
+  "latest": "Latest",
+  "shortestGap": "Shortest Gap",
+  "longestGap": "Longest Gap",
+  "characters": "Characters",
+  "dice": "Dice",
+  "passwordStrength": "Password Strength",
+  "strengthWeak": "Weak",
+  "strengthFair": "Fair",
+  "strengthGood": "Good",
+  "strengthStrong": "Strong",
+  "strengthVeryStrong": "Very Strong",
+  "clickToCopy": "Click to copy",
   "noNewUpdates": "No new updates",
   "updateCheckError": "Error checking updates: {errorMessage}",
   "@updateCheckError": {

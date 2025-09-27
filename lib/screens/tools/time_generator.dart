@@ -12,6 +12,9 @@ import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/utils/widget_layout_render_helper.dart';
 import 'package:random_please/widgets/history_widget.dart';
 import 'package:random_please/providers/settings_provider.dart';
+import 'package:random_please/widgets/statistics/datetime_statistics_widget.dart';
+import 'package:random_please/utils/auto_scroll_helper.dart';
+import 'package:random_please/utils/snackbar_utils.dart';
 import 'dart:math';
 
 class TimeGeneratorScreen extends ConsumerStatefulWidget {
@@ -27,6 +30,8 @@ class TimeGeneratorScreen extends ConsumerStatefulWidget {
 class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
   bool _copied = false;
   List<String> _results = [];
+  final ScrollController _scrollController = ScrollController();
+  late AppLocalizations loc;
 
   @override
   void initState() {
@@ -34,7 +39,14 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    loc = AppLocalizations.of(context)!;
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -100,6 +112,14 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
         _results = resultList;
       });
 
+      // Auto-scroll to results after generation
+      AutoScrollHelper.scrollToResults(
+        ref: ref,
+        scrollController: _scrollController,
+        mounted: mounted,
+        hasResults: _results.isNotEmpty,
+      );
+
       // Save state after generation
       await stateManager.saveCurrentState();
 
@@ -112,12 +132,7 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarUtils.showTyped(context, e.toString(), SnackBarType.error);
       }
     }
   }
@@ -131,11 +146,14 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
         _copied = true;
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-        );
+        SnackBarUtils.showTyped(context, loc.copied, SnackBarType.info);
       }
     }
+  }
+
+  String _getResultSubtitle() {
+    if (_results.isEmpty) return '';
+    return '${_results.length} ${loc.items.toLowerCase()}';
   }
 
   Future<void> _selectStartTime() async {
@@ -241,7 +259,7 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
     );
   }
 
-  Widget _buildHistoryWidget(AppLocalizations loc) {
+  Widget _buildHistoryWidget() {
     return HistoryWidget(
       type: 'time_generator',
       title: loc.generationHistory,
@@ -250,7 +268,6 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
     final state = ref.watch(timeGeneratorProvider);
     final stateManager = ref.read(timeGeneratorStateProvider.notifier);
 
@@ -273,7 +290,7 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
                   label: loc.timeCount,
                   currentValue: state.timeCount,
                   options: List.generate(
-                    10,
+                    40,
                     (i) => SliderOption(value: i + 1, label: '${i + 1}'),
                   ),
                   onChanged: (value) {
@@ -325,71 +342,113 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Header with better design (similar to Number Generator)
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        loc.results,
-                        style: Theme.of(context).textTheme.titleLarge,
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.access_time,
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              loc.results,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                            Text(
+                              _getResultSubtitle(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
                       IconButton(
-                        icon: Icon(_copied ? Icons.check : Icons.copy),
                         onPressed: _copyToClipboard,
+                        icon: Icon(_copied ? Icons.check : Icons.copy),
                         tooltip: loc.copyToClipboard,
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+
+                  // Results as Chips (similar to Number Generator)
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
                     children: _results.map((timeStr) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color:
-                                Theme.of(context).colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  timeStr,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimaryContainer,
-                                        fontFamily: 'monospace',
-                                      ),
-                                ),
+                      return Tooltip(
+                        message: loc.clickToCopy,
+                        child: InkWell(
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: timeStr));
+                            SnackBarUtils.showTyped(
+                                context, loc.copied, SnackBarType.info);
+                          },
+                          borderRadius: BorderRadius.circular(16),
+                          child: Chip(
+                            label: Text(
+                              timeStr,
+                              style: const TextStyle(
+                                fontFamily: 'monospace',
+                                fontWeight: FontWeight.w500,
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.copy, size: 18),
-                                onPressed: () {
-                                  Clipboard.setData(
-                                      ClipboardData(text: timeStr));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(loc.copied)),
-                                  );
-                                },
-                                tooltip: loc.copyToClipboard,
-                                style: IconButton.styleFrom(
-                                  foregroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer,
-                                ),
-                              ),
-                            ],
+                            ),
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
+                            side: BorderSide(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .outline
+                                  .withValues(alpha: 0.2),
+                            ),
                           ),
                         ),
                       );
                     }).toList(),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Statistics
+                  DateTimeStatisticsWidget(
+                    values: _results.map((timeStr) {
+                      final parts = timeStr.split(':');
+                      final now = DateTime.now();
+                      return DateTime(
+                        now.year,
+                        now.month,
+                        now.day,
+                        int.parse(parts[0]),
+                        int.parse(parts[1]),
+                      );
+                    }).toList(),
+                    type: DateTimeStatisticsType.time,
+                    locale: loc.localeName,
                   ),
                 ],
               ),
@@ -401,11 +460,12 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
 
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
-      historyWidget: _buildHistoryWidget(loc),
+      historyWidget: _buildHistoryWidget(),
       historyEnabled: ref.watch(settingsProvider).saveRandomToolsState,
       hasHistory: ref.watch(settingsProvider).saveRandomToolsState,
       isEmbedded: widget.isEmbedded,
       title: loc.timeGenerator,
+      scrollController: _scrollController,
     );
   }
 }

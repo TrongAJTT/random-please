@@ -10,6 +10,10 @@ import 'package:random_please/models/random_generator.dart';
 import 'package:random_please/providers/playing_cards_generator_state_provider.dart';
 import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/utils/snackbar_utils.dart';
+import 'package:random_please/utils/auto_scroll_helper.dart';
+import 'package:random_please/providers/settings_provider.dart';
+import 'package:random_please/widgets/statistics/playing_card_statistics_widget.dart';
 
 class PlayingCardGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -28,6 +32,7 @@ class _PlayingCardGeneratorScreenState
   late Animation<double> _animation;
   bool _copied = false;
   List<PlayingCard> _generatedCards = [];
+  final ScrollController _scrollController = ScrollController();
   static const String historyType = 'playing_cards';
 
   @override
@@ -46,6 +51,7 @@ class _PlayingCardGeneratorScreenState
   @override
   void dispose() {
     _controller.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -81,12 +87,81 @@ class _PlayingCardGeneratorScreenState
     setState(() {
       _copied = false;
     });
+
+    // Auto-scroll to results after generation
+    AutoScrollHelper.scrollToResults(
+      ref: ref,
+      scrollController: _scrollController,
+      mounted: mounted,
+      hasResults: _generatedCards.isNotEmpty,
+    );
   }
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return HistoryWidget(
       type: historyType,
       title: loc.generationHistory,
+    );
+  }
+
+  Widget _buildSwitchOptions(
+      AppLocalizations loc, dynamic currentState, dynamic stateManager) {
+    final switchOptions = [
+      {
+        'title': loc.includeJokers,
+        'subtitle': loc.includeJokersDesc,
+        'value': currentState.includeJokers,
+        'onChanged': (bool value) {
+          stateManager.updateIncludeJokers(value);
+        },
+      },
+      {
+        'title': loc.allowDuplicates,
+        'subtitle': loc.allowDuplicatesDesc,
+        'value': currentState.allowDuplicates,
+        'onChanged': (bool value) {
+          stateManager.updateAllowDuplicates(value);
+        },
+      },
+      {
+        'title': loc.skipAnimation,
+        'subtitle': loc.skipAnimationDesc,
+        'value': currentState.skipAnimation,
+        'onChanged': (bool value) {
+          stateManager.updateSkipAnimation(value);
+        },
+      },
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate how many items can fit in one row
+        final availableWidth = constraints.maxWidth;
+        const itemWidth = 220.0; // Minimum width for each switch
+        const spacing = 16.0;
+        final crossAxisCount =
+            ((availableWidth + spacing) / (itemWidth + spacing))
+                .floor()
+                .clamp(1, 2);
+
+        return Wrap(
+          spacing: 16,
+          runSpacing: 8,
+          children: switchOptions.map((option) {
+            return SizedBox(
+              width: (availableWidth - (crossAxisCount - 1) * spacing) /
+                  crossAxisCount,
+              child: OptionSwitch(
+                title: option['title'] as String,
+                subtitle: option['subtitle'] as String?,
+                value: option['value'] as bool,
+                onChanged: option['onChanged'] as void Function(bool),
+                decorator: OptionSwitchDecorator.compact(context),
+              ),
+            );
+          }).toList(),
+        );
+      },
     );
   }
 
@@ -144,9 +219,10 @@ class _PlayingCardGeneratorScreenState
     setState(() {
       _copied = true;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-    );
+    if (mounted) {
+      SnackBarUtils.showTyped(
+          context, AppLocalizations.of(context)!.copied, SnackBarType.info);
+    }
   }
 
   @override
@@ -156,7 +232,6 @@ class _PlayingCardGeneratorScreenState
     final currentState = ref.watch(playingCardsGeneratorStateManagerProvider);
     final stateManager =
         ref.read(playingCardsGeneratorStateManagerProvider.notifier);
-    final historyEnabled = ref.watch(historyEnabledProvider);
 
     final generatorContent = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -176,7 +251,7 @@ class _PlayingCardGeneratorScreenState
                   layout: OptionSliderLayout.none,
                   fixedWidth: 60,
                   options: List.generate(
-                      20,
+                      currentState.includeJokers ? 54 : 52,
                       (index) => SliderOption(
                             value: index + 1,
                             label: (index + 1).toString(),
@@ -186,29 +261,8 @@ class _PlayingCardGeneratorScreenState
                   },
                 ),
 
-                // Include jokers switch
-                OptionSwitch(
-                  title: loc.includeJokers,
-                  subtitle: loc.includeJokersDesc,
-                  value: currentState.includeJokers,
-                  onChanged: (value) {
-                    stateManager.updateIncludeJokers(value);
-                  },
-                  decorator: OptionSwitchDecorator.compact(context),
-                ),
-
-                const SizedBox(height: 8),
-
-                // Allow duplicates switch
-                OptionSwitch(
-                  title: loc.allowDuplicates,
-                  subtitle: loc.allowDuplicatesDesc,
-                  value: currentState.allowDuplicates,
-                  onChanged: (value) {
-                    stateManager.updateAllowDuplicates(value);
-                  },
-                  decorator: OptionSwitchDecorator.compact(context),
-                ),
+                // Switch options (similar to Password Generator layout)
+                _buildSwitchOptions(loc, currentState, stateManager),
 
                 VerticalSpacingDivider.specific(top: 6, bottom: 12),
 
@@ -328,6 +382,14 @@ class _PlayingCardGeneratorScreenState
                       );
                     },
                   ),
+
+                  const SizedBox(height: 16),
+
+                  // Statistics
+                  PlayingCardStatisticsWidget(
+                    cards: _generatedCards,
+                    locale: loc.localeName,
+                  ),
                 ],
               ),
             ),
@@ -339,10 +401,11 @@ class _PlayingCardGeneratorScreenState
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: historyEnabled,
-      hasHistory: historyEnabled,
+      historyEnabled: ref.watch(settingsProvider).saveRandomToolsState,
+      hasHistory: ref.watch(settingsProvider).saveRandomToolsState,
       isEmbedded: widget.isEmbedded,
       title: loc.playingCards,
+      scrollController: _scrollController,
     );
   }
 }

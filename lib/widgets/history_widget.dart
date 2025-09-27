@@ -12,11 +12,13 @@ import 'package:random_please/widgets/generic/generic_context_menu.dart';
 class HistoryWidget extends ConsumerStatefulWidget {
   final String type;
   final String title;
+  final String Function(String)? maskFunction;
 
   const HistoryWidget({
     Key? key,
     required this.type,
     required this.title,
+    this.maskFunction,
   }) : super(key: key);
 
   @override
@@ -126,11 +128,15 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
                     child: ListTile(
                       dense: true,
                       title: Text(
-                        item.value,
+                        widget.maskFunction != null
+                            ? widget.maskFunction!(item.value)
+                            : item.value,
                         style: TextStyle(
                           fontSize: 14,
                           color:
                               isConfirmingDelete ? Colors.red.shade700 : null,
+                          fontFamily:
+                              widget.maskFunction != null ? 'monospace' : null,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,

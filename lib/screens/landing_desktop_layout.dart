@@ -13,7 +13,7 @@ class DesktopLayout extends StatefulWidget {
 }
 
 class _DesktopLayoutState extends State<DesktopLayout> {
-  String _selectedTool = 'password'; // Default selected tool
+  String _selectedTool = ''; // Will be set to first tool when loaded
   List<ToolItem> _tools = [];
   bool _loading = true;
   bool _hasInitialized = false;
@@ -41,9 +41,8 @@ class _DesktopLayoutState extends State<DesktopLayout> {
       setState(() {
         _tools = tools;
         _loading = false;
-        // Set first tool as selected if current selection is not available
-        if (tools.isNotEmpty &&
-            !tools.any((tool) => tool.id == _selectedTool)) {
+        // Always set first tool as selected
+        if (tools.isNotEmpty) {
           _selectedTool = tools.first.id;
         }
       });

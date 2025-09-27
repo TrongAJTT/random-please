@@ -9,6 +9,9 @@ import 'package:random_please/widgets/history_widget.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'dart:math' as math;
 import 'package:random_please/widgets/generic/option_slider.dart';
+import 'package:random_please/widgets/statistics/number_statistics_widget.dart';
+import 'package:random_please/utils/snackbar_utils.dart';
+import 'package:random_please/utils/auto_scroll_helper.dart';
 
 class DiceRollGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -25,8 +28,8 @@ class _DiceRollGeneratorScreenState
     with TickerProviderStateMixin {
   late DiceRollGeneratorViewModel _viewModel;
   late AnimationController _rollController;
-  late Animation<double> _rollAnimation;
   late AppLocalizations loc;
+  final ScrollController _scrollController = ScrollController();
 
   final List<int> _availableSides = [
     3,
@@ -55,10 +58,6 @@ class _DiceRollGeneratorScreenState
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    _rollAnimation = CurvedAnimation(
-      parent: _rollController,
-      curve: Curves.easeOutBack,
-    );
     _viewModel.addListener(_onViewModelChanged);
   }
 
@@ -75,6 +74,7 @@ class _DiceRollGeneratorScreenState
   @override
   void dispose() {
     _rollController.dispose();
+    _scrollController.dispose();
     _viewModel.removeListener(_onViewModelChanged);
     _viewModel.dispose();
     super.dispose();
@@ -86,6 +86,14 @@ class _DiceRollGeneratorScreenState
 
     _viewModel.rollDice();
     setState(() {});
+
+    // Auto-scroll to results after generation
+    AutoScrollHelper.scrollToResults(
+      ref: ref,
+      scrollController: _scrollController,
+      mounted: mounted,
+      hasResults: _viewModel.results.isNotEmpty,
+    );
   }
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
@@ -95,8 +103,9 @@ class _DiceRollGeneratorScreenState
     );
   }
 
-  int _getTotal() {
-    return _viewModel.results.fold(0, (sum, value) => sum + value);
+  String _getDiceSubtitle() {
+    if (_viewModel.results.isEmpty) return '';
+    return '${_viewModel.results.length} ${AppLocalizations.of(context)!.dice.toLowerCase()}';
   }
 
   @override
@@ -119,7 +128,7 @@ class _DiceRollGeneratorScreenState
                   label: loc.diceCount,
                   currentValue: _viewModel.state.diceCount,
                   options: List.generate(
-                    20,
+                    40,
                     (i) => SliderOption(value: i + 1, label: '${i + 1}'),
                   ),
                   onChanged: (value) async {
@@ -174,27 +183,78 @@ class _DiceRollGeneratorScreenState
         if (_viewModel.results.isNotEmpty) ...[
           const SizedBox(height: 24),
           Card(
-            child: AnimatedBuilder(
-              animation: _rollAnimation,
-              builder: (context, child) {
-                return Transform.scale(
-                  scale: 1.0 + (_rollAnimation.value * 0.1),
-                  child: child,
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    // Result heading
-                    Text(
-                      loc.randomResult,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 16),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header with better design
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.casino, // Dice-specific icon
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              loc.results,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                            Text(
+                              _getDiceSubtitle(), // Dynamic subtitle
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          final resultText = _viewModel.results.join(', ');
+                          Clipboard.setData(ClipboardData(text: resultText));
+                          SnackBarUtils.showTyped(
+                              context, loc.copied, SnackBarType.info);
+                        },
+                        icon: const Icon(Icons.copy),
+                        tooltip: loc.copy,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
 
-                    // Dice display
-                    Wrap(
+                  // Dice display with better spacing
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).dividerColor),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Wrap(
                       spacing: 12,
                       runSpacing: 12,
                       alignment: WrapAlignment.center,
@@ -202,30 +262,16 @@ class _DiceRollGeneratorScreenState
                         return _buildDie(result);
                       }).toList(),
                     ),
+                  ),
 
-                    const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-                    // Total
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 16,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Text(
-                        loc.totalANumber(_getTotal()),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color:
-                              Theme.of(context).colorScheme.onPrimaryContainer,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  // Statistics section
+                  StatisticsWidget(
+                    values: _viewModel.results,
+                    isInteger: true,
+                  ),
+                ],
               ),
             ),
           ),
@@ -240,6 +286,7 @@ class _DiceRollGeneratorScreenState
       hasHistory: _viewModel.historyEnabled,
       isEmbedded: widget.isEmbedded,
       title: loc.rollDice,
+      scrollController: _scrollController,
     );
   }
 

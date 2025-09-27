@@ -10,8 +10,10 @@ import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/providers/lorem_ipsum_generator_state_provider.dart';
 import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/utils/snackbar_utils.dart';
+import 'package:random_please/utils/auto_scroll_helper.dart';
+import 'package:random_please/providers/settings_provider.dart';
 import 'package:faker/faker.dart';
-import 'dart:math';
 
 class LoremIpsumGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -32,6 +34,7 @@ class _LoremIpsumGeneratorScreenState
   bool _isDecoratorInitialized = false;
   static const String historyType = 'lorem_ipsum';
   final faker = Faker();
+  final ScrollController _scrollController = ScrollController();
 
   String _generatedText = '';
   bool _copied = false;
@@ -83,6 +86,7 @@ class _LoremIpsumGeneratorScreenState
 
   @override
   void dispose() {
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -238,7 +242,6 @@ class _LoremIpsumGeneratorScreenState
     final currentState = ref.read(loremIpsumGeneratorStateManagerProvider);
 
     // Generate text using faker
-    final random = Random();
     List<String> generatedContent = [];
 
     try {
@@ -260,15 +263,12 @@ class _LoremIpsumGeneratorScreenState
           break;
 
         case LoremIpsumType.paragraphs:
-          // Generate specific number of paragraphs
+          // Generate specific number of paragraphs using faker
           for (int i = 0; i < currentState.paragraphCount; i++) {
-            final sentencesPerParagraph =
-                random.nextInt(5) + 3; // 3-7 sentences per paragraph
-            List<String> paragraphSentences = [];
-            for (int j = 0; j < sentencesPerParagraph; j++) {
-              paragraphSentences.add(faker.lorem.sentence());
-            }
-            generatedContent.add(paragraphSentences.join(' '));
+            // Generate 3-7 sentences per paragraph using faker
+            final sentences =
+                faker.lorem.sentences(3 + (i % 5)); // 3-7 sentences
+            generatedContent.add(sentences.join(' '));
           }
           _generatedText = generatedContent.join('\n\n');
           break;
@@ -280,7 +280,18 @@ class _LoremIpsumGeneratorScreenState
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
         switch (currentState.generationType) {
           case LoremIpsumType.words:
-            _generatedText = '$loremPrefix $_generatedText';
+            // For words, we need to adjust the count to include prefix words
+            final prefixWords = loremPrefix.split(' ').length;
+            final adjustedWordCount = currentState.wordCount - prefixWords;
+            if (adjustedWordCount > 0) {
+              List<String> adjustedWords = [];
+              for (int i = 0; i < adjustedWordCount; i++) {
+                adjustedWords.add(faker.lorem.word());
+              }
+              _generatedText = '$loremPrefix ${adjustedWords.join(' ')}';
+            } else {
+              _generatedText = loremPrefix;
+            }
             break;
           case LoremIpsumType.sentences:
             _generatedText = '$loremPrefix $_generatedText';
@@ -307,6 +318,14 @@ class _LoremIpsumGeneratorScreenState
       rethrow;
     }
     setState(() {});
+
+    // Auto-scroll to results after generation
+    AutoScrollHelper.scrollToResults(
+      ref: ref,
+      scrollController: _scrollController,
+      mounted: mounted,
+      hasResults: _generatedText.isNotEmpty,
+    );
   }
 
   void _copyToClipboard() {
@@ -314,9 +333,10 @@ class _LoremIpsumGeneratorScreenState
     setState(() {
       _copied = true;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-    );
+    if (mounted) {
+      SnackBarUtils.showTyped(
+          context, AppLocalizations.of(context)!.copied, SnackBarType.info);
+    }
   }
 
   String _getResultSummary() {
@@ -326,15 +346,14 @@ class _LoremIpsumGeneratorScreenState
     final currentState = ref.read(loremIpsumGeneratorStateManagerProvider);
     switch (currentState.generationType) {
       case LoremIpsumType.words:
-        final wordCount = _generatedText.split(' ').length;
-        return '$wordCount ${loc.words.toLowerCase()}';
+        // Show the requested word count, not the actual count
+        return '${currentState.wordCount} ${loc.words.toLowerCase()}';
       case LoremIpsumType.sentences:
-        final sentenceCount =
-            _generatedText.split('.').where((s) => s.trim().isNotEmpty).length;
-        return '$sentenceCount ${loc.sentences.toLowerCase()}';
+        // Show the requested sentence count, not the actual count
+        return '${currentState.sentenceCount} ${loc.sentences.toLowerCase()}';
       case LoremIpsumType.paragraphs:
-        final paragraphCount = _generatedText.split('\n\n').length;
-        return '$paragraphCount ${loc.paragraphs.toLowerCase()}';
+        // Show the requested paragraph count, not the actual count
+        return '${currentState.paragraphCount} ${loc.paragraphs.toLowerCase()}';
     }
   }
 
@@ -350,7 +369,6 @@ class _LoremIpsumGeneratorScreenState
     final loc = AppLocalizations.of(context)!;
     // Watch state changes to trigger rebuilds
     final currentState = ref.watch(loremIpsumGeneratorStateManagerProvider);
-    final historyEnabled = ref.watch(historyEnabledProvider);
 
     if (!_isDecoratorInitialized) {
       switchDecorator = OptionSwitchDecorator.compact(context);
@@ -430,15 +448,17 @@ class _LoremIpsumGeneratorScreenState
 
                 if (currentState.generationType ==
                     LoremIpsumType.sentences) ...[
-                  _buildRangeSelector(LoremIpsumType.sentences, loc),
-                  const SizedBox(height: 12),
                   OptionSlider<int>(
                     label: loc.sentenceCount,
                     subtitle: loc.numberOfSentencesToGenerate,
                     icon: Icons.format_list_numbered,
                     currentValue: currentState.sentenceCount,
-                    options: _buildSliderOptions(
-                        _sentenceRanges[_selectedSentenceRangeIndex]),
+                    options: List.generate(
+                        50,
+                        (index) => SliderOption(
+                              value: index + 1,
+                              label: (index + 1).toString(),
+                            )),
                     onChanged: (value) {
                       ref
                           .read(
@@ -453,15 +473,17 @@ class _LoremIpsumGeneratorScreenState
 
                 if (currentState.generationType ==
                     LoremIpsumType.paragraphs) ...[
-                  _buildRangeSelector(LoremIpsumType.paragraphs, loc),
-                  const SizedBox(height: 12),
                   OptionSlider<int>(
                     label: loc.paragraphCount,
                     subtitle: loc.numberOfParagraphsToGenerate,
                     icon: Icons.subject,
                     currentValue: currentState.paragraphCount,
-                    options: _buildSliderOptions(
-                        _paragraphRanges[_selectedParagraphRangeIndex]),
+                    options: List.generate(
+                        30,
+                        (index) => SliderOption(
+                              value: index + 1,
+                              label: (index + 1).toString(),
+                            )),
                     onChanged: (value) {
                       ref
                           .read(
@@ -637,10 +659,11 @@ class _LoremIpsumGeneratorScreenState
     return RandomGeneratorLayout(
       generatorContent: generatorContent,
       historyWidget: _buildHistoryWidget(loc),
-      historyEnabled: historyEnabled,
-      hasHistory: historyEnabled,
+      historyEnabled: ref.watch(settingsProvider).saveRandomToolsState,
+      hasHistory: ref.watch(settingsProvider).saveRandomToolsState,
       isEmbedded: widget.isEmbedded,
       title: loc.loremIpsumGenerator,
+      scrollController: _scrollController,
     );
   }
 }

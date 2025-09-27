@@ -302,14 +302,15 @@ class PlayingCardGeneratorStateAdapter
       includeJokers: fields[0] as bool,
       cardCount: fields[1] as int,
       allowDuplicates: fields[2] as bool,
-      lastUpdated: fields[3] as DateTime,
+      skipAnimation: fields[3] as bool,
+      lastUpdated: fields[4] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, PlayingCardGeneratorState obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.includeJokers)
       ..writeByte(1)
@@ -317,6 +318,8 @@ class PlayingCardGeneratorStateAdapter
       ..writeByte(2)
       ..write(obj.allowDuplicates)
       ..writeByte(3)
+      ..write(obj.skipAnimation)
+      ..writeByte(4)
       ..write(obj.lastUpdated);
   }
 

@@ -9,6 +9,7 @@ import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/utils/auto_scroll_helper.dart';
 
 class PasswordGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -24,6 +25,7 @@ class _PasswordGeneratorScreenState
     extends ConsumerState<PasswordGeneratorScreen> {
   late PasswordGeneratorViewModel _viewModel;
   bool _copied = false;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -57,12 +59,21 @@ class _PasswordGeneratorScreenState
   void dispose() {
     _viewModel.removeListener(_onViewModelChanged);
     _viewModel.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   void _generatePassword() async {
     try {
       await _viewModel.generatePassword();
+
+      // Auto-scroll to results after generation
+      AutoScrollHelper.scrollToResults(
+        ref: ref,
+        scrollController: _scrollController,
+        mounted: mounted,
+        hasResults: _viewModel.result.isNotEmpty,
+      );
     } catch (e) {
       if (mounted) {
         SnackBarUtils.showTyped(context, e.toString(), SnackBarType.error);
@@ -77,10 +88,21 @@ class _PasswordGeneratorScreenState
         _copied = true;
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-        );
+        SnackBarUtils.showTyped(
+            context, AppLocalizations.of(context)!.copied, SnackBarType.info);
       }
+    }
+  }
+
+  String _maskPassword(String password) {
+    if (password.length == 4) {
+      return '${password[0]}**${password[3]}';
+    } else if (password.length == 5) {
+      return '${password[0]}${'*' * (password.length - 3)}${password[password.length - 1]}';
+    } else if (password.length <= 8) {
+      return '${password[0]}${'*' * (password.length - 3)}${password.substring(password.length - 2)}';
+    } else {
+      return '${password.substring(0, 2)}${'*' * (password.length - 4)}${password.substring(password.length - 2)}';
     }
   }
 
@@ -88,7 +110,157 @@ class _PasswordGeneratorScreenState
     return HistoryWidget(
       type: PasswordGeneratorViewModel.historyType,
       title: loc.generationHistory,
+      maskFunction: _maskPassword,
     );
+  }
+
+  String _getPasswordSubtitle() {
+    if (_viewModel.result.isEmpty) return '';
+    return '${_viewModel.result.length} ${AppLocalizations.of(context)!.characters.toLowerCase()}';
+  }
+
+  Map<String, dynamic> _evaluatePasswordStrength(String password) {
+    if (password.isEmpty) {
+      return {'level': 0, 'label': 'strengthWeak', 'color': Colors.red};
+    }
+
+    int score = 0;
+    final length = password.length;
+
+    // Length scoring (NIST recommends ≥15 characters)
+    if (length >= 15)
+      score += 3;
+    else if (length >= 12)
+      score += 2;
+    else if (length >= 8) score += 1;
+
+    // Character variety scoring
+    bool hasLowercase = password.contains(RegExp(r'[a-z]'));
+    bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
+    bool hasNumbers = password.contains(RegExp(r'[0-9]'));
+    bool hasSpecial = password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+
+    int varietyCount = [hasLowercase, hasUppercase, hasNumbers, hasSpecial]
+        .where((b) => b)
+        .length;
+    score += varietyCount;
+
+    // Entropy bonus for random patterns
+    if (length >= 12 && varietyCount >= 3) score += 1;
+    if (length >= 15 && varietyCount >= 4) score += 1;
+
+    // Determine strength level
+    if (score >= 8) {
+      return {'level': 5, 'label': 'strengthVeryStrong', 'color': Colors.green};
+    } else if (score >= 6) {
+      return {
+        'level': 4,
+        'label': 'strengthStrong',
+        'color': Colors.lightGreen
+      };
+    } else if (score >= 4) {
+      return {'level': 3, 'label': 'strengthGood', 'color': Colors.orange};
+    } else if (score >= 2) {
+      return {'level': 2, 'label': 'strengthFair', 'color': Colors.deepOrange};
+    } else {
+      return {'level': 1, 'label': 'strengthWeak', 'color': Colors.red};
+    }
+  }
+
+  Widget _buildPasswordStrengthSection(AppLocalizations loc) {
+    final strength = _evaluatePasswordStrength(_viewModel.result);
+    final level = strength['level'] as int;
+    final label = strength['label'] as String;
+    final color = strength['color'] as Color;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Theme.of(context)
+            .colorScheme
+            .surfaceContainerHighest
+            .withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.security,
+                size: 16,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                loc.passwordStrength,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              // Strength level indicator
+              Expanded(
+                child: Row(
+                  children: List.generate(5, (index) {
+                    return Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(right: index < 4 ? 4 : 0),
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: index < level
+                              ? color
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .outline
+                                  .withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                _getStrengthLabel(loc, label),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getStrengthLabel(AppLocalizations loc, String label) {
+    switch (label) {
+      case 'strengthWeak':
+        return loc.strengthWeak;
+      case 'strengthFair':
+        return loc.strengthFair;
+      case 'strengthGood':
+        return loc.strengthGood;
+      case 'strengthStrong':
+        return loc.strengthStrong;
+      case 'strengthVeryStrong':
+        return loc.strengthVeryStrong;
+      default:
+        return loc.strengthWeak;
+    }
   }
 
   Widget _buildSwitchOptions(BuildContext context, AppLocalizations loc) {
@@ -222,30 +394,78 @@ class _PasswordGeneratorScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // Header with better design
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        loc.generatedPassword,
-                        style: Theme.of(context).textTheme.titleLarge,
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.lock,
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              loc.generatedPassword,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                            Text(
+                              _getPasswordSubtitle(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
                       IconButton(
-                        icon: Icon(_copied ? Icons.check : Icons.copy),
                         onPressed: _copyToClipboard,
+                        icon: Icon(_copied ? Icons.check : Icons.copy),
                         tooltip: loc.copyToClipboard,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  SelectableText(
-                    _viewModel.result,
-                    style: const TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: 20,
-                      letterSpacing: 1.2,
+                  const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).dividerColor),
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
-                    textAlign: TextAlign.center,
+                    child: SelectableText(
+                      _viewModel.result,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontFamily: 'monospace',
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.w500,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
+                  const SizedBox(height: 16),
+                  // Password strength section
+                  _buildPasswordStrengthSection(loc),
                 ],
               ),
             ),
@@ -261,6 +481,7 @@ class _PasswordGeneratorScreenState
       hasHistory: _viewModel.historyEnabled,
       isEmbedded: widget.isEmbedded,
       title: loc.passwordGenerator,
+      scrollController: _scrollController,
     );
   }
 }

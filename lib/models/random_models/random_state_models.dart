@@ -449,12 +449,15 @@ class PlayingCardGeneratorState {
   @HiveField(2)
   final bool allowDuplicates;
   @HiveField(3)
+  final bool skipAnimation;
+  @HiveField(4)
   final DateTime lastUpdated;
 
   PlayingCardGeneratorState({
     required this.includeJokers,
     required this.cardCount,
     required this.allowDuplicates,
+    required this.skipAnimation,
     required this.lastUpdated,
   });
 
@@ -463,6 +466,7 @@ class PlayingCardGeneratorState {
       includeJokers: false,
       cardCount: 5,
       allowDuplicates: false,
+      skipAnimation: false,
       lastUpdated: DateTime.now(),
     );
   }
@@ -472,6 +476,7 @@ class PlayingCardGeneratorState {
       'includeJokers': includeJokers,
       'cardCount': cardCount,
       'allowDuplicates': allowDuplicates,
+      'skipAnimation': skipAnimation,
       'lastUpdated': lastUpdated.toIso8601String(),
     };
   }
@@ -481,6 +486,7 @@ class PlayingCardGeneratorState {
       includeJokers: json['includeJokers'] ?? false,
       cardCount: json['cardCount'] ?? 5,
       allowDuplicates: json['allowDuplicates'] ?? false,
+      skipAnimation: json['skipAnimation'] ?? false,
       lastUpdated: json['lastUpdated'] != null
           ? DateTime.parse(json['lastUpdated'])
           : DateTime.now(),
@@ -491,11 +497,13 @@ class PlayingCardGeneratorState {
     bool? includeJokers,
     int? cardCount,
     bool? allowDuplicates,
+    bool? skipAnimation,
   }) {
     return PlayingCardGeneratorState(
       includeJokers: includeJokers ?? this.includeJokers,
       cardCount: cardCount ?? this.cardCount,
       allowDuplicates: allowDuplicates ?? this.allowDuplicates,
+      skipAnimation: skipAnimation ?? this.skipAnimation,
       lastUpdated: DateTime.now(),
     );
   }

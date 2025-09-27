@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
+import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/view_models/number_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/widgets/history_widget.dart';
 import 'package:random_please/utils/size_utils.dart';
+import 'package:random_please/widgets/statistics/number_statistics_widget.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/utils/widget_layout_render_helper.dart';
 import 'package:random_please/utils/number_formatter.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
+import 'package:random_please/utils/auto_scroll_helper.dart';
 
 class NumberGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -28,6 +31,7 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
 
   final TextEditingController _minValueController = TextEditingController();
   final TextEditingController _maxValueController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -74,6 +78,7 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
     _viewModel.dispose();
     _minValueController.dispose();
     _maxValueController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -95,14 +100,17 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
 
       // Generate numbers
       await _viewModel.generateNumbers();
+
+      // Auto-scroll to results after generation
+      AutoScrollHelper.scrollToResults(
+        ref: ref,
+        scrollController: _scrollController,
+        mounted: mounted,
+        hasResults: _viewModel.results.isNotEmpty,
+      );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarUtils.showTyped(context, e.toString(), SnackBarType.error);
       }
     }
   }
@@ -116,9 +124,8 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
         _copied = true;
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-        );
+        SnackBarUtils.showTyped(
+            context, AppLocalizations.of(context)!.copied, SnackBarType.info);
       }
     }
   }
@@ -128,6 +135,11 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
       type: NumberGeneratorViewModel.historyType,
       title: loc.generationHistory,
     );
+  }
+
+  String _getResultSubtitle() {
+    if (_viewModel.results.isEmpty) return '';
+    return '${_viewModel.results.length} ${AppLocalizations.of(context)!.items.toLowerCase()}';
   }
 
   Widget _buildRangeDisplay(AppLocalizations loc) {
@@ -236,7 +248,7 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
                   label: loc.quantity,
                   currentValue: _viewModel.state.quantity,
                   options: List.generate(
-                    10,
+                    40,
                     (i) => SliderOption(value: i + 1, label: '${i + 1}'),
                   ),
                   onChanged: (value) {
@@ -286,71 +298,118 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Header with better design
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        loc.results,
-                        style: Theme.of(context).textTheme.titleLarge,
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.numbers,
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              loc.results,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                            Text(
+                              _getResultSubtitle(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
                       IconButton(
-                        icon: Icon(_copied ? Icons.check : Icons.copy),
                         onPressed: _copyToClipboard,
+                        icon: Icon(_copied ? Icons.check : Icons.copy),
                         tooltip: loc.copyToClipboard,
                       ),
                     ],
                   ),
+                  const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).dividerColor),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _viewModel.results.map((numberStr) {
+                        return Tooltip(
+                          message: loc.clickToCopy,
+                          child: InkWell(
+                            onTap: () {
+                              Clipboard.setData(ClipboardData(text: numberStr));
+                              SnackBarUtils.showTyped(
+                                  context, loc.copied, SnackBarType.info);
+                            },
+                            borderRadius: BorderRadius.circular(16),
+                            child: Chip(
+                              label: Text(
+                                numberStr,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                      fontFamily: 'monospace',
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                              labelStyle: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryContainer,
+                              ),
+                              side: BorderSide(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .outline
+                                    .withValues(alpha: 0.2),
+                                width: 1,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
                   const SizedBox(height: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _viewModel.results.map((numberStr) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color:
-                                Theme.of(context).colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  numberStr,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimaryContainer,
-                                        fontFamily: 'monospace',
-                                      ),
-                                ),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.copy, size: 18),
-                                onPressed: () {
-                                  Clipboard.setData(
-                                      ClipboardData(text: numberStr));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(loc.copied)),
-                                  );
-                                },
-                                tooltip: loc.copyToClipboard,
-                                style: IconButton.styleFrom(
-                                  foregroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                  // Statistics section
+                  StatisticsWidget(
+                    values: _viewModel.results
+                        .map((str) => int.tryParse(str) ?? 0)
+                        .toList(),
+                    isInteger: _viewModel.state.isInteger,
+                    decimalPlaces: _viewModel.state.isInteger ? 0 : 2,
                   ),
                 ],
               ),
@@ -367,6 +426,7 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
       hasHistory: _viewModel.historyEnabled,
       isEmbedded: widget.isEmbedded,
       title: loc.numberGenerator,
+      scrollController: _scrollController,
     );
   }
 }

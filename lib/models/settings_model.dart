@@ -31,6 +31,9 @@ class SettingsModel extends HiveObject {
   @HiveField(8)
   final bool remoteListTemplateDefaultState;
 
+  @HiveField(9)
+  final bool autoScrollToResults;
+
   SettingsModel({
     this.fetchTimeoutSeconds = 10,
     this.featureStateSavingEnabled = true, // Always enabled by default
@@ -41,6 +44,7 @@ class SettingsModel extends HiveObject {
     this.compactTabLayout = false, // Default to false
     this.remoteListTemplateCustomSource = const [], // Default empty list
     this.remoteListTemplateDefaultState = true, // Default to enabled
+    this.autoScrollToResults = true, // Default to enabled
   });
 
   SettingsModel copyWith({
@@ -53,6 +57,7 @@ class SettingsModel extends HiveObject {
     bool? compactTabLayout,
     List<String>? remoteListTemplateCustomSource,
     bool? remoteListTemplateDefaultState,
+    bool? autoScrollToResults,
   }) {
     return SettingsModel(
       fetchTimeoutSeconds: fetchTimeoutSeconds ?? this.fetchTimeoutSeconds,
@@ -67,6 +72,7 @@ class SettingsModel extends HiveObject {
           remoteListTemplateCustomSource ?? this.remoteListTemplateCustomSource,
       remoteListTemplateDefaultState:
           remoteListTemplateDefaultState ?? this.remoteListTemplateDefaultState,
+      autoScrollToResults: autoScrollToResults ?? this.autoScrollToResults,
     );
   }
 
@@ -81,6 +87,7 @@ class SettingsModel extends HiveObject {
       'compactTabLayout': compactTabLayout,
       'remoteListTemplateCustomSource': remoteListTemplateCustomSource,
       'remoteListTemplateDefaultState': remoteListTemplateDefaultState,
+      'autoScrollToResults': autoScrollToResults,
     };
   }
 
@@ -97,6 +104,7 @@ class SettingsModel extends HiveObject {
           List<String>.from(json['remoteListTemplateCustomSource'] ?? []),
       remoteListTemplateDefaultState:
           json['remoteListTemplateDefaultState'] ?? true,
+      autoScrollToResults: json['autoScrollToResults'] ?? true,
     );
   }
 }

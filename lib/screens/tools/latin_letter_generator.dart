@@ -11,6 +11,7 @@ import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/history_widget.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
+import 'package:random_please/utils/auto_scroll_helper.dart';
 import 'dart:math';
 
 class LatinLetterGeneratorScreen extends ConsumerStatefulWidget {
@@ -30,23 +31,21 @@ class _LatinLetterGeneratorScreenState
   List<String> _results = [];
   late AnimationController _controller;
   late Animation<double> _animation;
+  final ScrollController _scrollController = ScrollController();
 
   // New variables for range selection
-  int _selectedRangeIndex = 0; // Default to 1-20 range
+  int _selectedRangeIndex = 0; // Default to 1-30 range
 
   List<Map<String, dynamic>> get _ranges {
-    final state = ref.read(latinLetterGeneratorProvider);
-    final bothCases = state.includeUppercase && state.includeLowercase;
     return [
       {
-        'min': bothCases ? 2 : 1,
-        'max': 20,
-        'label': bothCases ? '2-20' : '1-20',
+        'min': 1,
+        'max': 30,
+        'label': '1-30',
       },
-      {'min': 21, 'max': 40, 'label': '21-40'},
-      {'min': 41, 'max': 60, 'label': '41-60'},
-      {'min': 61, 'max': 80, 'label': '61-80'},
-      {'min': 81, 'max': 100, 'label': '81-100'},
+      {'min': 31, 'max': 60, 'label': '31-60'},
+      {'min': 61, 'max': 90, 'label': '61-90'},
+      {'min': 91, 'max': 120, 'label': '91-120'},
     ];
   }
 
@@ -87,6 +86,7 @@ class _LatinLetterGeneratorScreenState
   @override
   void dispose() {
     _controller.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -102,11 +102,20 @@ class _LatinLetterGeneratorScreenState
         return;
       }
 
-      if (!stateManager.canGenerateLetters) {
+      // Calculate maximum possible letters based on selected cases
+      int maxPossibleLetters = 0;
+      if (state.includeUppercase) maxPossibleLetters += 26;
+      if (state.includeLowercase) maxPossibleLetters += 26;
+
+      // If no cases selected, default to 26
+      if (maxPossibleLetters == 0) maxPossibleLetters = 26;
+
+      // Check if we can generate the requested number of letters
+      if (!state.allowDuplicates && state.letterCount > maxPossibleLetters) {
         final loc = AppLocalizations.of(context)!;
         SnackBarUtils.showTyped(
           context,
-          loc.latinLetterGenerationError(state.letterCount),
+          loc.latinLetterGenerationError(state.letterCount, maxPossibleLetters),
           SnackBarType.error,
         );
         return;
@@ -153,6 +162,14 @@ class _LatinLetterGeneratorScreenState
         _copied = false;
       });
 
+      // Auto-scroll to results after generation
+      AutoScrollHelper.scrollToResults(
+        ref: ref,
+        scrollController: _scrollController,
+        mounted: mounted,
+        hasResults: _results.isNotEmpty,
+      );
+
       // Save state after generation
       await stateManager.saveCurrentState();
 
@@ -165,12 +182,7 @@ class _LatinLetterGeneratorScreenState
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarUtils.showTyped(context, e.toString(), SnackBarType.error);
       }
     }
   }
@@ -182,10 +194,16 @@ class _LatinLetterGeneratorScreenState
       setState(() {
         _copied = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-      );
+      if (mounted) {
+        SnackBarUtils.showTyped(
+            context, AppLocalizations.of(context)!.copied, SnackBarType.info);
+      }
     }
+  }
+
+  String _getResultSubtitle() {
+    if (_results.isEmpty) return '';
+    return '${_results.length} ${AppLocalizations.of(context)!.letters.toLowerCase()}';
   }
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
@@ -459,74 +477,128 @@ class _LatinLetterGeneratorScreenState
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Header with better design (similar to Number Generator)
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          loc.randomResult,
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        IconButton(
-                          icon: Icon(_copied ? Icons.check : Icons.copy),
-                          onPressed: _copyToClipboard,
-                          tooltip: loc.copyToClipboard,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    // Grid layout for letters to avoid overflow
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 8, // 8 letters per row
-                        childAspectRatio: 1.0,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
-                      ),
-                      itemCount: _results.length,
-                      itemBuilder: (context, index) {
-                        final letter = _results[index];
-                        return Container(
+                        Container(
+                          padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color:
                                 Theme.of(context).colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            letter,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context)
+                          child: Icon(
+                            Icons.abc,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                loc.results,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                              Text(
+                                _getResultSubtitle(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: _copyToClipboard,
+                          icon: Icon(_copied ? Icons.check : Icons.copy),
+                          tooltip: loc.copyToClipboard,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Results as Chips (similar to Number Generator)
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _results.map((letter) {
+                        return Tooltip(
+                          message: loc.clickToCopy,
+                          child: InkWell(
+                            onTap: () {
+                              Clipboard.setData(ClipboardData(text: letter));
+                              SnackBarUtils.showTyped(
+                                  context, loc.copied, SnackBarType.info);
+                            },
+                            borderRadius: BorderRadius.circular(16),
+                            child: Chip(
+                              label: Text(
+                                letter,
+                                style: const TextStyle(
+                                  fontFamily: 'monospace',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              backgroundColor: Theme.of(context)
                                   .colorScheme
-                                  .onPrimaryContainer,
+                                  .surfaceContainerHighest,
+                              side: BorderSide(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .outline
+                                    .withValues(alpha: 0.2),
+                              ),
                             ),
                           ),
                         );
-                      },
+                      }).toList(),
                     ),
+
                     const SizedBox(height: 16),
-                    Card(
-                      color:
-                          Theme.of(context).colorScheme.surfaceContainerHighest,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: SelectableText(
-                          _results.join(' '),
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: 'monospace',
-                            letterSpacing: 2,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                          textAlign: TextAlign.center,
+
+                    // Concatenated result in a container
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .outline
+                              .withValues(alpha: 0.1),
                         ),
+                      ),
+                      child: SelectableText(
+                        _results.join(''),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: 'monospace',
+                          letterSpacing: 2,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ],
@@ -545,6 +617,7 @@ class _LatinLetterGeneratorScreenState
       hasHistory: ref.watch(settingsProvider).saveRandomToolsState,
       isEmbedded: widget.isEmbedded,
       title: loc.latinLetters,
+      scrollController: _scrollController,
     );
   }
 }

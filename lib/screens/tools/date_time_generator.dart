@@ -13,6 +13,9 @@ import 'package:random_please/utils/widget_layout_render_helper.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/widgets/history_widget.dart';
+import 'package:random_please/widgets/statistics/datetime_statistics_widget.dart';
+import 'package:random_please/utils/auto_scroll_helper.dart';
+import 'package:random_please/providers/settings_provider.dart';
 import 'dart:math';
 
 class DateTimeGeneratorScreen extends ConsumerStatefulWidget {
@@ -30,6 +33,7 @@ class _DateTimeGeneratorScreenState
   static const String historyType = 'datetime';
   bool _copied = false;
   List<String> _results = [];
+  final ScrollController _scrollController = ScrollController();
 
   late AppLocalizations loc;
 
@@ -46,6 +50,7 @@ class _DateTimeGeneratorScreenState
 
   @override
   void dispose() {
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -157,6 +162,14 @@ class _DateTimeGeneratorScreenState
         _results = resultList;
         _copied = false;
       });
+
+      // Auto-scroll to results after generation
+      AutoScrollHelper.scrollToResults(
+        ref: ref,
+        scrollController: _scrollController,
+        mounted: mounted,
+        hasResults: _results.isNotEmpty,
+      );
     } catch (e) {
       if (mounted) {
         SnackBarUtils.showTyped(context, e.toString(), SnackBarType.error);
@@ -173,11 +186,14 @@ class _DateTimeGeneratorScreenState
         _copied = true;
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.copied)),
-        );
+        SnackBarUtils.showTyped(context, loc.copied, SnackBarType.info);
       }
     }
+  }
+
+  String _getResultSubtitle() {
+    if (_results.isEmpty) return '';
+    return '${_results.length} ${loc.items.toLowerCase()}';
   }
 
   Future<void> _selectStartDateTime() async {
@@ -334,7 +350,7 @@ class _DateTimeGeneratorScreenState
                   label: loc.dateCount,
                   currentValue: state.dateTimeCount,
                   options: List.generate(
-                    10,
+                    40,
                     (i) => SliderOption(value: i + 1, label: '${i + 1}'),
                   ),
                   onChanged: (value) {
@@ -386,71 +402,116 @@ class _DateTimeGeneratorScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Header with better design (similar to Number Generator)
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        loc.results,
-                        style: Theme.of(context).textTheme.titleLarge,
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.schedule,
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              loc.results,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                            Text(
+                              _getResultSubtitle(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
                       IconButton(
-                        icon: Icon(_copied ? Icons.check : Icons.copy),
                         onPressed: _copyToClipboard,
+                        icon: Icon(_copied ? Icons.check : Icons.copy),
                         tooltip: loc.copyToClipboard,
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+
+                  // Results as Chips (similar to Number Generator)
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
                     children: _results.map((dateTimeStr) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color:
-                                Theme.of(context).colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  dateTimeStr,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimaryContainer,
-                                        fontFamily: 'monospace',
-                                      ),
-                                ),
+                      return Tooltip(
+                        message: loc.clickToCopy,
+                        child: InkWell(
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: dateTimeStr));
+                            SnackBarUtils.showTyped(
+                                context, loc.copied, SnackBarType.info);
+                          },
+                          borderRadius: BorderRadius.circular(16),
+                          child: Chip(
+                            label: Text(
+                              dateTimeStr,
+                              style: const TextStyle(
+                                fontFamily: 'monospace',
+                                fontWeight: FontWeight.w500,
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.copy, size: 18),
-                                onPressed: () {
-                                  Clipboard.setData(
-                                      ClipboardData(text: dateTimeStr));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(loc.copied)),
-                                  );
-                                },
-                                tooltip: loc.copyToClipboard,
-                                style: IconButton.styleFrom(
-                                  foregroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer,
-                                ),
-                              ),
-                            ],
+                            ),
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
+                            side: BorderSide(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .outline
+                                  .withValues(alpha: 0.2),
+                            ),
                           ),
                         ),
                       );
                     }).toList(),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Statistics
+                  DateTimeStatisticsWidget(
+                    values: _results.map((dateTimeStr) {
+                      // Parse "yyyy-MM-dd HH:mm:ss" format
+                      final parts = dateTimeStr.split(' ');
+                      final dateParts = parts[0].split('-');
+                      final timeParts = parts[1].split(':');
+                      return DateTime(
+                        int.parse(dateParts[0]),
+                        int.parse(dateParts[1]),
+                        int.parse(dateParts[2]),
+                        int.parse(timeParts[0]),
+                        int.parse(timeParts[1]),
+                        int.parse(timeParts[2]),
+                      );
+                    }).toList(),
+                    type: DateTimeStatisticsType.dateTime,
+                    locale: loc.localeName,
                   ),
                 ],
               ),
@@ -466,12 +527,11 @@ class _DateTimeGeneratorScreenState
         type: historyType,
         title: loc.generationHistory,
       ),
-      historyEnabled:
-          ref.watch(historyProvider.select((state) => state.isHistoryEnabled)),
-      hasHistory:
-          ref.watch(historyProvider.select((state) => state.isHistoryEnabled)),
+      historyEnabled: ref.watch(settingsProvider).saveRandomToolsState,
+      hasHistory: ref.watch(settingsProvider).saveRandomToolsState,
       isEmbedded: widget.isEmbedded,
       title: loc.dateTimeGenerator,
+      scrollController: _scrollController,
     );
   }
 }

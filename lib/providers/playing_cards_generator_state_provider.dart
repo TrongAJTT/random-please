@@ -25,14 +25,17 @@ class PlayingCardsGeneratorStateManager
       final includeJokers = prefs.getBool('${_stateKey}_includeJokers');
       final cardCount = prefs.getInt('${_stateKey}_cardCount');
       final allowDuplicates = prefs.getBool('${_stateKey}_allowDuplicates');
+      final skipAnimation = prefs.getBool('${_stateKey}_skipAnimation');
 
       if (includeJokers != null &&
           cardCount != null &&
-          allowDuplicates != null) {
+          allowDuplicates != null &&
+          skipAnimation != null) {
         state = PlayingCardGeneratorState(
           includeJokers: includeJokers,
           cardCount: cardCount,
           allowDuplicates: allowDuplicates,
+          skipAnimation: skipAnimation,
           lastUpdated: DateTime.now(),
         );
         return;
@@ -53,6 +56,7 @@ class PlayingCardsGeneratorStateManager
       await prefs.setInt('${_stateKey}_cardCount', state.cardCount);
       await prefs.setBool(
           '${_stateKey}_allowDuplicates', state.allowDuplicates);
+      await prefs.setBool('${_stateKey}_skipAnimation', state.skipAnimation);
     }
   }
 
@@ -67,6 +71,10 @@ class PlayingCardsGeneratorStateManager
 
   void updateAllowDuplicates(bool value) {
     state = state.copyWith(allowDuplicates: value);
+  }
+
+  void updateSkipAnimation(bool value) {
+    state = state.copyWith(skipAnimation: value);
   }
 
   // Reset về default

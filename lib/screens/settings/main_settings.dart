@@ -61,6 +61,7 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
     await Future.wait([
       ref.read(historyEnabledProvider.notifier).loadState(),
       ref.read(compactTabLayoutProvider.notifier).loadState(),
+      ref.read(autoScrollToResultsProvider.notifier).loadState(),
       ref.read(cacheProvider.notifier).refreshCacheInfo(),
     ]);
 
@@ -88,6 +89,10 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
 
   void _onCompactTabLayoutChanged(bool enabled) async {
     ref.read(compactTabLayoutProvider.notifier).setEnabled(enabled);
+  }
+
+  void _onAutoScrollToResultsChanged(bool enabled) async {
+    ref.read(autoScrollToResultsProvider.notifier).setEnabled(enabled);
   }
 
   @override
@@ -178,6 +183,8 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
         const SettingsScreen(isEmbedded: true, showCacheSection: false),
         const SizedBox(height: 16),
         _buildCompactTabLayoutSettings(loc),
+        VerticalSpacingDivider.both(6),
+        _buildAutoScrollToResultsSettings(loc),
       ],
     );
   }
@@ -239,6 +246,17 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
       subtitle: loc.compactTabLayoutDesc,
       value: compactTabLayout,
       onChanged: _onCompactTabLayoutChanged,
+      decorator: switchDecorator,
+    );
+  }
+
+  Widget _buildAutoScrollToResultsSettings(AppLocalizations loc) {
+    final autoScrollToResults = ref.watch(autoScrollToResultsProvider);
+    return OptionSwitch(
+      title: loc.autoScrollToResults,
+      subtitle: loc.autoScrollToResultsDesc,
+      value: autoScrollToResults,
+      onChanged: _onAutoScrollToResultsChanged,
       decorator: switchDecorator,
     );
   }
