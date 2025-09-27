@@ -44,7 +44,9 @@ class ListPickerGeneratorStateManager
                 orElse: () => ListPickerMode.random,
               ),
               isListSelectorCollapsed: isListSelectorCollapsed,
-              isListManagerCollapsed: isListManagerCollapsed,
+              listManagerExpandState: isListManagerCollapsed
+                  ? ListManagerExpandState.minimized
+                  : ListManagerExpandState.expanded,
             );
           } catch (e2) {
             // If both fail, use default state
@@ -70,8 +72,8 @@ class ListPickerGeneratorStateManager
       await prefs.setString('${_stateKey}_mode', state.mode.name);
       await prefs.setBool('${_stateKey}_isListSelectorCollapsed',
           state.isListSelectorCollapsed);
-      await prefs.setBool(
-          '${_stateKey}_isListManagerCollapsed', state.isListManagerCollapsed);
+      await prefs.setBool('${_stateKey}_isListManagerCollapsed',
+          state.listManagerExpandState == ListManagerExpandState.minimized);
     }
   }
 
@@ -95,8 +97,21 @@ class ListPickerGeneratorStateManager
   }
 
   void toggleListManagerCollapse() {
+    ListManagerExpandState newState;
+    switch (state.listManagerExpandState) {
+      case ListManagerExpandState.expanded:
+        newState = ListManagerExpandState.collapsed;
+        break;
+      case ListManagerExpandState.collapsed:
+        newState = ListManagerExpandState.minimized;
+        break;
+      case ListManagerExpandState.minimized:
+        newState = ListManagerExpandState.expanded;
+        break;
+    }
+
     state = state.copyWith(
-      isListManagerCollapsed: !state.isListManagerCollapsed,
+      listManagerExpandState: newState,
       lastUpdated: DateTime.now(),
     );
     _saveState();

@@ -656,7 +656,7 @@ class ListPickerGeneratorStateAdapter
       lastUpdated: fields[3] as DateTime,
       mode: fields[4] as ListPickerMode,
       isListSelectorCollapsed: fields[5] as bool,
-      isListManagerCollapsed: fields[6] as bool,
+      listManagerExpandState: fields[6] as ListManagerExpandState,
     );
   }
 
@@ -677,7 +677,7 @@ class ListPickerGeneratorStateAdapter
       ..writeByte(5)
       ..write(obj.isListSelectorCollapsed)
       ..writeByte(6)
-      ..write(obj.isListManagerCollapsed);
+      ..write(obj.listManagerExpandState);
   }
 
   @override
@@ -858,6 +858,51 @@ class ListPickerModeAdapter extends TypeAdapter<ListPickerMode> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ListPickerModeAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class ListManagerExpandStateAdapter
+    extends TypeAdapter<ListManagerExpandState> {
+  @override
+  final int typeId = 78;
+
+  @override
+  ListManagerExpandState read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return ListManagerExpandState.expanded;
+      case 1:
+        return ListManagerExpandState.collapsed;
+      case 2:
+        return ListManagerExpandState.minimized;
+      default:
+        return ListManagerExpandState.expanded;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, ListManagerExpandState obj) {
+    switch (obj) {
+      case ListManagerExpandState.expanded:
+        writer.writeByte(0);
+        break;
+      case ListManagerExpandState.collapsed:
+        writer.writeByte(1);
+        break;
+      case ListManagerExpandState.minimized:
+        writer.writeByte(2);
+        break;
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ListManagerExpandStateAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

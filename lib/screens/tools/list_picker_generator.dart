@@ -807,7 +807,8 @@ class _ListPickerGeneratorScreenState
                           ),
                         ),
                         const SizedBox(width: 8),
-                        if (_viewModel.state.isListManagerCollapsed &&
+                        if (_viewModel.state.listManagerExpandState !=
+                                ListManagerExpandState.expanded &&
                             _viewModel.state.currentList != null)
                           Text(
                             '(${_viewModel.state.currentList!.items.length})',
@@ -829,16 +830,15 @@ class _ListPickerGeneratorScreenState
                     _viewModel.toggleListManagerCollapse();
                     setState(() {});
                   },
-                  icon: Icon(_viewModel.state.isListManagerCollapsed
-                      ? Icons.expand_more
-                      : Icons.expand_less),
-                  tooltip: _viewModel.state.isListManagerCollapsed
-                      ? loc.expand
-                      : loc.collapse,
+                  icon: Icon(
+                      _getExpandIcon(_viewModel.state.listManagerExpandState)),
+                  tooltip: _getExpandTooltip(
+                      _viewModel.state.listManagerExpandState, loc),
                 ),
               ],
             ),
-            if (!_viewModel.state.isListManagerCollapsed) ...[
+            if (_viewModel.state.listManagerExpandState !=
+                ListManagerExpandState.minimized) ...[
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -881,450 +881,228 @@ class _ListPickerGeneratorScreenState
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final isWideScreen = constraints.maxWidth > 500;
+                    final expandState = _viewModel.state.listManagerExpandState;
 
                     if (isWideScreen) {
                       // Two column layout for wide screens
-                      final items = _viewModel.state.currentList?.items ?? [];
+                      final allItems =
+                          _viewModel.state.currentList?.items ?? [];
+                      final items = allItems; // Show all items in both modes
                       final halfLength = (items.length / 2).ceil();
                       final leftItems = items.take(halfLength).toList();
                       final rightItems = items.skip(halfLength).toList();
 
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              children: leftItems.asMap().entries.map((entry) {
-                                final index = entry.key;
-                                final item = entry.value;
-                                return Container(
-                                  margin: const EdgeInsets.only(bottom: 4),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .outline
-                                          .withValues(alpha: 0.2),
-                                    ),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: GestureDetector(
-                                    onLongPress: () =>
-                                        _showRenameItemDialog(item),
-                                    onSecondaryTap: () =>
-                                        _showRenameItemDialog(item),
-                                    child: ListTile(
-                                      dense: true,
-                                      leading: Container(
-                                        width: 30,
-                                        height: 30,
-                                        decoration: BoxDecoration(
+                      return SizedBox(
+                        height: expandState == ListManagerExpandState.collapsed
+                            ? 400
+                            : null,
+                        child: SingleChildScrollView(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  children:
+                                      leftItems.asMap().entries.map((entry) {
+                                    final index = entry.key;
+                                    final item = entry.value;
+                                    return Container(
+                                      margin: const EdgeInsets.only(bottom: 4),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .primaryContainer,
-                                          borderRadius:
-                                              BorderRadius.circular(15),
+                                              .outline
+                                              .withValues(alpha: 0.2),
                                         ),
-                                        child: Center(
-                                          child: Text(
-                                            '${index + 1}',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall
-                                                ?.copyWith(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimaryContainer,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: GestureDetector(
+                                        onLongPress: () =>
+                                            _showRenameItemDialog(item),
+                                        onSecondaryTap: () =>
+                                            _showRenameItemDialog(item),
+                                        child: ListTile(
+                                          dense: true,
+                                          leading: Container(
+                                            width: 30,
+                                            height: 30,
+                                            decoration: BoxDecoration(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primaryContainer,
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                '${index + 1}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall
+                                                    ?.copyWith(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimaryContainer,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                              ),
+                                            ),
+                                          ),
+                                          title: Text(item.value),
+                                          trailing: IconButton(
+                                            icon: const Icon(Icons.delete,
+                                                size: 20),
+                                            onPressed: () =>
+                                                _removeItem(item.id),
                                           ),
                                         ),
                                       ),
-                                      title: Text(item.value),
-                                      trailing: IconButton(
-                                        icon:
-                                            const Icon(Icons.delete, size: 20),
-                                        onPressed: () => _removeItem(item.id),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              children: rightItems.asMap().entries.map((entry) {
-                                final index = entry.key + halfLength;
-                                final item = entry.value;
-                                return Container(
-                                  margin: const EdgeInsets.only(bottom: 4),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .outline
-                                          .withValues(alpha: 0.2),
-                                    ),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: GestureDetector(
-                                    onLongPress: () =>
-                                        _showRenameItemDialog(item),
-                                    onSecondaryTap: () =>
-                                        _showRenameItemDialog(item),
-                                    child: ListTile(
-                                      dense: true,
-                                      leading: Container(
-                                        width: 30,
-                                        height: 30,
-                                        decoration: BoxDecoration(
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  children:
+                                      rightItems.asMap().entries.map((entry) {
+                                    final index = entry.key + halfLength;
+                                    final item = entry.value;
+                                    return Container(
+                                      margin: const EdgeInsets.only(bottom: 4),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .primaryContainer,
-                                          borderRadius:
-                                              BorderRadius.circular(15),
+                                              .outline
+                                              .withValues(alpha: 0.2),
                                         ),
-                                        child: Center(
-                                          child: Text(
-                                            '${index + 1}',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall
-                                                ?.copyWith(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimaryContainer,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: GestureDetector(
+                                        onLongPress: () =>
+                                            _showRenameItemDialog(item),
+                                        onSecondaryTap: () =>
+                                            _showRenameItemDialog(item),
+                                        child: ListTile(
+                                          dense: true,
+                                          leading: Container(
+                                            width: 30,
+                                            height: 30,
+                                            decoration: BoxDecoration(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primaryContainer,
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                '${index + 1}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall
+                                                    ?.copyWith(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimaryContainer,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                              ),
+                                            ),
+                                          ),
+                                          title: Text(item.value),
+                                          trailing: IconButton(
+                                            icon: const Icon(Icons.delete,
+                                                size: 20),
+                                            onPressed: () =>
+                                                _removeItem(item.id),
                                           ),
                                         ),
                                       ),
-                                      title: Text(item.value),
-                                      trailing: IconButton(
-                                        icon:
-                                            const Icon(Icons.delete, size: 20),
-                                        onPressed: () => _removeItem(item.id),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       );
                     } else {
                       // Single column layout for narrow screens
-                      return Column(
-                        children: (_viewModel.state.currentList?.items ?? [])
-                            .asMap()
-                            .entries
-                            .map((entry) {
-                          final index = entry.key;
-                          final item = entry.value;
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 4),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .outline
-                                    .withValues(alpha: 0.2),
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: GestureDetector(
-                              onLongPress: () => _showRenameItemDialog(item),
-                              onSecondaryTap: () => _showRenameItemDialog(item),
-                              child: ListTile(
-                                dense: true,
-                                leading: Container(
-                                  width: 30,
-                                  height: 30,
-                                  decoration: BoxDecoration(
+                      final allItems =
+                          _viewModel.state.currentList?.items ?? [];
+                      final items = allItems; // Show all items in both modes
+                      return SizedBox(
+                        height: expandState == ListManagerExpandState.collapsed
+                            ? 400
+                            : null,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: items.asMap().entries.map((entry) {
+                              final index = entry.key;
+                              final item = entry.value;
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 4),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .primaryContainer,
-                                    borderRadius: BorderRadius.circular(15),
+                                        .outline
+                                        .withValues(alpha: 0.2),
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      '${index + 1}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimaryContainer,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: GestureDetector(
+                                  onLongPress: () =>
+                                      _showRenameItemDialog(item),
+                                  onSecondaryTap: () =>
+                                      _showRenameItemDialog(item),
+                                  child: ListTile(
+                                    dense: true,
+                                    leading: Container(
+                                      width: 30,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primaryContainer,
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          '${index + 1}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimaryContainer,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                      ),
+                                    ),
+                                    title: Text(item.value),
+                                    trailing: IconButton(
+                                      icon: const Icon(Icons.delete, size: 20),
+                                      onPressed: () => _removeItem(item.id),
                                     ),
                                   ),
                                 ),
-                                title: Text(item.value),
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.delete, size: 20),
-                                  onPressed: () => _removeItem(item.id),
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
+                              );
+                            }).toList(),
+                          ),
+                        ),
                       );
                     }
                   },
                 ),
               ],
-            ] else if (_viewModel.state.currentList != null &&
-                _viewModel.state.currentList!.items.isNotEmpty) ...[
-              // Collapsed state with SingleChildScrollView and max height only for items list
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _itemController,
-                      decoration: InputDecoration(
-                        labelText: loc.addItem,
-                        border: const OutlineInputBorder(),
-                      ),
-                      onSubmitted: (_) => _addItemToCurrentList(),
-                      enabled: _viewModel.state.currentList != null,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    onPressed: _viewModel.state.currentList != null
-                        ? _addItemToCurrentList
-                        : null,
-                    icon: const Icon(Icons.add),
-                    tooltip: loc.addSingleItem,
-                  ),
-                  IconButton(
-                    onPressed: _viewModel.state.currentList != null
-                        ? _showAddBatchDialog
-                        : null,
-                    icon: const Icon(Icons.add_box),
-                    tooltip: loc.addMultipleItems,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '${loc.items} (${_viewModel.state.currentList?.items.length ?? 0}):',
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SizedBox(height: 8),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 400),
-                child: SingleChildScrollView(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final isWideScreen = constraints.maxWidth > 500;
-
-                      if (isWideScreen) {
-                        // Two column layout for wide screens
-                        final items = _viewModel.state.currentList?.items ?? [];
-                        final halfLength = (items.length / 2).ceil();
-                        final leftItems = items.take(halfLength).toList();
-                        final rightItems = items.skip(halfLength).toList();
-
-                        return Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                children:
-                                    leftItems.asMap().entries.map((entry) {
-                                  final index = entry.key;
-                                  final item = entry.value;
-                                  return Container(
-                                    margin: const EdgeInsets.only(bottom: 4),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .outline
-                                            .withValues(alpha: 0.2),
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: GestureDetector(
-                                      onLongPress: () =>
-                                          _showRenameItemDialog(item),
-                                      onSecondaryTap: () =>
-                                          _showRenameItemDialog(item),
-                                      child: ListTile(
-                                        dense: true,
-                                        leading: Container(
-                                          width: 30,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primaryContainer,
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              '${index + 1}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall
-                                                  ?.copyWith(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .onPrimaryContainer,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
-                                        title: Text(item.value),
-                                        trailing: IconButton(
-                                          icon: const Icon(Icons.delete,
-                                              size: 20),
-                                          onPressed: () => _removeItem(item.id),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                children:
-                                    rightItems.asMap().entries.map((entry) {
-                                  final index = entry.key + halfLength;
-                                  final item = entry.value;
-                                  return Container(
-                                    margin: const EdgeInsets.only(bottom: 4),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .outline
-                                            .withValues(alpha: 0.2),
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: GestureDetector(
-                                      onLongPress: () =>
-                                          _showRenameItemDialog(item),
-                                      onSecondaryTap: () =>
-                                          _showRenameItemDialog(item),
-                                      child: ListTile(
-                                        dense: true,
-                                        leading: Container(
-                                          width: 30,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primaryContainer,
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              '${index + 1}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall
-                                                  ?.copyWith(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .onPrimaryContainer,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
-                                        title: Text(item.value),
-                                        trailing: IconButton(
-                                          icon: const Icon(Icons.delete,
-                                              size: 20),
-                                          onPressed: () => _removeItem(item.id),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ],
-                        );
-                      } else {
-                        // Single column layout for narrow screens
-                        return Column(
-                          children: (_viewModel.state.currentList?.items ?? [])
-                              .asMap()
-                              .entries
-                              .map((entry) {
-                            final index = entry.key;
-                            final item = entry.value;
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 4),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .outline
-                                      .withValues(alpha: 0.2),
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: GestureDetector(
-                                onLongPress: () => _showRenameItemDialog(item),
-                                onSecondaryTap: () =>
-                                    _showRenameItemDialog(item),
-                                child: ListTile(
-                                  dense: true,
-                                  leading: Container(
-                                    width: 30,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primaryContainer,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        '${index + 1}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall
-                                            ?.copyWith(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onPrimaryContainer,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                      ),
-                                    ),
-                                  ),
-                                  title: Text(item.value),
-                                  trailing: IconButton(
-                                    icon: const Icon(Icons.delete, size: 20),
-                                    onPressed: () => _removeItem(item.id),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ),
             ],
           ],
         ),
@@ -1602,8 +1380,9 @@ class _ListPickerGeneratorScreenState
 
           // Parse team result: "Team 1: item1, item2, item3"
           final teamParts = result.split(': ');
-          final teamName =
-              teamParts.length > 1 ? teamParts[0] : 'Team ${teamIndex + 1}';
+          final teamName = teamParts.length > 1
+              ? teamParts[0]
+              : '${loc.team} ${teamIndex + 1}';
           final teamMembers =
               teamParts.length > 1 ? teamParts[1].split(', ') : [result];
 
@@ -1611,11 +1390,16 @@ class _ListPickerGeneratorScreenState
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color:
-                  Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+              color: Theme.of(context)
+                  .colorScheme
+                  .surfaceContainerHighest
+                  .withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                color: Theme.of(context)
+                    .colorScheme
+                    .outline
+                    .withValues(alpha: 0.2),
               ),
             ),
             child: Column(
@@ -1695,6 +1479,28 @@ class _ListPickerGeneratorScreenState
       type: ListPickerViewModel.historyType,
       title: loc.generationHistory,
     );
+  }
+
+  IconData _getExpandIcon(ListManagerExpandState state) {
+    switch (state) {
+      case ListManagerExpandState.expanded:
+        return Icons.keyboard_arrow_up; // Expand to expanded
+      case ListManagerExpandState.collapsed:
+        return Icons.keyboard_arrow_up_outlined; // Minimize to minimized
+      case ListManagerExpandState.minimized:
+        return Icons.keyboard_arrow_down; // Collapse to collapsed
+    }
+  }
+
+  String _getExpandTooltip(ListManagerExpandState state, AppLocalizations loc) {
+    switch (state) {
+      case ListManagerExpandState.expanded:
+        return loc.collapseToLimitedView;
+      case ListManagerExpandState.collapsed:
+        return loc.minimizeToHeaderOnly;
+      case ListManagerExpandState.minimized:
+        return loc.expandToFullView;
+    }
   }
 
   @override
@@ -1938,7 +1744,7 @@ class _TemplateDialogState extends State<_TemplateDialog> {
                   children: [
                     const Icon(Icons.error, size: 48, color: Colors.red),
                     const SizedBox(height: 16),
-                    Text('Error: ${snapshot.error}'),
+                    Text('${loc.error}: ${snapshot.error}'),
                   ],
                 );
               }

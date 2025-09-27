@@ -1191,6 +1191,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get modeTeamDesc => 'Chia các mục thành các đội';
 
   @override
+  String get team => 'Đội';
+
+  @override
   String get createListDialog => 'Tạo danh sách mới';
 
   @override
@@ -1275,6 +1278,18 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get collapse => 'Thu gọn';
+
+  @override
+  String get minimize => 'Thu nhỏ';
+
+  @override
+  String get collapseToLimitedView => 'Thu gọn để xem giới hạn';
+
+  @override
+  String get minimizeToHeaderOnly => 'Thu nhỏ chỉ hiện tiêu đề';
+
+  @override
+  String get expandToFullView => 'Mở rộng để xem đầy đủ';
 
   @override
   String get viewDetails => 'Xem chi tiết';

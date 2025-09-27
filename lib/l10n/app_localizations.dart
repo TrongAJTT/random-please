@@ -2324,6 +2324,12 @@ abstract class AppLocalizations {
   /// **'Divide items into teams'**
   String get modeTeamDesc;
 
+  /// No description provided for @team.
+  ///
+  /// In en, this message translates to:
+  /// **'Team'**
+  String get team;
+
   /// No description provided for @createListDialog.
   ///
   /// In en, this message translates to:
@@ -2479,6 +2485,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Collapse'**
   String get collapse;
+
+  /// No description provided for @minimize.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimize'**
+  String get minimize;
+
+  /// No description provided for @collapseToLimitedView.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse to limited view'**
+  String get collapseToLimitedView;
+
+  /// No description provided for @minimizeToHeaderOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimize to header only'**
+  String get minimizeToHeaderOnly;
+
+  /// No description provided for @expandToFullView.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand to full view'**
+  String get expandToFullView;
 
   /// No description provided for @viewDetails.
   ///

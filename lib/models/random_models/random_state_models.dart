@@ -960,6 +960,16 @@ enum ListPickerMode {
   team,
 }
 
+@HiveType(typeId: 78)
+enum ListManagerExpandState {
+  @HiveField(0)
+  expanded, // Hiển thị full content
+  @HiveField(1)
+  collapsed, // Hiển thị một phần như trong ảnh
+  @HiveField(2)
+  minimized, // Chỉ hiển thị header
+}
+
 @HiveType(typeId: 71)
 class ListPickerGeneratorState {
   @HiveField(0)
@@ -981,7 +991,7 @@ class ListPickerGeneratorState {
   bool isListSelectorCollapsed;
 
   @HiveField(6)
-  bool isListManagerCollapsed;
+  ListManagerExpandState listManagerExpandState;
 
   ListPickerGeneratorState({
     required this.quantity,
@@ -990,7 +1000,7 @@ class ListPickerGeneratorState {
     required this.lastUpdated,
     this.mode = ListPickerMode.random,
     this.isListSelectorCollapsed = false,
-    this.isListManagerCollapsed = false,
+    this.listManagerExpandState = ListManagerExpandState.expanded,
   });
 
   static ListPickerGeneratorState createDefault() {
@@ -1001,7 +1011,7 @@ class ListPickerGeneratorState {
       lastUpdated: DateTime.now(),
       mode: ListPickerMode.random,
       isListSelectorCollapsed: false,
-      isListManagerCollapsed: false,
+      listManagerExpandState: ListManagerExpandState.expanded,
     );
   }
 
@@ -1013,7 +1023,7 @@ class ListPickerGeneratorState {
       'lastUpdated': lastUpdated.toIso8601String(),
       'mode': mode.name,
       'isListSelectorCollapsed': isListSelectorCollapsed,
-      'isListManagerCollapsed': isListManagerCollapsed,
+      'listManagerExpandState': listManagerExpandState.name,
     };
   }
 
@@ -1034,7 +1044,10 @@ class ListPickerGeneratorState {
         orElse: () => ListPickerMode.random,
       ),
       isListSelectorCollapsed: json['isListSelectorCollapsed'] ?? false,
-      isListManagerCollapsed: json['isListManagerCollapsed'] ?? false,
+      listManagerExpandState: ListManagerExpandState.values.firstWhere(
+        (state) => state.name == (json['listManagerExpandState'] ?? 'expanded'),
+        orElse: () => ListManagerExpandState.expanded,
+      ),
     );
   }
 
@@ -1045,7 +1058,7 @@ class ListPickerGeneratorState {
     DateTime? lastUpdated,
     ListPickerMode? mode,
     bool? isListSelectorCollapsed,
-    bool? isListManagerCollapsed,
+    ListManagerExpandState? listManagerExpandState,
   }) {
     return ListPickerGeneratorState(
       quantity: quantity ?? this.quantity,
@@ -1055,8 +1068,8 @@ class ListPickerGeneratorState {
       mode: mode ?? this.mode,
       isListSelectorCollapsed:
           isListSelectorCollapsed ?? this.isListSelectorCollapsed,
-      isListManagerCollapsed:
-          isListManagerCollapsed ?? this.isListManagerCollapsed,
+      listManagerExpandState:
+          listManagerExpandState ?? this.listManagerExpandState,
     );
   }
 }

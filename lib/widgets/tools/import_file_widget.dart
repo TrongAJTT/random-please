@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:random_please/l10n/app_localizations.dart';
+import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/view_models/list_picker_view_model.dart';
 import 'package:random_please/widgets/common/step_indicator.dart';
 import 'package:path/path.dart' as path;
@@ -145,7 +146,7 @@ class _ImportFileWidgetState extends State<ImportFileWidget> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -190,6 +191,22 @@ class _ImportFileWidgetState extends State<ImportFileWidget> {
     }
   }
 
+  bool _canProceedToNextStep() {
+    switch (_currentStep) {
+      case 0:
+        // Step 1: Can proceed only if file is selected and processed successfully
+        return _selectedFile != null && _previewItems.isNotEmpty;
+      case 1:
+        // Step 2: Can proceed to confirmation step
+        return true;
+      case 2:
+        // Step 3: Can proceed only if naming is valid
+        return _canProceedFromStep3;
+      default:
+        return false;
+    }
+  }
+
   void _goToPreviousStep() {
     if (_currentStep > 0) {
       setState(() {
@@ -222,12 +239,8 @@ class _ImportFileWidgetState extends State<ImportFileWidget> {
         widget.onSuccess?.call();
 
         // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(loc.importSuccess),
-            backgroundColor: Colors.green,
-          ),
-        );
+        SnackBarUtils.showTyped(
+            context, loc.importSuccess, SnackBarType.success);
       }
     } catch (e) {
       if (mounted) {
@@ -373,11 +386,23 @@ class _ImportFileWidgetState extends State<ImportFileWidget> {
                       const SizedBox(height: 32),
                       ElevatedButton.icon(
                         onPressed: _isProcessingFile ? null : _pickFile,
-                        icon: const Icon(Icons.folder_open),
+                        icon: const Icon(Icons.folder_open, size: 20),
                         label: Text(loc.selectFile),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 12),
+                              horizontal: 32, vertical: 16),
+                          minimumSize: const Size(200, 48),
+                          textStyle:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                          side: BorderSide(
+                            color: Theme.of(context).colorScheme.outline,
+                            width: 2,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -398,19 +423,33 @@ class _ImportFileWidgetState extends State<ImportFileWidget> {
               // Processing overlay
               if (_isProcessingFile)
                 Container(
-                  color: Colors.black54,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .scrim
+                      .withValues(alpha: 0.5),
                   child: Center(
                     child: Card(
+                      elevation: 8,
                       child: Padding(
                         padding: const EdgeInsets.all(24),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const CircularProgressIndicator(),
+                            CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
                             const SizedBox(height: 16),
                             Text(
                               loc.processingFile,
-                              style: Theme.of(context).textTheme.titleMedium,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
                             ),
                           ],
                         ),
@@ -430,96 +469,189 @@ class _ImportFileWidgetState extends State<ImportFileWidget> {
 
     return Column(
       children: [
-        // File info header
+        // File info header - compact horizontal layout
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color:
-                theme.colorScheme.surfaceContainerHighest.withValues(alpha: .3),
-            border: Border(
-              bottom: BorderSide(color: theme.dividerColor, width: 1),
+                theme.colorScheme.surfaceContainerHighest.withValues(alpha: .2),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: theme.colorScheme.outline.withValues(alpha: .2),
+              width: 1,
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          margin: const EdgeInsets.all(16),
+          child: Row(
             children: [
-              Text(
-                _selectedFile != null ? path.basename(_selectedFile!.path) : '',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
+              Icon(
+                Icons.description,
+                color: theme.colorScheme.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _selectedFile != null
+                          ? path.basename(_selectedFile!.path)
+                          : '',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      '${_previewItems.length} ${loc.items}',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                '${_previewItems.length} ${loc.items}',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withValues(alpha: .1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${_previewItems.length}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
           ),
         ),
 
-        // Items list
+        // Items list - compact grid layout
         Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  loc.preview,
-                  style: theme.textTheme.titleMedium,
-                ),
-                const SizedBox(height: 12),
-                ..._previewItems.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final item = entry.value;
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest
-                          .withValues(alpha: .5),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: theme.colorScheme.outline.withValues(alpha: .3),
+          child: Column(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.visibility,
+                      size: 20,
+                      color: theme.colorScheme.primary,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      loc.preview,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.primary,
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primary,
-                            shape: BoxShape.circle,
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withValues(alpha: .1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color:
+                              theme.colorScheme.primary.withValues(alpha: .3),
+                          width: 0.8,
+                        ),
+                      ),
+                      child: Text(
+                        '${_previewItems.length} ${loc.items}',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 6),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    children: _previewItems.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final item = entry.value;
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surfaceContainerHighest
+                              .withValues(alpha: .35),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: theme.colorScheme.outline
+                                .withValues(alpha: .25),
+                            width: 0.8,
                           ),
-                          child: Center(
-                            child: Text(
-                              '${index + 1}',
-                              style: TextStyle(
-                                color: theme.colorScheme.onPrimary,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: .03),
+                              blurRadius: 1,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 26,
+                              height: 26,
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.primary
+                                    .withValues(alpha: .12),
+                                borderRadius: BorderRadius.circular(13),
+                                border: Border.all(
+                                  color: theme.colorScheme.primary
+                                      .withValues(alpha: .35),
+                                  width: 1.2,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${index + 1}',
+                                  style: TextStyle(
+                                    color: theme.colorScheme.primary,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                item,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            item,
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
-              ],
-            ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -531,202 +663,323 @@ class _ImportFileWidgetState extends State<ImportFileWidget> {
 
     return Column(
       children: [
-        // Header
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color:
-                theme.colorScheme.surfaceContainerHighest.withValues(alpha: .3),
-            border: Border(
-              bottom: BorderSide(color: theme.dividerColor, width: 1),
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                loc.setListName,
-                style: theme.textTheme.titleLarge,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '${_selectedFile != null ? path.basename(_selectedFile!.path) : ''}',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-              Text(
-                '${_previewItems.length} ${loc.items}',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // Name input form
+        const SizedBox(height: 16),
+        // Name input form - compact layout
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Naming options
-                Text(
-                  loc.listNamingOptions,
-                  style: theme.textTheme.titleMedium,
-                ),
-                const SizedBox(height: 12),
-
-                // Option 1: Manual name
-                RadioListTile<bool>(
-                  title: Text(loc.enterManually),
-                  value: true,
-                  groupValue: _useManualName,
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        _useManualName = value;
-                      });
-                    }
-                  },
-                ),
-
-                if (_useManualName) ...[
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    controller: _listNameController,
-                    decoration: InputDecoration(
-                      labelText: loc.listName,
-                      hintText: _selectedFile != null
-                          ? path.basenameWithoutExtension(_selectedFile!.path)
-                          : '',
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.list),
+                // Naming options header
+                Row(
+                  children: [
+                    Icon(
+                      Icons.edit_note,
+                      size: 18,
+                      color: theme.colorScheme.primary,
                     ),
-                    textInputAction: TextInputAction.done,
-                    onChanged: (value) {
-                      setState(() {
-                        _listName = value;
-                      });
-                    },
+                    const SizedBox(width: 8),
+                    Text(
+                      loc.listNamingOptions,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Compact radio options
+                Container(
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHighest
+                        .withValues(alpha: .2),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: theme.colorScheme.outline.withValues(alpha: .2),
+                      width: 1,
+                    ),
                   ),
-                ],
+                  child: Column(
+                    children: [
+                      // Option 1: Manual name
+                      RadioListTile<bool>(
+                        title: Text(
+                          loc.enterManually,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                        value: true,
+                        groupValue: _useManualName,
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 12),
+                        onChanged: (value) {
+                          if (value != null) {
+                            setState(() {
+                              _useManualName = value;
+                              if (value) {
+                                // Reset to manual name when switching to manual mode
+                                _listName = _listNameController.text.trim();
+                              }
+                            });
+                          }
+                        },
+                      ),
+                      if (_useManualName) ...[
+                        const SizedBox(height: 6),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                          child: TextFormField(
+                            controller: _listNameController,
+                            decoration: InputDecoration(
+                              labelText: loc.listName,
+                              hintText: _selectedFile != null
+                                  ? path.basenameWithoutExtension(
+                                      _selectedFile!.path)
+                                  : '',
+                              border: const OutlineInputBorder(),
+                              prefixIcon: const Icon(Icons.list, size: 20),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
+                            ),
+                            textInputAction: TextInputAction.done,
+                            onChanged: (value) {
+                              setState(() {
+                                _listName = value;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                      // Option 2: Use element as name
+                      RadioListTile<bool>(
+                        title: Text(
+                          loc.useElementAsName,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                        value: false,
+                        groupValue: _useManualName,
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 12),
+                        onChanged: (value) {
+                          if (value != null) {
+                            setState(() {
+                              _useManualName = value;
+                              if (!value) {
+                                // Update list name based on selected element when switching to element mode
+                                if (_selectedElementIndex >= 1 &&
+                                    _selectedElementIndex <=
+                                        _previewItems.length) {
+                                  _listName =
+                                      _previewItems[_selectedElementIndex - 1];
+                                }
+                              }
+                            });
+                          }
+                        },
+                      ),
+                      if (!_useManualName) ...[
+                        const SizedBox(height: 6),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                          child: TextFormField(
+                            controller: _elementIndexController,
+                            decoration: InputDecoration(
+                              labelText:
+                                  '${loc.elementNumber} (1-${_previewItems.length})',
+                              border: const OutlineInputBorder(),
+                              prefixIcon: const Icon(Icons.numbers, size: 20),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
+                            ),
+                            keyboardType: TextInputType.number,
+                            textInputAction: TextInputAction.done,
+                            onChanged: (value) {
+                              final index = int.tryParse(value);
+                              if (index != null &&
+                                  index >= 1 &&
+                                  index <= _previewItems.length) {
+                                setState(() {
+                                  _selectedElementIndex = index;
+                                  _listName = _previewItems[index - 1];
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                          child: CheckboxListTile(
+                            title: Text(
+                              loc.removeElementFromList,
+                              style: theme.textTheme.titleMedium,
+                            ),
+                            subtitle: Text(
+                              loc.removeElementDescription,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            value: _removeSelectedElement,
+                            contentPadding: EdgeInsets.zero,
+                            onChanged: (value) {
+                              setState(() {
+                                _removeSelectedElement = value ?? false;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
 
                 const SizedBox(height: 16),
 
-                // Option 2: Use element as name
-                RadioListTile<bool>(
-                  title: Text(loc.useElementAsName),
-                  value: false,
-                  groupValue: _useManualName,
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        _useManualName = value;
-                      });
-                    }
-                  },
-                ),
-
-                if (!_useManualName) ...[
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    controller: _elementIndexController,
-                    decoration: InputDecoration(
-                      labelText:
-                          '${loc.elementNumber} (1-${_previewItems.length})',
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.numbers),
-                    ),
-                    keyboardType: TextInputType.number,
-                    textInputAction: TextInputAction.done,
-                    onChanged: (value) {
-                      final index = int.tryParse(value);
-                      if (index != null &&
-                          index >= 1 &&
-                          index <= _previewItems.length) {
-                        setState(() {
-                          _selectedElementIndex = index;
-                          _listName = _previewItems[index - 1];
-                        });
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  CheckboxListTile(
-                    title: Text(loc.removeElementFromList),
-                    subtitle: Text(loc.removeElementDescription),
-                    value: _removeSelectedElement,
-                    onChanged: (value) {
-                      setState(() {
-                        _removeSelectedElement = value ?? false;
-                      });
-                    },
-                  ),
-                ],
-
-                const SizedBox(height: 24),
-
-                // Preview section
+                // Compact preview section
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest
-                        .withValues(alpha: .3),
-                    borderRadius: BorderRadius.circular(12),
+                        .withValues(alpha: .2),
+                    borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                        color: theme.colorScheme.outline.withValues(alpha: .3)),
+                      color: theme.colorScheme.outline.withValues(alpha: .2),
+                      width: 1,
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        loc.listPreview,
-                        style: theme.textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 12),
+                      // Table header
                       Row(
                         children: [
-                          Icon(Icons.list, color: theme.colorScheme.primary),
-                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.preview,
+                            size: 16,
+                            color: theme.colorScheme.primary,
+                          ),
+                          const SizedBox(width: 6),
                           Text(
-                            loc.listName,
-                            style: theme.textTheme.titleSmall,
+                            loc.listPreview,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _listName.isNotEmpty ? _listName : loc.noNameSet,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
                       const SizedBox(height: 12),
-                      Row(
+
+                      // Table structure
+                      Column(
                         children: [
-                          Icon(Icons.numbers, color: theme.colorScheme.primary),
-                          const SizedBox(width: 8),
-                          Text(
-                            loc.itemCount,
-                            style: theme.textTheme.titleSmall,
+                          // Table rows - List Name row
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surfaceContainerHighest
+                                  .withValues(alpha: .2),
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(6),
+                                topRight: Radius.circular(6),
+                              ),
+                              border: Border.all(
+                                color: theme.colorScheme.outline
+                                    .withValues(alpha: .15),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.list,
+                                  size: 14,
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    loc.listName,
+                                    style: theme.textTheme.titleSmall?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Text(
+                                    _listName.isNotEmpty
+                                        ? _listName
+                                        : loc.noNameSet,
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // Item Count row
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surfaceContainerHighest
+                                  .withValues(alpha: .2),
+                              borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(6),
+                                bottomRight: Radius.circular(6),
+                              ),
+                              border: Border.all(
+                                color: theme.colorScheme.outline
+                                    .withValues(alpha: .15),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.numbers,
+                                  size: 14,
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    loc.itemCount,
+                                    style: theme.textTheme.titleSmall?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Text(
+                                    '${_getFinalItemCount()}',
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: theme.colorScheme.secondary,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${_getFinalItemCount()} ${loc.items}',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(height: 16),
               ],
             ),
           ),
@@ -750,8 +1003,11 @@ class _ImportFileWidgetState extends State<ImportFileWidget> {
         if (_currentStep > 0)
           TextButton.icon(
             onPressed: _isImporting ? null : _goToPreviousStep,
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back, size: 18),
             label: Text(loc.back),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            ),
           )
         else
           const SizedBox(),
@@ -760,15 +1016,17 @@ class _ImportFileWidgetState extends State<ImportFileWidget> {
         ElevatedButton.icon(
           onPressed: _isImporting
               ? null
-              : () {
-                  if (_currentStep == 2) {
-                    if (_canProceedFromStep3) {
-                      _performImport();
+              : _canProceedToNextStep()
+                  ? () {
+                      if (_currentStep == 2) {
+                        if (_canProceedFromStep3) {
+                          _performImport();
+                        }
+                      } else {
+                        _goToNextStep();
+                      }
                     }
-                  } else {
-                    _goToNextStep();
-                  }
-                },
+                  : null,
           icon: _isImporting
               ? SizedBox(
                   width: 16,
@@ -779,12 +1037,13 @@ class _ImportFileWidgetState extends State<ImportFileWidget> {
                         Theme.of(context).colorScheme.onPrimary),
                   ),
                 )
-              : Icon(_currentStep == 2 ? Icons.download : Icons.arrow_forward),
+              : Icon(_currentStep == 2 ? Icons.download : Icons.arrow_forward,
+                  size: 18),
           label: Text(_currentStep == 2
               ? (_isImporting ? loc.importing : loc.importData)
               : loc.next),
           style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           ),
         ),
       ],
@@ -803,15 +1062,15 @@ class _ImportFileWidgetState extends State<ImportFileWidget> {
                   centerTitle: true,
                 ),
           body: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(12.0),
             child: Column(
               children: [
                 _buildStepIndicator(),
-                const SizedBox(height: 32),
+                const SizedBox(height: 0),
                 Expanded(
                   child: _buildStepContent(),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 _buildActionButtons(),
               ],
             ),
@@ -821,22 +1080,38 @@ class _ImportFileWidgetState extends State<ImportFileWidget> {
         // Loading overlay
         if (_isImporting)
           Container(
-            color: Colors.black.withValues(alpha: 0.5),
+            color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.5),
             child: Center(
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .shadow
+                          .withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const CircularProgressIndicator(),
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       loc.importing,
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                     ),
                     const SizedBox(height: 8),
                     Text(

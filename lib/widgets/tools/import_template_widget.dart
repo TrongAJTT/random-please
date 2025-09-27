@@ -155,9 +155,9 @@ class _ImportTemplateWidgetState extends ConsumerState<ImportTemplateWidget>
   Widget _buildSelectTemplateStep(List<ListTemplateSource> sources) {
     final theme = Theme.of(context);
     final customSources =
-        sources.where((s) => !s.isDefault && s.hasData).toList();
+        sources.where((s) => !s.isDefault && s.hasData && s.isEnabled).toList();
     final defaultSources =
-        sources.where((s) => s.isDefault && s.hasData).toList();
+        sources.where((s) => s.isDefault && s.hasData && s.isEnabled).toList();
 
     return Column(
       children: [

@@ -1195,6 +1195,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modeTeamDesc => 'Divide items into teams';
 
   @override
+  String get team => 'Team';
+
+  @override
   String get createListDialog => 'Create New List';
 
   @override
@@ -1279,6 +1282,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get collapse => 'Collapse';
+
+  @override
+  String get minimize => 'Minimize';
+
+  @override
+  String get collapseToLimitedView => 'Collapse to limited view';
+
+  @override
+  String get minimizeToHeaderOnly => 'Minimize to header only';
+
+  @override
+  String get expandToFullView => 'Expand to full view';
 
   @override
   String get viewDetails => 'View Details';

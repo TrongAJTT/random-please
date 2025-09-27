@@ -30,6 +30,7 @@ class StepIndicator extends StatelessWidget {
 
     Widget stepIndicator = Row(
       children: [
+        const Spacer(),
         for (int index = 0; index < stepLabels.length; index++) ...[
           // Step circle
           Container(
@@ -64,10 +65,10 @@ class StepIndicator extends StatelessWidget {
                     ),
             ),
           ),
-
           // Line between steps
           if (index < stepLabels.length - 1)
             Expanded(
+              flex: 2,
               child: Container(
                 height: lineHeight,
                 margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -75,6 +76,7 @@ class StepIndicator extends StatelessWidget {
               ),
             ),
         ],
+        const Spacer(),
       ],
     );
 
