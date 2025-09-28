@@ -144,6 +144,9 @@ void _registerRandomStateAdapters() {
   if (!Hive.isAdapterRegistered(75)) {
     Hive.registerAdapter(CoinFlipGeneratorStateAdapter());
   }
+  if (!Hive.isAdapterRegistered(79)) {
+    Hive.registerAdapter(RockPaperScissorsGeneratorStateAdapter());
+  }
   if (!Hive.isAdapterRegistered(76)) {
     Hive.registerAdapter(LoremIpsumTypeAdapter());
   }

@@ -3488,6 +3488,36 @@ abstract class AppLocalizations {
   /// **'Track statistics of Yes/No results'**
   String get counterModeDesc;
 
+  /// No description provided for @rockPaperScissorsCounterMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Counter Mode'**
+  String get rockPaperScissorsCounterMode;
+
+  /// No description provided for @rockPaperScissorsCounterModeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Track statistics of Rock/Paper/Scissors results'**
+  String get rockPaperScissorsCounterModeDesc;
+
+  /// No description provided for @rockCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Rock Count'**
+  String get rockCount;
+
+  /// No description provided for @paperCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Paper Count'**
+  String get paperCount;
+
+  /// No description provided for @scissorsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Scissors Count'**
+  String get scissorsCount;
+
   /// No description provided for @batchCount.
   ///
   /// In en, this message translates to:

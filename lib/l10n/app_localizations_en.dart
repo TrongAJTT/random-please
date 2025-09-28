@@ -1804,6 +1804,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get counterModeDesc => 'Track statistics of Yes/No results';
 
   @override
+  String get rockPaperScissorsCounterMode => 'Counter Mode';
+
+  @override
+  String get rockPaperScissorsCounterModeDesc =>
+      'Track statistics of Rock/Paper/Scissors results';
+
+  @override
+  String get rockCount => 'Rock Count';
+
+  @override
+  String get paperCount => 'Paper Count';
+
+  @override
+  String get scissorsCount => 'Scissors Count';
+
+  @override
   String get batchCount => 'Batch Count';
 
   @override

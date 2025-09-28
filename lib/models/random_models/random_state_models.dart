@@ -1068,6 +1068,133 @@ class TimeGeneratorStateModel extends HiveObject {
   }
 }
 
+// Rock Paper Scissors Generator State with Counter Mode
+@HiveType(typeId: 79)
+class RockPaperScissorsGeneratorState {
+  @HiveField(0)
+  final bool skipAnimation;
+  @HiveField(1)
+  final bool counterMode;
+  @HiveField(2)
+  final int batchCount;
+  @HiveField(3)
+  final String result;
+  @HiveField(4)
+  final DateTime lastUpdated;
+  @HiveField(5)
+  final bool isLoading;
+
+  RockPaperScissorsGeneratorState({
+    this.skipAnimation = false,
+    this.counterMode = false,
+    this.batchCount = 5,
+    this.result = '',
+    required this.lastUpdated,
+    this.isLoading = false,
+  });
+
+  static RockPaperScissorsGeneratorState createDefault() {
+    return RockPaperScissorsGeneratorState(
+      skipAnimation: false,
+      counterMode: false,
+      batchCount: 5,
+      result: '',
+      lastUpdated: DateTime.now(),
+      isLoading: false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'skipAnimation': skipAnimation,
+      'counterMode': counterMode,
+      'batchCount': batchCount,
+      'result': result,
+      'lastUpdated': lastUpdated.toIso8601String(),
+      'isLoading': isLoading,
+    };
+  }
+
+  factory RockPaperScissorsGeneratorState.fromJson(Map<String, dynamic> json) {
+    return RockPaperScissorsGeneratorState(
+      skipAnimation: json['skipAnimation'] ?? false,
+      counterMode: json['counterMode'] ?? false,
+      batchCount: json['batchCount'] ?? 5,
+      result: json['result'] ?? '',
+      lastUpdated: json['lastUpdated'] != null
+          ? DateTime.parse(json['lastUpdated'])
+          : DateTime.now(),
+      isLoading: json['isLoading'] ?? false,
+    );
+  }
+
+  RockPaperScissorsGeneratorState copyWith({
+    bool? skipAnimation,
+    bool? counterMode,
+    int? batchCount,
+    String? result,
+    DateTime? lastUpdated,
+    bool? isLoading,
+  }) {
+    return RockPaperScissorsGeneratorState(
+      skipAnimation: skipAnimation ?? this.skipAnimation,
+      counterMode: counterMode ?? this.counterMode,
+      batchCount: batchCount ?? this.batchCount,
+      result: result ?? this.result,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
+      isLoading: isLoading ?? this.isLoading,
+    );
+  }
+}
+
+// Rock Paper Scissors Counter Statistics Model (not saved to state)
+class RockPaperScissorsCounterStatistics {
+  final DateTime startTime;
+  final int totalGenerations;
+  final int rockCount;
+  final int paperCount;
+  final int scissorsCount;
+
+  RockPaperScissorsCounterStatistics({
+    required this.startTime,
+    this.totalGenerations = 0,
+    this.rockCount = 0,
+    this.paperCount = 0,
+    this.scissorsCount = 0,
+  });
+
+  RockPaperScissorsCounterStatistics copyWith({
+    DateTime? startTime,
+    int? totalGenerations,
+    int? rockCount,
+    int? paperCount,
+    int? scissorsCount,
+  }) {
+    return RockPaperScissorsCounterStatistics(
+      startTime: startTime ?? this.startTime,
+      totalGenerations: totalGenerations ?? this.totalGenerations,
+      rockCount: rockCount ?? this.rockCount,
+      paperCount: paperCount ?? this.paperCount,
+      scissorsCount: scissorsCount ?? this.scissorsCount,
+    );
+  }
+
+  double get rockPercentage {
+    if (totalGenerations == 0) return 0.0;
+    return (rockCount / totalGenerations) * 100;
+  }
+
+  double get paperPercentage {
+    if (totalGenerations == 0) return 0.0;
+    return (paperCount / totalGenerations) * 100;
+  }
+
+  double get scissorsPercentage {
+    if (totalGenerations == 0) return 0.0;
+    return (scissorsCount / totalGenerations) * 100;
+  }
+}
+
 // Simple state models for tools with minimal options
 @HiveType(typeId: 46)
 class SimpleGeneratorStateModel extends HiveObject {

@@ -1799,6 +1799,22 @@ class AppLocalizationsVi extends AppLocalizations {
   String get counterModeDesc => 'Theo dõi thống kê kết quả Có/Không';
 
   @override
+  String get rockPaperScissorsCounterMode => 'Chế độ bộ đếm';
+
+  @override
+  String get rockPaperScissorsCounterModeDesc =>
+      'Theo dõi thống kê kết quả Đá/Giấy/Kéo';
+
+  @override
+  String get rockCount => 'Số lần Đá';
+
+  @override
+  String get paperCount => 'Số lần Giấy';
+
+  @override
+  String get scissorsCount => 'Số lần Kéo';
+
+  @override
   String get batchCount => 'Số lượng hàng loạt';
 
   @override

@@ -655,6 +655,56 @@ class TimeGeneratorStateModelAdapter
           typeId == other.typeId;
 }
 
+class RockPaperScissorsGeneratorStateAdapter
+    extends TypeAdapter<RockPaperScissorsGeneratorState> {
+  @override
+  final int typeId = 79;
+
+  @override
+  RockPaperScissorsGeneratorState read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return RockPaperScissorsGeneratorState(
+      skipAnimation: fields[0] as bool,
+      counterMode: fields[1] as bool,
+      batchCount: fields[2] as int,
+      result: fields[3] as String,
+      lastUpdated: fields[4] as DateTime,
+      isLoading: fields[5] as bool,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, RockPaperScissorsGeneratorState obj) {
+    writer
+      ..writeByte(6)
+      ..writeByte(0)
+      ..write(obj.skipAnimation)
+      ..writeByte(1)
+      ..write(obj.counterMode)
+      ..writeByte(2)
+      ..write(obj.batchCount)
+      ..writeByte(3)
+      ..write(obj.result)
+      ..writeByte(4)
+      ..write(obj.lastUpdated)
+      ..writeByte(5)
+      ..write(obj.isLoading);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RockPaperScissorsGeneratorStateAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
 class SimpleGeneratorStateModelAdapter
     extends TypeAdapter<SimpleGeneratorStateModel> {
   @override
