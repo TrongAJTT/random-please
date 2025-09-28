@@ -2,15 +2,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/providers/history_provider.dart';
+import 'package:random_please/providers/settings_provider.dart';
 import 'package:random_please/services/settings_service.dart';
 import 'package:faker/faker.dart';
 import 'dart:math';
 
 class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
   static const String boxName = 'yesNoGeneratorBox';
+  static const String counterStatsBoxName = 'yesNoCounterStatsBox';
   static const String historyType = 'yesno';
 
   late Box<YesNoGeneratorState> _box;
+  late Box<CounterStatistics> _counterStatsBox;
   bool _isBoxOpen = false;
   WidgetRef? _ref;
   CounterStatistics _counterStats =
@@ -37,6 +40,8 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
 
   Future<void> initHive() async {
     _box = await Hive.openBox<YesNoGeneratorState>(boxName);
+    _counterStatsBox =
+        await Hive.openBox<CounterStatistics>(counterStatsBoxName);
 
     // Check if state saving is enabled
     final isStateSavingEnabled =
@@ -47,6 +52,12 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
       final savedState =
           _box.get('state') ?? YesNoGeneratorState.createDefault();
       state = savedState;
+
+      // Load saved counter stats
+      final savedStats = _counterStatsBox.get('stats');
+      if (savedStats != null) {
+        _counterStats = savedStats;
+      }
     } else {
       // Use default state if setting is disabled
       state = YesNoGeneratorState.createDefault();
@@ -67,6 +78,18 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
     }
   }
 
+  void saveCounterStats() async {
+    if (_isBoxOpen) {
+      // Check if state saving is enabled
+      final isStateSavingEnabled =
+          await SettingsService.getSaveRandomToolsState();
+
+      if (isStateSavingEnabled) {
+        await _counterStatsBox.put('stats', _counterStats);
+      }
+    }
+  }
+
   void updateSkipAnimation(bool value) {
     state = state.copyWith(skipAnimation: value);
     saveState();
@@ -79,9 +102,13 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
       saveState();
     }
 
-    // Reset counter stats when enabling counter mode
-    if (value) {
-      _counterStats = CounterStatistics(startTime: DateTime.now());
+    // Check if should reset counter when toggling counter mode
+    if (_ref != null) {
+      final resetOnToggle = _ref!.read(resetCounterOnToggleProvider);
+      if (resetOnToggle) {
+        _counterStats = CounterStatistics(startTime: DateTime.now());
+        saveCounterStats();
+      }
     }
   }
 
@@ -112,6 +139,9 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
               : _counterStats.noCount,
         );
       }
+
+      // Save counter stats after updating
+      saveCounterStats();
 
       final resultText = results.join(', ');
 
@@ -152,6 +182,8 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
 
   void resetCounter() {
     _counterStats = CounterStatistics(startTime: DateTime.now());
+    // Save counter stats after reset
+    saveCounterStats();
     // Trigger UI refresh by updating state
     state = state.copyWith();
   }
@@ -167,6 +199,7 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
   void dispose() {
     if (_isBoxOpen) {
       _box.close();
+      _counterStatsBox.close();
     }
     super.dispose();
   }

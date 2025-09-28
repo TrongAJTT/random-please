@@ -10,12 +10,14 @@ class SettingsState {
   final Locale locale;
   final bool saveRandomToolsState;
   final int? autoCleanupHistoryLimit;
+  final bool resetCounterOnToggle;
 
   const SettingsState({
     required this.themeMode,
     required this.locale,
     required this.saveRandomToolsState,
     this.autoCleanupHistoryLimit,
+    required this.resetCounterOnToggle,
   });
 
   SettingsState copyWith({
@@ -23,6 +25,7 @@ class SettingsState {
     Locale? locale,
     bool? saveRandomToolsState,
     int? autoCleanupHistoryLimit,
+    bool? resetCounterOnToggle,
   }) {
     return SettingsState(
       themeMode: themeMode ?? this.themeMode,
@@ -30,6 +33,7 @@ class SettingsState {
       saveRandomToolsState: saveRandomToolsState ?? this.saveRandomToolsState,
       autoCleanupHistoryLimit:
           autoCleanupHistoryLimit ?? this.autoCleanupHistoryLimit,
+      resetCounterOnToggle: resetCounterOnToggle ?? this.resetCounterOnToggle,
     );
   }
 }
@@ -42,6 +46,7 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
           locale: Locale('en'),
           saveRandomToolsState: false,
           autoCleanupHistoryLimit: null,
+          resetCounterOnToggle: false,
         )) {
     // Auto-load settings on initialization
     loadSettings();
@@ -67,11 +72,16 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     final autoCleanupHistoryLimit =
         await SettingsService.getAutoCleanupHistoryLimit();
 
+    // Load reset counter on toggle
+    final resetCounterOnToggle =
+        await SettingsService.getResetCounterOnToggle();
+
     state = state.copyWith(
       themeMode: themeMode,
       locale: locale,
       saveRandomToolsState: saveRandomToolsState,
       autoCleanupHistoryLimit: autoCleanupHistoryLimit,
+      resetCounterOnToggle: resetCounterOnToggle,
     );
   }
 
@@ -96,6 +106,11 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     await SettingsService.updateAutoCleanupHistoryLimit(limit);
     state = state.copyWith(autoCleanupHistoryLimit: limit);
   }
+
+  Future<void> setResetCounterOnToggle(bool enabled) async {
+    await SettingsService.updateResetCounterOnToggle(enabled);
+    state = state.copyWith(resetCounterOnToggle: enabled);
+  }
 }
 
 // Provider for settings
@@ -114,4 +129,10 @@ final saveRandomToolsStateProvider = Provider<bool>((ref) {
 final autoCleanupHistoryLimitProvider = Provider<int?>((ref) {
   final settingsState = ref.watch(settingsProvider);
   return settingsState.autoCleanupHistoryLimit;
+});
+
+// Provider for resetCounterOnToggle
+final resetCounterOnToggleProvider = Provider<bool>((ref) {
+  final settingsState = ref.watch(settingsProvider);
+  return settingsState.resetCounterOnToggle;
 });

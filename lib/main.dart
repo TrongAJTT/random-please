@@ -168,6 +168,15 @@ void _registerRandomStateAdapters() {
   if (!Hive.isAdapterRegistered(14)) {
     Hive.registerAdapter(CloudTemplateAdapter());
   }
+  if (!Hive.isAdapterRegistered(80)) {
+    Hive.registerAdapter(CounterStatisticsAdapter());
+  }
+  if (!Hive.isAdapterRegistered(81)) {
+    Hive.registerAdapter(CoinFlipCounterStatisticsAdapter());
+  }
+  if (!Hive.isAdapterRegistered(82)) {
+    Hive.registerAdapter(RockPaperScissorsCounterStatisticsAdapter());
+  }
 }
 
 class MainApp extends ConsumerWidget {

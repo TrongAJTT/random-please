@@ -87,6 +87,10 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
     ref.read(settingsProvider.notifier).setSaveRandomToolsState(enabled);
   }
 
+  void _onResetCounterOnToggleChanged(bool enabled) async {
+    ref.read(settingsProvider.notifier).setResetCounterOnToggle(enabled);
+  }
+
   void _onCompactTabLayoutChanged(bool enabled) async {
     ref.read(compactTabLayoutProvider.notifier).setEnabled(enabled);
   }
@@ -201,6 +205,8 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
         VerticalSpacingDivider.both(6),
         _buildSaveRandomToolsStateSettings(loc),
         VerticalSpacingDivider.both(6),
+        _buildResetCounterOnToggleSettings(loc),
+        VerticalSpacingDivider.both(6),
         _buildToolOrderingSettings(loc),
         VerticalSpacingDivider.both(6),
         _buildRemoteListTemplateSettings(loc),
@@ -241,6 +247,17 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
       subtitle: loc.saveRandomToolsStateDesc,
       value: settings.saveRandomToolsState,
       onChanged: _onSaveRandomToolsStateChanged,
+      decorator: switchDecorator,
+    );
+  }
+
+  Widget _buildResetCounterOnToggleSettings(AppLocalizations loc) {
+    final settings = ref.watch(settingsProvider);
+    return OptionSwitch(
+      title: loc.resetCounterOnToggle,
+      subtitle: loc.resetCounterOnToggleDesc,
+      value: settings.resetCounterOnToggle,
+      onChanged: _onResetCounterOnToggleChanged,
       decorator: switchDecorator,
     );
   }

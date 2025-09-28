@@ -254,6 +254,14 @@
   "@saveRandomToolsStateDesc": {
     "description": "Save random tools state setting description"
   },
+  "resetCounterOnToggle": "Reset Counter on Toggle",
+  "@resetCounterOnToggle": {
+    "description": "Reset counter on toggle setting label"
+  },
+  "resetCounterOnToggleDesc": "Reset counter statistics when disabling Counter Mode",
+  "@resetCounterOnToggleDesc": {
+    "description": "Reset counter on toggle setting description"
+  },
   "aspectRatio": "Aspect Ratio",
   "reset": "Reset",
   "info": "Info",

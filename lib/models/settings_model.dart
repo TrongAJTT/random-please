@@ -37,6 +37,9 @@ class SettingsModel extends HiveObject {
   @HiveField(10)
   final int? autoCleanupHistoryLimit;
 
+  @HiveField(11)
+  final bool resetCounterOnToggle;
+
   SettingsModel({
     this.fetchTimeoutSeconds = 10,
     this.featureStateSavingEnabled = true, // Always enabled by default
@@ -49,6 +52,7 @@ class SettingsModel extends HiveObject {
     this.remoteListTemplateDefaultState = true, // Default to enabled
     this.autoScrollToResults = true, // Default to enabled
     this.autoCleanupHistoryLimit, // Default to null (No limit)
+    this.resetCounterOnToggle = false, // Default to disabled
   });
 
   SettingsModel copyWith({
@@ -63,6 +67,7 @@ class SettingsModel extends HiveObject {
     bool? remoteListTemplateDefaultState,
     bool? autoScrollToResults,
     int? autoCleanupHistoryLimit,
+    bool? resetCounterOnToggle,
   }) {
     return SettingsModel(
       fetchTimeoutSeconds: fetchTimeoutSeconds ?? this.fetchTimeoutSeconds,
@@ -80,6 +85,7 @@ class SettingsModel extends HiveObject {
       autoScrollToResults: autoScrollToResults ?? this.autoScrollToResults,
       autoCleanupHistoryLimit:
           autoCleanupHistoryLimit ?? this.autoCleanupHistoryLimit,
+      resetCounterOnToggle: resetCounterOnToggle ?? this.resetCounterOnToggle,
     );
   }
 
@@ -96,6 +102,7 @@ class SettingsModel extends HiveObject {
       'remoteListTemplateDefaultState': remoteListTemplateDefaultState,
       'autoScrollToResults': autoScrollToResults,
       'autoCleanupHistoryLimit': autoCleanupHistoryLimit,
+      'resetCounterOnToggle': resetCounterOnToggle,
     };
   }
 
@@ -114,6 +121,7 @@ class SettingsModel extends HiveObject {
           json['remoteListTemplateDefaultState'] ?? true,
       autoScrollToResults: json['autoScrollToResults'] ?? true,
       autoCleanupHistoryLimit: json['autoCleanupHistoryLimit'],
+      resetCounterOnToggle: json['resetCounterOnToggle'] ?? false,
     );
   }
 }

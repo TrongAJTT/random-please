@@ -524,6 +524,93 @@ class CoinFlipGeneratorStateAdapter
           typeId == other.typeId;
 }
 
+class CounterStatisticsAdapter extends TypeAdapter<CounterStatistics> {
+  @override
+  final int typeId = 80;
+
+  @override
+  CounterStatistics read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return CounterStatistics(
+      startTime: fields[2] as DateTime,
+      totalGenerations: fields[3] as int,
+      yesCount: fields[0] as int,
+      noCount: fields[1] as int,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, CounterStatistics obj) {
+    writer
+      ..writeByte(4)
+      ..writeByte(0)
+      ..write(obj.yesCount)
+      ..writeByte(1)
+      ..write(obj.noCount)
+      ..writeByte(2)
+      ..write(obj.startTime)
+      ..writeByte(3)
+      ..write(obj.totalGenerations);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CounterStatisticsAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class CoinFlipCounterStatisticsAdapter
+    extends TypeAdapter<CoinFlipCounterStatistics> {
+  @override
+  final int typeId = 81;
+
+  @override
+  CoinFlipCounterStatistics read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return CoinFlipCounterStatistics(
+      startTime: fields[2] as DateTime,
+      totalGenerations: fields[3] as int,
+      headsCount: fields[0] as int,
+      tailsCount: fields[1] as int,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, CoinFlipCounterStatistics obj) {
+    writer
+      ..writeByte(4)
+      ..writeByte(0)
+      ..write(obj.headsCount)
+      ..writeByte(1)
+      ..write(obj.tailsCount)
+      ..writeByte(2)
+      ..write(obj.startTime)
+      ..writeByte(3)
+      ..write(obj.totalGenerations);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CoinFlipCounterStatisticsAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
 class SimpleGeneratorStateAdapter extends TypeAdapter<SimpleGeneratorState> {
   @override
   final int typeId = 69;
@@ -701,6 +788,53 @@ class RockPaperScissorsGeneratorStateAdapter
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is RockPaperScissorsGeneratorStateAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class RockPaperScissorsCounterStatisticsAdapter
+    extends TypeAdapter<RockPaperScissorsCounterStatistics> {
+  @override
+  final int typeId = 82;
+
+  @override
+  RockPaperScissorsCounterStatistics read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return RockPaperScissorsCounterStatistics(
+      startTime: fields[3] as DateTime,
+      totalGenerations: fields[4] as int,
+      rockCount: fields[0] as int,
+      paperCount: fields[1] as int,
+      scissorsCount: fields[2] as int,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, RockPaperScissorsCounterStatistics obj) {
+    writer
+      ..writeByte(5)
+      ..writeByte(0)
+      ..write(obj.rockCount)
+      ..writeByte(1)
+      ..write(obj.paperCount)
+      ..writeByte(2)
+      ..write(obj.scissorsCount)
+      ..writeByte(3)
+      ..write(obj.startTime)
+      ..writeByte(4)
+      ..write(obj.totalGenerations);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RockPaperScissorsCounterStatisticsAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

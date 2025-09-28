@@ -799,13 +799,22 @@ class CoinFlipGeneratorState {
 }
 
 // Counter Statistics Model (not saved to state)
+@HiveType(typeId: 80)
 class CounterStatistics extends CounterStatisticsBase {
+  @HiveField(0)
   final int yesCount;
+  @HiveField(1)
   final int noCount;
+  @HiveField(2)
+  @override
+  final DateTime startTime;
+  @HiveField(3)
+  @override
+  final int totalGenerations;
 
   CounterStatistics({
-    required DateTime startTime,
-    int totalGenerations = 0,
+    required this.startTime,
+    this.totalGenerations = 0,
     this.yesCount = 0,
     this.noCount = 0,
   }) : super(startTime: startTime, totalGenerations: totalGenerations);
@@ -860,13 +869,22 @@ class CounterStatistics extends CounterStatisticsBase {
 }
 
 // Coin Flip Counter Statistics Model (not saved to state)
+@HiveType(typeId: 81)
 class CoinFlipCounterStatistics extends CounterStatisticsBase {
+  @HiveField(0)
   final int headsCount;
+  @HiveField(1)
   final int tailsCount;
+  @HiveField(2)
+  @override
+  final DateTime startTime;
+  @HiveField(3)
+  @override
+  final int totalGenerations;
 
   CoinFlipCounterStatistics({
-    required DateTime startTime,
-    int totalGenerations = 0,
+    required this.startTime,
+    this.totalGenerations = 0,
     this.headsCount = 0,
     this.tailsCount = 0,
   }) : super(startTime: startTime, totalGenerations: totalGenerations);
@@ -1194,14 +1212,24 @@ class RockPaperScissorsGeneratorState {
 }
 
 // Rock Paper Scissors Counter Statistics Model (not saved to state)
+@HiveType(typeId: 82)
 class RockPaperScissorsCounterStatistics extends CounterStatisticsBase {
+  @HiveField(0)
   final int rockCount;
+  @HiveField(1)
   final int paperCount;
+  @HiveField(2)
   final int scissorsCount;
+  @HiveField(3)
+  @override
+  final DateTime startTime;
+  @HiveField(4)
+  @override
+  final int totalGenerations;
 
   RockPaperScissorsCounterStatistics({
-    required DateTime startTime,
-    int totalGenerations = 0,
+    required this.startTime,
+    this.totalGenerations = 0,
     this.rockCount = 0,
     this.paperCount = 0,
     this.scissorsCount = 0,

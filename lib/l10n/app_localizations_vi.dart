@@ -670,6 +670,13 @@ class AppLocalizationsVi extends AppLocalizations {
       'Tự động lưu cài đặt công cụ khi tạo kết quả';
 
   @override
+  String get resetCounterOnToggle => 'Đặt lại Counter khi chuyển đổi';
+
+  @override
+  String get resetCounterOnToggleDesc =>
+      'Đặt lại thống kê counter khi tắt Chế độ Counter';
+
+  @override
   String get aspectRatio => 'Tỉ lệ khung hình';
 
   @override

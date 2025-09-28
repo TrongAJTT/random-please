@@ -673,6 +673,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Automatically save tool settings when generating results';
 
   @override
+  String get resetCounterOnToggle => 'Reset Counter on Toggle';
+
+  @override
+  String get resetCounterOnToggleDesc =>
+      'Reset counter statistics when disabling Counter Mode';
+
+  @override
   String get aspectRatio => 'Aspect Ratio';
 
   @override

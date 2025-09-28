@@ -11,6 +11,7 @@ import 'package:random_please/providers/yes_no_generator_provider.dart';
 import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
+import 'package:random_please/widgets/animations/animations.dart';
 
 class YesNoGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -23,43 +24,28 @@ class YesNoGeneratorScreen extends ConsumerStatefulWidget {
 }
 
 class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _bounceController;
-  late Animation<double> _bounceAnimation;
-  late List<AnimationController> _resultControllers;
-  late List<Animation<double>> _resultAnimations;
-  bool _isAnimating = false;
+    with TickerProviderStateMixin, RandomGeneratorAnimationMixin {
   CounterStatistics? _displayedStats;
 
   @override
   void initState() {
     super.initState();
-    _bounceController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-    _bounceAnimation = CurvedAnimation(
-      parent: _bounceController,
-      curve: Curves.elasticOut,
-    );
+    initializeAnimations();
 
-    // Initialize result animation controllers
-    _resultControllers = [];
-    _resultAnimations = [];
-
-    // Set ref for provider
+    // Set ref for provider and initialize displayed stats
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(yesNoGeneratorProvider.notifier).setRef(ref);
+      final notifier = ref.read(yesNoGeneratorProvider.notifier);
+      notifier.setRef(ref);
+      // Initialize displayed stats to current counter stats
+      setState(() {
+        _displayedStats = notifier.counterStats;
+      });
     });
   }
 
   @override
   void dispose() {
-    _bounceController.dispose();
-    // Dispose all result animation controllers
-    for (final controller in _resultControllers) {
-      controller.dispose();
-    }
+    disposeAnimations();
     super.dispose();
   }
 
@@ -67,28 +53,18 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
     final notifier = ref.read(yesNoGeneratorProvider.notifier);
     final state = ref.read(yesNoGeneratorProvider);
 
-    // Set loading state
-    setState(() {
-      _isAnimating = true;
-    });
-
-    if (!state.skipAnimation) {
-      _bounceController.reset();
-      _bounceController.forward();
-    }
-
-    await notifier.generate();
-
-    // Setup animations for individual results if in counter mode
-    if (state.counterMode && !state.skipAnimation) {
-      await _setupResultAnimations(notifier.result);
-    } else {
-      // If no animation or single mode, update stats immediately
-      setState(() {
-        _isAnimating = false;
-        _displayedStats = notifier.counterStats;
-      });
-    }
+    await handleGenerationWithAnimation(
+      skipAnimation: state.skipAnimation,
+      counterMode: state.counterMode,
+      result: notifier.result,
+      onGenerate: () async => await notifier.generate(),
+      onAnimationComplete: () {
+        setState(() {
+          _displayedStats = notifier.counterStats;
+        });
+      },
+      getCurrentResult: () => notifier.result,
+    );
   }
 
   void _copyToClipboard() {
@@ -110,216 +86,41 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
     );
   }
 
-  Future<void> _setupResultAnimations(String result) async {
-    // Dispose existing controllers
-    for (final controller in _resultControllers) {
-      controller.dispose();
-    }
-
-    final results = result.split(', ');
-    _resultControllers.clear();
-    _resultAnimations.clear();
-
-    // Create animation controllers for each result
-    for (int i = 0; i < results.length; i++) {
-      final controller = AnimationController(
-        duration: const Duration(milliseconds: 400),
-        vsync: this,
-      );
-      final animation = CurvedAnimation(
-        parent: controller,
-        curve: Curves.elasticOut,
-      );
-
-      _resultControllers.add(controller);
-      _resultAnimations.add(animation);
-
-      // Start animation with delay
-      Future.delayed(Duration(milliseconds: i * 100), () {
-        if (mounted) {
-          controller.forward();
-        }
-      });
-    }
-
-    // Calculate total animation duration and update stats when done
-    final totalDuration =
-        Duration(milliseconds: (results.length - 1) * 100 + 400);
-    Future.delayed(totalDuration, () {
-      if (mounted) {
-        setState(() {
-          _isAnimating = false;
-          _displayedStats =
-              ref.read(yesNoGeneratorProvider.notifier).counterStats;
-        });
-      }
-    });
-  }
-
   Widget _buildResultDisplay(
       BuildContext context, dynamic notifier, dynamic state) {
     // Always show result display if we have a result or if we're animating/loading
-    if (notifier.result.isEmpty && !_isAnimating && !state.isLoading) {
+    if (notifier.result.isEmpty && !isAnimating && !state.isLoading) {
       return const SizedBox.shrink();
     }
 
     if (state.counterMode) {
-      // Counter mode: show individual containers
-      return _buildMultiResultDisplay(context, notifier.result);
-    } else {
-      // Single mode: show single container with bounce animation
-      return _buildSingleResultDisplay(context, notifier.result);
-    }
-  }
-
-  Widget _buildSingleResultDisplay(BuildContext context, String result) {
-    // If no result yet, show a placeholder or loading state
-    if (result.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.grey.shade300, Colors.grey.shade400],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      // Counter mode: show staggered results
+      return StaggeredResultDisplay(
+        results: notifier.result,
+        animations: resultAnimations,
+        skipAnimation: state.skipAnimation,
+        configBuilder: (results) => results
+            .map(
+              (result) => AnimatedResultContainerConfig(
+                isSmall: true,
+                color: result.trim() == 'Yes' ? Colors.green : Colors.red,
+                text: result.trim(),
               ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Loading...',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-            ),
-          ],
+            )
+            .toList(),
+      );
+    } else {
+      // Single mode: show bounce result
+      return BounceResultDisplay(
+        result: notifier.result,
+        animation: bounceAnimation,
+        isLoading: isAnimating || state.isLoading,
+        config: AnimatedResultContainerConfig(
+          color: notifier.result == 'Yes' ? Colors.green : Colors.red,
+          text: notifier.result,
         ),
       );
     }
-
-    return AnimatedBuilder(
-      animation: _bounceAnimation,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: 0.8 + (_bounceAnimation.value * 0.2),
-          child: _buildResultContainer(context, result, Colors.green),
-        );
-      },
-    );
-  }
-
-  Widget _buildMultiResultDisplay(BuildContext context, String result) {
-    final results = result.split(', ');
-    final state = ref.read(yesNoGeneratorProvider);
-
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      alignment: WrapAlignment.center,
-      children: results.asMap().entries.map((entry) {
-        final index = entry.key;
-        final resultText = entry.value.trim();
-
-        // If skip animation, show static containers immediately
-        if (state.skipAnimation) {
-          return _buildResultContainer(
-            context,
-            resultText,
-            resultText == 'Yes' ? Colors.green : Colors.red,
-            isSmall: true,
-          );
-        }
-
-        // With animation, use AnimatedBuilder
-        if (index < _resultAnimations.length) {
-          return AnimatedBuilder(
-            animation: _resultAnimations[index],
-            builder: (context, child) {
-              // Hide elements that haven't started animating yet
-              if (_resultAnimations[index].value == 0.0) {
-                return const SizedBox.shrink();
-              }
-
-              return Transform.scale(
-                scale: 0.3 + (_resultAnimations[index].value * 0.7),
-                child: _buildResultContainer(
-                  context,
-                  resultText,
-                  resultText == 'Yes' ? Colors.green : Colors.red,
-                  isSmall: true,
-                ),
-              );
-            },
-          );
-        } else {
-          // Fallback for when animations aren't ready - hide them
-          return const SizedBox.shrink();
-        }
-      }).toList(),
-    );
-  }
-
-  Widget _buildResultContainer(BuildContext context, String text, Color color,
-      {bool isSmall = false}) {
-    // Determine gradient colors based on color type
-    List<Color> gradientColors;
-    if (color == Colors.green) {
-      gradientColors = [Colors.green.shade400, Colors.green.shade600];
-    } else if (color == Colors.red) {
-      gradientColors = [Colors.red.shade400, Colors.red.shade600];
-    } else {
-      gradientColors = [color, color];
-    }
-
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isSmall ? 16 : 32,
-        vertical: isSmall ? 12 : 20,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: gradientColors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(isSmall ? 12 : 16),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.3),
-            blurRadius: isSmall ? 8 : 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontSize: isSmall ? 16 : null,
-            ),
-        textAlign: TextAlign.center,
-      ),
-    );
   }
 
   @override
@@ -377,10 +178,10 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
                     // Generate button (expanded)
                     Expanded(
                       child: FilledButton.icon(
-                        onPressed: (_isAnimating || state.isLoading)
+                        onPressed: (isAnimating || state.isLoading)
                             ? null
                             : _generateAnswer,
-                        icon: (_isAnimating || state.isLoading)
+                        icon: (isAnimating || state.isLoading)
                             ? const SizedBox(
                                 width: 16,
                                 height: 16,
@@ -390,8 +191,8 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
                                       Colors.white),
                                 ),
                               )
-                            : const Icon(Icons.refresh),
-                        label: Text((_isAnimating || state.isLoading)
+                            : const Icon(Icons.help_outline),
+                        label: Text((isAnimating || state.isLoading)
                             ? 'Loading...'
                             : loc.generate),
                         style: FilledButton.styleFrom(
@@ -406,8 +207,13 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
 
                     // Counter mode toggle button
                     OutlinedButton.icon(
-                      onPressed: () =>
-                          notifier.updateCounterMode(!state.counterMode),
+                      onPressed: () {
+                        notifier.updateCounterMode(!state.counterMode);
+                        // Update displayed stats immediately when toggling
+                        setState(() {
+                          _displayedStats = notifier.counterStats;
+                        });
+                      },
                       icon: Icon(state.counterMode
                           ? Icons.analytics
                           : Icons.analytics_outlined),
@@ -435,7 +241,7 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
 
         const SizedBox(height: 24),
 
-        // Result card (Coin Flip style)
+        // Result card
         Card(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -517,7 +323,7 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
             stats: _displayedStats ?? notifier.counterStats,
             title: loc.counterStatistics,
             headerIcon: Icons.analytics,
-            headerColor: Colors.green,
+            headerColor: Colors.blue,
             onReset: () {
               notifier.resetCounter();
               setState(() {
@@ -537,7 +343,7 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
       historyEnabled: true,
       hasHistory: true,
       isEmbedded: widget.isEmbedded,
-      title: loc.yesNoGenerator,
+      title: loc.yesNo,
     );
   }
 }

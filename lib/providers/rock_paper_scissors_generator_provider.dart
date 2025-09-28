@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/providers/history_provider.dart';
+import 'package:random_please/providers/settings_provider.dart';
 import 'package:random_please/services/settings_service.dart';
 import 'package:faker/faker.dart';
 import 'dart:math';
@@ -9,9 +10,11 @@ import 'dart:math';
 class RockPaperScissorsGeneratorNotifier
     extends StateNotifier<RockPaperScissorsGeneratorState> {
   static const String boxName = 'rockPaperScissorsGeneratorBox';
+  static const String counterStatsBoxName = 'rockPaperScissorsCounterStatsBox';
   static const String historyType = 'rock_paper_scissors';
 
   late Box<RockPaperScissorsGeneratorState> _box;
+  late Box<RockPaperScissorsCounterStatistics> _counterStatsBox;
   bool _isBoxOpen = false;
   WidgetRef? _ref;
   RockPaperScissorsCounterStatistics _counterStats =
@@ -39,6 +42,8 @@ class RockPaperScissorsGeneratorNotifier
 
   Future<void> initHive() async {
     _box = await Hive.openBox<RockPaperScissorsGeneratorState>(boxName);
+    _counterStatsBox = await Hive.openBox<RockPaperScissorsCounterStatistics>(
+        counterStatsBoxName);
 
     // Check if state saving is enabled
     final isStateSavingEnabled =
@@ -49,6 +54,12 @@ class RockPaperScissorsGeneratorNotifier
       final savedState =
           _box.get('state') ?? RockPaperScissorsGeneratorState.createDefault();
       state = savedState;
+
+      // Load saved counter stats
+      final savedStats = _counterStatsBox.get('stats');
+      if (savedStats != null) {
+        _counterStats = savedStats;
+      }
     } else {
       // Use default state if setting is disabled
       state = RockPaperScissorsGeneratorState.createDefault();
@@ -69,6 +80,18 @@ class RockPaperScissorsGeneratorNotifier
     }
   }
 
+  void saveCounterStats() async {
+    if (_isBoxOpen) {
+      // Check if state saving is enabled
+      final isStateSavingEnabled =
+          await SettingsService.getSaveRandomToolsState();
+
+      if (isStateSavingEnabled) {
+        await _counterStatsBox.put('stats', _counterStats);
+      }
+    }
+  }
+
   void updateSkipAnimation(bool value) {
     state = state.copyWith(skipAnimation: value);
     saveState();
@@ -81,10 +104,14 @@ class RockPaperScissorsGeneratorNotifier
       saveState();
     }
 
-    // Reset counter stats when enabling counter mode
-    if (value) {
-      _counterStats =
-          RockPaperScissorsCounterStatistics(startTime: DateTime.now());
+    // Check if should reset counter when toggling counter mode
+    if (_ref != null) {
+      final resetOnToggle = _ref!.read(resetCounterOnToggleProvider);
+      if (resetOnToggle) {
+        _counterStats =
+            RockPaperScissorsCounterStatistics(startTime: DateTime.now());
+        saveCounterStats();
+      }
     }
   }
 
@@ -118,6 +145,9 @@ class RockPaperScissorsGeneratorNotifier
               : _counterStats.scissorsCount,
         );
       }
+
+      // Save counter stats after updating
+      saveCounterStats();
 
       final resultText = results.join(', ');
 
@@ -159,6 +189,8 @@ class RockPaperScissorsGeneratorNotifier
   void resetCounter() {
     _counterStats =
         RockPaperScissorsCounterStatistics(startTime: DateTime.now());
+    // Save counter stats after reset
+    saveCounterStats();
     // Trigger UI refresh by updating state
     state = state.copyWith();
   }
@@ -174,6 +206,7 @@ class RockPaperScissorsGeneratorNotifier
   void dispose() {
     if (_isBoxOpen) {
       _box.close();
+      _counterStatsBox.close();
     }
     super.dispose();
   }

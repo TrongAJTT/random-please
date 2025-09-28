@@ -11,6 +11,7 @@ import 'package:random_please/providers/rock_paper_scissors_generator_provider.d
 import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
+import 'package:random_please/widgets/animations/animations.dart';
 
 class RockPaperScissorsGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -24,43 +25,28 @@ class RockPaperScissorsGeneratorScreen extends ConsumerStatefulWidget {
 
 class _RockPaperScissorsGeneratorScreenState
     extends ConsumerState<RockPaperScissorsGeneratorScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _bounceController;
-  late Animation<double> _bounceAnimation;
-  late List<AnimationController> _resultControllers;
-  late List<Animation<double>> _resultAnimations;
-  bool _isAnimating = false;
+    with TickerProviderStateMixin, RandomGeneratorAnimationMixin {
   RockPaperScissorsCounterStatistics? _displayedStats;
 
   @override
   void initState() {
     super.initState();
-    _bounceController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-    _bounceAnimation = CurvedAnimation(
-      parent: _bounceController,
-      curve: Curves.elasticOut,
-    );
+    initializeAnimations();
 
-    // Initialize result animation controllers
-    _resultControllers = [];
-    _resultAnimations = [];
-
-    // Set ref for provider
+    // Set ref for provider and initialize displayed stats
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(rockPaperScissorsGeneratorProvider.notifier).setRef(ref);
+      final notifier = ref.read(rockPaperScissorsGeneratorProvider.notifier);
+      notifier.setRef(ref);
+      // Initialize displayed stats to current counter stats
+      setState(() {
+        _displayedStats = notifier.counterStats;
+      });
     });
   }
 
   @override
   void dispose() {
-    _bounceController.dispose();
-    // Dispose all result animation controllers
-    for (final controller in _resultControllers) {
-      controller.dispose();
-    }
+    disposeAnimations();
     super.dispose();
   }
 
@@ -68,28 +54,18 @@ class _RockPaperScissorsGeneratorScreenState
     final notifier = ref.read(rockPaperScissorsGeneratorProvider.notifier);
     final state = ref.read(rockPaperScissorsGeneratorProvider);
 
-    // Set loading state
-    setState(() {
-      _isAnimating = true;
-    });
-
-    if (!state.skipAnimation) {
-      _bounceController.reset();
-      _bounceController.forward();
-    }
-
-    await notifier.generate();
-
-    // Setup animations for individual results if in counter mode
-    if (state.counterMode && !state.skipAnimation) {
-      await _setupResultAnimations(notifier.result);
-    } else {
-      // If no animation or single mode, update stats immediately
-      setState(() {
-        _isAnimating = false;
-        _displayedStats = notifier.counterStats;
-      });
-    }
+    await handleGenerationWithAnimation(
+      skipAnimation: state.skipAnimation,
+      counterMode: state.counterMode,
+      result: notifier.result,
+      onGenerate: () async => await notifier.generate(),
+      onAnimationComplete: () {
+        setState(() {
+          _displayedStats = notifier.counterStats;
+        });
+      },
+      getCurrentResult: () => notifier.result,
+    );
   }
 
   void _copyToClipboard() {
@@ -150,230 +126,54 @@ class _RockPaperScissorsGeneratorScreenState
     );
   }
 
-  Future<void> _setupResultAnimations(String result) async {
-    // Dispose existing controllers
-    for (final controller in _resultControllers) {
-      controller.dispose();
-    }
-
-    final results = result.split(', ');
-    _resultControllers.clear();
-    _resultAnimations.clear();
-
-    // Create animation controllers for each result
-    for (int i = 0; i < results.length; i++) {
-      final controller = AnimationController(
-        duration: const Duration(milliseconds: 400),
-        vsync: this,
-      );
-      final animation = CurvedAnimation(
-        parent: controller,
-        curve: Curves.elasticOut,
-      );
-
-      _resultControllers.add(controller);
-      _resultAnimations.add(animation);
-
-      // Start animation with delay
-      Future.delayed(Duration(milliseconds: i * 100), () {
-        if (mounted) {
-          controller.forward();
-        }
-      });
-    }
-
-    // Calculate total animation duration and update stats when done
-    final totalDuration =
-        Duration(milliseconds: (results.length - 1) * 100 + 400);
-    Future.delayed(totalDuration, () {
-      if (mounted) {
-        setState(() {
-          _isAnimating = false;
-          _displayedStats = ref
-              .read(rockPaperScissorsGeneratorProvider.notifier)
-              .counterStats;
-        });
-      }
-    });
-  }
-
   Widget _buildResultDisplay(
       BuildContext context, dynamic notifier, dynamic state) {
-    // Always show result display if we have a result or if we're animating/loading
-    if (notifier.result.isEmpty && !_isAnimating && !state.isLoading) {
+    // Don't show anything if no result and not animating
+    if (notifier.result.isEmpty && !isAnimating) {
       return const SizedBox.shrink();
     }
 
     if (state.counterMode) {
-      // Counter mode: show individual containers
-      return _buildMultiResultDisplay(context, notifier.result);
-    } else {
-      // Single mode: show single container with bounce animation
-      return _buildSingleResultDisplay(context, notifier.result);
-    }
-  }
-
-  Widget _buildSingleResultDisplay(BuildContext context, String result) {
-    // If no result yet, show a placeholder or loading state
-    if (result.isEmpty) {
-      return Container(
-        width: 120,
-        height: 120,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.grey.shade300,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
+      // Counter mode: show staggered results
+      return StaggeredResultDisplay(
+        results: notifier.result,
+        animations: resultAnimations,
+        skipAnimation: state.skipAnimation,
+        configBuilder: (results) => results.map((result) {
+          final trimmedResult = result.trim();
+          return AnimatedResultContainerConfig(
+            isSmall: true,
+            color: _getResultColor(trimmedResult),
+            text: _getResultText(trimmedResult, AppLocalizations.of(context)!),
+            icon: Icon(
+              _getResultIcon(trimmedResult),
+              size: 24,
+              color: Colors.white,
             ),
-          ],
-        ),
-        child: const Center(
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            shape: const CircleBorder(),
+            padding: const EdgeInsets.all(18),
+          );
+        }).toList(),
+      );
+    } else {
+      // Single mode: show bounce result
+      return BounceResultDisplay(
+        result: notifier.result,
+        animation: bounceAnimation,
+        isLoading: isAnimating || state.isLoading,
+        config: AnimatedResultContainerConfig(
+          color: _getResultColor(notifier.result),
+          text: _getResultText(notifier.result, AppLocalizations.of(context)!),
+          icon: Icon(
+            _getResultIcon(notifier.result),
+            size: 48,
+            color: Colors.white,
           ),
+          shape: const CircleBorder(),
+          padding: const EdgeInsets.all(36),
         ),
       );
     }
-
-    return AnimatedBuilder(
-      animation: _bounceAnimation,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: 0.8 + (_bounceAnimation.value * 0.2),
-          child: Center(
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _getResultColor(result),
-                boxShadow: [
-                  BoxShadow(
-                    color: _getResultColor(result).withValues(alpha: 0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    _getResultIcon(result),
-                    size: 48,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    _getResultText(result, AppLocalizations.of(context)!),
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildMultiResultDisplay(BuildContext context, String result) {
-    final results = result.split(', ');
-    final state = ref.read(rockPaperScissorsGeneratorProvider);
-
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      alignment: WrapAlignment.center,
-      children: results.asMap().entries.map((entry) {
-        final index = entry.key;
-        final resultText = entry.value.trim();
-
-        // If skip animation, show static containers immediately
-        if (state.skipAnimation) {
-          return _buildResultContainer(
-            context,
-            resultText,
-            _getResultColor(resultText),
-            isSmall: true,
-          );
-        }
-
-        // With animation, use AnimatedBuilder
-        if (index < _resultAnimations.length) {
-          return AnimatedBuilder(
-            animation: _resultAnimations[index],
-            builder: (context, child) {
-              // Hide elements that haven't started animating yet
-              if (_resultAnimations[index].value == 0.0) {
-                return const SizedBox.shrink();
-              }
-
-              return Transform.scale(
-                scale: 0.3 + (_resultAnimations[index].value * 0.7),
-                child: _buildResultContainer(
-                  context,
-                  resultText,
-                  _getResultColor(resultText),
-                  isSmall: true,
-                ),
-              );
-            },
-          );
-        } else {
-          // Fallback for when animations aren't ready - hide them
-          return const SizedBox.shrink();
-        }
-      }).toList(),
-    );
-  }
-
-  Widget _buildResultContainer(BuildContext context, String text, Color color,
-      {bool isSmall = false}) {
-    return Container(
-      width: isSmall ? 60 : 120,
-      height: isSmall ? 60 : 120,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color,
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.3),
-            blurRadius: isSmall ? 8 : 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            _getResultIcon(text),
-            size: isSmall ? 24 : 48,
-            color: Colors.white,
-          ),
-          if (!isSmall) ...[
-            const SizedBox(height: 8),
-            Text(
-              _getResultText(text, AppLocalizations.of(context)!),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ],
-      ),
-    );
   }
 
   @override
@@ -431,10 +231,10 @@ class _RockPaperScissorsGeneratorScreenState
                     // Generate button (expanded)
                     Expanded(
                       child: FilledButton.icon(
-                        onPressed: (_isAnimating || state.isLoading)
+                        onPressed: (isAnimating || state.isLoading)
                             ? null
                             : _generateChoice,
-                        icon: (_isAnimating || state.isLoading)
+                        icon: (isAnimating || state.isLoading)
                             ? const SizedBox(
                                 width: 16,
                                 height: 16,
@@ -445,7 +245,7 @@ class _RockPaperScissorsGeneratorScreenState
                                 ),
                               )
                             : const Icon(Icons.sports_mma),
-                        label: Text((_isAnimating || state.isLoading)
+                        label: Text((isAnimating || state.isLoading)
                             ? 'Loading...'
                             : loc.generate),
                         style: FilledButton.styleFrom(
@@ -460,8 +260,13 @@ class _RockPaperScissorsGeneratorScreenState
 
                     // Counter mode toggle button
                     OutlinedButton.icon(
-                      onPressed: () =>
-                          notifier.updateCounterMode(!state.counterMode),
+                      onPressed: () {
+                        notifier.updateCounterMode(!state.counterMode);
+                        // Update displayed stats immediately when toggling
+                        setState(() {
+                          _displayedStats = notifier.counterStats;
+                        });
+                      },
                       icon: Icon(state.counterMode
                           ? Icons.analytics
                           : Icons.analytics_outlined),
@@ -489,7 +294,7 @@ class _RockPaperScissorsGeneratorScreenState
 
         const SizedBox(height: 24),
 
-        // Result card (Coin Flip style)
+        // Result card
         Card(
           child: Padding(
             padding: const EdgeInsets.all(16),

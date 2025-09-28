@@ -1364,6 +1364,18 @@ abstract class AppLocalizations {
   /// **'Automatically save tool settings when generating results'**
   String get saveRandomToolsStateDesc;
 
+  /// Reset counter on toggle setting label
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Counter on Toggle'**
+  String get resetCounterOnToggle;
+
+  /// Reset counter on toggle setting description
+  ///
+  /// In en, this message translates to:
+  /// **'Reset counter statistics when disabling Counter Mode'**
+  String get resetCounterOnToggleDesc;
+
   /// No description provided for @aspectRatio.
   ///
   /// In en, this message translates to:

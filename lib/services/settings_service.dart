@@ -183,6 +183,20 @@ class SettingsService {
     return settings.autoCleanupHistoryLimit;
   }
 
+  // Update reset counter on toggle
+  static Future<void> updateResetCounterOnToggle(bool enabled) async {
+    final currentSettings = await getSettings();
+    final updatedSettings =
+        currentSettings.copyWith(resetCounterOnToggle: enabled);
+    await saveSettings(updatedSettings);
+  }
+
+  // Get reset counter on toggle
+  static Future<bool> getResetCounterOnToggle() async {
+    final settings = await getSettings();
+    return settings.resetCounterOnToggle;
+  }
+
   // Clear settings (for testing or reset)
   static Future<void> clearSettings() async {
     await initialize();
