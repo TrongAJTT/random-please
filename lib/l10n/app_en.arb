@@ -27,6 +27,35 @@
   "userInterfaceDesc": "Customize the theme, language, and display style",
   "randomTools": "Random Tools",
   "randomToolsDesc": "History, status, tools arrangement, and data protection",
+  "localApi": "Local API",
+  "localApiDesc": "Start/stop API server and configure settings",
+  "localApiPort": "API Port",
+  "localApiPortDesc": "Configure port for the local API server",
+  "localApiPortCheck": "Check Port",
+  "localApiPortCheckSuccess": "Port {port} is available",
+  "@localApiPortCheckSuccess": {
+    "placeholders": {
+      "port": {
+        "type": "int"
+      }
+    }
+  },
+  "localApiPortCheckError": "Port {port} is not available",
+  "@localApiPortCheckError": {
+    "placeholders": {
+      "port": {
+        "type": "int"
+      }
+    }
+  },
+  "localApiAutoStart": "Auto-start on app launch",
+  "localApiAutoStartDesc": "Automatically start API server when app starts",
+  "configureInSettings": "Configure in Settings",
+  "localApiServer": "Local API Server",
+  "running": "Running",
+  "stopped": "Stopped",
+  "startServer": "Start Server",
+  "stopServer": "Stop Server",
   "dataManager": "Data Managerment",
   "dataManagerDesc": "Delete all data",
   "autoCleanupHistoryLimit": "Auto-cleanup old history records",
@@ -853,5 +882,19 @@
   "apiDocumentation": "API Documentation",
   "apiNumberGenerator": "Number Generator",
   "apiColorGenerator": "Color Generator",
-  "apiCopy": "Copy"
+  "apiCopy": "Copy",
+  "invalidPortNumber": "Invalid port number. Please enter a port between 1024-65535.",
+  "@invalidPortNumber": {
+    "description": "Error message for invalid port number"
+  },
+  "errorCheckingPort": "Error checking port: {error}",
+  "@errorCheckingPort": {
+    "description": "Error message when checking port fails",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Port already in use"
+      }
+    }
+  }
 }

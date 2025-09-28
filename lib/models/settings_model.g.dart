@@ -29,13 +29,15 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       autoScrollToResults: fields[9] as bool,
       autoCleanupHistoryLimit: fields[10] as int?,
       resetCounterOnToggle: fields[11] as bool,
+      localApiPort: fields[12] as int,
+      localApiAutoStart: fields[13] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, SettingsModel obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.fetchTimeoutSeconds)
       ..writeByte(1)
@@ -59,7 +61,11 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       ..writeByte(10)
       ..write(obj.autoCleanupHistoryLimit)
       ..writeByte(11)
-      ..write(obj.resetCounterOnToggle);
+      ..write(obj.resetCounterOnToggle)
+      ..writeByte(12)
+      ..write(obj.localApiPort)
+      ..writeByte(13)
+      ..write(obj.localApiAutoStart);
   }
 
   @override

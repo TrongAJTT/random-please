@@ -40,6 +40,12 @@ class SettingsModel extends HiveObject {
   @HiveField(11)
   final bool resetCounterOnToggle;
 
+  @HiveField(12)
+  final int localApiPort;
+
+  @HiveField(13)
+  final bool localApiAutoStart;
+
   SettingsModel({
     this.fetchTimeoutSeconds = 10,
     this.featureStateSavingEnabled = true, // Always enabled by default
@@ -53,6 +59,8 @@ class SettingsModel extends HiveObject {
     this.autoScrollToResults = true, // Default to enabled
     this.autoCleanupHistoryLimit, // Default to null (No limit)
     this.resetCounterOnToggle = false, // Default to disabled
+    this.localApiPort = 4000, // Default to port 4000
+    this.localApiAutoStart = false, // Default to disabled
   });
 
   SettingsModel copyWith({
@@ -68,6 +76,8 @@ class SettingsModel extends HiveObject {
     bool? autoScrollToResults,
     int? autoCleanupHistoryLimit,
     bool? resetCounterOnToggle,
+    int? localApiPort,
+    bool? localApiAutoStart,
   }) {
     return SettingsModel(
       fetchTimeoutSeconds: fetchTimeoutSeconds ?? this.fetchTimeoutSeconds,
@@ -86,6 +96,8 @@ class SettingsModel extends HiveObject {
       autoCleanupHistoryLimit:
           autoCleanupHistoryLimit ?? this.autoCleanupHistoryLimit,
       resetCounterOnToggle: resetCounterOnToggle ?? this.resetCounterOnToggle,
+      localApiPort: localApiPort ?? this.localApiPort,
+      localApiAutoStart: localApiAutoStart ?? this.localApiAutoStart,
     );
   }
 
@@ -103,6 +115,8 @@ class SettingsModel extends HiveObject {
       'autoScrollToResults': autoScrollToResults,
       'autoCleanupHistoryLimit': autoCleanupHistoryLimit,
       'resetCounterOnToggle': resetCounterOnToggle,
+      'localApiPort': localApiPort,
+      'localApiAutoStart': localApiAutoStart,
     };
   }
 
@@ -122,6 +136,8 @@ class SettingsModel extends HiveObject {
       autoScrollToResults: json['autoScrollToResults'] ?? true,
       autoCleanupHistoryLimit: json['autoCleanupHistoryLimit'],
       resetCounterOnToggle: json['resetCounterOnToggle'] ?? false,
+      localApiPort: json['localApiPort'] ?? 4000,
+      localApiAutoStart: json['localApiAutoStart'] ?? false,
     );
   }
 }

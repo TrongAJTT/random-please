@@ -39,7 +39,19 @@ class ApiStateNotifier extends StateNotifier<ApiState> {
           isRunning: false,
           port: 4000,
           baseUrl: '',
-        ));
+        )) {
+    // Sync initial state with actual API manager state
+    _syncState();
+  }
+
+  /// Sync state with actual API manager state
+  void _syncState() {
+    state = state.copyWith(
+      isRunning: _apiManager.isRunning,
+      port: _apiManager.currentPort,
+      baseUrl: _apiManager.baseUrl,
+    );
+  }
 
   /// Start API server với port được chỉ định
   Future<void> startServer({int? port}) async {

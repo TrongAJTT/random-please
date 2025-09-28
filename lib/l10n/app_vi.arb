@@ -27,6 +27,21 @@
   "userInterfaceDesc": "Cài đặt chủ đề và ngôn ngữ và phong cách hiển thị",
   "randomTools": "Công cụ ngẫu nhiên",
   "randomToolsDesc": "Lịch sử, trạng thái, vị trí sắp xếp công vụ và bảo vệ dữ liệu",
+  "localApi": "API Cục bộ",
+  "localApiDesc": "Bật/tắt máy chủ API và cấu hình cài đặt",
+  "localApiPort": "Cổng API",
+  "localApiPortDesc": "Cấu hình cổng cho máy chủ API cục bộ",
+  "localApiPortCheck": "Kiểm tra cổng",
+  "localApiPortCheckSuccess": "Cổng {port} khả dụng",
+  "localApiPortCheckError": "Cổng {port} không khả dụng",
+  "localApiAutoStart": "Tự động bật khi khởi động",
+  "localApiAutoStartDesc": "Tự động khởi chạy máy chủ API khi mở ứng dụng",
+  "configureInSettings": "Cấu hình trong Cài đặt",
+  "localApiServer": "Máy chủ API cục bộ",
+  "running": "Đang chạy",
+  "stopped": "Đã dừng",
+  "startServer": "Khởi động máy chủ",
+  "stopServer": "Dừng máy chủ",
   "dataManager": "Quản lý dữ liệu",
   "dataManagerDesc": "Xóa toàn bộ dữ liệu",
   "autoCleanupHistoryLimit": "Tự động xóa bản ghi lịch sử cũ",
@@ -786,5 +801,19 @@
   "apiDocumentation": "Tài liệu API",
   "apiNumberGenerator": "Tạo Số",
   "apiColorGenerator": "Tạo Màu",
-  "apiCopy": "Sao chép"
+  "apiCopy": "Sao chép",
+  "invalidPortNumber": "Số cổng không hợp lệ. Vui lòng nhập cổng từ 1024-65535.",
+  "@invalidPortNumber": {
+    "description": "Thông báo lỗi cho số cổng không hợp lệ"
+  },
+  "errorCheckingPort": "Lỗi kiểm tra cổng: {error}",
+  "@errorCheckingPort": {
+    "description": "Thông báo lỗi khi kiểm tra cổng thất bại",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Cổng đã được sử dụng"
+      }
+    }
+  }
 }

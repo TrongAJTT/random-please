@@ -80,6 +80,29 @@ class ApiManager {
     };
   }
 
+  /// Test if a port is available for binding
+  Future<bool> testPortAvailability(int port) async {
+    if (!isSupported) {
+      return false;
+    }
+
+    try {
+      // Try to create a temporary server to test port availability
+      _server = LocalApiServerNative();
+      await _server!.start(port: port);
+
+      // If successful, stop the test server immediately
+      await _server!.stop();
+      _server = null;
+
+      return true;
+    } catch (e) {
+      // Port is not available or there's an error
+      _server = null;
+      return false;
+    }
+  }
+
   /// Dispose resources
   void dispose() {
     stopServer();

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:random_please/utils/snackbar_utils.dart';
 import '../providers/api_state_provider.dart';
+import '../providers/settings_provider.dart';
 import '../l10n/app_localizations.dart';
 
+/// Simplified API Management Widget - only shows start/stop functionality
+/// Port configuration is moved to settings
 class ApiManagementWidget extends ConsumerStatefulWidget {
   const ApiManagementWidget({super.key});
 
@@ -12,21 +16,13 @@ class ApiManagementWidget extends ConsumerStatefulWidget {
 }
 
 class _ApiManagementWidgetState extends ConsumerState<ApiManagementWidget> {
-  final _portController = TextEditingController();
   bool _isLoading = false;
+  late AppLocalizations loc;
 
   @override
-  void initState() {
-    super.initState();
-    // Initialize port with current state
-    final apiState = ref.read(apiStateProvider);
-    _portController.text = apiState.port.toString();
-  }
-
-  @override
-  void dispose() {
-    _portController.dispose();
-    super.dispose();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    loc = AppLocalizations.of(context)!;
   }
 
   Future<void> _toggleServer() async {
@@ -41,45 +37,23 @@ class _ApiManagementWidgetState extends ConsumerState<ApiManagementWidget> {
       if (apiState.isRunning) {
         await apiNotifier.stopServer();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!.apiServerStopped),
-              backgroundColor: Colors.orange,
-            ),
-          );
+          SnackBarUtils.showTyped(
+              context, loc.apiServerStopped, SnackBarType.success);
         }
       } else {
-        final port = int.tryParse(_portController.text);
-        if (port == null || port < 1024 || port > 65535) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(AppLocalizations.of(context)!.invalidPortRange),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-          return;
-        }
+        // Get port from settings instead of text field
+        final settings = ref.read(settingsProvider);
+        final port = settings.localApiPort;
 
         await apiNotifier.startServer(port: port);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!.apiServerStarted),
-              backgroundColor: Colors.green,
-            ),
-          );
+          SnackBarUtils.showTyped(
+              context, loc.apiServerStarted, SnackBarType.success);
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarUtils.showTyped(context, 'Error: $e', SnackBarType.error);
       }
     } finally {
       if (mounted) {
@@ -91,41 +65,12 @@ class _ApiManagementWidgetState extends ConsumerState<ApiManagementWidget> {
   @override
   Widget build(BuildContext context) {
     final apiState = ref.watch(apiStateProvider);
-    final apiNotifier = ref.read(apiStateProvider.notifier);
     final l10n = AppLocalizations.of(context)!;
 
-    if (!apiNotifier.isSupported) {
-      return Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 48,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                l10n.localApiNotSupported,
-                style: Theme.of(context).textTheme.titleMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                l10n.localApiNotSupportedDescription,
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
     return Card(
+      margin: const EdgeInsets.all(16),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -134,63 +79,56 @@ class _ApiManagementWidgetState extends ConsumerState<ApiManagementWidget> {
               children: [
                 Icon(
                   Icons.api,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: apiState.isRunning ? Colors.green : Colors.grey,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  l10n.localApiManagement,
-                  style: Theme.of(context).textTheme.titleLarge,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.localApiServer,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      Text(
+                        apiState.isRunning
+                            ? '${l10n.running} - ${apiState.baseUrl}'
+                            : l10n.stopped,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: apiState.isRunning
+                                  ? Colors.green
+                                  : Colors.grey,
+                            ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
+
             const SizedBox(height: 16),
 
-            // Status indicator
+            // Port info (read-only, configured in settings)
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: apiState.isRunning
-                    ? Colors.green.withOpacity(0.1)
-                    : Colors.grey.withOpacity(0.1),
+                border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: apiState.isRunning ? Colors.green : Colors.grey,
-                ),
               ),
               child: Row(
                 children: [
-                  Icon(
-                    apiState.isRunning
-                        ? Icons.check_circle
-                        : Icons.radio_button_off,
-                    color: apiState.isRunning ? Colors.green : Colors.grey,
-                  ),
+                  Icon(Icons.settings, size: 20, color: Colors.grey[600]),
                   const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          apiState.isRunning
-                              ? l10n.apiServerRunning
-                              : l10n.apiServerStopped,
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: apiState.isRunning
-                                        ? Colors.green
-                                        : Colors.grey,
-                                  ),
+                  Text(
+                    '${l10n.apiPort}: ${ref.watch(settingsProvider).localApiPort}',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const Spacer(),
+                  Text(
+                    l10n.configureInSettings,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[600],
                         ),
-                        if (apiState.isRunning &&
-                            apiState.baseUrl.isNotEmpty) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            apiState.baseUrl,
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      ],
-                    ),
                   ),
                 ],
               ),
@@ -198,52 +136,32 @@ class _ApiManagementWidgetState extends ConsumerState<ApiManagementWidget> {
 
             const SizedBox(height: 16),
 
-            // Port configuration
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: _portController,
-                    enabled: !apiState.isRunning && !_isLoading,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: l10n.apiPort,
-                      hintText: '4000',
-                      helperText: l10n.portRangeHelper,
-                      border: const OutlineInputBorder(),
-                    ),
-                    onChanged: (value) {
-                      final port = int.tryParse(value);
-                      if (port != null && !apiState.isRunning) {
-                        apiNotifier.updatePort(port);
-                      }
-                    },
+            // Start/Stop button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _isLoading ? null : _toggleServer,
+                icon: _isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Icon(apiState.isRunning ? Icons.stop : Icons.play_arrow),
+                label: Text(
+                  apiState.isRunning ? l10n.stopServer : l10n.startServer,
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: apiState.isRunning
+                      ? Colors.red.shade600
+                      : Colors.blue.shade600,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                const SizedBox(width: 16),
-                SizedBox(
-                  width: 120,
-                  child: ElevatedButton.icon(
-                    onPressed: _isLoading ? null : _toggleServer,
-                    icon: _isLoading
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Icon(
-                            apiState.isRunning ? Icons.stop : Icons.play_arrow),
-                    label:
-                        Text(apiState.isRunning ? l10n.apiStop : l10n.apiStart),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: apiState.isRunning
-                          ? Theme.of(context).colorScheme.error
-                          : Theme.of(context).colorScheme.primary,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
 
             // Error display
@@ -252,7 +170,7 @@ class _ApiManagementWidgetState extends ConsumerState<ApiManagementWidget> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.red),
                 ),
@@ -270,68 +188,9 @@ class _ApiManagementWidgetState extends ConsumerState<ApiManagementWidget> {
                 ),
               ),
             ],
-
-            const SizedBox(height: 16),
-
-            // Quick links when running
-            if (apiState.isRunning) ...[
-              const Divider(),
-              const SizedBox(height: 8),
-              Text(
-                l10n.quickLinks,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _buildQuickLinkChip(
-                    context,
-                    '${apiState.baseUrl}/info',
-                    l10n.apiDocumentation,
-                    Icons.description,
-                  ),
-                  _buildQuickLinkChip(
-                    context,
-                    '${apiState.baseUrl}/number',
-                    l10n.apiNumberGenerator,
-                    Icons.numbers,
-                  ),
-                  _buildQuickLinkChip(
-                    context,
-                    '${apiState.baseUrl}/color',
-                    l10n.apiColorGenerator,
-                    Icons.palette,
-                  ),
-                ],
-              ),
-            ],
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildQuickLinkChip(
-      BuildContext context, String url, String label, IconData icon) {
-    return ActionChip(
-      avatar: Icon(icon, size: 16),
-      label: Text(label),
-      onPressed: () {
-        // TODO: Mở URL trong browser hoặc hiển thị trong dialog
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('$label: $url'),
-            action: SnackBarAction(
-              label: AppLocalizations.of(context)!.apiCopy,
-              onPressed: () {
-                // TODO: Copy to clipboard
-              },
-            ),
-          ),
-        );
-      },
     );
   }
 }

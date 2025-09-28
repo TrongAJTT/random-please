@@ -197,6 +197,32 @@ class SettingsService {
     return settings.resetCounterOnToggle;
   }
 
+  // Update local API port
+  static Future<void> updateLocalApiPort(int port) async {
+    final currentSettings = await getSettings();
+    final updatedSettings = currentSettings.copyWith(localApiPort: port);
+    await saveSettings(updatedSettings);
+  }
+
+  // Get local API port
+  static Future<int> getLocalApiPort() async {
+    final settings = await getSettings();
+    return settings.localApiPort;
+  }
+
+  // Update local API auto start
+  static Future<void> updateLocalApiAutoStart(bool enabled) async {
+    final currentSettings = await getSettings();
+    final updatedSettings = currentSettings.copyWith(localApiAutoStart: enabled);
+    await saveSettings(updatedSettings);
+  }
+
+  // Get local API auto start
+  static Future<bool> getLocalApiAutoStart() async {
+    final settings = await getSettings();
+    return settings.localApiAutoStart;
+  }
+
   // Clear settings (for testing or reset)
   static Future<void> clearSettings() async {
     await initialize();

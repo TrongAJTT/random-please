@@ -94,6 +94,56 @@ class AppLocalizationsVi extends AppLocalizations {
       'Lịch sử, trạng thái, vị trí sắp xếp công vụ và bảo vệ dữ liệu';
 
   @override
+  String get localApi => 'API Cục bộ';
+
+  @override
+  String get localApiDesc => 'Bật/tắt máy chủ API và cấu hình cài đặt';
+
+  @override
+  String get localApiPort => 'Cổng API';
+
+  @override
+  String get localApiPortDesc => 'Cấu hình cổng cho máy chủ API cục bộ';
+
+  @override
+  String get localApiPortCheck => 'Kiểm tra cổng';
+
+  @override
+  String localApiPortCheckSuccess(int port) {
+    return 'Cổng $port khả dụng';
+  }
+
+  @override
+  String localApiPortCheckError(int port) {
+    return 'Cổng $port không khả dụng';
+  }
+
+  @override
+  String get localApiAutoStart => 'Tự động bật khi khởi động';
+
+  @override
+  String get localApiAutoStartDesc =>
+      'Tự động khởi chạy máy chủ API khi mở ứng dụng';
+
+  @override
+  String get configureInSettings => 'Cấu hình trong Cài đặt';
+
+  @override
+  String get localApiServer => 'Máy chủ API cục bộ';
+
+  @override
+  String get running => 'Đang chạy';
+
+  @override
+  String get stopped => 'Đã dừng';
+
+  @override
+  String get startServer => 'Khởi động máy chủ';
+
+  @override
+  String get stopServer => 'Dừng máy chủ';
+
+  @override
   String get dataManager => 'Quản lý dữ liệu';
 
   @override
@@ -1906,4 +1956,13 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get apiCopy => 'Sao chép';
+
+  @override
+  String get invalidPortNumber =>
+      'Số cổng không hợp lệ. Vui lòng nhập cổng từ 1024-65535.';
+
+  @override
+  String errorCheckingPort(String error) {
+    return 'Lỗi kiểm tra cổng: $error';
+  }
 }

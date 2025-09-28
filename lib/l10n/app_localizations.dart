@@ -260,6 +260,96 @@ abstract class AppLocalizations {
   /// **'History, status, tools arrangement, and data protection'**
   String get randomToolsDesc;
 
+  /// No description provided for @localApi.
+  ///
+  /// In en, this message translates to:
+  /// **'Local API'**
+  String get localApi;
+
+  /// No description provided for @localApiDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Start/stop API server and configure settings'**
+  String get localApiDesc;
+
+  /// No description provided for @localApiPort.
+  ///
+  /// In en, this message translates to:
+  /// **'API Port'**
+  String get localApiPort;
+
+  /// No description provided for @localApiPortDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure port for the local API server'**
+  String get localApiPortDesc;
+
+  /// No description provided for @localApiPortCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Port'**
+  String get localApiPortCheck;
+
+  /// No description provided for @localApiPortCheckSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Port {port} is available'**
+  String localApiPortCheckSuccess(int port);
+
+  /// No description provided for @localApiPortCheckError.
+  ///
+  /// In en, this message translates to:
+  /// **'Port {port} is not available'**
+  String localApiPortCheckError(int port);
+
+  /// No description provided for @localApiAutoStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-start on app launch'**
+  String get localApiAutoStart;
+
+  /// No description provided for @localApiAutoStartDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically start API server when app starts'**
+  String get localApiAutoStartDesc;
+
+  /// No description provided for @configureInSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure in Settings'**
+  String get configureInSettings;
+
+  /// No description provided for @localApiServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Local API Server'**
+  String get localApiServer;
+
+  /// No description provided for @running.
+  ///
+  /// In en, this message translates to:
+  /// **'Running'**
+  String get running;
+
+  /// No description provided for @stopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped'**
+  String get stopped;
+
+  /// No description provided for @startServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Server'**
+  String get startServer;
+
+  /// No description provided for @stopServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Server'**
+  String get stopServer;
+
   /// No description provided for @dataManager.
   ///
   /// In en, this message translates to:
@@ -3697,6 +3787,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copy'**
   String get apiCopy;
+
+  /// Error message for invalid port number
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid port number. Please enter a port between 1024-65535.'**
+  String get invalidPortNumber;
+
+  /// Error message when checking port fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error checking port: {error}'**
+  String errorCheckingPort(String error);
 }
 
 class _AppLocalizationsDelegate

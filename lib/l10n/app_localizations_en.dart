@@ -93,6 +93,56 @@ class AppLocalizationsEn extends AppLocalizations {
       'History, status, tools arrangement, and data protection';
 
   @override
+  String get localApi => 'Local API';
+
+  @override
+  String get localApiDesc => 'Start/stop API server and configure settings';
+
+  @override
+  String get localApiPort => 'API Port';
+
+  @override
+  String get localApiPortDesc => 'Configure port for the local API server';
+
+  @override
+  String get localApiPortCheck => 'Check Port';
+
+  @override
+  String localApiPortCheckSuccess(int port) {
+    return 'Port $port is available';
+  }
+
+  @override
+  String localApiPortCheckError(int port) {
+    return 'Port $port is not available';
+  }
+
+  @override
+  String get localApiAutoStart => 'Auto-start on app launch';
+
+  @override
+  String get localApiAutoStartDesc =>
+      'Automatically start API server when app starts';
+
+  @override
+  String get configureInSettings => 'Configure in Settings';
+
+  @override
+  String get localApiServer => 'Local API Server';
+
+  @override
+  String get running => 'Running';
+
+  @override
+  String get stopped => 'Stopped';
+
+  @override
+  String get startServer => 'Start Server';
+
+  @override
+  String get stopServer => 'Stop Server';
+
+  @override
   String get dataManager => 'Data Managerment';
 
   @override
@@ -1910,4 +1960,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get apiCopy => 'Copy';
+
+  @override
+  String get invalidPortNumber =>
+      'Invalid port number. Please enter a port between 1024-65535.';
+
+  @override
+  String errorCheckingPort(String error) {
+    return 'Error checking port: $error';
+  }
 }

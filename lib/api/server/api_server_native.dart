@@ -384,6 +384,7 @@ class LocalApiServerNative implements LocalApiServer {
       ApiServiceRegistry serviceRegistry, int port) {
     final generators = serviceRegistry.getServicesInfo();
     final baseUrl = 'http://$host:$port';
+    final baseLocalUrl = 'http://localhost:$port';
 
     final buffer = StringBuffer();
 
@@ -392,7 +393,7 @@ class LocalApiServerNative implements LocalApiServer {
         <p>Random Please Local API provides endpoints to generate various types of random data. All endpoints support CORS and return JSON responses.</p>
         
         <div class="endpoint">
-            <strong>Base URL:</strong> <code>$baseUrl</code>
+            <strong>Base URL:</strong> <code>$baseUrl</code> or <code>$baseLocalUrl</code>
         </div>
         
         <h2>📋 Core Endpoints</h2>
@@ -521,7 +522,7 @@ class LocalApiServerNative implements LocalApiServer {
       case 'color':
         return '''<strong>Parameters:</strong>
             <ul>
-                <li><code>type</code> (string): "hex", "rgb", "hsl", "hsv", or "all" (default: "all")</li>
+                <li><code>type</code> (string): "hex", "rgb", "hsl" or "all" (default: "all")</li>
                 <li><code>includeAlpha</code> (boolean): Include alpha channel (default: true)</li>
             </ul>''';
       case 'password':

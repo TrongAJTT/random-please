@@ -17,6 +17,8 @@ import 'package:random_please/services/tool_order_service.dart';
 import 'package:random_please/providers/settings_provider.dart';
 import 'package:random_please/providers/cache_provider.dart';
 import 'package:random_please/providers/ui_settings_provider.dart';
+import 'package:random_please/api/api_manager.dart';
+import 'package:random_please/utils/snackbar_utils.dart';
 
 class MainSettingsScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -173,6 +175,14 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
         content: _buildRandomToolsSection(loc),
       ),
       SectionItem(
+        id: 'local_api',
+        title: loc.localApi,
+        subtitle: loc.localApiDesc,
+        icon: Icons.api,
+        iconColor: Colors.green,
+        content: _buildLocalApiSection(loc),
+      ),
+      SectionItem(
         id: 'data_management',
         title: loc.dataManager,
         subtitle: loc.dataManagerDesc,
@@ -210,6 +220,21 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
         _buildToolOrderingSettings(loc),
         VerticalSpacingDivider.both(6),
         _buildRemoteListTemplateSettings(loc),
+      ],
+    );
+  }
+
+  Widget _buildLocalApiSection(AppLocalizations loc) {
+    final settingsNotifier = ref.read(settingsProvider.notifier);
+    final settings = ref.watch(settingsProvider);
+    final apiManager = ref.watch(apiManagerProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildApiPortSettings(loc, settingsNotifier, settings),
+        VerticalSpacingDivider.both(6),
+        _buildApiAutoStartSettings(loc, settingsNotifier, settings),
       ],
     );
   }
@@ -481,6 +506,139 @@ class _MainSettingsScreenState extends ConsumerState<MainSettingsScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildApiPortSettings(
+      AppLocalizations loc, settingsNotifier, settings) {
+    final TextEditingController portController = TextEditingController(
+      text: settings.localApiPort.toString(),
+    );
+    bool isCheckingPort = false;
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              loc.localApiPort,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              loc.localApiPortDesc,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: TextField(
+                    controller: portController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      hintText: '4000',
+                      border: OutlineInputBorder(),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 1,
+                  child: FilledButton(
+                    onPressed: isCheckingPort
+                        ? null
+                        : () async {
+                            final portText = portController.text.trim();
+                            final port = int.tryParse(portText);
+
+                            if (port == null || port < 1024 || port > 65535) {
+                              SnackBarUtils.showTyped(
+                                context,
+                                loc.invalidPortNumber,
+                                SnackBarType.error,
+                              );
+                              return;
+                            }
+
+                            setState(() => isCheckingPort = true);
+
+                            try {
+                              final apiManager = ref.read(apiManagerProvider);
+
+                              // Test port availability by trying to bind to it
+                              final testServer =
+                                  await apiManager.testPortAvailability(port);
+                              if (testServer) {
+                                // Save the port
+                                await settingsNotifier.updateLocalApiPort(port);
+
+                                if (context.mounted) {
+                                  SnackBarUtils.showTyped(
+                                    context,
+                                    loc.localApiPortCheckSuccess(port),
+                                    SnackBarType.success,
+                                  );
+                                }
+                              } else {
+                                if (context.mounted) {
+                                  SnackBarUtils.showTyped(
+                                    context,
+                                    loc.localApiPortCheckError(port),
+                                    SnackBarType.error,
+                                  );
+                                }
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                SnackBarUtils.showTyped(
+                                  context,
+                                  loc.errorCheckingPort(e.toString()),
+                                  SnackBarType.error,
+                                );
+                              }
+                            } finally {
+                              setState(() => isCheckingPort = false);
+                            }
+                          },
+                    style: ButtonStyle(
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                    child: isCheckingPort
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Text(loc.localApiPortCheck),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildApiAutoStartSettings(
+      AppLocalizations loc, settingsNotifier, settings) {
+    return OptionSwitch(
+      title: loc.localApiAutoStart,
+      subtitle: loc.localApiAutoStartDesc,
+      value: settings.localApiAutoStart,
+      onChanged: (value) async {
+        await settingsNotifier.updateLocalApiAutoStart(value);
+      },
+      decorator: switchDecorator,
     );
   }
 }

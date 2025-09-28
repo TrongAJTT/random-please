@@ -11,6 +11,8 @@ class SettingsState {
   final bool saveRandomToolsState;
   final int? autoCleanupHistoryLimit;
   final bool resetCounterOnToggle;
+  final int localApiPort;
+  final bool localApiAutoStart;
 
   const SettingsState({
     required this.themeMode,
@@ -18,6 +20,8 @@ class SettingsState {
     required this.saveRandomToolsState,
     this.autoCleanupHistoryLimit,
     required this.resetCounterOnToggle,
+    required this.localApiPort,
+    required this.localApiAutoStart,
   });
 
   SettingsState copyWith({
@@ -26,6 +30,8 @@ class SettingsState {
     bool? saveRandomToolsState,
     int? autoCleanupHistoryLimit,
     bool? resetCounterOnToggle,
+    int? localApiPort,
+    bool? localApiAutoStart,
   }) {
     return SettingsState(
       themeMode: themeMode ?? this.themeMode,
@@ -34,6 +40,8 @@ class SettingsState {
       autoCleanupHistoryLimit:
           autoCleanupHistoryLimit ?? this.autoCleanupHistoryLimit,
       resetCounterOnToggle: resetCounterOnToggle ?? this.resetCounterOnToggle,
+      localApiPort: localApiPort ?? this.localApiPort,
+      localApiAutoStart: localApiAutoStart ?? this.localApiAutoStart,
     );
   }
 }
@@ -47,6 +55,8 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
           saveRandomToolsState: false,
           autoCleanupHistoryLimit: null,
           resetCounterOnToggle: false,
+          localApiPort: 4000,
+          localApiAutoStart: false,
         )) {
     // Auto-load settings on initialization
     loadSettings();
@@ -76,12 +86,18 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     final resetCounterOnToggle =
         await SettingsService.getResetCounterOnToggle();
 
+    // Load local API settings
+    final localApiPort = await SettingsService.getLocalApiPort();
+    final localApiAutoStart = await SettingsService.getLocalApiAutoStart();
+
     state = state.copyWith(
       themeMode: themeMode,
       locale: locale,
       saveRandomToolsState: saveRandomToolsState,
       autoCleanupHistoryLimit: autoCleanupHistoryLimit,
       resetCounterOnToggle: resetCounterOnToggle,
+      localApiPort: localApiPort,
+      localApiAutoStart: localApiAutoStart,
     );
   }
 
@@ -110,6 +126,16 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   Future<void> setResetCounterOnToggle(bool enabled) async {
     await SettingsService.updateResetCounterOnToggle(enabled);
     state = state.copyWith(resetCounterOnToggle: enabled);
+  }
+
+  Future<void> updateLocalApiPort(int port) async {
+    await SettingsService.updateLocalApiPort(port);
+    state = state.copyWith(localApiPort: port);
+  }
+
+  Future<void> updateLocalApiAutoStart(bool enabled) async {
+    await SettingsService.updateLocalApiAutoStart(enabled);
+    state = state.copyWith(localApiAutoStart: enabled);
   }
 }
 

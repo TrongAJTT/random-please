@@ -15,6 +15,7 @@ import 'package:random_please/services/settings_service.dart';
 import 'package:random_please/services/list_template_source_service.dart';
 import 'package:random_please/services/app_logger.dart';
 import 'package:random_please/services/security_manager.dart';
+import 'package:random_please/providers/api_state_provider.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/models/settings_model.dart';
 import 'package:random_please/models/list_template_source.dart';
@@ -95,9 +96,22 @@ Future<void> main() async {
   final container = ProviderContainer();
   await container.read(settingsProvider.notifier).loadSettings();
 
+  // Auto-start API server if enabled in settings
+  try {
+    final settings = container.read(settingsProvider);
+    if (settings.localApiAutoStart) {
+      final apiNotifier = container.read(apiStateProvider.notifier);
+      await apiNotifier.startServer(port: settings.localApiPort);
+      logInfo(
+          '🚀 Auto-started Local API Server on port ${settings.localApiPort}');
+    }
+  } catch (e) {
+    logError('❌ Failed to auto-start API server: $e');
+  }
+
   runApp(UncontrolledProviderScope(
     container: container,
-    child: const MainApp(),
+    child: const AppLifecycleWrapper(child: MainApp()),
   ));
 }
 
@@ -178,6 +192,58 @@ void _registerRandomStateAdapters() {
   }
   if (!Hive.isAdapterRegistered(82)) {
     Hive.registerAdapter(RockPaperScissorsCounterStatisticsAdapter());
+  }
+}
+
+/// Wrapper to handle app lifecycle events including API cleanup
+class AppLifecycleWrapper extends ConsumerStatefulWidget {
+  final Widget child;
+
+  const AppLifecycleWrapper({super.key, required this.child});
+
+  @override
+  ConsumerState<AppLifecycleWrapper> createState() =>
+      _AppLifecycleWrapperState();
+}
+
+class _AppLifecycleWrapperState extends ConsumerState<AppLifecycleWrapper>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached) {
+      // App is about to be terminated, stop API server
+      _stopApiServerOnExit();
+    }
+  }
+
+  void _stopApiServerOnExit() async {
+    try {
+      final apiNotifier = ref.read(apiStateProvider.notifier);
+      final apiState = ref.read(apiStateProvider);
+      if (apiState.isRunning) {
+        await apiNotifier.stopServer();
+        logInfo('🛑 API Server stopped on app exit');
+      }
+    } catch (e) {
+      logError('❌ Error stopping API server on exit: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
   }
 }
 
@@ -332,8 +398,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
     super.dispose();
   }
 
-  Widget _buildActionAppbar(
-      {required bool isDesktop, required int visibleCount}) {
+  Widget _buildActionAppbar({required bool isDesktop}) {
     List<IconButtonListItem> buttons = [
       IconButtonListItem(
         icon: Icons.refresh,
@@ -412,7 +477,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
     ];
     return IconButtonList(
       buttons: buttons,
-      visibleCount: visibleCount,
+      visibleCount: IconButtonList.getVisibleContext(context),
     );
   }
 
@@ -455,8 +520,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
               trailing: const ApiStatusIndicator(),
             ),
             actions: [
-              _buildActionAppbar(
-                  isDesktop: isDesktop, visibleCount: width > 500 ? 4 : 0),
+              _buildActionAppbar(isDesktop: isDesktop),
               const SizedBox(width: 8),
             ],
           ),
