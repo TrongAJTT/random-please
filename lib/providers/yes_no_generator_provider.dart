@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/providers/history_provider.dart';
+import 'package:faker/faker.dart';
 import 'dart:math';
 
 class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
@@ -28,7 +29,9 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
   }
 
   Future<void> _init() async {
+    state = state.copyWith(isLoading: true);
     await initHive();
+    state = state.copyWith(isLoading: false);
   }
 
   Future<void> initHive() async {
@@ -71,13 +74,11 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
   }
 
   Future<void> generate() async {
-    final random = Random();
-
     if (state.counterMode) {
       // Generate batch of results
       final results = <String>[];
       for (int i = 0; i < state.batchCount; i++) {
-        final result = random.nextBool() ? 'Yes' : 'No';
+        final result = _generateEnhancedRandomYesNo();
         results.add(result);
 
         // Update counter stats
@@ -108,7 +109,7 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
       saveState();
     } else {
       // Generate single result
-      final resultText = random.nextBool() ? 'Yes' : 'No';
+      final resultText = _generateEnhancedRandomYesNo();
 
       // Save to history via HistoryProvider
       if (_ref != null && resultText.isNotEmpty) {
@@ -148,6 +149,32 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
       _box.close();
     }
     super.dispose();
+  }
+
+  /// Enhanced random Yes/No generation using multiple entropy sources
+  String _generateEnhancedRandomYesNo() {
+    // Multiple entropy sources for better randomness
+    final random = Random();
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final fakerRandom = faker.randomGenerator;
+
+    // Combine multiple random sources
+    final entropy1 = random.nextInt(1000);
+    final entropy2 = timestamp % 1000;
+    final entropy3 = fakerRandom.integer(1000);
+    final entropy4 = fakerRandom.decimal(scale: 3).toInt();
+
+    // Create weighted random using multiple sources
+    final combinedEntropy = (entropy1 + entropy2 + entropy3 + entropy4) % 1000;
+
+    // Use Faker's random boolean as additional entropy
+    final fakerBool = fakerRandom.boolean();
+
+    // Combine all sources for final decision
+    final finalValue = (combinedEntropy + (fakerBool ? 500 : 0)) % 1000;
+
+    // Return Yes/No based on combined entropy
+    return finalValue < 500 ? 'Yes' : 'No';
   }
 }
 

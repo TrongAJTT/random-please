@@ -651,6 +651,8 @@ class YesNoGeneratorState {
   final String result;
   @HiveField(4)
   final DateTime lastUpdated;
+  @HiveField(5)
+  final bool isLoading;
 
   YesNoGeneratorState({
     this.skipAnimation = false,
@@ -658,6 +660,7 @@ class YesNoGeneratorState {
     this.batchCount = 5,
     this.result = '',
     required this.lastUpdated,
+    this.isLoading = false,
   });
 
   static YesNoGeneratorState createDefault() {
@@ -667,6 +670,7 @@ class YesNoGeneratorState {
       batchCount: 5,
       result: '',
       lastUpdated: DateTime.now(),
+      isLoading: false,
     );
   }
 
@@ -677,6 +681,7 @@ class YesNoGeneratorState {
       'batchCount': batchCount,
       'result': result,
       'lastUpdated': lastUpdated.toIso8601String(),
+      'isLoading': isLoading,
     };
   }
 
@@ -689,6 +694,7 @@ class YesNoGeneratorState {
       lastUpdated: json['lastUpdated'] != null
           ? DateTime.parse(json['lastUpdated'])
           : DateTime.now(),
+      isLoading: json['isLoading'] ?? false,
     );
   }
 
@@ -697,13 +703,16 @@ class YesNoGeneratorState {
     bool? counterMode,
     int? batchCount,
     String? result,
+    DateTime? lastUpdated,
+    bool? isLoading,
   }) {
     return YesNoGeneratorState(
       skipAnimation: skipAnimation ?? this.skipAnimation,
       counterMode: counterMode ?? this.counterMode,
       batchCount: batchCount ?? this.batchCount,
       result: result ?? this.result,
-      lastUpdated: DateTime.now(),
+      lastUpdated: lastUpdated ?? this.lastUpdated,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 }

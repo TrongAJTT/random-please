@@ -211,9 +211,20 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
                     // Generate button (expanded)
                     Expanded(
                       child: FilledButton.icon(
-                        onPressed: _generateAnswer,
-                        icon: const Icon(Icons.refresh),
-                        label: Text(loc.generate),
+                        onPressed: state.isLoading ? null : _generateAnswer,
+                        icon: state.isLoading
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              )
+                            : const Icon(Icons.refresh),
+                        label:
+                            Text(state.isLoading ? 'Loading...' : loc.generate),
                         style: FilledButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),

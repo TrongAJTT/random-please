@@ -441,13 +441,14 @@ class YesNoGeneratorStateAdapter extends TypeAdapter<YesNoGeneratorState> {
       batchCount: fields[2] as int,
       result: fields[3] as String,
       lastUpdated: fields[4] as DateTime,
+      isLoading: fields[5] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, YesNoGeneratorState obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.skipAnimation)
       ..writeByte(1)
@@ -457,7 +458,9 @@ class YesNoGeneratorStateAdapter extends TypeAdapter<YesNoGeneratorState> {
       ..writeByte(3)
       ..write(obj.result)
       ..writeByte(4)
-      ..write(obj.lastUpdated);
+      ..write(obj.lastUpdated)
+      ..writeByte(5)
+      ..write(obj.isLoading);
   }
 
   @override
