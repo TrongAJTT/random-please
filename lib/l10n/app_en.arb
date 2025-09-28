@@ -246,11 +246,11 @@
   "@focusModeEnabled": {
     "description": "Focus mode setting label"
   },
-  "saveRandomToolsState": "Save Random Tools State",
+  "saveRandomToolsState": "Reset Tools State At Startup",
   "@saveRandomToolsState": {
-    "description": "Save random tools state setting label"
+    "description": "Reset tools state at startup setting label"
   },
-  "saveRandomToolsStateDesc": "Automatically save tool settings when generating results",
+  "saveRandomToolsStateDesc": "Reset all tool states to default when the app starts",
   "@saveRandomToolsStateDesc": {
     "description": "Save random tools state setting description"
   },

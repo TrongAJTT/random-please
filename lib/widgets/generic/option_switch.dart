@@ -20,7 +20,7 @@ class OptionSwitchDecorator {
   /// This scales down the padding, font sizes, and the switch itself.
   static OptionSwitchDecorator compact(BuildContext context) {
     final theme = Theme.of(context);
-    final defaultTitleStyle = theme.textTheme.titleMedium;
+    final defaultTitleStyle = theme.textTheme.titleMedium?.copyWith();
     final defaultSubtitleStyle = theme.textTheme.bodySmall;
 
     // Default values from Material Design spec if theme values are null.
@@ -29,7 +29,7 @@ class OptionSwitchDecorator {
     const defaultVerticalPadding = 8.0;
     const defaultHorizontalPadding = 4.0;
 
-    const scale = 0.9;
+    const scale = 1.0;
 
     final titleFontSize = defaultTitleStyle?.fontSize ?? defaultTitleFontSize;
     final subtitleFontSize =
@@ -131,7 +131,7 @@ class OptionSwitch extends StatelessWidget {
     final theme = Theme.of(context);
     final bool isEffectivelyDisabled = isDisabled || onChanged == null;
 
-    final defaultTitleStyle = theme.textTheme.titleMedium?.copyWith(
+    final defaultTitleStyle = theme.textTheme.titleLarge?.copyWith(
       fontWeight: FontWeight.w500,
       color: isEffectivelyDisabled ? theme.disabledColor : null,
     );

@@ -273,7 +273,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     if (widget.isEmbedded) {
       return SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
         child: content,
       );
     } else {

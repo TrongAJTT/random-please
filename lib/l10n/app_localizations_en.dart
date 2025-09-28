@@ -666,11 +666,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get focusModeEnabled => 'Focus Mode';
 
   @override
-  String get saveRandomToolsState => 'Save Random Tools State';
+  String get saveRandomToolsState => 'Reset Tools State At Startup';
 
   @override
   String get saveRandomToolsStateDesc =>
-      'Automatically save tool settings when generating results';
+      'Reset all tool states to default when the app starts';
 
   @override
   String get resetCounterOnToggle => 'Reset Counter on Toggle';

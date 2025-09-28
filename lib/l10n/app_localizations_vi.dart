@@ -663,11 +663,11 @@ class AppLocalizationsVi extends AppLocalizations {
   String get focusModeEnabled => 'Chế độ tập trung';
 
   @override
-  String get saveRandomToolsState => 'Lưu trạng thái Random Tools';
+  String get saveRandomToolsState => 'Đặt lại trạng thái công cụ khi khởi động';
 
   @override
   String get saveRandomToolsStateDesc =>
-      'Tự động lưu cài đặt công cụ khi tạo kết quả';
+      'Đặt lại tất cả trạng thái công cụ về mặc định khi ứng dụng khởi động';
 
   @override
   String get resetCounterOnToggle => 'Đặt lại Counter khi chuyển đổi';

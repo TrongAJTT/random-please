@@ -230,11 +230,11 @@
   "@focusModeEnabled": {
     "description": "Focus mode setting label"
   },
-  "saveRandomToolsState": "Lưu trạng thái Random Tools",
+  "saveRandomToolsState": "Đặt lại trạng thái công cụ khi khởi động",
   "@saveRandomToolsState": {
-    "description": "Save random tools state setting label"
+    "description": "Reset tools state at startup setting label"
   },
-  "saveRandomToolsStateDesc": "Tự động lưu cài đặt công cụ khi tạo kết quả",
+  "saveRandomToolsStateDesc": "Đặt lại tất cả trạng thái công cụ về mặc định khi ứng dụng khởi động",
   "@saveRandomToolsStateDesc": {
     "description": "Save random tools state setting description"
   },

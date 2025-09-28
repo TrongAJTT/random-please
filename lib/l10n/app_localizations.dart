@@ -1352,16 +1352,16 @@ abstract class AppLocalizations {
   /// **'Focus Mode'**
   String get focusModeEnabled;
 
-  /// Save random tools state setting label
+  /// Reset tools state at startup setting label
   ///
   /// In en, this message translates to:
-  /// **'Save Random Tools State'**
+  /// **'Reset Tools State At Startup'**
   String get saveRandomToolsState;
 
   /// Save random tools state setting description
   ///
   /// In en, this message translates to:
-  /// **'Automatically save tool settings when generating results'**
+  /// **'Reset all tool states to default when the app starts'**
   String get saveRandomToolsStateDesc;
 
   /// Reset counter on toggle setting label
