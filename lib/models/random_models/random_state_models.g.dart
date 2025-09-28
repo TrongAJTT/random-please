@@ -474,6 +474,56 @@ class YesNoGeneratorStateAdapter extends TypeAdapter<YesNoGeneratorState> {
           typeId == other.typeId;
 }
 
+class CoinFlipGeneratorStateAdapter
+    extends TypeAdapter<CoinFlipGeneratorState> {
+  @override
+  final int typeId = 75;
+
+  @override
+  CoinFlipGeneratorState read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return CoinFlipGeneratorState(
+      skipAnimation: fields[0] as bool,
+      counterMode: fields[1] as bool,
+      batchCount: fields[2] as int,
+      result: fields[3] as String,
+      lastUpdated: fields[4] as DateTime,
+      isLoading: fields[5] as bool,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, CoinFlipGeneratorState obj) {
+    writer
+      ..writeByte(6)
+      ..writeByte(0)
+      ..write(obj.skipAnimation)
+      ..writeByte(1)
+      ..write(obj.counterMode)
+      ..writeByte(2)
+      ..write(obj.batchCount)
+      ..writeByte(3)
+      ..write(obj.result)
+      ..writeByte(4)
+      ..write(obj.lastUpdated)
+      ..writeByte(5)
+      ..write(obj.isLoading);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CoinFlipGeneratorStateAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
 class SimpleGeneratorStateAdapter extends TypeAdapter<SimpleGeneratorState> {
   @override
   final int typeId = 69;

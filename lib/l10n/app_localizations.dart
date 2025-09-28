@@ -881,7 +881,7 @@ abstract class AppLocalizations {
   /// No description provided for @flipCoinDesc.
   ///
   /// In en, this message translates to:
-  /// **'Virtual coin flip for random choices'**
+  /// **'Random coin flip result'**
   String get flipCoinDesc;
 
   /// No description provided for @rockPaperScissors.
@@ -3535,6 +3535,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No Percentage'**
   String get noPercentage;
+
+  /// No description provided for @headsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Heads Count'**
+  String get headsCount;
+
+  /// No description provided for @headsPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Heads Percentage'**
+  String get headsPercentage;
+
+  /// No description provided for @tailsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Tails Count'**
+  String get tailsCount;
+
+  /// No description provided for @tailsPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Tails Percentage'**
+  String get tailsPercentage;
 }
 
 class _AppLocalizationsDelegate

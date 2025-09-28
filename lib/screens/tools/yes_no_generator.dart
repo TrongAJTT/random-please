@@ -22,9 +22,13 @@ class YesNoGeneratorScreen extends ConsumerStatefulWidget {
 }
 
 class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _bounceController;
   late Animation<double> _bounceAnimation;
+  late List<AnimationController> _resultControllers;
+  late List<Animation<double>> _resultAnimations;
+  bool _isAnimating = false;
+  CounterStatistics? _displayedStats;
 
   @override
   void initState() {
@@ -38,6 +42,10 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
       curve: Curves.elasticOut,
     );
 
+    // Initialize result animation controllers
+    _resultControllers = [];
+    _resultAnimations = [];
+
     // Set ref for provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(yesNoGeneratorProvider.notifier).setRef(ref);
@@ -47,6 +55,10 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
   @override
   void dispose() {
     _bounceController.dispose();
+    // Dispose all result animation controllers
+    for (final controller in _resultControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -54,12 +66,28 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
     final notifier = ref.read(yesNoGeneratorProvider.notifier);
     final state = ref.read(yesNoGeneratorProvider);
 
+    // Set loading state
+    setState(() {
+      _isAnimating = true;
+    });
+
     if (!state.skipAnimation) {
       _bounceController.reset();
       _bounceController.forward();
     }
 
     await notifier.generate();
+
+    // Setup animations for individual results if in counter mode
+    if (state.counterMode && !state.skipAnimation) {
+      await _setupResultAnimations(notifier.result);
+    } else {
+      // If no animation or single mode, update stats immediately
+      setState(() {
+        _isAnimating = false;
+        _displayedStats = notifier.counterStats;
+      });
+    }
   }
 
   void _copyToClipboard() {
@@ -156,6 +184,218 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
     return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
+  Future<void> _setupResultAnimations(String result) async {
+    // Dispose existing controllers
+    for (final controller in _resultControllers) {
+      controller.dispose();
+    }
+
+    final results = result.split(', ');
+    _resultControllers.clear();
+    _resultAnimations.clear();
+
+    // Create animation controllers for each result
+    for (int i = 0; i < results.length; i++) {
+      final controller = AnimationController(
+        duration: const Duration(milliseconds: 400),
+        vsync: this,
+      );
+      final animation = CurvedAnimation(
+        parent: controller,
+        curve: Curves.elasticOut,
+      );
+
+      _resultControllers.add(controller);
+      _resultAnimations.add(animation);
+
+      // Start animation with delay
+      Future.delayed(Duration(milliseconds: i * 100), () {
+        if (mounted) {
+          controller.forward();
+        }
+      });
+    }
+
+    // Calculate total animation duration and update stats when done
+    final totalDuration =
+        Duration(milliseconds: (results.length - 1) * 100 + 400);
+    Future.delayed(totalDuration, () {
+      if (mounted) {
+        setState(() {
+          _isAnimating = false;
+          _displayedStats =
+              ref.read(yesNoGeneratorProvider.notifier).counterStats;
+        });
+      }
+    });
+  }
+
+  Widget _buildResultDisplay(
+      BuildContext context, dynamic notifier, dynamic state) {
+    // Always show result display if we have a result or if we're animating/loading
+    if (notifier.result.isEmpty && !_isAnimating && !state.isLoading) {
+      return const SizedBox.shrink();
+    }
+
+    if (state.counterMode) {
+      // Counter mode: show individual containers
+      return _buildMultiResultDisplay(context, notifier.result);
+    } else {
+      // Single mode: show single container with bounce animation
+      return _buildSingleResultDisplay(context, notifier.result);
+    }
+  }
+
+  Widget _buildSingleResultDisplay(BuildContext context, String result) {
+    // If no result yet, show a placeholder or loading state
+    if (result.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.grey.shade300, Colors.grey.shade400],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Loading...',
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return AnimatedBuilder(
+      animation: _bounceAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: 0.8 + (_bounceAnimation.value * 0.2),
+          child: _buildResultContainer(context, result, Colors.green),
+        );
+      },
+    );
+  }
+
+  Widget _buildMultiResultDisplay(BuildContext context, String result) {
+    final results = result.split(', ');
+    final state = ref.read(yesNoGeneratorProvider);
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      alignment: WrapAlignment.center,
+      children: results.asMap().entries.map((entry) {
+        final index = entry.key;
+        final resultText = entry.value.trim();
+
+        // If skip animation, show static containers immediately
+        if (state.skipAnimation) {
+          return _buildResultContainer(
+            context,
+            resultText,
+            resultText == 'Yes' ? Colors.green : Colors.red,
+            isSmall: true,
+          );
+        }
+
+        // With animation, use AnimatedBuilder
+        if (index < _resultAnimations.length) {
+          return AnimatedBuilder(
+            animation: _resultAnimations[index],
+            builder: (context, child) {
+              // Hide elements that haven't started animating yet
+              if (_resultAnimations[index].value == 0.0) {
+                return const SizedBox.shrink();
+              }
+
+              return Transform.scale(
+                scale: 0.3 + (_resultAnimations[index].value * 0.7),
+                child: _buildResultContainer(
+                  context,
+                  resultText,
+                  resultText == 'Yes' ? Colors.green : Colors.red,
+                  isSmall: true,
+                ),
+              );
+            },
+          );
+        } else {
+          // Fallback for when animations aren't ready - hide them
+          return const SizedBox.shrink();
+        }
+      }).toList(),
+    );
+  }
+
+  Widget _buildResultContainer(BuildContext context, String text, Color color,
+      {bool isSmall = false}) {
+    // Determine gradient colors based on color type
+    List<Color> gradientColors;
+    if (color == Colors.green) {
+      gradientColors = [Colors.green.shade400, Colors.green.shade600];
+    } else if (color == Colors.red) {
+      gradientColors = [Colors.red.shade400, Colors.red.shade600];
+    } else {
+      gradientColors = [color, color];
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: isSmall ? 16 : 32,
+        vertical: isSmall ? 12 : 20,
+      ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: gradientColors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(isSmall ? 12 : 16),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.3),
+            blurRadius: isSmall ? 8 : 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontSize: isSmall ? 16 : null,
+            ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -211,8 +451,10 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
                     // Generate button (expanded)
                     Expanded(
                       child: FilledButton.icon(
-                        onPressed: state.isLoading ? null : _generateAnswer,
-                        icon: state.isLoading
+                        onPressed: (_isAnimating || state.isLoading)
+                            ? null
+                            : _generateAnswer,
+                        icon: (_isAnimating || state.isLoading)
                             ? const SizedBox(
                                 width: 16,
                                 height: 16,
@@ -223,8 +465,9 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
                                 ),
                               )
                             : const Icon(Icons.refresh),
-                        label:
-                            Text(state.isLoading ? 'Loading...' : loc.generate),
+                        label: Text((_isAnimating || state.isLoading)
+                            ? 'Loading...'
+                            : loc.generate),
                         style: FilledButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -335,52 +578,7 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
                 const SizedBox(height: 16),
 
                 // Result display
-                AnimatedBuilder(
-                  animation: _bounceAnimation,
-                  builder: (context, child) {
-                    return Transform.scale(
-                      scale: 0.8 + (_bounceAnimation.value * 0.2),
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 20,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: notifier.result.contains('Yes')
-                                ? [Colors.green.shade400, Colors.green.shade600]
-                                : [Colors.red.shade400, Colors.red.shade600],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: (notifier.result.contains('Yes')
-                                      ? Colors.green
-                                      : Colors.red)
-                                  .withValues(alpha: 0.3),
-                              blurRadius: 12,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          notifier.result,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                _buildResultDisplay(context, notifier, state),
               ],
             ),
           ),
@@ -396,24 +594,53 @@ class _YesNoGeneratorScreenState extends ConsumerState<YesNoGeneratorScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        loc.counterStatistics,
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                ),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.analytics,
+                          color: Colors.green.shade700,
+                          size: 20,
+                        ),
                       ),
-                      IconButton(
-                        onPressed: () => notifier.resetCounter(),
-                        icon: const Icon(Icons.refresh),
-                        tooltip: 'Reset Counter',
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          loc.counterStatistics,
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.red.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            notifier.resetCounter();
+                            setState(() {
+                              _displayedStats = notifier.counterStats;
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.refresh,
+                            color: Colors.red,
+                          ),
+                          tooltip: 'Reset Counter',
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  _buildCounterStats(loc, notifier.counterStats),
+                  _buildCounterStats(
+                      loc, _displayedStats ?? notifier.counterStats),
                 ],
               ),
             ),

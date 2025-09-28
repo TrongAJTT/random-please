@@ -417,7 +417,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get flipCoin => 'Tung đồng xu';
 
   @override
-  String get flipCoinDesc => 'Tung đồng xu ảo để chọn lựa ngẫu nhiên';
+  String get flipCoinDesc => 'Kết quả tung đồng xu ngẫu nhiên';
 
   @override
   String get rockPaperScissors => 'Kéo búa bao';
@@ -1821,4 +1821,16 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get noPercentage => 'Tỷ lệ Không';
+
+  @override
+  String get headsCount => 'Số lần Ngửa';
+
+  @override
+  String get headsPercentage => 'Tỷ lệ Ngửa';
+
+  @override
+  String get tailsCount => 'Số lần Sấp';
+
+  @override
+  String get tailsPercentage => 'Tỷ lệ Sấp';
 }

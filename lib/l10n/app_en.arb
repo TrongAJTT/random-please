@@ -819,5 +819,10 @@
   "yesCount": "Yes Count",
   "noCount": "No Count",
   "yesPercentage": "Yes Percentage",
-  "noPercentage": "No Percentage"
+  "noPercentage": "No Percentage",
+  "headsCount": "Heads Count",
+  "headsPercentage": "Heads Percentage",
+  "tailsCount": "Tails Count",
+  "tailsPercentage": "Tails Percentage",
+  "flipCoinDesc": "Random coin flip result"
 }

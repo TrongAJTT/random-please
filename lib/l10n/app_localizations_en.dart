@@ -417,7 +417,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get flipCoin => 'Flip Coin';
 
   @override
-  String get flipCoinDesc => 'Virtual coin flip for random choices';
+  String get flipCoinDesc => 'Random coin flip result';
 
   @override
   String get rockPaperScissors => 'Rock Paper Scissors';
@@ -1826,4 +1826,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noPercentage => 'No Percentage';
+
+  @override
+  String get headsCount => 'Heads Count';
+
+  @override
+  String get headsPercentage => 'Heads Percentage';
+
+  @override
+  String get tailsCount => 'Tails Count';
+
+  @override
+  String get tailsPercentage => 'Tails Percentage';
 }

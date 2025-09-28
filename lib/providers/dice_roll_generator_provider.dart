@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/services/generation_history_service.dart';
+import 'package:random_please/services/settings_service.dart';
 import 'dart:math';
 
 // Combined view state for DiceRollGenerator
@@ -80,8 +81,19 @@ class DiceRollGeneratorNotifier
 
   Future<void> initHive() async {
     _box = await Hive.openBox<DiceRollGeneratorState>(boxName);
-    final savedState =
-        _box.get('state') ?? DiceRollGeneratorState.createDefault();
+
+    // Check if state saving is enabled
+    final isStateSavingEnabled =
+        await SettingsService.getSaveRandomToolsState();
+
+    DiceRollGeneratorState savedState;
+    if (isStateSavingEnabled) {
+      // Load saved state if setting is enabled
+      savedState = _box.get('state') ?? DiceRollGeneratorState.createDefault();
+    } else {
+      // Use default state if setting is disabled
+      savedState = DiceRollGeneratorState.createDefault();
+    }
 
     state = state.copyWith(
       generatorState: savedState,
@@ -99,9 +111,15 @@ class DiceRollGeneratorNotifier
     );
   }
 
-  void saveState() {
+  void saveState() async {
     if (state.isBoxOpen) {
-      _box.put('state', state.generatorState);
+      // Check if state saving is enabled
+      final isStateSavingEnabled =
+          await SettingsService.getSaveRandomToolsState();
+
+      if (isStateSavingEnabled) {
+        await _box.put('state', state.generatorState);
+      }
     }
   }
 

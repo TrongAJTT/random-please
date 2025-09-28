@@ -717,6 +717,85 @@ class YesNoGeneratorState {
   }
 }
 
+// Coin Flip Generator State with Counter Mode
+@HiveType(typeId: 75)
+class CoinFlipGeneratorState {
+  @HiveField(0)
+  final bool skipAnimation;
+  @HiveField(1)
+  final bool counterMode;
+  @HiveField(2)
+  final int batchCount;
+  @HiveField(3)
+  final String result;
+  @HiveField(4)
+  final DateTime lastUpdated;
+  @HiveField(5)
+  final bool isLoading;
+
+  CoinFlipGeneratorState({
+    this.skipAnimation = false,
+    this.counterMode = false,
+    this.batchCount = 5,
+    this.result = '',
+    required this.lastUpdated,
+    this.isLoading = false,
+  });
+
+  static CoinFlipGeneratorState createDefault() {
+    return CoinFlipGeneratorState(
+      skipAnimation: false,
+      counterMode: false,
+      batchCount: 5,
+      result: '',
+      lastUpdated: DateTime.now(),
+      isLoading: false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'skipAnimation': skipAnimation,
+      'counterMode': counterMode,
+      'batchCount': batchCount,
+      'result': result,
+      'lastUpdated': lastUpdated.toIso8601String(),
+      'isLoading': isLoading,
+    };
+  }
+
+  factory CoinFlipGeneratorState.fromJson(Map<String, dynamic> json) {
+    return CoinFlipGeneratorState(
+      skipAnimation: json['skipAnimation'] ?? false,
+      counterMode: json['counterMode'] ?? false,
+      batchCount: json['batchCount'] ?? 5,
+      result: json['result'] ?? '',
+      lastUpdated: json['lastUpdated'] != null
+          ? DateTime.parse(json['lastUpdated'])
+          : DateTime.now(),
+      isLoading: json['isLoading'] ?? false,
+    );
+  }
+
+  CoinFlipGeneratorState copyWith({
+    bool? skipAnimation,
+    bool? counterMode,
+    int? batchCount,
+    String? result,
+    DateTime? lastUpdated,
+    bool? isLoading,
+  }) {
+    return CoinFlipGeneratorState(
+      skipAnimation: skipAnimation ?? this.skipAnimation,
+      counterMode: counterMode ?? this.counterMode,
+      batchCount: batchCount ?? this.batchCount,
+      result: result ?? this.result,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
+      isLoading: isLoading ?? this.isLoading,
+    );
+  }
+}
+
 // Counter Statistics Model (not saved to state)
 class CounterStatistics {
   final DateTime startTime;
@@ -753,6 +832,45 @@ class CounterStatistics {
   double get noPercentage {
     if (totalGenerations == 0) return 0.0;
     return (noCount / totalGenerations) * 100;
+  }
+}
+
+// Coin Flip Counter Statistics Model (not saved to state)
+class CoinFlipCounterStatistics {
+  final DateTime startTime;
+  final int totalGenerations;
+  final int headsCount;
+  final int tailsCount;
+
+  CoinFlipCounterStatistics({
+    required this.startTime,
+    this.totalGenerations = 0,
+    this.headsCount = 0,
+    this.tailsCount = 0,
+  });
+
+  CoinFlipCounterStatistics copyWith({
+    DateTime? startTime,
+    int? totalGenerations,
+    int? headsCount,
+    int? tailsCount,
+  }) {
+    return CoinFlipCounterStatistics(
+      startTime: startTime ?? this.startTime,
+      totalGenerations: totalGenerations ?? this.totalGenerations,
+      headsCount: headsCount ?? this.headsCount,
+      tailsCount: tailsCount ?? this.tailsCount,
+    );
+  }
+
+  double get headsPercentage {
+    if (totalGenerations == 0) return 0.0;
+    return (headsCount / totalGenerations) * 100;
+  }
+
+  double get tailsPercentage {
+    if (totalGenerations == 0) return 0.0;
+    return (tailsCount / totalGenerations) * 100;
   }
 }
 

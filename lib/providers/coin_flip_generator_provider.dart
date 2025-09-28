@@ -6,24 +6,24 @@ import 'package:random_please/services/settings_service.dart';
 import 'package:faker/faker.dart';
 import 'dart:math';
 
-class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
-  static const String boxName = 'yesNoGeneratorBox';
-  static const String historyType = 'yesno';
+class CoinFlipGeneratorNotifier extends StateNotifier<CoinFlipGeneratorState> {
+  static const String boxName = 'coinFlipGeneratorBox';
+  static const String historyType = 'coin_flip';
 
-  late Box<YesNoGeneratorState> _box;
+  late Box<CoinFlipGeneratorState> _box;
   bool _isBoxOpen = false;
   WidgetRef? _ref;
-  CounterStatistics _counterStats =
-      CounterStatistics(startTime: DateTime.now());
+  CoinFlipCounterStatistics _counterStats =
+      CoinFlipCounterStatistics(startTime: DateTime.now());
 
-  YesNoGeneratorNotifier() : super(YesNoGeneratorState.createDefault()) {
+  CoinFlipGeneratorNotifier() : super(CoinFlipGeneratorState.createDefault()) {
     _init();
   }
 
   // Getters
   bool get isBoxOpen => _isBoxOpen;
   String get result => state.result;
-  CounterStatistics get counterStats => _counterStats;
+  CoinFlipCounterStatistics get counterStats => _counterStats;
 
   void setRef(WidgetRef ref) {
     _ref = ref;
@@ -36,7 +36,7 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
   }
 
   Future<void> initHive() async {
-    _box = await Hive.openBox<YesNoGeneratorState>(boxName);
+    _box = await Hive.openBox<CoinFlipGeneratorState>(boxName);
 
     // Check if state saving is enabled
     final isStateSavingEnabled =
@@ -45,17 +45,17 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
     if (isStateSavingEnabled) {
       // Load saved state if setting is enabled
       final savedState =
-          _box.get('state') ?? YesNoGeneratorState.createDefault();
+          _box.get('state') ?? CoinFlipGeneratorState.createDefault();
       state = savedState;
     } else {
       // Use default state if setting is disabled
-      state = YesNoGeneratorState.createDefault();
+      state = CoinFlipGeneratorState.createDefault();
     }
 
     _isBoxOpen = true;
   }
 
-  void saveState() async {
+  Future<void> saveState() async {
     if (_isBoxOpen) {
       // Check if state saving is enabled
       final isStateSavingEnabled =
@@ -75,22 +75,14 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
   void updateCounterMode(bool value) {
     state = state.copyWith(counterMode: value);
     // Only save state if not in counter mode (as per requirement)
-    if (!value) {
+    if (!state.counterMode) {
       saveState();
-    }
-
-    // Reset counter stats when enabling counter mode
-    if (value) {
-      _counterStats = CounterStatistics(startTime: DateTime.now());
     }
   }
 
   void updateBatchCount(int value) {
     state = state.copyWith(batchCount: value);
-    // Only save state if not in counter mode (as per requirement)
-    if (!state.counterMode) {
-      saveState();
-    }
+    saveState();
   }
 
   Future<void> generate() async {
@@ -98,18 +90,18 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
       // Generate batch of results
       final results = <String>[];
       for (int i = 0; i < state.batchCount; i++) {
-        final result = _generateEnhancedRandomYesNo();
+        final result = _generateEnhancedRandomCoinFlip();
         results.add(result);
 
         // Update counter stats
         _counterStats = _counterStats.copyWith(
           totalGenerations: _counterStats.totalGenerations + 1,
-          yesCount: result == 'Yes'
-              ? _counterStats.yesCount + 1
-              : _counterStats.yesCount,
-          noCount: result == 'No'
-              ? _counterStats.noCount + 1
-              : _counterStats.noCount,
+          headsCount: result == 'Heads'
+              ? _counterStats.headsCount + 1
+              : _counterStats.headsCount,
+          tailsCount: result == 'Tails'
+              ? _counterStats.tailsCount + 1
+              : _counterStats.tailsCount,
         );
       }
 
@@ -129,7 +121,7 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
       saveState();
     } else {
       // Generate single result
-      final resultText = _generateEnhancedRandomYesNo();
+      final resultText = _generateEnhancedRandomCoinFlip();
 
       // Save to history via HistoryProvider
       if (_ref != null && resultText.isNotEmpty) {
@@ -151,12 +143,11 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
   }
 
   void resetCounter() {
-    _counterStats = CounterStatistics(startTime: DateTime.now());
+    _counterStats = CoinFlipCounterStatistics(startTime: DateTime.now());
     // Trigger UI refresh by updating state
     state = state.copyWith();
   }
 
-  // History management methods
   Future<void> clearAllHistory() async {
     if (_ref != null) {
       await _ref!.read(historyProvider.notifier).clearHistory(historyType);
@@ -171,8 +162,8 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
     super.dispose();
   }
 
-  /// Enhanced random Yes/No generation using multiple entropy sources
-  String _generateEnhancedRandomYesNo() {
+  /// Enhanced random Coin Flip generation using multiple entropy sources
+  String _generateEnhancedRandomCoinFlip() {
     // Multiple entropy sources for better randomness
     final random = Random();
     final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -193,12 +184,12 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
     // Combine all sources for final decision
     final finalValue = (combinedEntropy + (fakerBool ? 500 : 0)) % 1000;
 
-    // Return Yes/No based on combined entropy
-    return finalValue < 500 ? 'Yes' : 'No';
+    // Return Heads/Tails based on combined entropy
+    return finalValue < 500 ? 'Heads' : 'Tails';
   }
 }
 
-final yesNoGeneratorProvider =
-    StateNotifierProvider<YesNoGeneratorNotifier, YesNoGeneratorState>(
-  (ref) => YesNoGeneratorNotifier(),
+final coinFlipGeneratorProvider =
+    StateNotifierProvider<CoinFlipGeneratorNotifier, CoinFlipGeneratorState>(
+  (ref) => CoinFlipGeneratorNotifier(),
 );

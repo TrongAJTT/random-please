@@ -752,5 +752,10 @@
   "yesCount": "Số lần Có",
   "noCount": "Số lần Không",
   "yesPercentage": "Tỷ lệ Có",
-  "noPercentage": "Tỷ lệ Không"
+  "noPercentage": "Tỷ lệ Không",
+  "headsCount": "Số lần Ngửa",
+  "headsPercentage": "Tỷ lệ Ngửa",
+  "tailsCount": "Số lần Sấp",
+  "tailsPercentage": "Tỷ lệ Sấp",
+  "flipCoinDesc": "Kết quả tung đồng xu ngẫu nhiên"
 }
