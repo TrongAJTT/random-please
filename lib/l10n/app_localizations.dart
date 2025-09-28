@@ -3601,6 +3601,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tails Percentage'**
   String get tailsPercentage;
+
+  /// No description provided for @localApiManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Local API Management'**
+  String get localApiManagement;
+
+  /// No description provided for @localApiNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Local API Not Supported'**
+  String get localApiNotSupported;
+
+  /// No description provided for @localApiNotSupportedDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Local API server is not available on web platform'**
+  String get localApiNotSupportedDescription;
+
+  /// No description provided for @apiServerRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'API Server Running'**
+  String get apiServerRunning;
+
+  /// No description provided for @apiServerStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'API Server Stopped'**
+  String get apiServerStopped;
+
+  /// No description provided for @apiServerStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'API server started successfully'**
+  String get apiServerStarted;
+
+  /// No description provided for @apiPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Port'**
+  String get apiPort;
+
+  /// No description provided for @portRangeHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Port range: 1024-65535'**
+  String get portRangeHelper;
+
+  /// No description provided for @invalidPortRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid port range. Please use 1024-65535'**
+  String get invalidPortRange;
+
+  /// No description provided for @apiStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get apiStart;
+
+  /// No description provided for @apiStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get apiStop;
+
+  /// No description provided for @quickLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Links'**
+  String get quickLinks;
+
+  /// No description provided for @apiDocumentation.
+  ///
+  /// In en, this message translates to:
+  /// **'API Documentation'**
+  String get apiDocumentation;
+
+  /// No description provided for @apiNumberGenerator.
+  ///
+  /// In en, this message translates to:
+  /// **'Number Generator'**
+  String get apiNumberGenerator;
+
+  /// No description provided for @apiColorGenerator.
+  ///
+  /// In en, this message translates to:
+  /// **'Color Generator'**
+  String get apiColorGenerator;
+
+  /// No description provided for @apiCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get apiCopy;
 }
 
 class _AppLocalizationsDelegate

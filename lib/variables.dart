@@ -4,6 +4,8 @@ const String appCode = 'random_please';
 const String appName = 'Random Please';
 const String appSlogan = "Convenient randomizer tool that can help you anytime";
 const String appAssetIcon = 'assets/app_icon.png';
+const String appAssetIconUrl =
+    'https://raw.githubusercontent.com/TrongAJTT/random-please/main/assets/app_icon.png';
 
 const String termsOfUseUrl =
     'https://www.trongajtt.com/apps/random-please/terms/latest/';

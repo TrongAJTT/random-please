@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
-import 'package:random_please/view_models/number_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/utils/size_utils.dart';
@@ -15,6 +14,8 @@ import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/utils/auto_scroll_helper.dart';
 import 'package:random_please/providers/history_provider.dart';
+import 'package:random_please/providers/number_generator_state_provider.dart';
+import 'package:random_please/models/random_generator.dart';
 
 class NumberGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -27,8 +28,9 @@ class NumberGeneratorScreen extends ConsumerStatefulWidget {
 }
 
 class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
-  late NumberGeneratorViewModel _viewModel;
+  static const String historyType = 'number';
   bool _copied = false;
+  List<String> _results = [];
 
   final TextEditingController _minValueController = TextEditingController();
   final TextEditingController _maxValueController = TextEditingController();
@@ -37,77 +39,76 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel = NumberGeneratorViewModel(ref: ref);
-    _initializeViewModel();
-  }
 
-  Future<void> _initializeViewModel() async {
-    await _viewModel.initHive();
-    await _viewModel.loadHistory();
-
-    // Initialize text controllers with state values
-    _minValueController.text = _viewModel.state.minValue.toString();
-    _maxValueController.text = _viewModel.state.maxValue.toString();
-
-    // Listen to state changes
-    _viewModel.addListener(_onViewModelChanged);
-
-    // Update UI after initialization
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void _onViewModelChanged() {
-    if (mounted) {
-      setState(() {
-        _copied = false;
-        // Update text controllers if values changed
-        if (_minValueController.text != _viewModel.state.minValue.toString()) {
-          _minValueController.text = _viewModel.state.minValue.toString();
-        }
-        if (_maxValueController.text != _viewModel.state.maxValue.toString()) {
-          _maxValueController.text = _viewModel.state.maxValue.toString();
-        }
-      });
-    }
+    // Khởi tạo controllers với giá trị từ state
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final state = ref.read(numberGeneratorStateManagerProvider);
+      _minValueController.text = state.minValue.toString();
+      _maxValueController.text = state.maxValue.toString();
+    });
   }
 
   @override
   void dispose() {
-    _viewModel.removeListener(_onViewModelChanged);
-    _viewModel.dispose();
     _minValueController.dispose();
     _maxValueController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
-  void _generateNumbers() async {
+  Future<void> _generateNumbers() async {
     try {
-      // Parse values from text controllers and update view model
-      double min = double.tryParse(_minValueController.text) ??
-          _viewModel.state.minValue;
-      double max = double.tryParse(_maxValueController.text) ??
-          _viewModel.state.maxValue;
+      final state = ref.read(numberGeneratorStateManagerProvider);
 
-      // Update view model with new values
-      if (min != _viewModel.state.minValue) {
-        _viewModel.updateMinValue(min);
+      // Parse values from text controllers
+      double min = double.tryParse(_minValueController.text) ?? state.minValue;
+      double max = double.tryParse(_maxValueController.text) ?? state.maxValue;
+
+      // Update state with new values
+      if (min != state.minValue) {
+        ref
+            .read(numberGeneratorStateManagerProvider.notifier)
+            .updateMinValue(min);
       }
-      if (max != _viewModel.state.maxValue) {
-        _viewModel.updateMaxValue(max);
+      if (max != state.maxValue) {
+        ref
+            .read(numberGeneratorStateManagerProvider.notifier)
+            .updateMaxValue(max);
       }
 
-      // Generate numbers
-      await _viewModel.generateNumbers();
+      // Generate numbers using RandomGenerator
+      final currentState = ref.read(numberGeneratorStateManagerProvider);
+      final numResults = RandomGenerator.generateNumbers(
+        min: currentState.minValue,
+        max: currentState.maxValue,
+        count: currentState.quantity,
+        isInteger: currentState.isInteger,
+        allowDuplicates: currentState.allowDuplicates,
+      );
+
+      // Convert numbers to strings
+      _results = numResults.map((number) => number.toString()).toList();
+
+      // Save state after generation
+      await ref
+          .read(numberGeneratorStateManagerProvider.notifier)
+          .saveStateOnGenerate();
+
+      // Save to history if enabled
+      final historyEnabled = ref.read(historyEnabledProvider);
+      if (historyEnabled && _results.isNotEmpty) {
+        String numbersText = _results.join(', ');
+        await ref
+            .read(historyProvider.notifier)
+            .addHistoryItem(numbersText, historyType);
+      }
 
       // Auto-scroll to results after generation
       AutoScrollHelper.scrollToResults(
         ref: ref,
         scrollController: _scrollController,
         mounted: mounted,
-        hasResults: _viewModel.results.isNotEmpty,
+        hasResults: _results.isNotEmpty,
       );
     } catch (e) {
       if (mounted) {
@@ -117,8 +118,8 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
   }
 
   void _copyToClipboard() {
-    if (_viewModel.results.isNotEmpty) {
-      String numbersText = _viewModel.results.join('\n');
+    if (_results.isNotEmpty) {
+      String numbersText = _results.join('\n');
 
       Clipboard.setData(ClipboardData(text: numbersText));
       setState(() {
@@ -133,27 +134,30 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return HistoryWidget(
-      type: NumberGeneratorViewModel.historyType,
+      type: historyType,
       title: loc.generationHistory,
     );
   }
 
   String _getResultSubtitle() {
-    if (_viewModel.results.isEmpty) return '';
-    return '${_viewModel.results.length} ${AppLocalizations.of(context)!.items.toLowerCase()}';
+    if (_results.isEmpty) return '';
+    return '${_results.length} ${AppLocalizations.of(context)!.items.toLowerCase()}';
   }
 
   Widget _buildRangeDisplay(AppLocalizations loc) {
-    final locale = NumberFormatter.getCurrentLocale(context);
-    return Text(
-      loc.numberRangeFromTo(
-        NumberFormatter.formatNumber(_viewModel.state.minValue, locale,
-            isInteger: _viewModel.state.isInteger, decimalPlaces: 2),
-        NumberFormatter.formatNumber(_viewModel.state.maxValue, locale,
-            isInteger: _viewModel.state.isInteger, decimalPlaces: 2),
-      ),
-      style: Theme.of(context).textTheme.titleMedium,
-    );
+    return Consumer(builder: (context, ref, child) {
+      final state = ref.watch(numberGeneratorStateManagerProvider);
+      final locale = NumberFormatter.getCurrentLocale(context);
+      return Text(
+        loc.numberRangeFromTo(
+          NumberFormatter.formatNumber(state.minValue, locale,
+              isInteger: state.isInteger, decimalPlaces: 2),
+          NumberFormatter.formatNumber(state.maxValue, locale,
+              isInteger: state.isInteger, decimalPlaces: 2),
+        ),
+        style: Theme.of(context).textTheme.titleMedium,
+      );
+    });
   }
 
   @override
@@ -181,29 +185,39 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          ChoiceChip(
-                            label: Text(loc.integers),
-                            selected: _viewModel.state.isInteger,
-                            onSelected: (selected) {
-                              if (!(_viewModel.state.isInteger)) {
-                                _viewModel.updateIsInteger(true);
-                              }
-                            },
-                          ),
-                          const SizedBox(width: 12),
-                          ChoiceChip(
-                            label: Text(loc.floatingPoint),
-                            selected: !_viewModel.state.isInteger,
-                            onSelected: (selected) {
-                              if (_viewModel.state.isInteger) {
-                                _viewModel.updateIsInteger(false);
-                              }
-                            },
-                          ),
-                        ],
-                      ),
+                      Consumer(builder: (context, ref, child) {
+                        final state =
+                            ref.watch(numberGeneratorStateManagerProvider);
+                        return Row(
+                          children: [
+                            ChoiceChip(
+                              label: Text(loc.integers),
+                              selected: state.isInteger,
+                              onSelected: (selected) {
+                                if (!(state.isInteger)) {
+                                  ref
+                                      .read(numberGeneratorStateManagerProvider
+                                          .notifier)
+                                      .updateIsInteger(true);
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 12),
+                            ChoiceChip(
+                              label: Text(loc.floatingPoint),
+                              selected: !state.isInteger,
+                              onSelected: (selected) {
+                                if (state.isInteger) {
+                                  ref
+                                      .read(numberGeneratorStateManagerProvider
+                                          .notifier)
+                                      .updateIsInteger(false);
+                                }
+                              },
+                            ),
+                          ],
+                        );
+                      }),
                     ],
                   ),
                 ),
@@ -221,9 +235,12 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
                     ),
                     keyboardType: TextInputType.number,
                     onChanged: (value) {
-                      final newValue =
-                          double.tryParse(value) ?? _viewModel.state.minValue;
-                      _viewModel.updateMinValue(newValue);
+                      final state =
+                          ref.read(numberGeneratorStateManagerProvider);
+                      final newValue = double.tryParse(value) ?? state.minValue;
+                      ref
+                          .read(numberGeneratorStateManagerProvider.notifier)
+                          .updateMinValue(newValue);
                     },
                   ),
                   TextField(
@@ -234,9 +251,12 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
                     ),
                     keyboardType: TextInputType.number,
                     onChanged: (value) {
-                      final newValue =
-                          double.tryParse(value) ?? _viewModel.state.maxValue;
-                      _viewModel.updateMaxValue(newValue);
+                      final state =
+                          ref.read(numberGeneratorStateManagerProvider);
+                      final newValue = double.tryParse(value) ?? state.maxValue;
+                      ref
+                          .read(numberGeneratorStateManagerProvider.notifier)
+                          .updateMaxValue(newValue);
                     },
                   ),
                   minWidth: 120,
@@ -245,29 +265,39 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
                 const SizedBox(height: 8),
 
                 // 3. Quantity Slider
-                OptionSlider<int>(
-                  label: loc.quantity,
-                  currentValue: _viewModel.state.quantity,
-                  options: List.generate(
-                    40,
-                    (i) => SliderOption(value: i + 1, label: '${i + 1}'),
-                  ),
-                  onChanged: (value) {
-                    _viewModel.updateQuantity(value);
-                  },
-                  layout: OptionSliderLayout.none,
-                ),
+                Consumer(builder: (context, ref, child) {
+                  final state = ref.watch(numberGeneratorStateManagerProvider);
+                  return OptionSlider<int>(
+                    label: loc.quantity,
+                    currentValue: state.quantity,
+                    options: List.generate(
+                      40,
+                      (i) => SliderOption(value: i + 1, label: '${i + 1}'),
+                    ),
+                    onChanged: (value) {
+                      ref
+                          .read(numberGeneratorStateManagerProvider.notifier)
+                          .updateQuantity(value);
+                    },
+                    layout: OptionSliderLayout.none,
+                  );
+                }),
 
                 // 4. Allow Duplicates Switch
-                OptionSwitch(
-                  title: loc.allowDuplicates,
-                  subtitle: loc.allowDuplicatesDesc,
-                  value: _viewModel.state.allowDuplicates,
-                  onChanged: (value) {
-                    _viewModel.updateAllowDuplicates(value);
-                  },
-                  decorator: OptionSwitchDecorator.compact(context),
-                ),
+                Consumer(builder: (context, ref, child) {
+                  final state = ref.watch(numberGeneratorStateManagerProvider);
+                  return OptionSwitch(
+                    title: loc.allowDuplicates,
+                    subtitle: loc.allowDuplicatesDesc,
+                    value: state.allowDuplicates,
+                    onChanged: (value) {
+                      ref
+                          .read(numberGeneratorStateManagerProvider.notifier)
+                          .updateAllowDuplicates(value);
+                    },
+                    decorator: OptionSwitchDecorator.compact(context),
+                  );
+                }),
                 VerticalSpacingDivider.specific(top: 6, bottom: 12),
 
                 // Generate button
@@ -292,7 +322,7 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
         const SizedBox(height: 24),
 
         // Results
-        if (_viewModel.results.isNotEmpty) ...[
+        if (_results.isNotEmpty) ...[
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -361,7 +391,7 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
                     child: Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: _viewModel.results.map((numberStr) {
+                      children: _results.map((numberStr) {
                         return Tooltip(
                           message: loc.clickToCopy,
                           child: InkWell(
@@ -405,13 +435,17 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
                   ),
                   const SizedBox(height: 16),
                   // Statistics section
-                  StatisticsWidget(
-                    values: _viewModel.results
-                        .map((str) => int.tryParse(str) ?? 0)
-                        .toList(),
-                    isInteger: _viewModel.state.isInteger,
-                    decimalPlaces: _viewModel.state.isInteger ? 0 : 2,
-                  ),
+                  Consumer(builder: (context, ref, child) {
+                    final state =
+                        ref.watch(numberGeneratorStateManagerProvider);
+                    return StatisticsWidget(
+                      values: _results
+                          .map((str) => int.tryParse(str) ?? 0)
+                          .toList(),
+                      isInteger: state.isInteger,
+                      decimalPlaces: state.isInteger ? 0 : 2,
+                    );
+                  }),
                 ],
               ),
             ),

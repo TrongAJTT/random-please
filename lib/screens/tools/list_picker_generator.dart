@@ -37,7 +37,6 @@ class ListPickerGeneratorScreen extends ConsumerStatefulWidget {
 
 class _ListPickerGeneratorScreenState
     extends ConsumerState<ListPickerGeneratorScreen> {
-  late ListPickerViewModel _viewModel;
   late AppLocalizations loc;
 
   final TextEditingController _itemController = TextEditingController();
@@ -45,12 +44,11 @@ class _ListPickerGeneratorScreenState
   final ScrollController _scrollController = ScrollController();
 
   bool _isLoading = false;
+  List<String> _currentResults = [];
 
   @override
   void initState() {
     super.initState();
-    _viewModel = ListPickerViewModel(ref: ref);
-    _initData();
   }
 
   @override
@@ -65,27 +63,6 @@ class _ListPickerGeneratorScreenState
     _quantityController.dispose();
     _scrollController.dispose();
     super.dispose();
-  }
-
-  Future<void> _initData() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    // Use Future.wait to ensure minimum display time for loading
-    await Future.wait([
-      Future.delayed(const Duration(milliseconds: 300)), // Minimum loading time
-      _initDataActual(),
-    ]);
-
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
-  Future<void> _initDataActual() async {
-    await _viewModel.initHive();
-    await _viewModel.loadHistory();
   }
 
   Future<void> _showCreateListDialog() async {
@@ -117,7 +94,9 @@ class _ListPickerGeneratorScreenState
                         errorMessage = loc.listNameRequired;
                       } else if (value.length > 30) {
                         errorMessage = loc.listNameTooLong;
-                      } else if (_viewModel.state.savedLists
+                      } else if (ref
+                          .watch(listPickerGeneratorStateManagerProvider)
+                          .savedLists
                           .any((list) => list.name == value)) {
                         errorMessage = loc.listNameExists;
                       } else {
@@ -146,7 +125,9 @@ class _ListPickerGeneratorScreenState
     );
 
     if (result != null) {
-      _viewModel.createNewList(result);
+      ref
+          .read(listPickerGeneratorStateManagerProvider.notifier)
+          .createNewList(result);
       setState(() {});
     }
   }
@@ -207,7 +188,9 @@ class _ListPickerGeneratorScreenState
     );
 
     if (result != null && result != item.value) {
-      _viewModel.renameItem(item, result);
+      ref
+          .read(listPickerGeneratorStateManagerProvider.notifier)
+          .renameItem(item, result);
       setState(() {});
     }
   }
@@ -306,7 +289,9 @@ class _ListPickerGeneratorScreenState
         break;
       }
 
-      if (result.isNotEmpty && _viewModel.state.currentList != null) {
+      if (result.isNotEmpty &&
+          ref.read(listPickerGeneratorStateManagerProvider).currentList !=
+              null) {
         final lines =
             result.split('\n').where((line) => line.trim().isNotEmpty).toList();
 
@@ -317,7 +302,12 @@ class _ListPickerGeneratorScreenState
           builder: (context) => AlertDialog(
             title: Text(loc.confirmAddItems),
             content: Text(loc.confirmAddItemsMessage(
-                lines.length, _viewModel.state.currentList?.name ?? '')),
+                lines.length,
+                ref
+                        .read(listPickerGeneratorStateManagerProvider)
+                        .currentList
+                        ?.name ??
+                    '')),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
@@ -334,7 +324,9 @@ class _ListPickerGeneratorScreenState
 
         if (confirmed == true) {
           // Add items using ViewModel
-          _viewModel.addBatchItems(lines.map((line) => line.trim()).toList());
+          ref
+              .read(listPickerGeneratorStateManagerProvider.notifier)
+              .addBatchItems(lines.map((line) => line.trim()).toList());
           setState(() {});
 
           // Show success message
@@ -374,7 +366,6 @@ class _ListPickerGeneratorScreenState
       UniRouteModel(
         title: loc.importFromFile,
         content: ImportFileWidget(
-          viewModel: _viewModel,
           isEmbedded: true,
           onSuccess: () {
             setState(() {
@@ -390,12 +381,16 @@ class _ListPickerGeneratorScreenState
       List<String> items, String listName) async {
     try {
       // Create a new list with specified name
-      _viewModel.createNewList(listName);
+      ref
+          .read(listPickerGeneratorStateManagerProvider.notifier)
+          .createNewList(listName);
 
       // Add all items to the new list in background to avoid blocking UI
       await Future.microtask(() {
         for (final item in items) {
-          _viewModel.addItemToCurrentList(item);
+          ref
+              .read(listPickerGeneratorStateManagerProvider.notifier)
+              .addItemToCurrentList(item);
         }
       });
 
@@ -514,7 +509,9 @@ class _ListPickerGeneratorScreenState
       await Future.delayed(const Duration(milliseconds: 100));
 
       // Create new list immediately
-      _viewModel.createNewList(template.name);
+      ref
+          .read(listPickerGeneratorStateManagerProvider.notifier)
+          .createNewList(template.name);
 
       // Add items in batches of 50 to avoid blocking UI
       const batchSize = 50;
@@ -526,7 +523,9 @@ class _ListPickerGeneratorScreenState
         final batch = items.sublist(i, endIndex);
 
         // Add batch and yield to UI thread
-        await _viewModel.addBatchItems(batch);
+        await ref
+            .read(listPickerGeneratorStateManagerProvider.notifier)
+            .addBatchItems(batch);
         await Future.delayed(const Duration(
             milliseconds: 10)); // Small delay to allow UI updates
       }
@@ -555,19 +554,25 @@ class _ListPickerGeneratorScreenState
   void _addItemToCurrentList() {
     final text = _itemController.text.trim();
     if (text.isNotEmpty) {
-      _viewModel.addItemToCurrentList(text);
+      ref
+          .read(listPickerGeneratorStateManagerProvider.notifier)
+          .addItemToCurrentList(text);
       _itemController.clear();
       setState(() {});
     }
   }
 
   void _removeItem(String itemId) {
-    _viewModel.removeItem(itemId);
+    ref
+        .read(listPickerGeneratorStateManagerProvider.notifier)
+        .removeItem(itemId);
     setState(() {});
   }
 
   void _switchToList(CustomList list) {
-    _viewModel.switchToList(list);
+    ref
+        .read(listPickerGeneratorStateManagerProvider.notifier)
+        .switchToList(list);
     setState(() {});
   }
 
@@ -580,7 +585,9 @@ class _ListPickerGeneratorScreenState
     );
 
     if (confirmed == true) {
-      _viewModel.deleteList(list);
+      ref
+          .read(listPickerGeneratorStateManagerProvider.notifier)
+          .deleteList(list);
       setState(() {});
       // Note: The provider already handles clearing currentList when no lists remain
     }
@@ -617,7 +624,9 @@ class _ListPickerGeneratorScreenState
                       } else if (value.length > 30) {
                         errorMessage = loc.listNameTooLong;
                       } else if (value != list.name &&
-                          _viewModel.state.savedLists
+                          ref
+                              .watch(listPickerGeneratorStateManagerProvider)
+                              .savedLists
                               .any((l) => l.name == value)) {
                         errorMessage = loc.listNameExists;
                       } else {
@@ -646,21 +655,36 @@ class _ListPickerGeneratorScreenState
     );
 
     if (result != null && result != list.name) {
-      _viewModel.renameList(list, result);
+      ref
+          .read(listPickerGeneratorStateManagerProvider.notifier)
+          .renameList(list, result);
       setState(() {});
     }
   }
 
   void _pickRandomItems() async {
     setState(() {}); // Update state only once when button is pressed
-    await _viewModel.pickRandomItems();
+
+    final results = await ref
+        .read(listPickerGeneratorStateManagerProvider.notifier)
+        .pickRandomItems();
+    setState(() {
+      _currentResults = results;
+    });
+
+    // Save to history if results exist
+    if (results.isNotEmpty) {
+      await ref
+          .read(historyProvider.notifier)
+          .addHistoryItems(results, 'list_picker');
+    }
 
     // Auto-scroll to results after generation
     AutoScrollHelper.scrollToResults(
       ref: ref,
       scrollController: _scrollController,
       mounted: mounted,
-      hasResults: _viewModel.results.isNotEmpty,
+      hasResults: _currentResults.isNotEmpty,
     );
   }
 
@@ -678,7 +702,10 @@ class _ListPickerGeneratorScreenState
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      _viewModel.toggleListSelectorCollapse();
+                      ref
+                          .read(
+                              listPickerGeneratorStateManagerProvider.notifier)
+                          .toggleListSelectorCollapse();
                       setState(() {});
                     },
                     child: Row(
@@ -688,11 +715,17 @@ class _ListPickerGeneratorScreenState
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         const SizedBox(width: 8),
-                        if (_viewModel.state.currentList != null &&
-                            _viewModel.state.isListSelectorCollapsed)
+                        if (ref
+                                    .watch(
+                                        listPickerGeneratorStateManagerProvider)
+                                    .currentList !=
+                                null &&
+                            ref
+                                .watch(listPickerGeneratorStateManagerProvider)
+                                .isListSelectorCollapsed)
                           Expanded(
                             child: Text(
-                              '(${_viewModel.state.currentList!.name} - ${_viewModel.state.currentList!.items.length} ${loc.items.toLowerCase()})',
+                              '(${ref.watch(listPickerGeneratorStateManagerProvider).currentList!.name} - ${ref.watch(listPickerGeneratorStateManagerProvider).currentList!.items.length} ${loc.items.toLowerCase()})',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium
@@ -710,17 +743,25 @@ class _ListPickerGeneratorScreenState
                 ),
                 IconButton(
                   onPressed: () {
-                    _viewModel.toggleListSelectorCollapse();
+                    ref
+                        .read(listPickerGeneratorStateManagerProvider.notifier)
+                        .toggleListSelectorCollapse();
                     setState(() {});
                   },
-                  icon: Icon(_viewModel.state.isListSelectorCollapsed
+                  icon: Icon(ref
+                          .watch(listPickerGeneratorStateManagerProvider)
+                          .isListSelectorCollapsed
                       ? Icons.expand_more
                       : Icons.expand_less),
-                  tooltip: _viewModel.state.isListSelectorCollapsed
+                  tooltip: ref
+                          .watch(listPickerGeneratorStateManagerProvider)
+                          .isListSelectorCollapsed
                       ? loc.expand
                       : loc.collapse,
                 ),
-                if (!_viewModel.state.isListSelectorCollapsed) ...[
+                if (!ref
+                    .watch(listPickerGeneratorStateManagerProvider)
+                    .isListSelectorCollapsed) ...[
                   IconButton(
                     onPressed: () => _showImportTemplateDialog(),
                     icon: const Icon(Icons.file_download),
@@ -739,9 +780,14 @@ class _ListPickerGeneratorScreenState
                 ],
               ],
             ),
-            if (!_viewModel.state.isListSelectorCollapsed) ...[
+            if (!ref
+                .watch(listPickerGeneratorStateManagerProvider)
+                .isListSelectorCollapsed) ...[
               const SizedBox(height: 8),
-              if (_viewModel.state.savedLists.isEmpty)
+              if (ref
+                  .watch(listPickerGeneratorStateManagerProvider)
+                  .savedLists
+                  .isEmpty)
                 Text(
                   loc.noListsAvailable,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -751,9 +797,15 @@ class _ListPickerGeneratorScreenState
               else
                 Wrap(
                   spacing: 8,
-                  children: _viewModel.state.savedLists.map((list) {
-                    final isSelected =
-                        _viewModel.state.currentList?.id == list.id;
+                  children: ref
+                      .watch(listPickerGeneratorStateManagerProvider)
+                      .savedLists
+                      .map((list) {
+                    final isSelected = ref
+                            .watch(listPickerGeneratorStateManagerProvider)
+                            .currentList
+                            ?.id ==
+                        list.id;
                     return GestureDetector(
                       onLongPress: () => _showRenameListDialog(list),
                       onSecondaryTap: () => _showRenameListDialog(list),
@@ -777,7 +829,8 @@ class _ListPickerGeneratorScreenState
   }
 
   Widget _buildListManager(AppLocalizations loc) {
-    if (_viewModel.state.currentList == null) {
+    if (ref.watch(listPickerGeneratorStateManagerProvider).currentList ==
+        null) {
       return SizedBox(
         width: double.infinity,
         child: Card(
@@ -804,26 +857,40 @@ class _ListPickerGeneratorScreenState
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      _viewModel.toggleListManagerCollapse();
+                      ref
+                          .read(
+                              listPickerGeneratorStateManagerProvider.notifier)
+                          .toggleListManagerCollapse();
                       setState(() {});
                     },
                     child: Row(
                       children: [
                         Expanded(
                           child: Text(
-                            _viewModel.state.currentList != null
-                                ? '${loc.manageList}: ${_viewModel.state.currentList!.name}'
+                            ref
+                                        .watch(
+                                            listPickerGeneratorStateManagerProvider)
+                                        .currentList !=
+                                    null
+                                ? '${loc.manageList}: ${ref.watch(listPickerGeneratorStateManagerProvider).currentList!.name}'
                                 : loc.manageList,
                             style: Theme.of(context).textTheme.titleMedium,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         const SizedBox(width: 8),
-                        if (_viewModel.state.listManagerExpandState !=
+                        if (ref
+                                    .watch(
+                                        listPickerGeneratorStateManagerProvider)
+                                    .listManagerExpandState !=
                                 ListManagerExpandState.expanded &&
-                            _viewModel.state.currentList != null)
+                            ref
+                                    .watch(
+                                        listPickerGeneratorStateManagerProvider)
+                                    .currentList !=
+                                null)
                           Text(
-                            '(${_viewModel.state.currentList!.items.length})',
+                            '(${ref.watch(listPickerGeneratorStateManagerProvider).currentList!.items.length})',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium
@@ -839,17 +906,25 @@ class _ListPickerGeneratorScreenState
                 ),
                 IconButton(
                   onPressed: () {
-                    _viewModel.toggleListManagerCollapse();
+                    ref
+                        .read(listPickerGeneratorStateManagerProvider.notifier)
+                        .toggleListManagerCollapse();
                     setState(() {});
                   },
-                  icon: Icon(
-                      _getExpandIcon(_viewModel.state.listManagerExpandState)),
+                  icon: Icon(_getExpandIcon(ref
+                      .watch(listPickerGeneratorStateManagerProvider)
+                      .listManagerExpandState)),
                   tooltip: _getExpandTooltip(
-                      _viewModel.state.listManagerExpandState, loc),
+                      ref
+                          .watch(listPickerGeneratorStateManagerProvider)
+                          .listManagerExpandState,
+                      loc),
                 ),
               ],
             ),
-            if (_viewModel.state.listManagerExpandState !=
+            if (ref
+                    .watch(listPickerGeneratorStateManagerProvider)
+                    .listManagerExpandState !=
                 ListManagerExpandState.minimized) ...[
               const SizedBox(height: 16),
               Row(
@@ -862,19 +937,28 @@ class _ListPickerGeneratorScreenState
                         border: const OutlineInputBorder(),
                       ),
                       onSubmitted: (_) => _addItemToCurrentList(),
-                      enabled: _viewModel.state.currentList != null,
+                      enabled: ref
+                              .watch(listPickerGeneratorStateManagerProvider)
+                              .currentList !=
+                          null,
                     ),
                   ),
                   const SizedBox(width: 8),
                   IconButton(
-                    onPressed: _viewModel.state.currentList != null
+                    onPressed: ref
+                                .watch(listPickerGeneratorStateManagerProvider)
+                                .currentList !=
+                            null
                         ? _addItemToCurrentList
                         : null,
                     icon: const Icon(Icons.add),
                     tooltip: loc.addSingleItem,
                   ),
                   IconButton(
-                    onPressed: _viewModel.state.currentList != null
+                    onPressed: ref
+                                .watch(listPickerGeneratorStateManagerProvider)
+                                .currentList !=
+                            null
                         ? _showAddBatchDialog
                         : null,
                     icon: const Icon(Icons.add_box),
@@ -883,22 +967,34 @@ class _ListPickerGeneratorScreenState
                 ],
               ),
               const SizedBox(height: 16),
-              if (_viewModel.state.currentList != null &&
-                  _viewModel.state.currentList!.items.isNotEmpty) ...[
+              if (ref
+                          .watch(listPickerGeneratorStateManagerProvider)
+                          .currentList !=
+                      null &&
+                  ref
+                      .watch(listPickerGeneratorStateManagerProvider)
+                      .currentList!
+                      .items
+                      .isNotEmpty) ...[
                 Text(
-                  '${loc.items} (${_viewModel.state.currentList!.items.length}):',
+                  '${loc.items} (${ref.watch(listPickerGeneratorStateManagerProvider).currentList!.items.length}):',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
                 const SizedBox(height: 8),
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final isWideScreen = constraints.maxWidth > 500;
-                    final expandState = _viewModel.state.listManagerExpandState;
+                    final expandState = ref
+                        .watch(listPickerGeneratorStateManagerProvider)
+                        .listManagerExpandState;
 
                     if (isWideScreen) {
                       // Two column layout for wide screens
-                      final allItems =
-                          _viewModel.state.currentList?.items ?? [];
+                      final allItems = ref
+                              .watch(listPickerGeneratorStateManagerProvider)
+                              .currentList
+                              ?.items ??
+                          [];
                       final items = allItems; // Show all items in both modes
                       final halfLength = (items.length / 2).ceil();
                       final leftItems = items.take(halfLength).toList();
@@ -1045,8 +1141,11 @@ class _ListPickerGeneratorScreenState
                       );
                     } else {
                       // Single column layout for narrow screens
-                      final allItems =
-                          _viewModel.state.currentList?.items ?? [];
+                      final allItems = ref
+                              .watch(listPickerGeneratorStateManagerProvider)
+                              .currentList
+                              ?.items ??
+                          [];
                       final items = allItems; // Show all items in both modes
                       return SizedBox(
                         height: expandState == ListManagerExpandState.collapsed
@@ -1123,7 +1222,12 @@ class _ListPickerGeneratorScreenState
   }
 
   Widget _buildGeneratorOptions() {
-    final maxItems = _viewModel.state.currentList?.items.length ?? 0;
+    final maxItems = ref
+            .watch(listPickerGeneratorStateManagerProvider)
+            .currentList
+            ?.items
+            .length ??
+        0;
     final colorScheme = Theme.of(context).colorScheme;
 
     // Handle edge case when no items
@@ -1158,7 +1262,7 @@ class _ListPickerGeneratorScreenState
     int minQuantity = 1;
     int maxQuantity = maxItems;
 
-    switch (_viewModel.state.mode) {
+    switch (ref.watch(listPickerGeneratorStateManagerProvider).mode) {
       case ListPickerMode.random:
         minQuantity = 1;
         maxQuantity = maxItems >= 2 ? (maxItems - 1) : maxItems;
@@ -1178,8 +1282,10 @@ class _ListPickerGeneratorScreenState
       minQuantity = maxQuantity;
     }
 
-    final safeQuantity =
-        _viewModel.state.quantity.clamp(minQuantity, maxQuantity);
+    final safeQuantity = ref
+        .watch(listPickerGeneratorStateManagerProvider)
+        .quantity
+        .clamp(minQuantity, maxQuantity);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -1208,7 +1314,9 @@ class _ListPickerGeneratorScreenState
                 spacing: 8,
                 children: List.generate(3, (i) {
                   final mode = ListPickerMode.values[i];
-                  final isSelected = _viewModel.state.mode == mode;
+                  final isSelected =
+                      ref.watch(listPickerGeneratorStateManagerProvider).mode ==
+                          mode;
                   final enabled =
                       (mode == ListPickerMode.random && maxItems >= 2) ||
                           (mode == ListPickerMode.shuffle && maxItems >= 2) ||
@@ -1231,7 +1339,11 @@ class _ListPickerGeneratorScreenState
                       onSelected: enabled
                           ? (selected) {
                               if (selected) {
-                                _viewModel.updateMode(mode);
+                                ref
+                                    .read(
+                                        listPickerGeneratorStateManagerProvider
+                                            .notifier)
+                                    .updateMode(mode);
                                 setState(() {});
                               }
                             }
@@ -1250,7 +1362,11 @@ class _ListPickerGeneratorScreenState
                   ? _buildQuantityTextInput(
                       loc, minQuantity, maxQuantity, safeQuantity)
                   : OptionSlider<int>(
-                      label: _viewModel.state.mode == ListPickerMode.team
+                      label: ref
+                                  .watch(
+                                      listPickerGeneratorStateManagerProvider)
+                                  .mode ==
+                              ListPickerMode.team
                           ? loc.teams
                           : loc.quantity,
                       currentValue: safeQuantity,
@@ -1262,7 +1378,10 @@ class _ListPickerGeneratorScreenState
                         ),
                       ),
                       onChanged: (value) {
-                        _viewModel.updateQuantity(value);
+                        ref
+                            .read(listPickerGeneratorStateManagerProvider
+                                .notifier)
+                            .updateQuantity(value);
                         setState(() {});
                       },
                       layout: OptionSliderLayout.none,
@@ -1290,14 +1409,26 @@ class _ListPickerGeneratorScreenState
                     borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
                 ),
-                onPressed: _viewModel.state.currentList != null &&
-                        _viewModel.state.currentList!.items.isNotEmpty
+                onPressed: ref
+                                .watch(listPickerGeneratorStateManagerProvider)
+                                .currentList !=
+                            null &&
+                        ref
+                            .watch(listPickerGeneratorStateManagerProvider)
+                            .currentList!
+                            .items
+                            .isNotEmpty
                     ? _pickRandomItems
                     : null,
                 icon: Icon(
-                  _viewModel.state.mode == ListPickerMode.random
+                  ref.watch(listPickerGeneratorStateManagerProvider).mode ==
+                          ListPickerMode.random
                       ? Icons.shuffle
-                      : _viewModel.state.mode == ListPickerMode.shuffle
+                      : ref
+                                  .watch(
+                                      listPickerGeneratorStateManagerProvider)
+                                  .mode ==
+                              ListPickerMode.shuffle
                           ? Icons.shuffle_outlined
                           : Icons.group,
                 ),
@@ -1311,33 +1442,33 @@ class _ListPickerGeneratorScreenState
   }
 
   String _getGenerateButtonText() {
-    switch (_viewModel.state.mode) {
+    switch (ref.watch(listPickerGeneratorStateManagerProvider).mode) {
       case ListPickerMode.random:
         return loc.generateRandom;
       case ListPickerMode.shuffle:
         return loc.modeShuffle;
       case ListPickerMode.team:
-        return '${loc.modeTeam} (${_viewModel.state.quantity} ${loc.teams.toLowerCase()})';
+        return '${loc.modeTeam} (${ref.watch(listPickerGeneratorStateManagerProvider).quantity} ${loc.teams.toLowerCase()})';
     }
   }
 
   String _getResultSubtitle() {
-    if (_viewModel.results.isEmpty) return '';
+    if (_currentResults.isEmpty) return '';
 
-    switch (_viewModel.state.mode) {
+    switch (ref.watch(listPickerGeneratorStateManagerProvider).mode) {
       case ListPickerMode.random:
-        return '${_viewModel.results.length} ${loc.items.toLowerCase()}';
+        return '${_currentResults.length} ${loc.items.toLowerCase()}';
       case ListPickerMode.shuffle:
-        return '${_viewModel.results.length} ${loc.items.toLowerCase()}';
+        return '${_currentResults.length} ${loc.items.toLowerCase()}';
       case ListPickerMode.team:
-        return '${_viewModel.state.quantity} ${loc.teams.toLowerCase()}';
+        return '${ref.watch(listPickerGeneratorStateManagerProvider).quantity} ${loc.teams.toLowerCase()}';
     }
   }
 
   Widget _buildResults() {
-    if (_viewModel.results.isEmpty) return const SizedBox.shrink();
+    if (_currentResults.isEmpty) return const SizedBox.shrink();
 
-    final currentState = _viewModel.state;
+    final currentState = ref.watch(listPickerGeneratorStateManagerProvider);
     final isTeamMode = currentState.mode == ListPickerMode.team;
 
     return Card(
@@ -1386,7 +1517,7 @@ class _ListPickerGeneratorScreenState
                 ),
                 IconButton(
                   onPressed: () {
-                    final resultText = _viewModel.results.join('; ');
+                    final resultText = _currentResults.join('; ');
                     Clipboard.setData(ClipboardData(text: resultText));
                     SnackBarUtils.showTyped(
                         context, loc.copied, SnackBarType.info);
@@ -1416,7 +1547,7 @@ class _ListPickerGeneratorScreenState
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: _viewModel.results.map((result) {
+      children: _currentResults.map((result) {
         return Chip(
           label: Text(result),
         );
@@ -1429,7 +1560,7 @@ class _ListPickerGeneratorScreenState
       scrollDirection: Axis.horizontal,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: _viewModel.results.asMap().entries.map((entry) {
+        children: _currentResults.asMap().entries.map((entry) {
           final teamIndex = entry.key;
           final result = entry.value;
 
@@ -1637,8 +1768,10 @@ class _ListPickerGeneratorScreenState
       _quantityController.text = currentQuantity.toString();
     }
 
-    final label =
-        _viewModel.state.mode == ListPickerMode.team ? loc.teams : loc.quantity;
+    final label = ref.watch(listPickerGeneratorStateManagerProvider).mode ==
+            ListPickerMode.team
+        ? loc.teams
+        : loc.quantity;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1669,7 +1802,9 @@ class _ListPickerGeneratorScreenState
                   if (intValue != null &&
                       intValue >= minQuantity &&
                       intValue <= maxQuantity) {
-                    _viewModel.updateQuantity(intValue);
+                    ref
+                        .read(listPickerGeneratorStateManagerProvider.notifier)
+                        .updateQuantity(intValue);
                     setState(() {});
                   }
                 },
@@ -1679,7 +1814,9 @@ class _ListPickerGeneratorScreenState
                     final clampedValue =
                         intValue.clamp(minQuantity, maxQuantity);
                     _quantityController.text = clampedValue.toString();
-                    _viewModel.updateQuantity(clampedValue);
+                    ref
+                        .read(listPickerGeneratorStateManagerProvider.notifier)
+                        .updateQuantity(clampedValue);
                     setState(() {});
                   } else {
                     // Reset to current value if invalid
@@ -1695,7 +1832,9 @@ class _ListPickerGeneratorScreenState
               onTap: () {
                 final newValue = currentQuantity + 1;
                 _quantityController.text = newValue.toString();
-                _viewModel.updateQuantity(newValue);
+                ref
+                    .read(listPickerGeneratorStateManagerProvider.notifier)
+                    .updateQuantity(newValue);
                 setState(() {});
               },
               child: Container(
@@ -1717,7 +1856,9 @@ class _ListPickerGeneratorScreenState
               onTap: () {
                 final newValue = currentQuantity - 1;
                 _quantityController.text = newValue.toString();
-                _viewModel.updateQuantity(newValue);
+                ref
+                    .read(listPickerGeneratorStateManagerProvider.notifier)
+                    .updateQuantity(newValue);
                 setState(() {});
               },
               child: Container(

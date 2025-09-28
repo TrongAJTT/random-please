@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/utils/color_util.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
-import 'package:random_please/view_models/color_generator_view_model.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/size_utils.dart';
 import 'package:random_please/utils/widget_layout_render_helper.dart';
 import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/providers/history_provider.dart';
+import 'package:random_please/providers/color_generator_state_provider.dart';
+import 'package:random_please/models/random_generator.dart';
 
 class ColorGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -22,15 +24,15 @@ class ColorGeneratorScreen extends ConsumerStatefulWidget {
 
 class _ColorGeneratorScreenState extends ConsumerState<ColorGeneratorScreen>
     with SingleTickerProviderStateMixin {
-  late ColorGeneratorViewModel _viewModel;
+  static const String historyType = 'color';
   late AnimationController _controller;
   late Animation<double> _animation;
   late AppLocalizations loc;
+  Color _currentColor = Colors.blue;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = ColorGeneratorViewModel(ref: ref);
     _controller = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -39,13 +41,6 @@ class _ColorGeneratorScreenState extends ConsumerState<ColorGeneratorScreen>
       parent: _controller,
       curve: Curves.easeInOut,
     );
-    _initData();
-  }
-
-  Future<void> _initData() async {
-    await _viewModel.initHive();
-    await _viewModel.loadHistory();
-    setState(() {});
   }
 
   @override
@@ -57,21 +52,39 @@ class _ColorGeneratorScreenState extends ConsumerState<ColorGeneratorScreen>
   @override
   void dispose() {
     _controller.dispose();
-    _viewModel.dispose();
     super.dispose();
   }
 
-  void _generateColor() {
+  Future<void> _generateColor() async {
     _controller.reset();
     _controller.forward();
 
-    _viewModel.generateColor();
+    final state = ref.read(colorGeneratorStateManagerProvider);
+
+    // Generate color using RandomGenerator
+    _currentColor = RandomGenerator.generateColor(withAlpha: state.withAlpha);
+
+    // Save state after generation
+    await ref
+        .read(colorGeneratorStateManagerProvider.notifier)
+        .saveStateOnGenerate();
+
+    // Save to history if enabled
+    final historyEnabled = ref.read(historyEnabledProvider);
+    if (historyEnabled) {
+      String colorText = _getHexColor();
+      await ref
+          .read(historyProvider.notifier)
+          .addHistoryItem(colorText, historyType);
+    }
+
     setState(() {});
   }
 
   String _getHexColor() {
-    final colorValue = _viewModel.currentColor.toARGB32();
-    if (_viewModel.state.withAlpha) {
+    final state = ref.read(colorGeneratorStateManagerProvider);
+    final colorValue = _currentColor.toARGB32();
+    if (state.withAlpha) {
       return '#${colorValue.toRadixString(16).padLeft(8, '0').toUpperCase()}';
     } else {
       return '#${(colorValue & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
@@ -79,25 +92,25 @@ class _ColorGeneratorScreenState extends ConsumerState<ColorGeneratorScreen>
   }
 
   String _getRgbColor() {
-    final color = _viewModel.currentColor;
+    final state = ref.read(colorGeneratorStateManagerProvider);
     String baseRpg =
-        '${color.getRed255String()}, ${color.getGreen255String()}, ${color.getBlue255String()}';
-    if (_viewModel.state.withAlpha) {
-      return 'rgba($baseRpg, ${color.getAlphaStringFixed(2)})';
+        '${_currentColor.getRed255String()}, ${_currentColor.getGreen255String()}, ${_currentColor.getBlue255String()}';
+    if (state.withAlpha) {
+      return 'rgba($baseRpg, ${_currentColor.getAlphaStringFixed(2)})';
     } else {
-      return 'rpg($baseRpg)';
+      return 'rgb($baseRpg)';
     }
   }
 
   Widget _buildHistoryWidget() {
     return HistoryWidget(
-      type: ColorGeneratorViewModel.historyType,
+      type: historyType,
       title: loc.generationHistory,
     );
   }
 
   void _copyToClipboard(String value) {
-    _viewModel.copyColor(value);
+    Clipboard.setData(ClipboardData(text: value));
     SnackBarUtils.showTyped(context, loc.copied, SnackBarType.info);
   }
 
@@ -121,13 +134,12 @@ class _ColorGeneratorScreenState extends ConsumerState<ColorGeneratorScreen>
                   builder: (context, child) {
                     return Container(
                       decoration: BoxDecoration(
-                        color: _viewModel.currentColor,
+                        color: _currentColor,
                         borderRadius:
                             const BorderRadius.all(Radius.circular(16)),
                         boxShadow: [
                           BoxShadow(
-                            color:
-                                _viewModel.currentColor.withValues(alpha: 0.4),
+                            color: _currentColor.withValues(alpha: 0.4),
                             blurRadius: 20,
                             spreadRadius: 4,
                             offset: const Offset(0, 8),
@@ -141,7 +153,7 @@ class _ColorGeneratorScreenState extends ConsumerState<ColorGeneratorScreen>
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: _isColorDark(_viewModel.currentColor)
+                            color: _isColorDark(_currentColor)
                                 ? Colors.white.withValues(alpha: 0.9)
                                 : Colors.black.withValues(alpha: 0.8),
                             borderRadius: BorderRadius.circular(20),
@@ -149,7 +161,7 @@ class _ColorGeneratorScreenState extends ConsumerState<ColorGeneratorScreen>
                           child: Text(
                             _getHexColor(),
                             style: TextStyle(
-                              color: _isColorDark(_viewModel.currentColor)
+                              color: _isColorDark(_currentColor)
                                   ? Colors.black
                                   : Colors.white,
                               fontFamily: 'monospace',
@@ -176,27 +188,35 @@ class _ColorGeneratorScreenState extends ConsumerState<ColorGeneratorScreen>
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                ChoiceChip(
-                  label: Text(loc.solid),
-                  selected: !_viewModel.state.withAlpha,
-                  onSelected: (selected) {
-                    if (selected) {
-                      _viewModel.updateWithAlpha(false);
-                      setState(() {});
-                    }
-                  },
-                ),
+                Consumer(builder: (context, ref, child) {
+                  final state = ref.watch(colorGeneratorStateManagerProvider);
+                  return ChoiceChip(
+                    label: Text(loc.solid),
+                    selected: !state.withAlpha,
+                    onSelected: (selected) {
+                      if (selected) {
+                        ref
+                            .read(colorGeneratorStateManagerProvider.notifier)
+                            .updateWithAlpha(false);
+                      }
+                    },
+                  );
+                }),
                 const SizedBox(width: 12),
-                ChoiceChip(
-                  label: Text(loc.includeAlpha),
-                  selected: _viewModel.state.withAlpha,
-                  onSelected: (selected) {
-                    if (selected) {
-                      _viewModel.updateWithAlpha(true);
-                      setState(() {});
-                    }
-                  },
-                ),
+                Consumer(builder: (context, ref, child) {
+                  final state = ref.watch(colorGeneratorStateManagerProvider);
+                  return ChoiceChip(
+                    label: Text(loc.includeAlpha),
+                    selected: state.withAlpha,
+                    onSelected: (selected) {
+                      if (selected) {
+                        ref
+                            .read(colorGeneratorStateManagerProvider.notifier)
+                            .updateWithAlpha(true);
+                      }
+                    },
+                  );
+                }),
               ],
             ),
 

@@ -2,29 +2,28 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:desktop_drop/desktop_drop.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
-import 'package:random_please/view_models/list_picker_view_model.dart';
+import 'package:random_please/providers/list_picker_generator_state_provider.dart';
 import 'package:random_please/widgets/common/step_indicator.dart';
 import 'package:path/path.dart' as path;
 
-class ImportFileWidget extends StatefulWidget {
-  final ListPickerViewModel viewModel;
+class ImportFileWidget extends ConsumerStatefulWidget {
   final VoidCallback? onSuccess;
   final bool isEmbedded;
 
   const ImportFileWidget({
     super.key,
-    required this.viewModel,
     this.onSuccess,
     this.isEmbedded = false,
   });
 
   @override
-  State<ImportFileWidget> createState() => _ImportFileWidgetState();
+  ConsumerState<ImportFileWidget> createState() => _ImportFileWidgetState();
 }
 
-class _ImportFileWidgetState extends State<ImportFileWidget> {
+class _ImportFileWidgetState extends ConsumerState<ImportFileWidget> {
   int _currentStep = 0;
   bool _isImporting = false;
   bool _isDragging = false;
@@ -254,7 +253,9 @@ class _ImportFileWidgetState extends State<ImportFileWidget> {
 
   Future<void> _importData() async {
     // Create a new list with the imported data
-    widget.viewModel.createNewList(_listName.trim());
+    ref
+        .read(listPickerGeneratorStateManagerProvider.notifier)
+        .createNewList(_listName.trim());
 
     // Prepare final items list
     List<String> finalItems = List.from(_previewItems);
@@ -268,7 +269,9 @@ class _ImportFileWidgetState extends State<ImportFileWidget> {
     }
 
     // Add all items to the newly created list
-    await widget.viewModel.addBatchItems(finalItems);
+    await ref
+        .read(listPickerGeneratorStateManagerProvider.notifier)
+        .addBatchItems(finalItems);
 
     // Small delay for UX
     await Future.delayed(const Duration(milliseconds: 500));

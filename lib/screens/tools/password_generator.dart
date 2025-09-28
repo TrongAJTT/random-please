@@ -1,9 +1,11 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:random_please/l10n/app_localizations.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
-import 'package:random_please/view_models/password_generator_view_model.dart';
+import 'package:random_please/providers/password_generator_state_provider.dart';
+import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
@@ -24,56 +26,48 @@ class PasswordGeneratorScreen extends ConsumerStatefulWidget {
 
 class _PasswordGeneratorScreenState
     extends ConsumerState<PasswordGeneratorScreen> {
-  late PasswordGeneratorViewModel _viewModel;
   bool _copied = false;
   final ScrollController _scrollController = ScrollController();
+  String _currentResult = '';
 
   @override
   void initState() {
     super.initState();
-    _viewModel = PasswordGeneratorViewModel(ref: ref);
-    _initializeViewModel();
-  }
-
-  Future<void> _initializeViewModel() async {
-    await _viewModel.initHive();
-    await _viewModel.loadHistory();
-
-    // Listen to state changes
-    _viewModel.addListener(_onViewModelChanged);
-
-    // Update UI after initialization
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void _onViewModelChanged() {
-    if (mounted) {
-      setState(() {
-        _copied = false;
-      });
-    }
   }
 
   @override
   void dispose() {
-    _viewModel.removeListener(_onViewModelChanged);
-    _viewModel.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
   void _generatePassword() async {
     try {
-      await _viewModel.generatePassword();
+      final currentState = ref.read(passwordGeneratorStateManagerProvider);
+      final password = _generatePasswordFromState(currentState);
+
+      setState(() {
+        _currentResult = password;
+      });
+
+      // Save state on generate
+      await ref
+          .read(passwordGeneratorStateManagerProvider.notifier)
+          .saveStateOnGenerate();
+
+      // Save to history if enabled
+      if (password.isNotEmpty) {
+        await ref
+            .read(historyProvider.notifier)
+            .addHistoryItems([password], 'password');
+      }
 
       // Auto-scroll to results after generation
       AutoScrollHelper.scrollToResults(
         ref: ref,
         scrollController: _scrollController,
         mounted: mounted,
-        hasResults: _viewModel.result.isNotEmpty,
+        hasResults: password.isNotEmpty,
       );
     } catch (e) {
       if (mounted) {
@@ -82,9 +76,66 @@ class _PasswordGeneratorScreenState
     }
   }
 
+  String _generatePasswordFromState(PasswordGeneratorState state) {
+    // Character sets
+    const String lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const String uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const String numbers = '0123456789';
+    const String special = '!@#\$%^&*()_+-=[]{}|;:,.<>?';
+
+    String availableChars = '';
+    final List<String> requiredSets = [];
+
+    if (state.includeLowercase) {
+      availableChars += lowercase;
+      requiredSets.add(lowercase);
+    }
+    if (state.includeUppercase) {
+      availableChars += uppercase;
+      requiredSets.add(uppercase);
+    }
+    if (state.includeNumbers) {
+      availableChars += numbers;
+      requiredSets.add(numbers);
+    }
+    if (state.includeSpecial) {
+      availableChars += special;
+      requiredSets.add(special);
+    }
+
+    if (availableChars.isEmpty) {
+      return '';
+    }
+
+    final random = Random();
+    String password = '';
+    const int maxAttempts = 1000;
+    int attempt = 0;
+
+    bool isValid(String pwd) {
+      for (final set in requiredSets) {
+        if (!pwd.split('').any((c) => set.contains(c))) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    do {
+      final buffer = StringBuffer();
+      for (int i = 0; i < state.passwordLength; i++) {
+        buffer.write(availableChars[random.nextInt(availableChars.length)]);
+      }
+      password = buffer.toString();
+      attempt++;
+    } while (!isValid(password) && attempt < maxAttempts);
+
+    return password;
+  }
+
   void _copyToClipboard() {
-    if (_viewModel.result.isNotEmpty) {
-      Clipboard.setData(ClipboardData(text: _viewModel.result));
+    if (_currentResult.isNotEmpty) {
+      Clipboard.setData(ClipboardData(text: _currentResult));
       setState(() {
         _copied = true;
       });
@@ -109,15 +160,15 @@ class _PasswordGeneratorScreenState
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return HistoryWidget(
-      type: PasswordGeneratorViewModel.historyType,
+      type: 'password',
       title: loc.generationHistory,
       maskFunction: _maskPassword,
     );
   }
 
   String _getPasswordSubtitle() {
-    if (_viewModel.result.isEmpty) return '';
-    return '${_viewModel.result.length} ${AppLocalizations.of(context)!.characters.toLowerCase()}';
+    if (_currentResult.isEmpty) return '';
+    return '${_currentResult.length} ${AppLocalizations.of(context)!.characters.toLowerCase()}';
   }
 
   Map<String, dynamic> _evaluatePasswordStrength(String password) {
@@ -171,7 +222,7 @@ class _PasswordGeneratorScreenState
   }
 
   Widget _buildPasswordStrengthSection(AppLocalizations loc) {
-    final strength = _evaluatePasswordStrength(_viewModel.result);
+    final strength = _evaluatePasswordStrength(_currentResult);
     final level = strength['level'] as int;
     final label = strength['label'] as String;
     final color = strength['color'] as Color;
@@ -271,33 +322,45 @@ class _PasswordGeneratorScreenState
       {
         'title': loc.includeLowercase,
         'subtitle': loc.includeLowercaseDesc,
-        'value': _viewModel.state.includeLowercase,
+        'value':
+            ref.watch(passwordGeneratorStateManagerProvider).includeLowercase,
         'onChanged': (bool value) {
-          _viewModel.updateIncludeLowercase(value);
+          ref
+              .read(passwordGeneratorStateManagerProvider.notifier)
+              .updateIncludeLowercase(value);
         },
       },
       {
         'title': loc.includeUppercase,
         'subtitle': loc.includeUppercaseDesc,
-        'value': _viewModel.state.includeUppercase,
+        'value':
+            ref.watch(passwordGeneratorStateManagerProvider).includeUppercase,
         'onChanged': (bool value) {
-          _viewModel.updateIncludeUppercase(value);
+          ref
+              .read(passwordGeneratorStateManagerProvider.notifier)
+              .updateIncludeUppercase(value);
         },
       },
       {
         'title': loc.includeNumbers,
         'subtitle': loc.includeNumbersDesc,
-        'value': _viewModel.state.includeNumbers,
+        'value':
+            ref.watch(passwordGeneratorStateManagerProvider).includeNumbers,
         'onChanged': (bool value) {
-          _viewModel.updateIncludeNumbers(value);
+          ref
+              .read(passwordGeneratorStateManagerProvider.notifier)
+              .updateIncludeNumbers(value);
         },
       },
       {
         'title': loc.includeSpecial,
         'subtitle': loc.includeSpecialDesc,
-        'value': _viewModel.state.includeSpecial,
+        'value':
+            ref.watch(passwordGeneratorStateManagerProvider).includeSpecial,
         'onChanged': (bool value) {
-          _viewModel.updateIncludeSpecial(value);
+          ref
+              .read(passwordGeneratorStateManagerProvider.notifier)
+              .updateIncludeSpecial(value);
         },
       },
     ];
@@ -351,7 +414,9 @@ class _PasswordGeneratorScreenState
                 // Password length slider
                 OptionSlider<int>(
                   label: loc.numCharacters,
-                  currentValue: _viewModel.state.passwordLength,
+                  currentValue: ref
+                      .watch(passwordGeneratorStateManagerProvider)
+                      .passwordLength,
                   options: List.generate(
                     29, // 4 to 32 characters
                     (i) => SliderOption(
@@ -360,7 +425,9 @@ class _PasswordGeneratorScreenState
                     ),
                   ),
                   onChanged: (int value) {
-                    _viewModel.updatePasswordLength(value);
+                    ref
+                        .read(passwordGeneratorStateManagerProvider.notifier)
+                        .updatePasswordLength(value);
                   },
                   fixedWidth: 60,
                   layout: OptionSliderLayout.none,
@@ -389,7 +456,7 @@ class _PasswordGeneratorScreenState
         ),
 
         // Result card
-        if (_viewModel.result.isNotEmpty) ...[
+        if (_currentResult.isNotEmpty) ...[
           const SizedBox(height: 24),
           Card(
             child: Padding(
@@ -457,7 +524,7 @@ class _PasswordGeneratorScreenState
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: SelectableText(
-                      _viewModel.result,
+                      _currentResult,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontFamily: 'monospace',
                             letterSpacing: 1.2,

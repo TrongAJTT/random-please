@@ -1861,4 +1861,53 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tailsPercentage => 'Tails Percentage';
+
+  @override
+  String get localApiManagement => 'Local API Management';
+
+  @override
+  String get localApiNotSupported => 'Local API Not Supported';
+
+  @override
+  String get localApiNotSupportedDescription =>
+      'Local API server is not available on web platform';
+
+  @override
+  String get apiServerRunning => 'API Server Running';
+
+  @override
+  String get apiServerStopped => 'API Server Stopped';
+
+  @override
+  String get apiServerStarted => 'API server started successfully';
+
+  @override
+  String get apiPort => 'Port';
+
+  @override
+  String get portRangeHelper => 'Port range: 1024-65535';
+
+  @override
+  String get invalidPortRange => 'Invalid port range. Please use 1024-65535';
+
+  @override
+  String get apiStart => 'Start';
+
+  @override
+  String get apiStop => 'Stop';
+
+  @override
+  String get quickLinks => 'Quick Links';
+
+  @override
+  String get apiDocumentation => 'API Documentation';
+
+  @override
+  String get apiNumberGenerator => 'Number Generator';
+
+  @override
+  String get apiColorGenerator => 'Color Generator';
+
+  @override
+  String get apiCopy => 'Copy';
 }

@@ -1856,4 +1856,54 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get tailsPercentage => 'Tỷ lệ Sấp';
+
+  @override
+  String get localApiManagement => 'Quản lý API Cục bộ';
+
+  @override
+  String get localApiNotSupported => 'API Cục bộ Không Được Hỗ trợ';
+
+  @override
+  String get localApiNotSupportedDescription =>
+      'API server cục bộ không khả dụng trên nền tảng web';
+
+  @override
+  String get apiServerRunning => 'API Server Đang Chạy';
+
+  @override
+  String get apiServerStopped => 'API Server Đã Dừng';
+
+  @override
+  String get apiServerStarted => 'API server đã khởi động thành công';
+
+  @override
+  String get apiPort => 'Cổng';
+
+  @override
+  String get portRangeHelper => 'Phạm vi cổng: 1024-65535';
+
+  @override
+  String get invalidPortRange =>
+      'Phạm vi cổng không hợp lệ. Vui lòng sử dụng 1024-65535';
+
+  @override
+  String get apiStart => 'Khởi động';
+
+  @override
+  String get apiStop => 'Dừng';
+
+  @override
+  String get quickLinks => 'Liên kết Nhanh';
+
+  @override
+  String get apiDocumentation => 'Tài liệu API';
+
+  @override
+  String get apiNumberGenerator => 'Tạo Số';
+
+  @override
+  String get apiColorGenerator => 'Tạo Màu';
+
+  @override
+  String get apiCopy => 'Sao chép';
 }

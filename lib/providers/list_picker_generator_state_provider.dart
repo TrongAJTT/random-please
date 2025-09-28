@@ -218,6 +218,11 @@ class ListPickerGeneratorStateManager
     }
   }
 
+  // Alias for consistency with ViewModel
+  Future<void> addBatchItems(List<String> itemValues) async {
+    await addBatchItemsToCurrentList(itemValues);
+  }
+
   // Efficient batch add - only save once at the end
   Future<void> addBatchItemsToCurrentList(List<String> itemValues) async {
     if (itemValues.isEmpty || state.currentList == null) return;
@@ -265,6 +270,16 @@ class ListPickerGeneratorStateManager
     }
   }
 
+  void removeItem(String itemId) {
+    if (state.currentList != null) {
+      final index =
+          state.currentList!.items.indexWhere((item) => item.id == itemId);
+      if (index != -1) {
+        removeItemFromCurrentList(index);
+      }
+    }
+  }
+
   void removeItemFromCurrentList(int index) {
     if (state.currentList != null &&
         index >= 0 &&
@@ -294,6 +309,15 @@ class ListPickerGeneratorStateManager
         lastUpdated: DateTime.now(),
       );
       _saveState();
+    }
+  }
+
+  void renameItem(ListItem item, String newValue) {
+    if (state.currentList != null) {
+      final index = state.currentList!.items.indexWhere((i) => i.id == item.id);
+      if (index != -1) {
+        editItemInCurrentList(index, newValue);
+      }
     }
   }
 
@@ -331,6 +355,51 @@ class ListPickerGeneratorStateManager
       );
       _saveState();
     }
+  }
+
+  // Pick random items based on current state and mode
+  Future<List<String>> pickRandomItems() async {
+    if (state.currentList == null || state.currentList!.items.isEmpty) {
+      return [];
+    }
+
+    final items = List<ListItem>.from(state.currentList!.items);
+    List<String> results = [];
+
+    switch (state.mode) {
+      case ListPickerMode.random:
+        items.shuffle();
+        final count =
+            state.quantity.clamp(1, (items.length - 1).clamp(1, items.length));
+        results = items.take(count).map((item) => item.value).toList();
+        break;
+
+      case ListPickerMode.shuffle:
+        items.shuffle();
+        final count = state.quantity.clamp(2, items.length);
+        results = items.take(count).map((item) => item.value).toList();
+        break;
+
+      case ListPickerMode.team:
+        items.shuffle();
+        final numberOfTeams = state.quantity
+            .clamp(2, (items.length / 2).ceil().clamp(2, items.length));
+        final itemsPerTeam = (items.length / numberOfTeams).ceil();
+
+        results = [];
+        for (int i = 0; i < numberOfTeams; i++) {
+          final startIndex = i * itemsPerTeam;
+          final endIndex = ((i + 1) * itemsPerTeam).clamp(0, items.length);
+          if (startIndex < items.length) {
+            final teamItems = items.sublist(startIndex, endIndex);
+            final teamNames = teamItems.map((item) => item.value).join(', ');
+            results.add('Team ${i + 1}: $teamNames');
+          }
+        }
+        break;
+    }
+
+    return results;
   }
 
   // Reset về default

@@ -837,5 +837,21 @@
   "headsPercentage": "Heads Percentage",
   "tailsCount": "Tails Count",
   "tailsPercentage": "Tails Percentage",
-  "flipCoinDesc": "Random coin flip result"
+  "flipCoinDesc": "Random coin flip result",
+  "localApiManagement": "Local API Management",
+  "localApiNotSupported": "Local API Not Supported",
+  "localApiNotSupportedDescription": "Local API server is not available on web platform",
+  "apiServerRunning": "API Server Running",
+  "apiServerStopped": "API Server Stopped",
+  "apiServerStarted": "API server started successfully",
+  "apiPort": "Port",
+  "portRangeHelper": "Port range: 1024-65535",
+  "invalidPortRange": "Invalid port range. Please use 1024-65535",
+  "apiStart": "Start",
+  "apiStop": "Stop",
+  "quickLinks": "Quick Links",
+  "apiDocumentation": "API Documentation",
+  "apiNumberGenerator": "Number Generator",
+  "apiColorGenerator": "Color Generator",
+  "apiCopy": "Copy"
 }

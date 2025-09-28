@@ -770,5 +770,21 @@
   "headsPercentage": "Tỷ lệ Ngửa",
   "tailsCount": "Số lần Sấp",
   "tailsPercentage": "Tỷ lệ Sấp",
-  "flipCoinDesc": "Kết quả tung đồng xu ngẫu nhiên"
+  "flipCoinDesc": "Kết quả tung đồng xu ngẫu nhiên",
+  "localApiManagement": "Quản lý API Cục bộ",
+  "localApiNotSupported": "API Cục bộ Không Được Hỗ trợ",
+  "localApiNotSupportedDescription": "API server cục bộ không khả dụng trên nền tảng web",
+  "apiServerRunning": "API Server Đang Chạy",
+  "apiServerStopped": "API Server Đã Dừng",
+  "apiServerStarted": "API server đã khởi động thành công",
+  "apiPort": "Cổng",
+  "portRangeHelper": "Phạm vi cổng: 1024-65535",
+  "invalidPortRange": "Phạm vi cổng không hợp lệ. Vui lòng sử dụng 1024-65535",
+  "apiStart": "Khởi động",
+  "apiStop": "Dừng",
+  "quickLinks": "Liên kết Nhanh",
+  "apiDocumentation": "Tài liệu API",
+  "apiNumberGenerator": "Tạo Số",
+  "apiColorGenerator": "Tạo Màu",
+  "apiCopy": "Sao chép"
 }

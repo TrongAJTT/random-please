@@ -20,8 +20,10 @@ import 'package:random_please/models/settings_model.dart';
 import 'package:random_please/models/list_template_source.dart';
 import 'package:random_please/models/cloud_template.dart';
 import 'package:random_please/widgets/generic/icon_button_list.dart';
+import 'package:random_please/widgets/api_status_indicator.dart';
 import 'package:window_manager/window_manager.dart';
 import 'screens/settings/main_settings.dart';
+import 'screens/settings/api_management_screen.dart';
 import 'screens/landing_screen.dart';
 import 'screens/landing_desktop_layout.dart';
 import 'package:flutter/services.dart';
@@ -339,6 +341,20 @@ class _HomePageState extends State<HomePage> with WindowListener {
         onPressed: _onToolOrderChanged,
       ),
       IconButtonListItem(
+        icon: Icons.api,
+        label: loc.localApiManagement,
+        onPressed: () {
+          const screen = ApiManagementScreen();
+          UniRoute.navigate(
+            context,
+            UniRouteModel(
+              title: loc.localApiManagement,
+              content: screen,
+            ),
+          );
+        },
+      ),
+      IconButtonListItem(
         icon: Icons.settings,
         label: loc.settings,
         onPressed: () {
@@ -436,6 +452,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
                   style: Theme.of(context).textTheme.titleLarge),
               leading: SizedBox(
                   width: 40, height: 40, child: Image.asset(imageAssetPath)),
+              trailing: const ApiStatusIndicator(),
             ),
             actions: [
               _buildActionAppbar(
