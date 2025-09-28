@@ -6,6 +6,7 @@ import 'package:random_please/layouts/random_generator_layout.dart';
 import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/common/history_widget.dart';
+import 'package:random_please/widgets/common/counter_statistics_card.dart';
 import 'package:random_please/providers/rock_paper_scissors_generator_provider.dart';
 import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
@@ -147,90 +148,6 @@ class _RockPaperScissorsGeneratorScreenState
       type: 'rock_paper_scissors',
       title: loc.generationHistory,
     );
-  }
-
-  Widget _buildCounterStats(
-      AppLocalizations loc, RockPaperScissorsCounterStatistics stats) {
-    return Column(
-      children: [
-        // Start time
-        _buildStatRow(
-          icon: Icons.access_time,
-          label: loc.startTime,
-          value: _formatTime(stats.startTime),
-        ),
-        const SizedBox(height: 12),
-
-        // Total generations
-        _buildStatRow(
-          icon: Icons.repeat,
-          label: loc.totalGenerations,
-          value: stats.totalGenerations.toString(),
-        ),
-        VerticalSpacingDivider.both(4),
-
-        // Rock count
-        _buildStatRow(
-          icon: Icons.sports_mma,
-          label: loc.rockCount,
-          value:
-              '${stats.rockCount} (${stats.rockPercentage.toStringAsFixed(1)}%)',
-        ),
-        const SizedBox(height: 12),
-
-        // Paper count
-        _buildStatRow(
-          icon: Icons.article,
-          label: loc.paperCount,
-          value:
-              '${stats.paperCount} (${stats.paperPercentage.toStringAsFixed(1)}%)',
-        ),
-        const SizedBox(height: 12),
-
-        // Scissors count
-        _buildStatRow(
-          icon: Icons.content_cut,
-          label: loc.scissorsCount,
-          value:
-              '${stats.scissorsCount} (${stats.scissorsPercentage.toStringAsFixed(1)}%)',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStatRow({
-    required IconData icon,
-    required String label,
-    required String value,
-    Color? valueColor,
-  }) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 20,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            label,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-                color: valueColor,
-              ),
-        ),
-      ],
-    );
-  }
-
-  String _formatTime(DateTime dateTime) {
-    return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
   Future<void> _setupResultAnimations(String result) async {
@@ -650,63 +567,18 @@ class _RockPaperScissorsGeneratorScreenState
 
         // Counter statistics card (only show in counter mode)
         if (state.counterMode) ...[
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.orange.shade100,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(
-                          Icons.analytics,
-                          color: Colors.orange.shade700,
-                          size: 20,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          loc.counterStatistics,
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            notifier.resetCounter();
-                            setState(() {
-                              _displayedStats = notifier.counterStats;
-                            });
-                          },
-                          icon: const Icon(
-                            Icons.refresh,
-                            color: Colors.red,
-                          ),
-                          tooltip: 'Reset Counter',
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  _buildCounterStats(
-                      loc, _displayedStats ?? notifier.counterStats),
-                ],
-              ),
-            ),
+          CounterStatisticsCard(
+            stats: _displayedStats ?? notifier.counterStats,
+            title: loc.counterStatistics,
+            headerIcon: Icons.analytics,
+            headerColor: Colors.orange,
+            onReset: () {
+              notifier.resetCounter();
+              setState(() {
+                _displayedStats = notifier.counterStats;
+              });
+            },
+            resetTooltip: 'Reset Counter',
           ),
           const SizedBox(height: 24),
         ],

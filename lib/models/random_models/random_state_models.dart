@@ -1,4 +1,6 @@
 import 'package:hive/hive.dart';
+import 'package:flutter/material.dart';
+import 'package:random_please/models/counter_statistics_base.dart';
 
 part 'random_state_models.g.dart';
 
@@ -797,19 +799,48 @@ class CoinFlipGeneratorState {
 }
 
 // Counter Statistics Model (not saved to state)
-class CounterStatistics {
-  final DateTime startTime;
-  final int totalGenerations;
+class CounterStatistics extends CounterStatisticsBase {
   final int yesCount;
   final int noCount;
 
   CounterStatistics({
-    required this.startTime,
-    this.totalGenerations = 0,
+    required DateTime startTime,
+    int totalGenerations = 0,
     this.yesCount = 0,
     this.noCount = 0,
-  });
+  }) : super(startTime: startTime, totalGenerations: totalGenerations);
 
+  @override
+  Map<String, int> get counts => {
+        'yes': yesCount,
+        'no': noCount,
+      };
+
+  @override
+  Map<String, double> get percentages => {
+        'yes': calculatePercentage(yesCount),
+        'no': calculatePercentage(noCount),
+      };
+
+  @override
+  Map<String, String> get labels => {
+        'yes': 'Yes Count',
+        'no': 'No Count',
+      };
+
+  @override
+  Map<String, String> get icons => {
+        'yes': 'check_circle',
+        'no': 'cancel',
+      };
+
+  @override
+  Map<String, int> get colors => {
+        'yes': Colors.green.value,
+        'no': Colors.red.value,
+      };
+
+  @override
   CounterStatistics copyWith({
     DateTime? startTime,
     int? totalGenerations,
@@ -818,37 +849,59 @@ class CounterStatistics {
   }) {
     return CounterStatistics(
       startTime: startTime ?? this.startTime,
-      totalGenerations: totalGenerations ?? this.totalGenerations,
+      totalGenerations: totalGenerations ?? super.totalGenerations,
       yesCount: yesCount ?? this.yesCount,
       noCount: noCount ?? this.noCount,
     );
   }
 
-  double get yesPercentage {
-    if (totalGenerations == 0) return 0.0;
-    return (yesCount / totalGenerations) * 100;
-  }
-
-  double get noPercentage {
-    if (totalGenerations == 0) return 0.0;
-    return (noCount / totalGenerations) * 100;
-  }
+  double get yesPercentage => calculatePercentage(yesCount);
+  double get noPercentage => calculatePercentage(noCount);
 }
 
 // Coin Flip Counter Statistics Model (not saved to state)
-class CoinFlipCounterStatistics {
-  final DateTime startTime;
-  final int totalGenerations;
+class CoinFlipCounterStatistics extends CounterStatisticsBase {
   final int headsCount;
   final int tailsCount;
 
   CoinFlipCounterStatistics({
-    required this.startTime,
-    this.totalGenerations = 0,
+    required DateTime startTime,
+    int totalGenerations = 0,
     this.headsCount = 0,
     this.tailsCount = 0,
-  });
+  }) : super(startTime: startTime, totalGenerations: totalGenerations);
 
+  @override
+  Map<String, int> get counts => {
+        'heads': headsCount,
+        'tails': tailsCount,
+      };
+
+  @override
+  Map<String, double> get percentages => {
+        'heads': calculatePercentage(headsCount),
+        'tails': calculatePercentage(tailsCount),
+      };
+
+  @override
+  Map<String, String> get labels => {
+        'heads': 'Heads Count',
+        'tails': 'Tails Count',
+      };
+
+  @override
+  Map<String, String> get icons => {
+        'heads': 'check_circle',
+        'tails': 'cancel',
+      };
+
+  @override
+  Map<String, int> get colors => {
+        'heads': Colors.amber.value,
+        'tails': Colors.grey.value,
+      };
+
+  @override
   CoinFlipCounterStatistics copyWith({
     DateTime? startTime,
     int? totalGenerations,
@@ -857,21 +910,14 @@ class CoinFlipCounterStatistics {
   }) {
     return CoinFlipCounterStatistics(
       startTime: startTime ?? this.startTime,
-      totalGenerations: totalGenerations ?? this.totalGenerations,
+      totalGenerations: totalGenerations ?? super.totalGenerations,
       headsCount: headsCount ?? this.headsCount,
       tailsCount: tailsCount ?? this.tailsCount,
     );
   }
 
-  double get headsPercentage {
-    if (totalGenerations == 0) return 0.0;
-    return (headsCount / totalGenerations) * 100;
-  }
-
-  double get tailsPercentage {
-    if (totalGenerations == 0) return 0.0;
-    return (tailsCount / totalGenerations) * 100;
-  }
+  double get headsPercentage => calculatePercentage(headsCount);
+  double get tailsPercentage => calculatePercentage(tailsCount);
 }
 
 // Simple state for tools with minimal options (Yes/No, Coin Flip, Rock Paper Scissors)
@@ -1148,21 +1194,55 @@ class RockPaperScissorsGeneratorState {
 }
 
 // Rock Paper Scissors Counter Statistics Model (not saved to state)
-class RockPaperScissorsCounterStatistics {
-  final DateTime startTime;
-  final int totalGenerations;
+class RockPaperScissorsCounterStatistics extends CounterStatisticsBase {
   final int rockCount;
   final int paperCount;
   final int scissorsCount;
 
   RockPaperScissorsCounterStatistics({
-    required this.startTime,
-    this.totalGenerations = 0,
+    required DateTime startTime,
+    int totalGenerations = 0,
     this.rockCount = 0,
     this.paperCount = 0,
     this.scissorsCount = 0,
-  });
+  }) : super(startTime: startTime, totalGenerations: totalGenerations);
 
+  @override
+  Map<String, int> get counts => {
+        'rock': rockCount,
+        'paper': paperCount,
+        'scissors': scissorsCount,
+      };
+
+  @override
+  Map<String, double> get percentages => {
+        'rock': calculatePercentage(rockCount),
+        'paper': calculatePercentage(paperCount),
+        'scissors': calculatePercentage(scissorsCount),
+      };
+
+  @override
+  Map<String, String> get labels => {
+        'rock': 'Rock Count',
+        'paper': 'Paper Count',
+        'scissors': 'Scissors Count',
+      };
+
+  @override
+  Map<String, String> get icons => {
+        'rock': 'sports_mma',
+        'paper': 'article',
+        'scissors': 'content_cut',
+      };
+
+  @override
+  Map<String, int> get colors => {
+        'rock': Colors.brown.value,
+        'paper': Colors.blue.value,
+        'scissors': Colors.red.value,
+      };
+
+  @override
   RockPaperScissorsCounterStatistics copyWith({
     DateTime? startTime,
     int? totalGenerations,
@@ -1172,27 +1252,16 @@ class RockPaperScissorsCounterStatistics {
   }) {
     return RockPaperScissorsCounterStatistics(
       startTime: startTime ?? this.startTime,
-      totalGenerations: totalGenerations ?? this.totalGenerations,
+      totalGenerations: totalGenerations ?? super.totalGenerations,
       rockCount: rockCount ?? this.rockCount,
       paperCount: paperCount ?? this.paperCount,
       scissorsCount: scissorsCount ?? this.scissorsCount,
     );
   }
 
-  double get rockPercentage {
-    if (totalGenerations == 0) return 0.0;
-    return (rockCount / totalGenerations) * 100;
-  }
-
-  double get paperPercentage {
-    if (totalGenerations == 0) return 0.0;
-    return (paperCount / totalGenerations) * 100;
-  }
-
-  double get scissorsPercentage {
-    if (totalGenerations == 0) return 0.0;
-    return (scissorsCount / totalGenerations) * 100;
-  }
+  double get rockPercentage => calculatePercentage(rockCount);
+  double get paperPercentage => calculatePercentage(paperCount);
+  double get scissorsPercentage => calculatePercentage(scissorsCount);
 }
 
 // Simple state models for tools with minimal options
