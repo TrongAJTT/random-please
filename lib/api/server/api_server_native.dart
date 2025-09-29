@@ -189,10 +189,25 @@ class LocalApiServerNative implements LocalApiServer {
         final result = await service.generate(config);
         final jsonResult = service.resultToJson(result);
 
+        // Build unified API response map
+        final Map<String, dynamic> fullResponse = ApiResponse.success(
+          jsonResult['data'],
+          metadata: jsonResult['metadata'],
+        ).toJson();
+
+        // Handle `target` param: default "all" returns the full 6-key JSON
+        final String target =
+            request.url.queryParameters['target']?.toLowerCase() ?? 'all';
+
+        dynamic bodyToEncode;
+        if (target != 'all' && fullResponse.containsKey(target)) {
+          bodyToEncode = fullResponse[target];
+        } else {
+          bodyToEncode = fullResponse;
+        }
+
         return Response.ok(
-          jsonEncode(ApiResponse.success(jsonResult['data'],
-                  metadata: jsonResult['metadata'])
-              .toJson()),
+          jsonEncode(bodyToEncode),
           headers: {
             'Content-Type': 'application/json',
             'X-Title': 'Random Please API - $generator'
@@ -470,6 +485,21 @@ class LocalApiServerNative implements LocalApiServer {
   "timestamp": 1234567890,
   "version": "1.0.0"
 }</pre>
+        <div class="endpoint">
+            <strong>Target parameter:</strong> Use <code>?target=all|data|metadata|success|error|timestamp|version</code> to control the response shape.<br>
+            <ul>
+                <li><code>target=all</code> (default) returns the full 6-key JSON shown above.</li>
+                <li>When set to a specific top-level key (e.g. <code>data</code>), only that value is returned.</li>
+                <li>If an unknown value is provided, the server falls back to <code>all</code>.</li>
+            </ul>
+            <strong>Examples:</strong>
+            <pre>
+GET $baseUrl/api/v1/random/number?from=1&to=10&quantity=3&type=int&target=all
+GET $baseUrl/api/v1/random/number?from=1&to=10&quantity=3&type=int&target=data
+GET $baseUrl/api/v1/random/number?from=1&to=10&quantity=3&type=int&target=metadata
+GET $baseUrl/api/v1/random/number?from=1&to=10&quantity=3&type=int&target=timestamp
+            </pre>
+        </div>
         
         <h2>🎯 New Data Structure</h2>
         <p><strong>Clean Separation:</strong></p>
