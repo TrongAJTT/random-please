@@ -128,7 +128,7 @@ class LocalApiServerNative implements LocalApiServer {
         jsonEncode(ApiResponse.success({
           'name': 'Random Please Local API',
           'version': '1.0.0',
-          'baseUrl': 'http://$host:${port}',
+          'baseUrl': 'http://$host:$port',
           'endpoints': {
             'health': '/health',
             'info': '/info',
@@ -205,6 +205,8 @@ class LocalApiServerNative implements LocalApiServer {
         );
       }
     });
+
+
 
     // OPTIONS handler for CORS preflight
     app.options('/<path|.*>', (Request request, String path) {

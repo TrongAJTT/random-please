@@ -64,7 +64,8 @@ shelf_cors_headers: ^0.1.5  # (unused, implemented custom CORS)
 #### **Random Generator Endpoints:**
 - `GET /api/v1/random/number` - Number generator
 - `GET /api/v1/random/color` - Color generator
-- 🔄 **Ready for expansion:** Password, List Picker, Cards, etc.
+- `GET /api/v1/random/list` - List picker from Hive data or custom items
+- 🔄 **Ready for expansion:** Password, Cards, etc.
 
 #### **Response Format:**
 ```json

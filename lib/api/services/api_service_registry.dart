@@ -4,6 +4,10 @@ import '../services/color_api_service.dart';
 import '../services/password_api_service.dart';
 import '../services/cards_api_service.dart';
 import '../services/simple_generators_api_service.dart';
+import '../services/date_api_service.dart';
+import '../services/lorem_ipsum_api_service.dart';
+import '../services/latin_letter_api_service.dart';
+import '../services/list_picker_api_service.dart';
 
 // Service registry để quản lý tất cả generators theo SOLID DIP principle
 class ApiServiceRegistry {
@@ -26,7 +30,11 @@ class ApiServiceRegistry {
     _services['dice'] = DiceApiService();
     _services['rps'] = RpsApiService();
     _services['yesno'] = YesNoApiService();
-    // TODO: Add date, lorem, letter, list-pick generators
+    // New services implemented
+    _services['date'] = DateApiService();
+    _services['lorem'] = LoremIpsumApiService();
+    _services['letter'] = LatinLetterApiService();
+    _services['list'] = ListPickerApiService();
   }
 
   // Get service by name
