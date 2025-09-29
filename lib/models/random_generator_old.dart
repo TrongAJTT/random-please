@@ -1,0 +1,641 @@
+import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:faker/faker.dart' show Faker;
+import 'package:random_please/utils/enhanced_random.dart';
+
+/// Playing card representation
+class PlayingCard {
+  final String suit;
+  final String rank;
+
+  PlayingCard({required this.suit, required this.rank});
+
+  @override
+  String toString() => '$rank$suit';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PlayingCard &&
+          runtimeType == other.runtimeType &&
+          suit == other.suit &&
+          rank == other.rank;
+
+  @override
+  int get hashCode => suit.hashCode ^ rank.hashCode;
+
+  bool get isRed => suit == '♥' || suit == '♦';
+}
+
+/// Utility class for all random generation functionality
+class RandomGenerator {
+  static final Random _random = Random();
+  static final Faker _faker = Faker();
+  static final Random _secureRandom = Random.secure();
+
+  // Enhanced random number generator combining multiple sources
+  static num _generateEnhancedRandom({
+    required bool isInteger,
+    required num min,
+    required num max,
+  }) {
+    // Combine multiple random sources for better randomness
+    final fakerValue = isInteger
+        ? _faker.randomGenerator
+            .integer((max - min).toInt() + 1, min: min.toInt())
+        : _faker.randomGenerator.decimal(scale: max - min, min: min.toDouble());
+
+    final dartRandomValue = isInteger
+        ? min.toInt() + _random.nextInt((max - min).toInt() + 1)
+        : min + _random.nextDouble() * (max - min);
+
+    // Secure random source (independent and high-entropy)
+    final secureValue = isInteger
+        ? min.toInt() + _secureRandom.nextInt((max - min).toInt() + 1)
+        : min + _secureRandom.nextDouble() * (max - min);
+
+    // Combine all three sources using weighted average
+    if (isInteger) {
+      // For integers, randomly pick among three independent sources
+      // to avoid bias and correlation; all are uniform.
+      final values = [fakerValue, dartRandomValue, secureValue];
+      return values[_random.nextInt(values.length)];
+    } else {
+      // For floating point, use weighted combination
+      final weights = [0.34, 0.33, 0.33]; // balance sources
+      final combined = (fakerValue * weights[0] +
+          dartRandomValue * weights[1] +
+          secureValue * weights[2]);
+
+      // Round to 2 decimal places
+      return double.parse(combined.toStringAsFixed(2));
+    }
+  }
+
+  // Password generator
+  static String generatePassword({
+    required int length,
+    required bool includeLowercase,
+    required bool includeUppercase,
+    required bool includeNumbers,
+    required bool includeSpecial,
+  }) {
+    // At least one category should be selected
+    if (!includeLowercase &&
+        !includeUppercase &&
+        !includeNumbers &&
+        !includeSpecial) {
+      throw ArgumentError('At least one character set must be selected');
+    }
+
+    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
+    const special = '!@#\$%^&*()-_=+[]{}|;:,.<>?/';
+
+    String allowedChars = '';
+    if (includeLowercase) allowedChars += lowercase;
+    if (includeUppercase) allowedChars += uppercase;
+    if (includeNumbers) allowedChars += numbers;
+    if (includeSpecial) allowedChars += special;
+
+    if (allowedChars.isEmpty) {
+      return '';
+    }
+
+    StringBuffer password = StringBuffer();
+    for (int i = 0; i < length; i++) {
+      int randomIndex = _random.nextInt(allowedChars.length);
+      password.write(allowedChars[randomIndex]);
+    }
+
+    return password.toString();
+  }
+
+  // Number generator with enhanced randomness using faker
+  static List<num> generateNumbers({
+    required bool isInteger,
+    required num min,
+    required num max,
+    required int count,
+    required bool allowDuplicates,
+  }) {
+    if (min > max) {
+      throw ArgumentError(
+          'Minimum value must be less than or equal to maximum value');
+    }
+
+    if (count <= 0) {
+      return [];
+    }
+
+    // If not allowing duplicates, check if we can generate enough unique numbers
+    if (!allowDuplicates) {
+      int possibleUniqueValues;
+      if (isInteger) {
+        possibleUniqueValues = (max.toInt() - min.toInt() + 1);
+      } else {
+        // For floating point, there's virtually infinite values between min and max
+        possibleUniqueValues = count; // Just set to count to allow it
+      }
+
+      if (count > possibleUniqueValues) {
+        throw ArgumentError(
+            'Cannot generate $count unique numbers in range $min to $max');
+      }
+    }
+
+    List<num> numbers = [];
+
+    if (allowDuplicates) {
+      for (int i = 0; i < count; i++) {
+        if (isInteger) {
+          final value =
+              min.toInt() + _secureRandom.nextInt((max - min).toInt() + 1);
+          numbers.add(value);
+        } else {
+          final value = min + _secureRandom.nextDouble() * (max - min);
+          numbers.add(double.parse(value.toStringAsFixed(2)));
+        }
+      }
+    } else {
+      // Generate unique numbers
+      Set<num> uniqueNumbers = {};
+      while (uniqueNumbers.length < count) {
+        uniqueNumbers.add(_generateEnhancedRandom(
+          isInteger: isInteger,
+          min: min,
+          max: max,
+        ));
+      }
+      numbers = uniqueNumbers.toList();
+    }
+
+    return numbers;
+  }
+
+  // Yes or No
+  static bool generateYesNo() {
+    return _random.nextBool();
+  }
+
+  // Coin flip
+  static bool generateCoinFlip() {
+    return _random.nextBool(); // true = heads, false = tails
+  }
+
+  // Rock-Paper-Scissors
+  static int generateRockPaperScissors() {
+    return _random.nextInt(3); // 0: Rock, 1: Paper, 2: Scissors
+  }
+
+  // Dice roll
+  static List<int> generateDiceRolls({required int count, required int sides}) {
+    if (count <= 0) {
+      return [];
+    }
+
+    if (sides <= 0) {
+      throw ArgumentError('Dice must have at least 1 side');
+    }
+
+    List<int> rolls = [];
+    for (int i = 0; i < count; i++) {
+      // Enhanced random dice roll using multiple sources
+      final roll = _generateEnhancedDiceRoll(sides);
+      rolls.add(roll);
+    }
+
+    return rolls;
+  }
+
+  // Enhanced dice roll generator combining multiple sources
+  static int _generateEnhancedDiceRoll(int sides) {
+    // Combine multiple random sources for better randomness
+    final fakerRoll = 1 + _faker.randomGenerator.integer(sides);
+    final dartRoll = 1 + _random.nextInt(sides);
+
+    // Use timestamp-based seed for additional randomness
+    final timestampSeed = DateTime.now().millisecondsSinceEpoch % 1000;
+    final timestampRandom = Random(timestampSeed);
+    final timestampRoll = 1 + timestampRandom.nextInt(sides);
+
+    // Choose randomly between the three sources
+    final sources = [fakerRoll, dartRoll, timestampRoll];
+    return sources[_random.nextInt(sources.length)];
+  }
+
+  // Color generator
+  static Color generateColor({bool withAlpha = false}) {
+    // Enhanced random color generation using multiple sources
+    final r = _generateEnhancedColorComponent();
+    final g = _generateEnhancedColorComponent();
+    final b = _generateEnhancedColorComponent();
+    final a = withAlpha ? _generateEnhancedColorComponent() : 255;
+
+    return Color.fromARGB(a, r, g, b);
+  }
+
+  // Enhanced color component generator combining multiple sources
+  static int _generateEnhancedColorComponent() {
+    // Combine multiple random sources for better randomness
+    final fakerValue = _faker.randomGenerator.integer(256);
+    final dartValue = _random.nextInt(256);
+
+    // Use timestamp-based seed for additional randomness
+    final timestampSeed = DateTime.now().millisecondsSinceEpoch % 1000;
+    final timestampRandom = Random(timestampSeed);
+    final timestampValue = timestampRandom.nextInt(256);
+
+    // Combine all three sources using weighted average
+    final combinedValue = (fakerValue + dartValue + timestampValue) % 256;
+
+    return combinedValue;
+  }
+
+  // Latin letter generator
+  static String generateLatinLetters(
+    int count, {
+    bool includeUppercase = true,
+    bool includeLowercase = true,
+    bool allowDuplicates = true,
+  }) {
+    if (count <= 0) {
+      return '';
+    }
+
+    const String lowers = 'abcdefghijklmnopqrstuvwxyz';
+    const String uppers = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    String letters = '';
+    if (includeLowercase) letters += lowers;
+    if (includeUppercase) letters += uppers;
+
+    if (letters.isEmpty) {
+      throw ArgumentError('At least one letter case must be included');
+    }
+
+    if (!allowDuplicates && count > letters.length) {
+      throw ArgumentError(
+          'Cannot generate $count unique letters from available set');
+    }
+
+    // Guarantee at least one uppercase and one lowercase if both enabled and count >= 2
+    final bool needGuarantee =
+        includeLowercase && includeUppercase && count >= 2;
+    if (allowDuplicates) {
+      List<String> result = [];
+      if (needGuarantee) {
+        // Preselect one lowercase and one uppercase
+        result.add(lowers[_random.nextInt(lowers.length)]);
+        result.add(uppers[_random.nextInt(uppers.length)]);
+        for (int i = 2; i < count; i++) {
+          result.add(letters[_random.nextInt(letters.length)]);
+        }
+        result.shuffle(_random);
+        return result.join();
+      } else {
+        StringBuffer buffer = StringBuffer();
+        for (int i = 0; i < count; i++) {
+          buffer.write(letters[_random.nextInt(letters.length)]);
+        }
+        return buffer.toString();
+      }
+    } else {
+      // Generate unique letters
+      List<String> availableLetters = letters.split('');
+      if (needGuarantee) {
+        // Preselect one lowercase and one uppercase, then fill the rest
+        List<String> result = [];
+        String lower = lowers[_random.nextInt(lowers.length)];
+        String upper = uppers[_random.nextInt(uppers.length)];
+        result.add(lower);
+        result.add(upper);
+        // Remove chosen from available
+        availableLetters.remove(lower);
+        availableLetters.remove(upper);
+        availableLetters.shuffle(_random);
+        result.addAll(availableLetters.take(count - 2));
+        result.shuffle(_random);
+        return result.join();
+      } else {
+        availableLetters.shuffle(_random);
+        return availableLetters.take(count).join('');
+      }
+    }
+  }
+
+  // Playing cards generator
+  static List<PlayingCard> generatePlayingCards({
+    required int count,
+    required bool includeJokers,
+    required bool allowDuplicates,
+  }) {
+    if (count <= 0) {
+      return [];
+    }
+
+    // Create deck
+    List<PlayingCard> deck = [];
+
+    // Standard 52 cards
+    final suits = ['♠', '♥', '♦', '♣'];
+    final ranks = [
+      'A',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      '10',
+      'J',
+      'Q',
+      'K'
+    ];
+
+    for (var suit in suits) {
+      for (var rank in ranks) {
+        deck.add(PlayingCard(suit: suit, rank: rank));
+      }
+    }
+
+    // Add jokers if requested
+    if (includeJokers) {
+      deck.add(PlayingCard(suit: '🃏', rank: 'Joker'));
+      deck.add(PlayingCard(suit: '🃏', rank: 'Joker'));
+    }
+
+    // Check if we can generate enough unique cards
+    if (!allowDuplicates && count > deck.length) {
+      throw ArgumentError(
+          'Cannot generate $count unique cards. Only ${deck.length} cards available.');
+    }
+
+    List<PlayingCard> result = [];
+
+    if (allowDuplicates) {
+      // Allow duplicates - simply pick random cards using EnhancedRandom
+      for (int i = 0; i < count; i++) {
+        result.add(deck[EnhancedRandom.nextInt(deck.length)]);
+      }
+    } else {
+      // No duplicates - perform enhanced shuffle (Fisher-Yates with EnhancedRandom)
+      List<PlayingCard> shuffledDeck = List.from(deck);
+      for (int i = shuffledDeck.length - 1; i > 0; i--) {
+        final j = EnhancedRandom.nextInt(i + 1);
+        final temp = shuffledDeck[i];
+        shuffledDeck[i] = shuffledDeck[j];
+        shuffledDeck[j] = temp;
+      }
+      result = shuffledDeck.take(count).toList();
+    }
+
+    return result;
+  }
+
+  // Date generator
+  static List<DateTime> generateRandomDates({
+    required DateTime startDate,
+    required DateTime endDate,
+    required int count,
+    required bool allowDuplicates,
+  }) {
+    if (startDate.isAfter(endDate)) {
+      throw ArgumentError('Start date must be before end date');
+    }
+
+    if (count <= 0) {
+      return [];
+    }
+
+    final int rangeDays = endDate.difference(startDate).inDays;
+
+    // Check if we can generate enough unique dates
+    if (!allowDuplicates && count > rangeDays + 1) {
+      throw ArgumentError('Cannot generate $count unique dates in range');
+    }
+
+    List<DateTime> dates = [];
+
+    if (allowDuplicates) {
+      for (int i = 0; i < count; i++) {
+        final daysToAdd = _random.nextInt(rangeDays + 1);
+        dates.add(startDate.add(Duration(days: daysToAdd)));
+      }
+    } else {
+      // Generate unique dates
+      Set<int> uniqueDays = {};
+      while (uniqueDays.length < count) {
+        uniqueDays.add(_random.nextInt(rangeDays + 1));
+      }
+
+      for (int days in uniqueDays) {
+        dates.add(startDate.add(Duration(days: days)));
+      }
+    }
+
+    return dates;
+  }
+
+  // Time generator
+  static List<TimeOfDay> generateRandomTimes({
+    required TimeOfDay startTime,
+    required TimeOfDay endTime,
+    required int count,
+    required bool allowDuplicates,
+  }) {
+    // Convert TimeOfDay to minutes for easier comparison
+    int startMinutes = startTime.hour * 60 + startTime.minute;
+    int endMinutes = endTime.hour * 60 + endTime.minute;
+
+    // Adjust if end is before start (crossing midnight)
+    if (endMinutes < startMinutes) {
+      endMinutes += 24 * 60; // Add a full day
+    }
+
+    int rangeMinutes = endMinutes - startMinutes;
+
+    // Check if we can generate enough unique times
+    if (!allowDuplicates && count > rangeMinutes + 1) {
+      throw ArgumentError('Cannot generate $count unique times in range');
+    }
+
+    if (count <= 0) {
+      return [];
+    }
+
+    List<TimeOfDay> times = [];
+
+    if (allowDuplicates) {
+      for (int i = 0; i < count; i++) {
+        final minutesToAdd = _random.nextInt(rangeMinutes + 1);
+        final totalMinutes = (startMinutes + minutesToAdd) % (24 * 60);
+        times.add(
+            TimeOfDay(hour: totalMinutes ~/ 60, minute: totalMinutes % 60));
+      }
+    } else {
+      // Generate unique times
+      Set<int> uniqueMinutes = {};
+      while (uniqueMinutes.length < count) {
+        uniqueMinutes.add(_random.nextInt(rangeMinutes + 1));
+      }
+
+      for (int minutes in uniqueMinutes) {
+        final totalMinutes = (startMinutes + minutes) % (24 * 60);
+        times.add(
+            TimeOfDay(hour: totalMinutes ~/ 60, minute: totalMinutes % 60));
+      }
+    }
+
+    return times;
+  }
+
+  // Date and Time generator
+  static List<DateTime> generateRandomDateTimes({
+    required DateTime startDateTime,
+    required DateTime endDateTime,
+    required int count,
+    required bool allowDuplicates,
+  }) {
+    if (startDateTime.isAfter(endDateTime)) {
+      throw ArgumentError('Start datetime must be before end datetime');
+    }
+
+    if (count <= 0) {
+      return [];
+    }
+
+    int rangeSeconds = endDateTime.difference(startDateTime).inSeconds;
+
+    // For date times, there are so many possible values that duplicates are very unlikely
+    // So we'll just generate random times
+    List<DateTime> dateTimes = [];
+
+    for (int i = 0; i < count; i++) {
+      final secondsToAdd = _random.nextInt(rangeSeconds + 1);
+      dateTimes.add(startDateTime.add(Duration(seconds: secondsToAdd)));
+    }
+
+    if (!allowDuplicates && dateTimes.length != count) {
+      // In the extremely unlikely case of duplicates, recursively call again
+      return generateRandomDateTimes(
+        startDateTime: startDateTime,
+        endDateTime: endDateTime,
+        count: count,
+        allowDuplicates: allowDuplicates,
+      );
+    }
+
+    return dateTimes;
+  }
+
+  // List helpers for list picker API
+  static List<String> pickRandomItems(
+    List<String> items, {
+    required int quantity,
+  }) {
+    if (items.isEmpty) return [];
+    final working = List<String>.from(items);
+    working.shuffle(_random);
+    final count =
+        quantity.clamp(1, (working.length - 1).clamp(1, working.length));
+    return working.take(count).toList();
+  }
+
+  static List<String> shuffleTake(
+    List<String> items, {
+    required int quantity,
+  }) {
+    if (items.isEmpty) return [];
+    final working = List<String>.from(items);
+    working.shuffle(_random);
+    final count = quantity.clamp(2, working.length);
+    return working.take(count).toList();
+  }
+
+  static List<String> splitIntoTeams(
+    List<String> items, {
+    required int teams,
+  }) {
+    if (items.isEmpty) return [];
+    final working = List<String>.from(items);
+    working.shuffle(_random);
+    final numberOfTeams =
+        teams.clamp(2, (working.length / 2).ceil().clamp(2, working.length));
+    final itemsPerTeam = (working.length / numberOfTeams).ceil();
+    final results = <String>[];
+    for (int i = 0; i < numberOfTeams; i++) {
+      final startIndex = i * itemsPerTeam;
+      final endIndex = ((i + 1) * itemsPerTeam).clamp(0, working.length);
+      if (startIndex < working.length) {
+        final teamItems = working.sublist(startIndex, endIndex);
+        results.add('Team ${i + 1}: ${teamItems.join(', ')}');
+      }
+    }
+    return results;
+  }
+
+  // Lorem ipsum generator to unify API and app behavior
+  static String generateLorem({
+    required String type, // 'words' | 'sentences' | 'paragraphs'
+    required int quantity,
+    required bool startLorem,
+  }) {
+    if (quantity <= 0) return '';
+
+    final faker = _faker;
+    if (type == 'words') {
+      List<String> words = [];
+      if (startLorem) {
+        words.addAll(['Lorem', 'ipsum', 'dolor', 'sit', 'amet']);
+        if (quantity > 5) {
+          for (int i = 0; i < quantity - 5; i++) {
+            words.add(faker.lorem.word());
+          }
+        }
+      } else {
+        for (int i = 0; i < quantity; i++) {
+          words.add(faker.lorem.word());
+        }
+      }
+      return words.join(' ');
+    } else if (type == 'sentences') {
+      List<String> sentences = [];
+      if (startLorem) {
+        sentences
+            .add('Lorem ipsum dolor sit amet, consectetur adipiscing elit.');
+        if (quantity > 1) {
+          for (int i = 0; i < quantity - 1; i++) {
+            sentences.add(faker.lorem.sentence());
+          }
+        }
+      } else {
+        for (int i = 0; i < quantity; i++) {
+          sentences.add(faker.lorem.sentence());
+        }
+      }
+      return sentences.join(' ');
+    } else {
+      // paragraphs
+      List<String> paragraphs = [];
+      if (startLorem) {
+        paragraphs.add(
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
+        if (quantity > 1) {
+          for (int i = 0; i < quantity - 1; i++) {
+            paragraphs
+                .add(faker.lorem.sentences(3 + _random.nextInt(4)).join(' '));
+          }
+        }
+      } else {
+        for (int i = 0; i < quantity; i++) {
+          paragraphs
+              .add(faker.lorem.sentences(3 + _random.nextInt(4)).join(' '));
+        }
+      }
+      return paragraphs.join('\n\n');
+    }
+  }
+}

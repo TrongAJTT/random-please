@@ -15,7 +15,7 @@ import 'package:random_please/widgets/statistics/datetime_statistics_widget.dart
 import 'package:random_please/utils/auto_scroll_helper.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/constants/history_types.dart';
-import 'package:random_please/utils/enhanced_random.dart';
+import 'package:random_please/utils/standard_random_utils.dart';
 // ignore_for_file: unused_import
 import 'dart:math';
 
@@ -35,7 +35,7 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
   final ScrollController _scrollController = ScrollController();
   late AppLocalizations loc;
 
-  // Remove unused Random (EnhancedRandom is used)
+  // Uses standard high-quality PRNG for time generation
 
   @override
   void initState() {
@@ -146,7 +146,7 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
 
   // Enhanced random minute generator combining multiple sources
   int _getEnhancedRandomMinutes(int maxMinutes) {
-    return EnhancedRandom.nextInt(maxMinutes + 1);
+    return StandardRandomUtils.nextInt(0, maxMinutes);
   }
 
   void _copyToClipboard() {

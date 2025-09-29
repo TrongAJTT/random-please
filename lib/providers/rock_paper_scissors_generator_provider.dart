@@ -4,9 +4,9 @@ import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/providers/settings_provider.dart';
 import 'package:random_please/services/settings_service.dart';
-// Removed unused imports (EnhancedRandom is used instead)
+// Uses proper statistical algorithms instead of flawed averaging
 import 'package:random_please/constants/history_types.dart';
-import 'package:random_please/utils/enhanced_random.dart';
+import 'package:random_please/utils/standard_random_utils.dart';
 
 class RockPaperScissorsGeneratorNotifier
     extends StateNotifier<RockPaperScissorsGeneratorState> {
@@ -220,8 +220,8 @@ class RockPaperScissorsGeneratorNotifier
 
   /// Enhanced random Rock Paper Scissors generation using multiple entropy sources
   String _generateEnhancedRandomRPS() {
-    // Use EnhancedRandom uniformly to map 0..2 → Rock/Paper/Scissors
-    final idx = EnhancedRandom.nextInt(3); // 0,1,2
+    // Use StandardRandomUtils for uniform distribution to map 0..2 → Rock/Paper/Scissors
+    final idx = StandardRandomUtils.nextInt(0, 2); // 0,1,2
     switch (idx) {
       case 0:
         return 'Rock';

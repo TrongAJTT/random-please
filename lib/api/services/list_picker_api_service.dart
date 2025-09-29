@@ -166,10 +166,17 @@ class ListPickerApiService
           break;
 
         case 'team':
-          results = main_random.RandomGenerator.splitIntoTeams(
+          final teams = main_random.RandomGenerator.splitIntoTeams(
             items,
             teams: config.quantity,
           );
+
+          // Convert teams to formatted strings
+          results = [];
+          for (int i = 0; i < teams.length; i++) {
+            final teamItems = teams[i].join(', ');
+            results.add('Team ${i + 1}: $teamItems');
+          }
           break;
       }
 

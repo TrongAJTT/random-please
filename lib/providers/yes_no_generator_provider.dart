@@ -5,8 +5,8 @@ import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/providers/settings_provider.dart';
 import 'package:random_please/services/settings_service.dart';
 import 'package:random_please/constants/history_types.dart';
-// Removed direct faker usage; EnhancedRandom handles entropy
-import 'package:random_please/utils/enhanced_random.dart';
+// Uses proper statistical algorithms instead of flawed entropy
+import 'package:random_please/utils/standard_random_utils.dart';
 
 class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
   static const String boxName = 'yesNoGeneratorBox';
@@ -123,7 +123,7 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
 
   /// Enhanced random Yes/No generation using shared utility (uniform 50/50)
   String _generateEnhancedRandomYesNo() {
-    return EnhancedRandom.nextInt(2) == 0 ? 'Yes' : 'No';
+    return StandardRandomUtils.nextInt(0, 1) == 0 ? 'Yes' : 'No';
   }
 
   Future<void> generate() async {

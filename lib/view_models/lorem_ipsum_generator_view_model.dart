@@ -4,7 +4,7 @@ import 'package:faker/faker.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/services/generation_history_service.dart';
 import 'package:random_please/constants/history_types.dart';
-import 'package:random_please/utils/enhanced_random.dart';
+import 'package:random_please/utils/standard_random_utils.dart';
 
 class LoremIpsumGeneratorViewModel extends ChangeNotifier {
   static const String boxName = 'loremIpsumGeneratorBox';
@@ -101,7 +101,7 @@ class LoremIpsumGeneratorViewModel extends ChangeNotifier {
         case LoremIpsumType.paragraphs:
           // Generate specific number of paragraphs with enhanced randomness for sentence count
           for (int i = 0; i < _state.paragraphCount; i++) {
-            final sentencesPerParagraph = 3 + EnhancedRandom.nextInt(5);
+            final sentencesPerParagraph = 3 + StandardRandomUtils.nextInt(0, 4);
             generatedContent
                 .add(faker.lorem.sentences(sentencesPerParagraph).join(' '));
           }

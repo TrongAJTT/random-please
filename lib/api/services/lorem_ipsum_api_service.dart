@@ -103,8 +103,8 @@ class LoremIpsumApiService
     try {
       final result = RandomGenerator.generateLorem(
         type: config.type,
-        quantity: config.quantity,
-        startLorem: config.startLorem,
+        count: config.quantity,
+        startWithLorem: config.startLorem,
       );
 
       return LoremIpsumApiResult(text: result, config: config);
