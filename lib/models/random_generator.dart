@@ -31,6 +31,7 @@ class PlayingCard {
 class RandomGenerator {
   static final Random _random = Random();
   static final Faker _faker = Faker();
+  static final Random _secureRandom = Random.secure();
 
   // Enhanced random number generator combining multiple sources
   static num _generateEnhancedRandom({
@@ -48,24 +49,23 @@ class RandomGenerator {
         ? min.toInt() + _random.nextInt((max - min).toInt() + 1)
         : min + _random.nextDouble() * (max - min);
 
-    // Use timestamp-based seed for additional randomness
-    final timestampSeed = DateTime.now().millisecondsSinceEpoch % 1000;
-    final timestampRandom = Random(timestampSeed);
-    final timestampValue = isInteger
-        ? min.toInt() + timestampRandom.nextInt((max - min).toInt() + 1)
-        : min + timestampRandom.nextDouble() * (max - min);
+    // Secure random source (independent and high-entropy)
+    final secureValue = isInteger
+        ? min.toInt() + _secureRandom.nextInt((max - min).toInt() + 1)
+        : min + _secureRandom.nextDouble() * (max - min);
 
     // Combine all three sources using weighted average
     if (isInteger) {
-      // For integers, use majority vote or average
-      final values = [fakerValue, dartRandomValue, timestampValue];
+      // For integers, randomly pick among three independent sources
+      // to avoid bias and correlation; all are uniform.
+      final values = [fakerValue, dartRandomValue, secureValue];
       return values[_random.nextInt(values.length)];
     } else {
       // For floating point, use weighted combination
-      final weights = [0.4, 0.3, 0.3]; // Faker gets slightly more weight
+      final weights = [0.34, 0.33, 0.33]; // balance sources
       final combined = (fakerValue * weights[0] +
           dartRandomValue * weights[1] +
-          timestampValue * weights[2]);
+          secureValue * weights[2]);
 
       // Round to 2 decimal places
       return double.parse(combined.toStringAsFixed(2));
@@ -149,11 +149,14 @@ class RandomGenerator {
 
     if (allowDuplicates) {
       for (int i = 0; i < count; i++) {
-        numbers.add(_generateEnhancedRandom(
-          isInteger: isInteger,
-          min: min,
-          max: max,
-        ));
+        if (isInteger) {
+          final value =
+              min.toInt() + _secureRandom.nextInt((max - min).toInt() + 1);
+          numbers.add(value);
+        } else {
+          final value = min + _secureRandom.nextDouble() * (max - min);
+          numbers.add(double.parse(value.toStringAsFixed(2)));
+        }
       }
     } else {
       // Generate unique numbers
@@ -526,5 +529,113 @@ class RandomGenerator {
     }
 
     return dateTimes;
+  }
+
+  // List helpers for list picker API
+  static List<String> pickRandomItems(
+    List<String> items, {
+    required int quantity,
+  }) {
+    if (items.isEmpty) return [];
+    final working = List<String>.from(items);
+    working.shuffle(_random);
+    final count =
+        quantity.clamp(1, (working.length - 1).clamp(1, working.length));
+    return working.take(count).toList();
+  }
+
+  static List<String> shuffleTake(
+    List<String> items, {
+    required int quantity,
+  }) {
+    if (items.isEmpty) return [];
+    final working = List<String>.from(items);
+    working.shuffle(_random);
+    final count = quantity.clamp(2, working.length);
+    return working.take(count).toList();
+  }
+
+  static List<String> splitIntoTeams(
+    List<String> items, {
+    required int teams,
+  }) {
+    if (items.isEmpty) return [];
+    final working = List<String>.from(items);
+    working.shuffle(_random);
+    final numberOfTeams =
+        teams.clamp(2, (working.length / 2).ceil().clamp(2, working.length));
+    final itemsPerTeam = (working.length / numberOfTeams).ceil();
+    final results = <String>[];
+    for (int i = 0; i < numberOfTeams; i++) {
+      final startIndex = i * itemsPerTeam;
+      final endIndex = ((i + 1) * itemsPerTeam).clamp(0, working.length);
+      if (startIndex < working.length) {
+        final teamItems = working.sublist(startIndex, endIndex);
+        results.add('Team ${i + 1}: ${teamItems.join(', ')}');
+      }
+    }
+    return results;
+  }
+
+  // Lorem ipsum generator to unify API and app behavior
+  static String generateLorem({
+    required String type, // 'words' | 'sentences' | 'paragraphs'
+    required int quantity,
+    required bool startLorem,
+  }) {
+    if (quantity <= 0) return '';
+
+    final faker = _faker;
+    if (type == 'words') {
+      List<String> words = [];
+      if (startLorem) {
+        words.addAll(['Lorem', 'ipsum', 'dolor', 'sit', 'amet']);
+        if (quantity > 5) {
+          for (int i = 0; i < quantity - 5; i++) {
+            words.add(faker.lorem.word());
+          }
+        }
+      } else {
+        for (int i = 0; i < quantity; i++) {
+          words.add(faker.lorem.word());
+        }
+      }
+      return words.join(' ');
+    } else if (type == 'sentences') {
+      List<String> sentences = [];
+      if (startLorem) {
+        sentences
+            .add('Lorem ipsum dolor sit amet, consectetur adipiscing elit.');
+        if (quantity > 1) {
+          for (int i = 0; i < quantity - 1; i++) {
+            sentences.add(faker.lorem.sentence());
+          }
+        }
+      } else {
+        for (int i = 0; i < quantity; i++) {
+          sentences.add(faker.lorem.sentence());
+        }
+      }
+      return sentences.join(' ');
+    } else {
+      // paragraphs
+      List<String> paragraphs = [];
+      if (startLorem) {
+        paragraphs.add(
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
+        if (quantity > 1) {
+          for (int i = 0; i < quantity - 1; i++) {
+            paragraphs
+                .add(faker.lorem.sentences(3 + _random.nextInt(4)).join(' '));
+          }
+        }
+      } else {
+        for (int i = 0; i < quantity; i++) {
+          paragraphs
+              .add(faker.lorem.sentences(3 + _random.nextInt(4)).join(' '));
+        }
+      }
+      return paragraphs.join('\n\n');
+    }
   }
 }

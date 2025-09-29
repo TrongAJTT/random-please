@@ -1,6 +1,6 @@
-import 'dart:math';
 import '../interfaces/api_random_generator.dart';
 import '../models/api_models.dart';
+import '../../models/random_generator.dart' as main_random;
 
 // Configuration cho Playing Cards API theo CustomAPI.md
 class CardsApiConfig extends ApiConfig {
@@ -105,24 +105,7 @@ class CardsApiResult extends ApiResult {
 // Playing Cards API Service
 class CardsApiService
     implements ApiRandomGenerator<CardsApiConfig, CardsApiResult> {
-  final Random _random = Random();
-
-  static const List<String> _suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
-  static const List<String> _ranks = [
-    'A',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    'J',
-    'Q',
-    'K'
-  ];
+  // Deck composition is defined in the main RandomGenerator implementation
 
   @override
   String get generatorName => 'card';
@@ -140,50 +123,22 @@ class CardsApiService
       throw ArgumentError('Invalid configuration for cards generator');
     }
 
-    // Create deck
-    List<PlayingCard> deck = [];
+    // Delegate to main RandomGenerator to get unified behavior
+    final generated = main_random.RandomGenerator.generatePlayingCards(
+      count: config.quantity,
+      includeJokers: config.joker,
+      allowDuplicates: config.allowDuplicates,
+    );
 
-    // Add standard cards
-    for (final suit in _suits) {
-      for (final rank in _ranks) {
-        deck.add(PlayingCard(
-          suit: suit,
-          rank: rank,
-          name: '$rank of $suit',
-        ));
-      }
-    }
-
-    // Add jokers if requested
-    if (config.joker) {
-      deck.add(PlayingCard(
-        suit: '',
-        rank: 'Joker',
-        name: 'Red Joker',
-        isJoker: true,
-      ));
-      deck.add(PlayingCard(
-        suit: '',
-        rank: 'Joker',
-        name: 'Black Joker',
-        isJoker: true,
-      ));
-    }
-
-    List<PlayingCard> result = [];
-    List<PlayingCard> availableCards = List.from(deck);
-
-    for (int i = 0; i < config.quantity; i++) {
-      if (availableCards.isEmpty) break;
-
-      final index = _random.nextInt(availableCards.length);
-      final card = availableCards[index];
-      result.add(card);
-
-      if (!config.allowDuplicates) {
-        availableCards.removeAt(index);
-      }
-    }
+    // Map main model to API model
+    final result = generated
+        .map((c) => PlayingCard(
+              suit: c.suit,
+              rank: c.rank,
+              name: '${c.rank} of ${c.suit}',
+              isJoker: c.rank == 'Joker',
+            ))
+        .toList();
 
     return CardsApiResult(
       cards: result,

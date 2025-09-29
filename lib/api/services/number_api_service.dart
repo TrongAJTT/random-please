@@ -1,4 +1,4 @@
-import 'dart:math';
+import '../../models/random_generator.dart';
 import '../interfaces/api_random_generator.dart';
 import '../models/api_models.dart';
 
@@ -97,8 +97,6 @@ class NumberApiResult extends ApiResult {
 // Number Generator API Service
 class NumberApiService
     implements ApiRandomGenerator<NumberApiConfig, NumberApiResult> {
-  final Random _random = Random();
-
   @override
   String get generatorName => 'number';
 
@@ -115,38 +113,13 @@ class NumberApiService
       throw ArgumentError('Invalid configuration for number generator');
     }
 
-    final List<num> numbers = [];
-    final Set<num> usedNumbers = <num>{};
-
-    for (int i = 0; i < config.quantity; i++) {
-      num value;
-      int attempts = 0;
-      const maxAttempts = 1000;
-
-      do {
-        if (config.type == 'int') {
-          value = config.from.toInt() +
-              _random.nextInt((config.to - config.from).toInt() + 1);
-        } else {
-          value =
-              config.from + _random.nextDouble() * (config.to - config.from);
-          // Round to 2 decimal places for doubles
-          value = (value * 100).round() / 100;
-        }
-        attempts++;
-      } while (!config.allowDuplicates &&
-          usedNumbers.contains(value) &&
-          attempts < maxAttempts);
-
-      if (!config.allowDuplicates && attempts >= maxAttempts) {
-        break; // Avoid infinite loop if range is too small
-      }
-
-      numbers.add(value);
-      if (!config.allowDuplicates) {
-        usedNumbers.add(value);
-      }
-    }
+    final numbers = RandomGenerator.generateNumbers(
+      isInteger: config.type == 'int',
+      min: config.from,
+      max: config.to,
+      count: config.quantity,
+      allowDuplicates: config.allowDuplicates,
+    );
 
     return NumberApiResult(
       numbers: numbers,

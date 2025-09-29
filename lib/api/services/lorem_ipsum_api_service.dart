@@ -1,6 +1,6 @@
 import '../interfaces/api_random_generator.dart';
 import '../models/api_models.dart';
-import 'package:faker/faker.dart';
+import '../../models/random_generator.dart';
 
 // Lorem Ipsum Generator API Service theo CustomAPI.md spec
 // Endpoint: /api/v1/random/lorem
@@ -79,8 +79,6 @@ class LoremIpsumApiResult extends ApiResult {
 
 class LoremIpsumApiService
     implements ApiRandomGenerator<LoremIpsumApiConfig, LoremIpsumApiResult> {
-  final faker = Faker();
-
   @override
   String get generatorName => 'lorem';
 
@@ -103,74 +101,11 @@ class LoremIpsumApiService
     }
 
     try {
-      String result = '';
-
-      if (config.type == 'words') {
-        List<String> words = [];
-
-        // Add "Lorem ipsum..." start if enabled
-        if (config.startLorem) {
-          words.addAll(['Lorem', 'ipsum', 'dolor', 'sit', 'amet']);
-          // Generate remaining words
-          if (config.quantity > 5) {
-            for (int i = 0; i < config.quantity - 5; i++) {
-              words.add(faker.lorem.word());
-            }
-          }
-        } else {
-          // Generate all words randomly
-          for (int i = 0; i < config.quantity; i++) {
-            words.add(faker.lorem.word());
-          }
-        }
-
-        result = words.join(' ');
-      } else if (config.type == 'sentences') {
-        List<String> sentences = [];
-
-        if (config.startLorem) {
-          sentences
-              .add('Lorem ipsum dolor sit amet, consectetur adipiscing elit.');
-          // Generate remaining sentences
-          if (config.quantity > 1) {
-            for (int i = 0; i < config.quantity - 1; i++) {
-              sentences.add(faker.lorem.sentence());
-            }
-          }
-        } else {
-          // Generate all sentences randomly
-          for (int i = 0; i < config.quantity; i++) {
-            sentences.add(faker.lorem.sentence());
-          }
-        }
-
-        result = sentences.join(' ');
-      } else {
-        // Paragraphs
-        List<String> paragraphs = [];
-
-        if (config.startLorem) {
-          paragraphs.add(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
-          // Generate remaining paragraphs
-          if (config.quantity > 1) {
-            for (int i = 0; i < config.quantity - 1; i++) {
-              paragraphs.add(faker.lorem
-                  .sentences(3 + faker.randomGenerator.integer(4))
-                  .join(' '));
-            }
-          }
-        } else {
-          // Generate all paragraphs randomly
-          for (int i = 0; i < config.quantity; i++) {
-            paragraphs.add(faker.lorem
-                .sentences(3 + faker.randomGenerator.integer(4))
-                .join(' '));
-          }
-        }
-
-        result = paragraphs.join('\n\n');
-      }
+      final result = RandomGenerator.generateLorem(
+        type: config.type,
+        quantity: config.quantity,
+        startLorem: config.startLorem,
+      );
 
       return LoremIpsumApiResult(text: result, config: config);
     } catch (e) {

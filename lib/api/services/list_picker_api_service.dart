@@ -1,7 +1,7 @@
 import '../interfaces/api_random_generator.dart';
 import '../models/api_models.dart';
 // Removed Hive dependencies: list selection now only uses `items`
-import 'dart:math';
+import '../../models/random_generator.dart' as main_random;
 
 // List Picker Generator API Service - Updated spec
 // Endpoints:
@@ -107,7 +107,6 @@ class ListPickerApiResult extends ApiResult {
 
 class ListPickerApiService
     implements ApiRandomGenerator<ListPickerApiConfig, ListPickerApiResult> {
-  final Random _random = Random();
   // Deprecated: no longer used
   // static const String _boxName = 'listPickerGeneratorBox';
 
@@ -153,34 +152,24 @@ class ListPickerApiService
 
       switch (config.mode) {
         case 'random':
-          items.shuffle(_random);
-          final count = config.quantity
-              .clamp(1, (items.length - 1).clamp(1, items.length));
-          results = items.take(count).toList();
+          results = main_random.RandomGenerator.pickRandomItems(
+            items,
+            quantity: config.quantity,
+          );
           break;
 
         case 'shuffle':
-          items.shuffle(_random);
-          final count = config.quantity.clamp(2, items.length);
-          results = items.take(count).toList();
+          results = main_random.RandomGenerator.shuffleTake(
+            items,
+            quantity: config.quantity,
+          );
           break;
 
         case 'team':
-          items.shuffle(_random);
-          final numberOfTeams = config.quantity
-              .clamp(2, (items.length / 2).ceil().clamp(2, items.length));
-          final itemsPerTeam = (items.length / numberOfTeams).ceil();
-
-          results = [];
-          for (int i = 0; i < numberOfTeams; i++) {
-            final startIndex = i * itemsPerTeam;
-            final endIndex = ((i + 1) * itemsPerTeam).clamp(0, items.length);
-            if (startIndex < items.length) {
-              final teamItems = items.sublist(startIndex, endIndex);
-              final teamNames = teamItems.join(', ');
-              results.add('Team ${i + 1}: $teamNames');
-            }
-          }
+          results = main_random.RandomGenerator.splitIntoTeams(
+            items,
+            teams: config.quantity,
+          );
           break;
       }
 

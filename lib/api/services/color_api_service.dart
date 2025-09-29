@@ -1,7 +1,7 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import '../interfaces/api_random_generator.dart';
 import '../models/api_models.dart';
+import '../../models/random_generator.dart';
 
 // Configuration cho Color Generator API theo CustomAPI.md
 class ColorApiConfig extends ApiConfig {
@@ -95,8 +95,6 @@ class ColorApiResult extends ApiResult {
 // Color Generator API Service
 class ColorApiService
     implements ApiRandomGenerator<ColorApiConfig, ColorApiResult> {
-  final Random _random = Random();
-
   @override
   String get generatorName => 'color';
 
@@ -113,15 +111,8 @@ class ColorApiService
       throw ArgumentError('Invalid configuration for color generator');
     }
 
-    // Generate một color duy nhất theo CustomAPI.md
-    Color color;
-    if (config.includeAlpha) {
-      // Tạo color với alpha channel
-      color = Color(_random.nextInt(0x100000000));
-    } else {
-      // Tạo color không có alpha (opaque)
-      color = Color(0xFF000000 + _random.nextInt(0xFFFFFF));
-    }
+    // Generate color via shared RandomGenerator for consistency
+    final color = RandomGenerator.generateColor(withAlpha: config.includeAlpha);
 
     final colorData = ColorData(
       color: color,
