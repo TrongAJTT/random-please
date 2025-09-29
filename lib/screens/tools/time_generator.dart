@@ -14,6 +14,9 @@ import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/widgets/statistics/datetime_statistics_widget.dart';
 import 'package:random_please/utils/auto_scroll_helper.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
+import 'package:random_please/constants/history_types.dart';
+import 'package:random_please/utils/enhanced_random.dart';
+// ignore_for_file: unused_import
 import 'dart:math';
 
 class TimeGeneratorScreen extends ConsumerStatefulWidget {
@@ -31,6 +34,8 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
   List<String> _results = [];
   final ScrollController _scrollController = ScrollController();
   late AppLocalizations loc;
+
+  // Remove unused Random (EnhancedRandom is used)
 
   @override
   void initState() {
@@ -53,7 +58,6 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
     try {
       final state = ref.read(timeGeneratorProvider);
       final stateManager = ref.read(timeGeneratorStateProvider.notifier);
-      final random = Random();
       final Set<String> generatedSet = {};
       final List<String> resultList = [];
 
@@ -88,7 +92,8 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
         const maxAttempts = 1000;
 
         do {
-          final randomMinutes = fromMinutes + random.nextInt(range + 1);
+          // Enhanced random minute selection using multiple sources
+          final randomMinutes = fromMinutes + _getEnhancedRandomMinutes(range);
 
           final hour = randomMinutes ~/ 60;
           final minute = randomMinutes % 60;
@@ -124,16 +129,24 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
 
       // Save to history
       if (_results.isNotEmpty) {
-        await ref.read(historyProvider.notifier).addHistoryItem(
-              _results.join(', '),
-              'time_generator',
-            );
+        final historyEnabled = ref.read(historyEnabledProvider);
+        if (historyEnabled) {
+          await ref.read(historyProvider.notifier).addHistoryItem(
+                _results.join(', '),
+                HistoryTypes.time,
+              );
+        }
       }
     } catch (e) {
       if (mounted) {
         SnackBarUtils.showTyped(context, e.toString(), SnackBarType.error);
       }
     }
+  }
+
+  // Enhanced random minute generator combining multiple sources
+  int _getEnhancedRandomMinutes(int maxMinutes) {
+    return EnhancedRandom.nextInt(maxMinutes + 1);
   }
 
   void _copyToClipboard() {
@@ -260,7 +273,7 @@ class _TimeGeneratorScreenState extends ConsumerState<TimeGeneratorScreen> {
 
   Widget _buildHistoryWidget() {
     return HistoryWidget(
-      type: 'time_generator',
+      type: HistoryTypes.time,
       title: loc.generationHistory,
     );
   }

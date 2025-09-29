@@ -4,13 +4,14 @@ import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/providers/settings_provider.dart';
 import 'package:random_please/services/settings_service.dart';
+import 'package:random_please/constants/history_types.dart';
 import 'package:faker/faker.dart';
 import 'dart:math';
 
 class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
   static const String boxName = 'yesNoGeneratorBox';
   static const String counterStatsBoxName = 'yesNoCounterStatsBox';
-  static const String historyType = 'yesno';
+  static const String historyType = HistoryTypes.yesNo;
 
   late Box<YesNoGeneratorState> _box;
   late Box<CounterStatistics> _counterStatsBox;
@@ -211,23 +212,20 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final fakerRandom = faker.randomGenerator;
 
-    // Combine multiple random sources
-    final entropy1 = random.nextInt(1000);
-    final entropy2 = timestamp % 1000;
-    final entropy3 = fakerRandom.integer(1000);
-    final entropy4 = fakerRandom.decimal(scale: 3).toInt();
+    // Generate three independent random values from different sources
+    final fakerValue = fakerRandom.integer(1000);
+    final dartValue = random.nextInt(1000);
 
-    // Create weighted random using multiple sources
-    final combinedEntropy = (entropy1 + entropy2 + entropy3 + entropy4) % 1000;
+    // Use timestamp-based seed for additional randomness
+    final timestampSeed = timestamp % 1000;
+    final timestampRandom = Random(timestampSeed);
+    final timestampValue = timestampRandom.nextInt(1000);
 
-    // Use Faker's random boolean as additional entropy
-    final fakerBool = fakerRandom.boolean();
+    // Combine all three sources using weighted average
+    final combinedValue = (fakerValue + dartValue + timestampValue) % 1000;
 
-    // Combine all sources for final decision
-    final finalValue = (combinedEntropy + (fakerBool ? 500 : 0)) % 1000;
-
-    // Return Yes/No based on combined entropy
-    return finalValue < 500 ? 'Yes' : 'No';
+    // Return Yes/No based on combined value (50/50 distribution)
+    return combinedValue < 500 ? 'Yes' : 'No';
   }
 }
 

@@ -11,7 +11,8 @@ import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/utils/auto_scroll_helper.dart';
-import 'dart:math';
+import 'package:random_please/constants/history_types.dart';
+import 'package:random_please/utils/enhanced_random.dart';
 
 class LatinLetterGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -134,7 +135,7 @@ class _LatinLetterGeneratorScreenState
         availableLetters += 'abcdefghijklmnopqrstuvwxyz';
       }
 
-      final random = Random();
+      // Use EnhancedRandom for better entropy
       final Set<String> generatedSet = {};
       final List<String> resultList = [];
 
@@ -144,7 +145,8 @@ class _LatinLetterGeneratorScreenState
         const maxAttempts = 1000;
 
         do {
-          letter = availableLetters[random.nextInt(availableLetters.length)];
+          letter =
+              availableLetters[EnhancedRandom.nextInt(availableLetters.length)];
           attempts++;
         } while (!state.allowDuplicates &&
             generatedSet.contains(letter) &&
@@ -174,10 +176,13 @@ class _LatinLetterGeneratorScreenState
 
       // Save to history
       if (_results.isNotEmpty) {
-        await ref.read(historyProvider.notifier).addHistoryItem(
-              _results.join(''),
-              'latin_letter',
-            );
+        final historyEnabled = ref.read(historyEnabledProvider);
+        if (historyEnabled) {
+          await ref.read(historyProvider.notifier).addHistoryItem(
+                _results.join(''),
+                HistoryTypes.latinLetter,
+              );
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -207,7 +212,7 @@ class _LatinLetterGeneratorScreenState
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return HistoryWidget(
-      type: 'latin_letter',
+      type: HistoryTypes.latinLetter,
       title: loc.generationHistory,
     );
   }

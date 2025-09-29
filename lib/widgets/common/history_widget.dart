@@ -40,6 +40,17 @@ class _HistoryWidgetState extends ConsumerState<HistoryWidget> {
   }
 
   @override
+  void didUpdateWidget(HistoryWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Reload history if type changed
+    if (oldWidget.type != widget.type) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(historyProvider.notifier).loadHistoryForType(widget.type);
+      });
+    }
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     loc = AppLocalizations.of(context)!;

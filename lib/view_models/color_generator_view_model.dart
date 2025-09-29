@@ -6,10 +6,11 @@ import 'package:random_please/models/random_generator.dart';
 import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/providers/color_generator_state_provider.dart';
 import 'package:random_please/services/generation_history_service.dart';
+import 'package:random_please/constants/history_types.dart';
 
 // Temporary wrapper to maintain compatibility
 class ColorGeneratorViewModel extends ChangeNotifier {
-  static const String historyType = 'color';
+  static const String historyType = HistoryTypes.color;
   final WidgetRef? _ref;
 
   ColorGeneratorViewModel({WidgetRef? ref}) : _ref = ref;

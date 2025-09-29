@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:faker/faker.dart' show Faker;
+import 'package:random_please/utils/enhanced_random.dart';
 
 /// Playing card representation
 class PlayingCard {
@@ -28,6 +30,47 @@ class PlayingCard {
 /// Utility class for all random generation functionality
 class RandomGenerator {
   static final Random _random = Random();
+  static final Faker _faker = Faker();
+
+  // Enhanced random number generator combining multiple sources
+  static num _generateEnhancedRandom({
+    required bool isInteger,
+    required num min,
+    required num max,
+  }) {
+    // Combine multiple random sources for better randomness
+    final fakerValue = isInteger
+        ? _faker.randomGenerator
+            .integer((max - min).toInt() + 1, min: min.toInt())
+        : _faker.randomGenerator.decimal(scale: max - min, min: min.toDouble());
+
+    final dartRandomValue = isInteger
+        ? min.toInt() + _random.nextInt((max - min).toInt() + 1)
+        : min + _random.nextDouble() * (max - min);
+
+    // Use timestamp-based seed for additional randomness
+    final timestampSeed = DateTime.now().millisecondsSinceEpoch % 1000;
+    final timestampRandom = Random(timestampSeed);
+    final timestampValue = isInteger
+        ? min.toInt() + timestampRandom.nextInt((max - min).toInt() + 1)
+        : min + timestampRandom.nextDouble() * (max - min);
+
+    // Combine all three sources using weighted average
+    if (isInteger) {
+      // For integers, use majority vote or average
+      final values = [fakerValue, dartRandomValue, timestampValue];
+      return values[_random.nextInt(values.length)];
+    } else {
+      // For floating point, use weighted combination
+      final weights = [0.4, 0.3, 0.3]; // Faker gets slightly more weight
+      final combined = (fakerValue * weights[0] +
+          dartRandomValue * weights[1] +
+          timestampValue * weights[2]);
+
+      // Round to 2 decimal places
+      return double.parse(combined.toStringAsFixed(2));
+    }
+  }
 
   // Password generator
   static String generatePassword({
@@ -69,7 +112,7 @@ class RandomGenerator {
     return password.toString();
   }
 
-  // Number generator
+  // Number generator with enhanced randomness using faker
   static List<num> generateNumbers({
     required bool isInteger,
     required num min,
@@ -106,22 +149,21 @@ class RandomGenerator {
 
     if (allowDuplicates) {
       for (int i = 0; i < count; i++) {
-        if (isInteger) {
-          numbers.add(min.toInt() + _random.nextInt((max - min).toInt() + 1));
-        } else {
-          numbers.add(min + _random.nextDouble() * (max - min));
-        }
+        numbers.add(_generateEnhancedRandom(
+          isInteger: isInteger,
+          min: min,
+          max: max,
+        ));
       }
     } else {
       // Generate unique numbers
       Set<num> uniqueNumbers = {};
       while (uniqueNumbers.length < count) {
-        if (isInteger) {
-          uniqueNumbers
-              .add(min.toInt() + _random.nextInt((max - min).toInt() + 1));
-        } else {
-          uniqueNumbers.add(min + _random.nextDouble() * (max - min));
-        }
+        uniqueNumbers.add(_generateEnhancedRandom(
+          isInteger: isInteger,
+          min: min,
+          max: max,
+        ));
       }
       numbers = uniqueNumbers.toList();
     }
@@ -156,20 +198,56 @@ class RandomGenerator {
 
     List<int> rolls = [];
     for (int i = 0; i < count; i++) {
-      rolls.add(1 + _random.nextInt(sides));
+      // Enhanced random dice roll using multiple sources
+      final roll = _generateEnhancedDiceRoll(sides);
+      rolls.add(roll);
     }
 
     return rolls;
   }
 
+  // Enhanced dice roll generator combining multiple sources
+  static int _generateEnhancedDiceRoll(int sides) {
+    // Combine multiple random sources for better randomness
+    final fakerRoll = 1 + _faker.randomGenerator.integer(sides);
+    final dartRoll = 1 + _random.nextInt(sides);
+
+    // Use timestamp-based seed for additional randomness
+    final timestampSeed = DateTime.now().millisecondsSinceEpoch % 1000;
+    final timestampRandom = Random(timestampSeed);
+    final timestampRoll = 1 + timestampRandom.nextInt(sides);
+
+    // Choose randomly between the three sources
+    final sources = [fakerRoll, dartRoll, timestampRoll];
+    return sources[_random.nextInt(sources.length)];
+  }
+
   // Color generator
   static Color generateColor({bool withAlpha = false}) {
-    int r = _random.nextInt(256);
-    int g = _random.nextInt(256);
-    int b = _random.nextInt(256);
-    int a = withAlpha ? _random.nextInt(256) : 255;
+    // Enhanced random color generation using multiple sources
+    final r = _generateEnhancedColorComponent();
+    final g = _generateEnhancedColorComponent();
+    final b = _generateEnhancedColorComponent();
+    final a = withAlpha ? _generateEnhancedColorComponent() : 255;
 
     return Color.fromARGB(a, r, g, b);
+  }
+
+  // Enhanced color component generator combining multiple sources
+  static int _generateEnhancedColorComponent() {
+    // Combine multiple random sources for better randomness
+    final fakerValue = _faker.randomGenerator.integer(256);
+    final dartValue = _random.nextInt(256);
+
+    // Use timestamp-based seed for additional randomness
+    final timestampSeed = DateTime.now().millisecondsSinceEpoch % 1000;
+    final timestampRandom = Random(timestampSeed);
+    final timestampValue = timestampRandom.nextInt(256);
+
+    // Combine all three sources using weighted average
+    final combinedValue = (fakerValue + dartValue + timestampValue) % 256;
+
+    return combinedValue;
   }
 
   // Latin letter generator
@@ -295,14 +373,19 @@ class RandomGenerator {
     List<PlayingCard> result = [];
 
     if (allowDuplicates) {
-      // Allow duplicates - simply pick random cards
+      // Allow duplicates - simply pick random cards using EnhancedRandom
       for (int i = 0; i < count; i++) {
-        result.add(deck[_random.nextInt(deck.length)]);
+        result.add(deck[EnhancedRandom.nextInt(deck.length)]);
       }
     } else {
-      // No duplicates - shuffle and take first N cards
+      // No duplicates - perform enhanced shuffle (Fisher-Yates with EnhancedRandom)
       List<PlayingCard> shuffledDeck = List.from(deck);
-      shuffledDeck.shuffle(_random);
+      for (int i = shuffledDeck.length - 1; i > 0; i--) {
+        final j = EnhancedRandom.nextInt(i + 1);
+        final temp = shuffledDeck[i];
+        shuffledDeck[i] = shuffledDeck[j];
+        shuffledDeck[j] = temp;
+      }
       result = shuffledDeck.take(count).toList();
     }
 

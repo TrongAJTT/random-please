@@ -12,6 +12,7 @@ import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/utils/widget_layout_decor_utils.dart';
 import 'package:random_please/widgets/animations/animations.dart';
+import 'package:random_please/constants/history_types.dart';
 
 class CoinFlipGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -98,7 +99,7 @@ class _CoinFlipGeneratorScreenState
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return HistoryWidget(
-      type: 'coin_flip',
+      type: HistoryTypes.coinFlip,
       title: loc.generationHistory,
     );
   }

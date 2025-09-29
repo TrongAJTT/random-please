@@ -13,6 +13,8 @@ import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/utils/auto_scroll_helper.dart';
 import 'package:faker/faker.dart';
+import 'package:random_please/constants/history_types.dart';
+import 'package:random_please/utils/enhanced_random.dart';
 
 class LoremIpsumGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -31,7 +33,7 @@ class _LoremIpsumGeneratorScreenState
     extends ConsumerState<LoremIpsumGeneratorScreen> {
   late OptionSwitchDecorator switchDecorator;
   bool _isDecoratorInitialized = false;
-  static const String historyType = 'lorem_ipsum';
+  static const String historyType = HistoryTypes.loremIpsum;
   final faker = Faker();
   final ScrollController _scrollController = ScrollController();
 
@@ -264,9 +266,9 @@ class _LoremIpsumGeneratorScreenState
         case LoremIpsumType.paragraphs:
           // Generate specific number of paragraphs using faker
           for (int i = 0; i < currentState.paragraphCount; i++) {
-            // Generate 3-7 sentences per paragraph using faker
-            final sentences =
-                faker.lorem.sentences(3 + (i % 5)); // 3-7 sentences
+            // Generate 3-7 sentences per paragraph using enhanced randomness
+            final sentencesPerParagraph = 3 + EnhancedRandom.nextInt(5);
+            final sentences = faker.lorem.sentences(sentencesPerParagraph);
             generatedContent.add(sentences.join(' '));
           }
           _generatedText = generatedContent.join('\n\n');

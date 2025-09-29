@@ -15,7 +15,8 @@ import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/widgets/statistics/datetime_statistics_widget.dart';
 import 'package:random_please/utils/auto_scroll_helper.dart';
-import 'dart:math';
+import 'package:random_please/utils/enhanced_random.dart';
+import 'package:random_please/constants/history_types.dart';
 
 class DateTimeGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -29,7 +30,7 @@ class DateTimeGeneratorScreen extends ConsumerStatefulWidget {
 
 class _DateTimeGeneratorScreenState
     extends ConsumerState<DateTimeGeneratorScreen> {
-  static const String historyType = 'datetime';
+  static const String historyType = HistoryTypes.dateTime;
   bool _copied = false;
   List<String> _results = [];
   final ScrollController _scrollController = ScrollController();
@@ -59,7 +60,6 @@ class _DateTimeGeneratorScreenState
       final stateManager =
           ref.read(dateTimeGeneratorStateManagerProvider.notifier);
       final historyManager = ref.read(historyProvider.notifier);
-      final random = Random();
       final Set<String> generatedSet = {};
       final List<String> resultList = [];
 
@@ -96,7 +96,8 @@ class _DateTimeGeneratorScreenState
 
         do {
           // Random day offset
-          final randomDay = totalDays == 0 ? 0 : random.nextInt(totalDays + 1);
+          final randomDay =
+              totalDays == 0 ? 0 : EnhancedRandom.nextInt(totalDays + 1);
           final day = fromDateTime.add(Duration(days: randomDay));
           // Random ms in day
           const msInDay = 24 * 60 * 60 * 1000;
@@ -112,25 +113,26 @@ class _DateTimeGeneratorScreenState
                 toDateTime.minute * 60000 +
                 toDateTime.hour * 3600000;
             final msRange = endMs - startMs;
-            randomMs =
-                msRange > 0 ? random.nextInt(msRange + 1) + startMs : startMs;
+            randomMs = msRange > 0
+                ? EnhancedRandom.nextInt(msRange + 1) + startMs
+                : startMs;
           } else if (randomDay == 0) {
             // First day, restrict ms >= fromDateTime
             final startMs = fromDateTime.millisecond +
                 fromDateTime.second * 1000 +
                 fromDateTime.minute * 60000 +
                 fromDateTime.hour * 3600000;
-            randomMs = startMs + random.nextInt(msInDay - startMs);
+            randomMs = startMs + EnhancedRandom.nextInt(msInDay - startMs);
           } else if (randomDay == totalDays) {
             // Last day, restrict ms <= toDateTime
             final endMs = toDateTime.millisecond +
                 toDateTime.second * 1000 +
                 toDateTime.minute * 60000 +
                 toDateTime.hour * 3600000;
-            randomMs = random.nextInt(endMs + 1);
+            randomMs = EnhancedRandom.nextInt(endMs + 1);
           } else {
             // Any full day
-            randomMs = random.nextInt(msInDay);
+            randomMs = EnhancedRandom.nextInt(msInDay);
           }
           final hours = randomMs ~/ 3600000;
           final minutes = (randomMs % 3600000) ~/ 60000;
@@ -152,10 +154,13 @@ class _DateTimeGeneratorScreenState
       await stateManager.saveCurrentState();
 
       // Add to history
-      await historyManager.addHistoryItem(
-        resultList.join(', '),
-        historyType,
-      );
+      final historyEnabled = ref.read(historyEnabledProvider);
+      if (historyEnabled && resultList.isNotEmpty) {
+        await historyManager.addHistoryItem(
+          resultList.join(', '),
+          historyType,
+        );
+      }
 
       setState(() {
         _results = resultList;
@@ -175,6 +180,11 @@ class _DateTimeGeneratorScreenState
       }
     }
   }
+
+  // Enhanced random helper combining Faker + Random + timestamp
+  // Deprecated helper (kept for compatibility) – no longer used
+  // ignore: unused_element
+  int _getEnhancedRandomInRange(int max) => EnhancedRandom.nextInt(max);
 
   void _copyToClipboard() {
     if (_results.isNotEmpty) {

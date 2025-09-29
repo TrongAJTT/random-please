@@ -4,11 +4,12 @@ import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/providers/password_generator_state_provider.dart';
 import 'package:random_please/services/generation_history_service.dart';
+import 'package:random_please/constants/history_types.dart';
 import 'dart:math';
 
 // Temporary wrapper to maintain compatibility
 class PasswordGeneratorViewModel extends ChangeNotifier {
-  static const String historyType = 'password';
+  static const String historyType = HistoryTypes.password;
   final WidgetRef? _ref;
 
   PasswordGeneratorViewModel({WidgetRef? ref}) : _ref = ref;

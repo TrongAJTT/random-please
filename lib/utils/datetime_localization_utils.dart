@@ -19,12 +19,18 @@ class DateTimeLocalizationUtils {
   }) {
     final parts = <String>[];
 
-    // Calculate components
+    // Calculate components using more accurate method
     final totalDays = duration.inDays;
+
+    // Use a more accurate year calculation (accounting for leap years)
     final years = totalDays ~/ 365;
     final remainingDaysAfterYears = totalDays % 365;
-    final months = remainingDaysAfterYears ~/ 30;
-    final remainingDaysAfterMonths = remainingDaysAfterYears % 30;
+
+    // Use average month length (365.25/12 ≈ 30.44 days)
+    final months = (remainingDaysAfterYears / 30.44).floor();
+    final remainingDaysAfterMonths =
+        remainingDaysAfterYears - (months * 30.44).round();
+
     final hours = duration.inHours % 24;
     final minutes = duration.inMinutes % 60;
 
@@ -38,8 +44,8 @@ class DateTimeLocalizationUtils {
         parts.add('$months ${months == 1 ? 'tháng' : 'tháng'}');
       }
       if (includeDate && remainingDaysAfterMonths > 0) {
-        parts.add(
-            '$remainingDaysAfterMonths ${remainingDaysAfterMonths == 1 ? 'ngày' : 'ngày'}');
+        final days = remainingDaysAfterMonths.round();
+        parts.add('$days ${days == 1 ? 'ngày' : 'ngày'}');
       }
       if (includeTime && hours > 0) {
         parts.add('$hours ${hours == 1 ? 'giờ' : 'giờ'}');
@@ -56,8 +62,8 @@ class DateTimeLocalizationUtils {
         parts.add('$months ${months == 1 ? 'month' : 'months'}');
       }
       if (includeDate && remainingDaysAfterMonths > 0) {
-        parts.add(
-            '$remainingDaysAfterMonths ${remainingDaysAfterMonths == 1 ? 'day' : 'days'}');
+        final days = remainingDaysAfterMonths.round();
+        parts.add('$days ${days == 1 ? 'day' : 'days'}');
       }
       if (includeTime && hours > 0) {
         parts.add('$hours ${hours == 1 ? 'hour' : 'hours'}');

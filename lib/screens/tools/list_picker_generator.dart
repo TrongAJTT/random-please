@@ -21,6 +21,7 @@ import 'package:random_please/widgets/holdable_button.dart';
 import 'package:random_please/widgets/tools/import_template_widget.dart';
 import 'package:random_please/widgets/tools/import_file_widget.dart';
 import 'package:random_please/providers/history_provider.dart';
+import 'package:random_please/constants/history_types.dart';
 
 class ListPickerGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -674,9 +675,13 @@ class _ListPickerGeneratorScreenState
 
     // Save to history if results exist
     if (results.isNotEmpty) {
-      await ref
-          .read(historyProvider.notifier)
-          .addHistoryItems(results, 'list_picker');
+      final historyEnabled = ref.read(historyEnabledProvider);
+      if (historyEnabled) {
+        String resultsText = results.join('; ');
+        await ref
+            .read(historyProvider.notifier)
+            .addHistoryItem(resultsText, HistoryTypes.listPicker);
+      }
     }
 
     // Auto-scroll to results after generation

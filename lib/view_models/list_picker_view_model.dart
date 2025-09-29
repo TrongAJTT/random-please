@@ -4,10 +4,11 @@ import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/providers/list_picker_generator_state_provider.dart';
 import 'package:random_please/services/generation_history_service.dart';
+import 'package:random_please/constants/history_types.dart';
 
 // Temporary wrapper to maintain compatibility
 class ListPickerViewModel extends ChangeNotifier {
-  static const String historyType = 'listpicker';
+  static const String historyType = HistoryTypes.listPicker;
   final WidgetRef? _ref;
 
   ListPickerViewModel({WidgetRef? ref}) : _ref = ref;

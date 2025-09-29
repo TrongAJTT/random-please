@@ -12,6 +12,7 @@ import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/utils/auto_scroll_helper.dart';
+import 'package:random_please/constants/history_types.dart';
 import 'package:random_please/widgets/statistics/playing_card_statistics_widget.dart';
 
 class PlayingCardGeneratorScreen extends ConsumerStatefulWidget {
@@ -32,7 +33,7 @@ class _PlayingCardGeneratorScreenState
   bool _copied = false;
   List<PlayingCard> _generatedCards = [];
   final ScrollController _scrollController = ScrollController();
-  static const String historyType = 'playing_cards';
+  static const String historyType = HistoryTypes.playingCard;
 
   @override
   void initState() {

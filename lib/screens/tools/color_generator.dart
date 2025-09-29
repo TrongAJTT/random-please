@@ -11,6 +11,7 @@ import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/providers/color_generator_state_provider.dart';
 import 'package:random_please/models/random_generator.dart';
+import 'package:random_please/constants/history_types.dart';
 
 class ColorGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -24,7 +25,7 @@ class ColorGeneratorScreen extends ConsumerStatefulWidget {
 
 class _ColorGeneratorScreenState extends ConsumerState<ColorGeneratorScreen>
     with SingleTickerProviderStateMixin {
-  static const String historyType = 'color';
+  static const String historyType = HistoryTypes.color;
   late AnimationController _controller;
   late Animation<double> _animation;
   late AppLocalizations loc;

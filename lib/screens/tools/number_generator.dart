@@ -16,6 +16,7 @@ import 'package:random_please/utils/auto_scroll_helper.dart';
 import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/providers/number_generator_state_provider.dart';
 import 'package:random_please/models/random_generator.dart';
+import 'package:random_please/constants/history_types.dart';
 
 class NumberGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -28,7 +29,7 @@ class NumberGeneratorScreen extends ConsumerStatefulWidget {
 }
 
 class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
-  static const String historyType = 'number';
+  static const String historyType = HistoryTypes.number;
   bool _copied = false;
   List<String> _results = [];
 
@@ -88,6 +89,11 @@ class _NumberGeneratorScreenState extends ConsumerState<NumberGeneratorScreen> {
 
       // Convert numbers to strings
       _results = numResults.map((number) => number.toString()).toList();
+
+      // Update UI to show results
+      if (mounted) {
+        setState(() {});
+      }
 
       // Save state after generation
       await ref

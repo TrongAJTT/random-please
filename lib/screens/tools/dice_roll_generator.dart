@@ -13,6 +13,7 @@ import 'package:random_please/widgets/generic/option_slider.dart';
 import 'package:random_please/widgets/statistics/number_statistics_widget.dart';
 import 'package:random_please/utils/snackbar_utils.dart';
 import 'package:random_please/utils/auto_scroll_helper.dart';
+import 'package:random_please/constants/history_types.dart';
 
 class DiceRollGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -99,7 +100,7 @@ class _DiceRollGeneratorScreenState
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return HistoryWidget(
-      type: DiceRollGeneratorViewModel.historyType,
+      type: HistoryTypes.diceRoll,
       title: loc.generationHistory,
     );
   }

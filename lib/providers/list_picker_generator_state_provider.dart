@@ -1,14 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'dart:math';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/providers/settings_provider.dart';
+import 'package:faker/faker.dart' show Faker;
 
 // StateManager cho ListPickerGenerator với persistent state
 class ListPickerGeneratorStateManager
     extends StateNotifier<ListPickerGeneratorState> {
   static const String _stateKey = 'listPickerGeneratorState';
   final Ref ref;
+  static final Random _random = Random();
+  static final Faker _faker = Faker();
 
   ListPickerGeneratorStateManager(this.ref)
       : super(ListPickerGeneratorState.createDefault()) {
@@ -357,6 +361,34 @@ class ListPickerGeneratorStateManager
     }
   }
 
+  // Enhanced shuffle using multiple random sources
+  void _enhancedShuffle<T>(List<T> list) {
+    // Combine multiple random sources for better randomness
+    final fakerRandom = _faker.randomGenerator;
+    final dartRandom = _random;
+
+    // Use timestamp-based seed for additional randomness
+    final timestampSeed = DateTime.now().millisecondsSinceEpoch % 1000;
+    final timestampRandom = Random(timestampSeed);
+
+    // Fisher-Yates shuffle with enhanced randomness
+    for (int i = list.length - 1; i > 0; i--) {
+      // Use weighted combination of random sources
+      final fakerIndex = fakerRandom.integer(i + 1);
+      final dartIndex = dartRandom.nextInt(i + 1);
+      final timestampIndex = timestampRandom.nextInt(i + 1);
+
+      // Choose randomly between the three sources
+      final finalIndex =
+          [fakerIndex, dartIndex, timestampIndex][dartRandom.nextInt(3)];
+
+      // Swap elements
+      final temp = list[i];
+      list[i] = list[finalIndex];
+      list[finalIndex] = temp;
+    }
+  }
+
   // Pick random items based on current state and mode
   Future<List<String>> pickRandomItems() async {
     if (state.currentList == null || state.currentList!.items.isEmpty) {
@@ -368,20 +400,20 @@ class ListPickerGeneratorStateManager
 
     switch (state.mode) {
       case ListPickerMode.random:
-        items.shuffle();
+        _enhancedShuffle(items);
         final count =
             state.quantity.clamp(1, (items.length - 1).clamp(1, items.length));
         results = items.take(count).map((item) => item.value).toList();
         break;
 
       case ListPickerMode.shuffle:
-        items.shuffle();
+        _enhancedShuffle(items);
         final count = state.quantity.clamp(2, items.length);
         results = items.take(count).map((item) => item.value).toList();
         break;
 
       case ListPickerMode.team:
-        items.shuffle();
+        _enhancedShuffle(items);
         final numberOfTeams = state.quantity
             .clamp(2, (items.length / 2).ceil().clamp(2, items.length));
         final itemsPerTeam = (items.length / numberOfTeams).ceil();

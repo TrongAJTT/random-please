@@ -15,6 +15,9 @@ import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/widgets/statistics/datetime_statistics_widget.dart';
 import 'package:random_please/utils/auto_scroll_helper.dart';
+import 'package:random_please/constants/history_types.dart';
+import 'package:random_please/utils/enhanced_random.dart';
+// ignore_for_file: unused_import
 import 'dart:math';
 
 class DateGeneratorScreen extends ConsumerStatefulWidget {
@@ -33,6 +36,8 @@ class _DateGeneratorScreenState extends ConsumerState<DateGeneratorScreen> {
   final ScrollController _scrollController = ScrollController();
 
   late AppLocalizations loc;
+
+  // Remove unused Random (EnhancedRandom is used)
 
   @override
   void initState() {
@@ -54,7 +59,6 @@ class _DateGeneratorScreenState extends ConsumerState<DateGeneratorScreen> {
   Future<void> _generateDates() async {
     try {
       final state = ref.read(dateGeneratorStateManagerProvider);
-      final random = Random();
       final Set<DateTime> generatedSet = {};
       final List<String> resultList = [];
 
@@ -91,7 +95,8 @@ class _DateGeneratorScreenState extends ConsumerState<DateGeneratorScreen> {
         const maxAttempts = 1000;
 
         do {
-          final randomDay = random.nextInt(totalDays + 1);
+          // Enhanced random day selection using multiple sources
+          final randomDay = _getEnhancedRandomDay(totalDays);
           date = fromDate.add(Duration(days: randomDay));
           attempts++;
         } while (!state.allowDuplicates &&
@@ -128,16 +133,24 @@ class _DateGeneratorScreenState extends ConsumerState<DateGeneratorScreen> {
 
       // Save to history
       if (_results.isNotEmpty) {
-        await ref.read(historyProvider.notifier).addHistoryItem(
-              _results.join(', '),
-              'date_generator',
-            );
+        final historyEnabled = ref.read(historyEnabledProvider);
+        if (historyEnabled) {
+          await ref.read(historyProvider.notifier).addHistoryItem(
+                _results.join(', '),
+                HistoryTypes.date,
+              );
+        }
       }
     } catch (e) {
       if (mounted) {
         SnackBarUtils.showTyped(context, e.toString(), SnackBarType.error);
       }
     }
+  }
+
+  // Enhanced random day generator combining multiple sources
+  int _getEnhancedRandomDay(int maxDays) {
+    return EnhancedRandom.nextInt(maxDays + 1);
   }
 
   void _copyToClipboard() {
@@ -261,7 +274,7 @@ class _DateGeneratorScreenState extends ConsumerState<DateGeneratorScreen> {
 
   Widget _buildHistoryWidget() {
     return HistoryWidget(
-      type: 'date_generator',
+      type: HistoryTypes.date,
       title: loc.generationHistory,
     );
   }

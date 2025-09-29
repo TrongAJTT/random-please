@@ -4,11 +4,12 @@ import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/models/random_generator.dart';
 import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/providers/dice_roll_generator_state_provider.dart';
+import 'package:random_please/constants/history_types.dart';
 
 /// ViewModel wrapper for DiceRollGenerator using Riverpod StateManager
 class DiceRollGeneratorViewModel extends ChangeNotifier {
   final WidgetRef _ref;
-  static const String historyType = 'dice_roll';
+  static const String historyType = HistoryTypes.diceRoll;
 
   bool _historyEnabled = true;
   List<int> _results = [];

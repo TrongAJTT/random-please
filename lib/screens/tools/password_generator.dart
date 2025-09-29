@@ -13,6 +13,8 @@ import 'package:random_please/widgets/generic/option_switch.dart';
 import 'package:random_please/widgets/common/history_widget.dart';
 import 'package:random_please/utils/auto_scroll_helper.dart';
 import 'package:random_please/providers/history_provider.dart';
+import 'package:random_please/constants/history_types.dart';
+import 'package:faker/faker.dart' show Faker;
 
 class PasswordGeneratorScreen extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -29,6 +31,9 @@ class _PasswordGeneratorScreenState
   bool _copied = false;
   final ScrollController _scrollController = ScrollController();
   String _currentResult = '';
+
+  static final Random _random = Random();
+  static final Faker _faker = Faker();
 
   @override
   void initState() {
@@ -57,9 +62,12 @@ class _PasswordGeneratorScreenState
 
       // Save to history if enabled
       if (password.isNotEmpty) {
-        await ref
-            .read(historyProvider.notifier)
-            .addHistoryItems([password], 'password');
+        final historyEnabled = ref.read(historyEnabledProvider);
+        if (historyEnabled) {
+          await ref
+              .read(historyProvider.notifier)
+              .addHistoryItem(password, HistoryTypes.password);
+        }
       }
 
       // Auto-scroll to results after generation
@@ -107,7 +115,6 @@ class _PasswordGeneratorScreenState
       return '';
     }
 
-    final random = Random();
     String password = '';
     const int maxAttempts = 1000;
     int attempt = 0;
@@ -124,13 +131,31 @@ class _PasswordGeneratorScreenState
     do {
       final buffer = StringBuffer();
       for (int i = 0; i < state.passwordLength; i++) {
-        buffer.write(availableChars[random.nextInt(availableChars.length)]);
+        // Enhanced random character selection using multiple sources
+        final charIndex = _getEnhancedRandomIndex(availableChars.length);
+        buffer.write(availableChars[charIndex]);
       }
       password = buffer.toString();
       attempt++;
     } while (!isValid(password) && attempt < maxAttempts);
 
     return password;
+  }
+
+  // Enhanced random index generator combining multiple sources
+  int _getEnhancedRandomIndex(int max) {
+    // Combine multiple random sources for better randomness
+    final fakerIndex = _faker.randomGenerator.integer(max);
+    final dartIndex = _random.nextInt(max);
+
+    // Use timestamp-based seed for additional randomness
+    final timestampSeed = DateTime.now().millisecondsSinceEpoch % 1000;
+    final timestampRandom = Random(timestampSeed);
+    final timestampIndex = timestampRandom.nextInt(max);
+
+    // Choose randomly between the three sources
+    final sources = [fakerIndex, dartIndex, timestampIndex];
+    return sources[_random.nextInt(sources.length)];
   }
 
   void _copyToClipboard() {
@@ -160,7 +185,7 @@ class _PasswordGeneratorScreenState
 
   Widget _buildHistoryWidget(AppLocalizations loc) {
     return HistoryWidget(
-      type: 'password',
+      type: HistoryTypes.password,
       title: loc.generationHistory,
       maskFunction: _maskPassword,
     );

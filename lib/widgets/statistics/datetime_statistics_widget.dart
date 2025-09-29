@@ -117,6 +117,7 @@ class _DateTimeStatisticsWidgetState
         _buildTableRow(loc.latest, stats['latest']),
         _buildTableRow(loc.shortestGap, stats['shortestGap']),
         _buildTableRow(loc.longestGap, stats['longestGap']),
+        _buildTableRow('Tổng khoảng cách', stats['overallSpan']),
       ],
     );
   }
@@ -178,6 +179,9 @@ class _DateTimeStatisticsWidgetState
       longestGap = gaps.reduce((a, b) => a > b ? a : b);
     }
 
+    // Also calculate the overall span (earliest to latest)
+    final overallSpan = latest.difference(earliest);
+
     // Format results based on type
     String formatDateTime(DateTime dateTime) {
       switch (widget.type) {
@@ -211,6 +215,7 @@ class _DateTimeStatisticsWidgetState
       'latest': formatDateTime(latest),
       'shortestGap': formatDuration(shortestGap),
       'longestGap': formatDuration(longestGap),
+      'overallSpan': formatDuration(overallSpan),
     };
   }
 }

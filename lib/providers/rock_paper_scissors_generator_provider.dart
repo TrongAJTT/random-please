@@ -4,14 +4,15 @@ import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/providers/settings_provider.dart';
 import 'package:random_please/services/settings_service.dart';
-import 'package:faker/faker.dart';
-import 'dart:math';
+// Removed unused imports (EnhancedRandom is used instead)
+import 'package:random_please/constants/history_types.dart';
+import 'package:random_please/utils/enhanced_random.dart';
 
 class RockPaperScissorsGeneratorNotifier
     extends StateNotifier<RockPaperScissorsGeneratorState> {
   static const String boxName = 'rockPaperScissorsGeneratorBox';
   static const String counterStatsBoxName = 'rockPaperScissorsCounterStatsBox';
-  static const String historyType = 'rock_paper_scissors';
+  static const String historyType = HistoryTypes.rockPaperScissors;
 
   late Box<RockPaperScissorsGeneratorState> _box;
   late Box<RockPaperScissorsCounterStatistics> _counterStatsBox;
@@ -153,9 +154,12 @@ class RockPaperScissorsGeneratorNotifier
 
       // Save to history via HistoryProvider
       if (_ref != null && results.isNotEmpty) {
-        await _ref!
-            .read(historyProvider.notifier)
-            .addHistoryItems(results, historyType);
+        final enabled = _ref!.read(historyEnabledProvider);
+        if (enabled) {
+          await _ref!
+              .read(historyProvider.notifier)
+              .addHistoryItems(results, historyType);
+        }
       }
 
       // Update state with result
@@ -169,9 +173,12 @@ class RockPaperScissorsGeneratorNotifier
 
       // Save to history via HistoryProvider
       if (_ref != null && resultText.isNotEmpty) {
-        await _ref!
-            .read(historyProvider.notifier)
-            .addHistoryItems([resultText], historyType);
+        final enabled = _ref!.read(historyEnabledProvider);
+        if (enabled) {
+          await _ref!
+              .read(historyProvider.notifier)
+              .addHistoryItems([resultText], historyType);
+        }
       }
 
       // Update state with result
@@ -213,33 +220,15 @@ class RockPaperScissorsGeneratorNotifier
 
   /// Enhanced random Rock Paper Scissors generation using multiple entropy sources
   String _generateEnhancedRandomRPS() {
-    // Multiple entropy sources for better randomness
-    final random = Random();
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final fakerRandom = faker.randomGenerator;
-
-    // Combine multiple random sources
-    final entropy1 = random.nextInt(1000);
-    final entropy2 = timestamp % 1000;
-    final entropy3 = fakerRandom.integer(1000);
-    final entropy4 = fakerRandom.decimal(scale: 3).toInt();
-
-    // Create weighted random using multiple sources
-    final combinedEntropy = (entropy1 + entropy2 + entropy3 + entropy4) % 1000;
-
-    // Use Faker's random integer as additional entropy
-    final fakerInt = fakerRandom.integer(3); // 0, 1, or 2
-
-    // Combine all sources for final decision
-    final finalValue = (combinedEntropy + (fakerInt * 333)) % 1000;
-
-    // Return Rock/Paper/Scissors based on combined entropy
-    if (finalValue < 333) {
-      return 'Rock';
-    } else if (finalValue < 666) {
-      return 'Paper';
-    } else {
-      return 'Scissors';
+    // Use EnhancedRandom uniformly to map 0..2 → Rock/Paper/Scissors
+    final idx = EnhancedRandom.nextInt(3); // 0,1,2
+    switch (idx) {
+      case 0:
+        return 'Rock';
+      case 1:
+        return 'Paper';
+      default:
+        return 'Scissors';
     }
   }
 }
