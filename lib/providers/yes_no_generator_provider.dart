@@ -5,8 +5,8 @@ import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/providers/settings_provider.dart';
 import 'package:random_please/services/settings_service.dart';
 import 'package:random_please/constants/history_types.dart';
-import 'package:faker/faker.dart';
-import 'dart:math';
+// Removed direct faker usage; EnhancedRandom handles entropy
+import 'package:random_please/utils/enhanced_random.dart';
 
 class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
   static const String boxName = 'yesNoGeneratorBox';
@@ -121,6 +121,11 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
     }
   }
 
+  /// Enhanced random Yes/No generation using shared utility (uniform 50/50)
+  String _generateEnhancedRandomYesNo() {
+    return EnhancedRandom.nextInt(2) == 0 ? 'Yes' : 'No';
+  }
+
   Future<void> generate() async {
     if (state.counterMode) {
       // Generate batch of results
@@ -203,29 +208,6 @@ class YesNoGeneratorNotifier extends StateNotifier<YesNoGeneratorState> {
       _counterStatsBox.close();
     }
     super.dispose();
-  }
-
-  /// Enhanced random Yes/No generation using multiple entropy sources
-  String _generateEnhancedRandomYesNo() {
-    // Multiple entropy sources for better randomness
-    final random = Random();
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final fakerRandom = faker.randomGenerator;
-
-    // Generate three independent random values from different sources
-    final fakerValue = fakerRandom.integer(1000);
-    final dartValue = random.nextInt(1000);
-
-    // Use timestamp-based seed for additional randomness
-    final timestampSeed = timestamp % 1000;
-    final timestampRandom = Random(timestampSeed);
-    final timestampValue = timestampRandom.nextInt(1000);
-
-    // Combine all three sources using weighted average
-    final combinedValue = (fakerValue + dartValue + timestampValue) % 1000;
-
-    // Return Yes/No based on combined value (50/50 distribution)
-    return combinedValue < 500 ? 'Yes' : 'No';
   }
 }
 

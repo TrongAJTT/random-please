@@ -1,18 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'dart:math';
+import 'package:random_please/utils/enhanced_random.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/providers/settings_provider.dart';
-import 'package:faker/faker.dart' show Faker;
 
 // StateManager cho ListPickerGenerator với persistent state
 class ListPickerGeneratorStateManager
     extends StateNotifier<ListPickerGeneratorState> {
   static const String _stateKey = 'listPickerGeneratorState';
   final Ref ref;
-  static final Random _random = Random();
-  static final Faker _faker = Faker();
+  // EnhancedRandom is used for shuffling
 
   ListPickerGeneratorStateManager(this.ref)
       : super(ListPickerGeneratorState.createDefault()) {
@@ -363,29 +361,12 @@ class ListPickerGeneratorStateManager
 
   // Enhanced shuffle using multiple random sources
   void _enhancedShuffle<T>(List<T> list) {
-    // Combine multiple random sources for better randomness
-    final fakerRandom = _faker.randomGenerator;
-    final dartRandom = _random;
-
-    // Use timestamp-based seed for additional randomness
-    final timestampSeed = DateTime.now().millisecondsSinceEpoch % 1000;
-    final timestampRandom = Random(timestampSeed);
-
-    // Fisher-Yates shuffle with enhanced randomness
+    // Fisher-Yates shuffle using EnhancedRandom for indices
     for (int i = list.length - 1; i > 0; i--) {
-      // Use weighted combination of random sources
-      final fakerIndex = fakerRandom.integer(i + 1);
-      final dartIndex = dartRandom.nextInt(i + 1);
-      final timestampIndex = timestampRandom.nextInt(i + 1);
-
-      // Choose randomly between the three sources
-      final finalIndex =
-          [fakerIndex, dartIndex, timestampIndex][dartRandom.nextInt(3)];
-
-      // Swap elements
+      final j = EnhancedRandom.nextInt(i + 1);
       final temp = list[i];
-      list[i] = list[finalIndex];
-      list[finalIndex] = temp;
+      list[i] = list[j];
+      list[j] = temp;
     }
   }
 

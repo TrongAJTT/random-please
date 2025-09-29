@@ -3,11 +3,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:faker/faker.dart';
 import 'package:random_please/models/random_models/random_state_models.dart';
 import 'package:random_please/services/generation_history_service.dart';
-import 'dart:math';
+import 'package:random_please/constants/history_types.dart';
+import 'package:random_please/utils/enhanced_random.dart';
 
 class LoremIpsumNotifier extends StateNotifier<LoremIpsumGeneratorState> {
   static const String boxName = 'loremIpsumGeneratorBox';
-  static const String historyType = 'lorem_ipsum';
+  static const String historyType = HistoryTypes.loremIpsum;
 
   late Box<LoremIpsumGeneratorState> _box;
   bool _isBoxOpen = false;
@@ -79,7 +80,6 @@ class LoremIpsumNotifier extends StateNotifier<LoremIpsumGeneratorState> {
   }
 
   Future<void> generateText() async {
-    final random = Random();
     List<String> generatedContent = [];
 
     try {
@@ -101,10 +101,11 @@ class LoremIpsumNotifier extends StateNotifier<LoremIpsumGeneratorState> {
           break;
 
         case LoremIpsumType.paragraphs:
-          // Generate specific number of paragraphs
+          // Generate specific number of paragraphs with enhanced randomness for sentence count
           for (int i = 0; i < state.paragraphCount; i++) {
+            final sentencesPerParagraph = 3 + EnhancedRandom.nextInt(5);
             generatedContent
-                .add(faker.lorem.sentences(random.nextInt(5) + 3).join(' '));
+                .add(faker.lorem.sentences(sentencesPerParagraph).join(' '));
           }
           _result = generatedContent.join('\n\n');
           break;

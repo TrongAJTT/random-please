@@ -5,8 +5,8 @@ import 'package:random_please/providers/history_provider.dart';
 import 'package:random_please/providers/settings_provider.dart';
 import 'package:random_please/services/settings_service.dart';
 import 'package:random_please/constants/history_types.dart';
-import 'package:faker/faker.dart';
-import 'dart:math';
+// Removed direct faker/random usage; EnhancedRandom handles entropy
+import 'package:random_please/utils/enhanced_random.dart';
 
 class CoinFlipGeneratorNotifier extends StateNotifier<CoinFlipGeneratorState> {
   static const String boxName = 'coinFlipGeneratorBox';
@@ -118,6 +118,11 @@ class CoinFlipGeneratorNotifier extends StateNotifier<CoinFlipGeneratorState> {
     saveState();
   }
 
+  /// Enhanced random Coin Flip generation using multiple entropy sources
+  String _generateEnhancedRandomCoinFlip() {
+    return EnhancedRandom.nextInt(2) == 0 ? 'Heads' : 'Tails';
+  }
+
   Future<void> generate() async {
     if (state.counterMode) {
       // Generate batch of results
@@ -193,29 +198,6 @@ class CoinFlipGeneratorNotifier extends StateNotifier<CoinFlipGeneratorState> {
       _box.close();
     }
     super.dispose();
-  }
-
-  /// Enhanced random Coin Flip generation using multiple entropy sources
-  String _generateEnhancedRandomCoinFlip() {
-    // Multiple entropy sources for better randomness
-    final random = Random();
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final fakerRandom = faker.randomGenerator;
-
-    // Generate three independent random values from different sources
-    final fakerValue = fakerRandom.integer(1000);
-    final dartValue = random.nextInt(1000);
-
-    // Use timestamp-based seed for additional randomness
-    final timestampSeed = timestamp % 1000;
-    final timestampRandom = Random(timestampSeed);
-    final timestampValue = timestampRandom.nextInt(1000);
-
-    // Combine all three sources using weighted average
-    final combinedValue = (fakerValue + dartValue + timestampValue) % 1000;
-
-    // Return Heads/Tails based on combined value (50/50 distribution)
-    return combinedValue < 500 ? 'Heads' : 'Tails';
   }
 }
 
