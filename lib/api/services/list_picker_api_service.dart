@@ -1,20 +1,18 @@
 import '../interfaces/api_random_generator.dart';
 import '../models/api_models.dart';
-import '../../models/random_models/random_state_models.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+// Removed Hive dependencies: list selection now only uses `items`
 import 'dart:math';
 
 // List Picker Generator API Service - Updated spec
 // Endpoints:
 // - GET /api/v1/random/list
 // Parameters:
-// - index: Chọn list từ Hive (mặc định 0 = list đầu tiên)  
-// - items: Custom list (ghi đè index nếu có)
+// - items: Custom list (mặc định: a,b,c,d,e,f,g,h,i)
 // - mode: random|shuffle|team (mặc định random)
 // - quantity: số lượng (mặc định 1)
 
 class ListPickerApiConfig extends ApiConfig {
-  final int? index; // Index của list trong Hive (null nếu dùng custom items)
+  final int? index; // Deprecated: Không còn sử dụng
   final List<String>? items; // Custom items list (ghi đè index)
   final String mode; // 'random', 'shuffle', 'team'
   final int quantity;
@@ -28,27 +26,27 @@ class ListPickerApiConfig extends ApiConfig {
 
   factory ListPickerApiConfig.fromJson(Map<String, dynamic> json) {
     List<String>? customItems;
-    
-    // Parse custom items if provided
+
+    // Parse custom items if provided, else use default a..i
     if (json['items'] != null) {
       if (json['items'] is String) {
-        // Comma-separated values
         customItems = (json['items'] as String)
             .split(',')
             .map((e) => e.trim())
             .where((e) => e.isNotEmpty)
             .toList();
       } else if (json['items'] is List) {
-        // Array format
         customItems = (json['items'] as List)
             .map((e) => e.toString().trim())
             .where((e) => e.isNotEmpty)
             .toList();
       }
+    } else {
+      customItems = const ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'];
     }
 
     return ListPickerApiConfig(
-      index: customItems == null ? _parseInt(json['index']) ?? 0 : null,
+      index: null, // deprecated
       items: customItems,
       mode: (json['mode'] as String?) ?? 'random',
       quantity: _parseInt(json['quantity']) ?? 1,
@@ -76,12 +74,10 @@ class ListPickerApiConfig extends ApiConfig {
   bool isValid() {
     if (quantity <= 0 || quantity > 1000) return false;
     if (!['random', 'shuffle', 'team'].contains(mode)) return false;
-    
-    // Phải có items hoặc index hợp lệ
-    if (items == null && index == null) return false;
-    if (items != null && items!.isEmpty) return false;
-    if (index != null && index! < 0) return false;
-    
+
+    // Phải có items hợp lệ
+    if (items == null || items!.isEmpty) return false;
+
     return true;
   }
 }
@@ -112,7 +108,8 @@ class ListPickerApiResult extends ApiResult {
 class ListPickerApiService
     implements ApiRandomGenerator<ListPickerApiConfig, ListPickerApiResult> {
   final Random _random = Random();
-  static const String _boxName = 'listPickerGeneratorBox';
+  // Deprecated: no longer used
+  // static const String _boxName = 'listPickerGeneratorBox';
 
   @override
   String get generatorName => 'list';
@@ -129,46 +126,7 @@ class ListPickerApiService
     return ListPickerApiConfig.fromJson(json);
   }
 
-  // Lấy list từ Hive storage
-  Future<List<String>?> _getListFromHive(int index) async {
-    try {
-      final box = await Hive.openBox<ListPickerGeneratorState>(_boxName);
-      final state = box.get('state');
-      
-      if (state == null || state.savedLists.isEmpty) {
-        return null;
-      }
-      
-      if (index >= state.savedLists.length) {
-        return null;
-      }
-      
-      final selectedList = state.savedLists[index];
-      return selectedList.items.map((item) => item.value).toList();
-    } catch (e) {
-      return null;
-    }
-  }
-
-  // Lấy tên list từ Hive storage
-  Future<String?> _getListNameFromHive(int index) async {
-    try {
-      final box = await Hive.openBox<ListPickerGeneratorState>(_boxName);
-      final state = box.get('state');
-      
-      if (state == null || state.savedLists.isEmpty) {
-        return null;
-      }
-      
-      if (index >= state.savedLists.length) {
-        return null;
-      }
-      
-      return state.savedLists[index].name;
-    } catch (e) {
-      return null;
-    }
-  }
+  // Deprecated Hive accessors removed (list selection now relies solely on `items`)
 
   @override
   Future<ListPickerApiResult> generate(ListPickerApiConfig config) async {
@@ -180,22 +138,15 @@ class ListPickerApiService
       List<String> items;
       String? listName;
 
-      // Sử dụng custom items nếu có, nếu không thì lấy từ Hive
-      if (config.items != null) {
-        items = List<String>.from(config.items!);
-        listName = 'Custom List';
-      } else {
-        final hiveItems = await _getListFromHive(config.index ?? 0);
-        if (hiveItems == null || hiveItems.isEmpty) {
-          throw ArgumentError('No lists available in the application. Please create a list first.');
-        }
-        items = hiveItems;
-        listName = await _getListNameFromHive(config.index ?? 0);
-      }
+      // Luôn sử dụng items, đã có mặc định a..i
+      items = List<String>.from(
+          config.items ?? const ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']);
+      listName = 'Custom List';
 
       // Validate items vs mode and quantity
       if (!_validateItemsForMode(items, config.mode, config.quantity)) {
-        throw ArgumentError('Invalid quantity for ${config.mode} mode with ${items.length} items');
+        throw ArgumentError(
+            'Invalid quantity for ${config.mode} mode with ${items.length} items');
       }
 
       List<String> results = [];
@@ -203,7 +154,8 @@ class ListPickerApiService
       switch (config.mode) {
         case 'random':
           items.shuffle(_random);
-          final count = config.quantity.clamp(1, (items.length - 1).clamp(1, items.length));
+          final count = config.quantity
+              .clamp(1, (items.length - 1).clamp(1, items.length));
           results = items.take(count).toList();
           break;
 
@@ -215,7 +167,8 @@ class ListPickerApiService
 
         case 'team':
           items.shuffle(_random);
-          final numberOfTeams = config.quantity.clamp(2, (items.length / 2).ceil().clamp(2, items.length));
+          final numberOfTeams = config.quantity
+              .clamp(2, (items.length / 2).ceil().clamp(2, items.length));
           final itemsPerTeam = (items.length / numberOfTeams).ceil();
 
           results = [];
@@ -243,14 +196,16 @@ class ListPickerApiService
 
   bool _validateItemsForMode(List<String> items, String mode, int quantity) {
     if (items.isEmpty) return false;
-    
+
     switch (mode) {
       case 'random':
         return quantity > 0 && quantity < items.length;
       case 'shuffle':
         return quantity >= 2 && quantity <= items.length;
       case 'team':
-        return quantity >= 2 && items.length >= 3 && quantity <= (items.length / 2).ceil();
+        return quantity >= 2 &&
+            items.length >= 3 &&
+            quantity <= (items.length / 2).ceil();
       default:
         return false;
     }
@@ -264,7 +219,8 @@ class ListPickerApiService
   @override
   ListPickerApiConfig getDefaultConfig() {
     return ListPickerApiConfig(
-      index: 0, // Use first list by default
+      index: null,
+      items: const ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'],
       mode: 'random',
       quantity: 1,
     );
@@ -278,8 +234,8 @@ class ListPickerApiService
         'count': result.results.length,
         'mode': result.config.mode,
         'list_name': result.listName,
-        'used_index': result.config.index,
-        'used_custom_items': result.config.items != null,
+        'used_index': null,
+        'used_custom_items': true,
         'config': result.config.toJson(),
         'generator': generatorName,
         'version': version,

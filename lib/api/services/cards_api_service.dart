@@ -15,10 +15,16 @@ class CardsApiConfig extends ApiConfig {
   });
 
   factory CardsApiConfig.fromJson(Map<String, dynamic> json) {
+    final parsedQuantity = _parseInt(json['quantity']) ?? 8;
+    final parsedJoker =
+        _parseBool(json['joker']) ?? _parseBool(json['includeJokers']) ?? true;
+    final parsedDup =
+        _parseBool(json['dup']) ?? _parseBool(json['allowDuplicates']) ?? true;
+
     return CardsApiConfig(
-      quantity: (json['quantity'] as int?) ?? 8,
-      joker: _parseBool(json['joker']) ?? true,
-      allowDuplicates: _parseBool(json['dup']) ?? true,
+      quantity: parsedQuantity,
+      joker: parsedJoker,
+      allowDuplicates: parsedDup,
     );
   }
 
@@ -27,6 +33,13 @@ class CardsApiConfig extends ApiConfig {
     if (value is String) {
       return value.toLowerCase() == 'true';
     }
+    return null;
+  }
+
+  static int? _parseInt(dynamic value) {
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value);
     return null;
   }
 

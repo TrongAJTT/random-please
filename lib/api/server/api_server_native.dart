@@ -206,8 +206,6 @@ class LocalApiServerNative implements LocalApiServer {
       }
     });
 
-
-
     // OPTIONS handler for CORS preflight
     app.options('/<path|.*>', (Request request, String path) {
       return Response.ok('', headers: corsHeaders);
@@ -315,6 +313,17 @@ class LocalApiServerNative implements LocalApiServer {
         }
         .api-link:hover {
             background: #0056b3;
+        }
+        .api-inline {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 6px 0;
+        }
+        .api-link.small {
+            padding: 6px 10px;
+            font-size: 12px;
+            line-height: 1;
         }
     </style>
 </head>
@@ -435,7 +444,11 @@ class LocalApiServerNative implements LocalApiServer {
             <div class="method">GET</div>
             <strong>/api/v1/random/$name</strong><br>
             <em>$description</em><br>
-            <strong>Example:</strong> <code>$baseUrl/api/v1/random/$name${_getExampleParams(name)}</code><br>
+            <div class="api-inline">
+              <strong>Example:</strong>
+              <code>$baseUrl/api/v1/random/$name${_getExampleParams(name)}</code>
+              <a class="api-link small" target="_blank" href="$baseUrl/api/v1/random/$name${_getExampleParams(name)}">Try it</a>
+            </div><br>
             ${_getParameterDocumentation(name)}
         </div>
       ''');
@@ -493,6 +506,14 @@ class LocalApiServerNative implements LocalApiServer {
         return '?from=1&to=100&quantity=5&type=int&dup=true';
       case 'color':
         return '?type=hex&includeAlpha=true';
+      case 'date':
+        return '?date_a=2024-01-01&date_b=2024-12-31&quantity=5&dup=false';
+      case 'lorem':
+        return '?type=sentences&quantity=3&start_lorem=true';
+      case 'letter':
+        return '?quantity=10&lower=true&upper=true&dup=true';
+      case 'list':
+        return '?items=a,b,c,d,e,f,g,h,i&mode=random&quantity=3';
       case 'password':
         return '?quantity=12&upper=true&lower=true&number=true&special=true';
       case 'card':
@@ -526,6 +547,36 @@ class LocalApiServerNative implements LocalApiServer {
             <ul>
                 <li><code>type</code> (string): "hex", "rgb", "hsl" or "all" (default: "all")</li>
                 <li><code>includeAlpha</code> (boolean): Include alpha channel (default: true)</li>
+            </ul>''';
+      case 'date':
+        return '''<strong>Parameters:</strong>
+            <ul>
+                <li><code>date_a</code> (string): Start date ISO (default: now - 365 days)</li>
+                <li><code>date_b</code> (string): End date ISO (default: now + 365 days)</li>
+                <li><code>quantity</code> (integer): Number of dates (default: 10)</li>
+                <li><code>dup</code> (boolean): Allow duplicates (default: true)</li>
+            </ul>''';
+      case 'lorem':
+        return '''<strong>Parameters:</strong>
+            <ul>
+                <li><code>type</code> (string): "words" | "sentences" | "paragraphs" (default: "sentences")</li>
+                <li><code>quantity</code> (integer): Count by type (default: 5)</li>
+                <li><code>start_lorem</code> (boolean): Start with "Lorem ipsum..." (default: true)</li>
+            </ul>''';
+      case 'letter':
+        return '''<strong>Parameters:</strong>
+            <ul>
+                <li><code>quantity</code> (integer): Number of letters (default: 10)</li>
+                <li><code>lower</code> (boolean): Include lowercase a-z (default: true)</li>
+                <li><code>upper</code> (boolean): Include uppercase A-Z (default: true)</li>
+                <li><code>dup</code> (boolean): Allow duplicates (default: true)</li>
+            </ul>''';
+      case 'list':
+        return '''<strong>Parameters:</strong>
+            <ul>
+                <li><code>items</code> (string|array): Custom items list (default: a,b,c,d,e,f,g,h,i)</li>
+                <li><code>mode</code> (string): "random" | "shuffle" | "team" (default: "random")</li>
+                <li><code>quantity</code> (integer): Amount depends on mode (default: 1)</li>
             </ul>''';
       case 'password':
         return '''<strong>Parameters:</strong>
